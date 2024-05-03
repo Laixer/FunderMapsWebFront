@@ -1,0 +1,63 @@
+
+
+export interface IMapset {
+
+  /**
+   * Unique identifier in uuid format
+   *  id & identifier contain duplicate data
+   */
+  id: string,
+  identifier?: string,
+  
+  /**
+   * The readable name
+   */
+  name: string,
+
+  /**
+   * A mapbox style url
+   */
+  style: string,
+
+  /**
+   * Mapbox layer names
+   */
+  layers?: string[],
+
+  /**
+   * Configuration options for the layers
+   * TODO: Which options? How do they differ for multiple layers?
+   */
+  options?: string,
+
+  /**
+   * Whether the mapset can be shared with others
+   */
+  public?: boolean,
+
+  /**
+   * An optional disclaimer, to be shown in a popup that needs to be accepted before presentation of the layer
+   */
+  consent?: string,
+
+  /**
+   * An optional explanation about the layers included in this mapset
+   */
+  note?: string,
+
+  /**
+   * An optional icon
+   */
+  icon?: string,
+
+  /**
+   * The municipality reference that should be used as mask on the layerdata.
+   *  If no value is provided, all data should be accessible.
+   */
+  fenceMunicipality?: string,
+
+  /**
+   * Layer styling / legend config in JSON format
+   */
+  layerSet: string
+}
