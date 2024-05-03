@@ -7,6 +7,9 @@ interface ImportMetaEnv {
 
   // PDOK
   readonly VITE_PDOK_LOCATIONSERVICE: string
+
+  // Fundermaps Base API Url
+  readonly VITE_FUNDERMAPS_URL: string
 }
 
 interface ImportMeta {

@@ -196,5 +196,5 @@ export const put = async function put(
  * Combine the endpoint with the base path while removing the trailing & leading / of the two segments
  */
 function combineEndpoint(endpoint: string) {
-  return `${trimTrailingChar(apiBasePath, '/')}/${trimLeadingChar(endpoint, '/')}`
+  return `${trimTrailingChar(apiBasePath, '/')}/api/${trimLeadingChar(endpoint, '/')}`
 }
