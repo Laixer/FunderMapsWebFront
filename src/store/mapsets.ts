@@ -65,6 +65,20 @@ const firstMapsetId = computed<string|null>(() => {
 })
 
 /**
+ * If available we use the preferred default, otherwise go for the first mapset
+ */
+const defaultMapsetId = computed<string|null>(() => {
+
+  const preferredMapsetId = import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99"
+
+  if (getMapsetById(preferredMapsetId)) {
+    return preferredMapsetId
+  }
+
+  return firstMapsetId.value
+})
+
+/**
  * Get a mapset by id
  */
 const getMapsetById = function getMapsetById(id: string) {
@@ -227,6 +241,7 @@ function useMapsets() {
     availableMapsets,
     activeMapsetId,
     firstMapsetId,
+    defaultMapsetId,
     getMapsetById,
     activeMapset,
     hasAvailableMapsets,

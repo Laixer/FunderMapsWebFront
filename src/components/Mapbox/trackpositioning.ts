@@ -11,9 +11,10 @@ let mapInstance: Map|null = null;
 
 export const getLastKnownPositioning = function getLastKnownPositioning() {
   return {
-    center: sessionStorage.getItem('lastCenterPosition') ? JSON.parse(sessionStorage.getItem('lastCenterPosition') as string) : undefined,
-    zoom: sessionStorage.getItem('storeLastZoomLevel') ? parseFloat(sessionStorage.getItem('storeLastZoomLevel') as string) : undefined,
-    pitch: sessionStorage.getItem('lastPitchDegree') ? parseFloat(sessionStorage.getItem('lastPitchDegree') as string) : undefined
+    center: localStorage.getItem('lastCenterPosition') ? JSON.parse(localStorage.getItem('lastCenterPosition') as string) : undefined,
+    zoom: localStorage.getItem('lastZoomLevel') ? parseFloat(localStorage.getItem('lastZoomLevel') as string) : undefined,
+    pitch: localStorage.getItem('lastPitchDegree') ? parseFloat(localStorage.getItem('lastPitchDegree') as string) : undefined,
+    bearing: localStorage.getItem('lastRotation') ? parseFloat(localStorage.getItem('lastRotation') as string) : undefined,
   }
 }
 
@@ -23,6 +24,12 @@ export const startTrackingPositioning = function startTrackingPositioning(map: M
   map.on('moveend', storeLastCenterPosition);
   map.on('zoomend', storeLastZoomLevel);
   map.on('pitchend', storeLastPitchDegree);
+  map.on('rotateend', storeLastRotation);
+
+  storeLastCenterPosition()
+  storeLastZoomLevel()
+  storeLastPitchDegree()
+  storeLastRotation()
 }
 
 export const stopTrackingPositioning = function stopTrackingPositioning() {
@@ -30,6 +37,7 @@ export const stopTrackingPositioning = function stopTrackingPositioning() {
     mapInstance.off('moveend', storeLastCenterPosition);
     mapInstance.off('zoomend', storeLastZoomLevel);
     mapInstance.off('pitchend', storeLastPitchDegree);
+    mapInstance.off('rotateend', storeLastRotation);
 
     mapInstance = null
   }
@@ -41,15 +49,20 @@ export const stopTrackingPositioning = function stopTrackingPositioning() {
 
 const storeLastCenterPosition = function storeLastCenterPosition() {
   if (mapInstance === null) return
-  sessionStorage.setItem('lastCenterPosition', JSON.stringify(mapInstance.getCenter()));
+  localStorage.setItem('lastCenterPosition', JSON.stringify(mapInstance.getCenter()));
 }
 
 const storeLastZoomLevel = function storeLastZoomLevel() {
   if (mapInstance === null) return
-  sessionStorage.setItem('storeLastZoomLevel', mapInstance.getZoom().toString())
+  localStorage.setItem('lastZoomLevel', mapInstance.getZoom().toString())
 }
 
 const storeLastPitchDegree = function storeLastPitchDegree() {
   if (mapInstance === null) return
-  sessionStorage.setItem('lastPitchDegree', mapInstance.getPitch().toString())
+  localStorage.setItem('lastPitchDegree', mapInstance.getPitch().toString())
+}
+
+const storeLastRotation = function storeLastRotation() {
+  if (mapInstance === null) return
+  localStorage.setItem('lastRotation', mapInstance.getBearing().toString())
 }

@@ -16,7 +16,7 @@ import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataCon
 import { useBuildingStore } from '@/store/buildings';
 import { useInquiriesStore } from '@/store/building/inquiries';
 
-const { getCombinedInquiryDataByBuildingId } = useInquiriesStore()
+const { getCombinedInquiryDataByBuildingId, buildingInquiryDataHasBeenRetrieved, buildingHasInquiries } = useInquiriesStore()
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useInquiriesStore())
 const { buildingId } = storeToRefs(useBuildingStore())
 
@@ -32,6 +32,17 @@ const emit = defineEmits(['close', 'back'])
 const caseItems: ComputedRef<ICombinedInquiryData[]> = computed(() => {
   if (! buildingId.value) return []
   return getCombinedInquiryDataByBuildingId(buildingId.value) || []
+})
+
+/**
+ * Check whether there is relevant data available for this panel
+ */
+const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
+  if (! buildingId.value) return false
+  return (
+    buildingInquiryDataHasBeenRetrieved(buildingId.value) 
+    && ! buildingHasInquiries(buildingId.value)
+  )
 })
 
 /**
@@ -84,7 +95,7 @@ const reportFieldsWithData = computed(() => {
     // new FieldDataConfig({ name: 'link naar rapport' }),
     new FieldDataConfig({ name: 'jointMeasurement' }),
     new FieldDataConfig({ name: 'floorMeasurement' }),
-    new FieldDataConfig({ name: 'note' })
+    // new FieldDataConfig({ name: 'note' })
     ]
   })
 
@@ -105,6 +116,19 @@ watch(
   () => buildingId.value, 
   () => resetListValue()
 )
+
+/**
+ * Close the panel if there is no data for this building
+ */
+watch(
+  () => noCaseItemAvailableForBuilding.value, 
+  (value) => {
+    if (value === true) {
+      emit('back')
+    }
+  }
+)
+
 
 /**
  * Navigation between cases

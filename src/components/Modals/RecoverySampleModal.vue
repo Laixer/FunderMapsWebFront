@@ -65,7 +65,9 @@ const sampleFieldsWithData: ComputedRef<CompletedFieldData[]> = computed(() => {
       new FieldDataConfig({ name: 'permit' }),
       new FieldDataConfig({ name: 'permitDate' }),
       new FieldDataConfig({ name: 'recoveryDate' }),
-      new FieldDataConfig({ name: 'id' })
+      new FieldDataConfig({ name: 'id' }),
+      
+      new FieldDataConfig({ name: 'note', source: selectedCaseItem.value?.report }),
     ]
   })
 

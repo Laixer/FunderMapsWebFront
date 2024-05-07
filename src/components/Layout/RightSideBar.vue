@@ -39,14 +39,14 @@ const { clearBuildingId } = useBuildingStore()
 const { 
   loadLocationDataByBuildingId, 
   getFullAddressByBuildingId, 
-  buildingLocationDataHasBeenRetrieved, 
-  buildingHasLocationData 
+  // buildingLocationDataHasBeenRetrieved, 
+  // buildingHasLocationData 
 } = useGeoLocationsStore()
 
 const { 
   loadAnalysisDataByBuildingId,
-  buildingAnalysisDataHasBeenRetrieved,
-  buildingHasAnalysisData 
+  // buildingAnalysisDataHasBeenRetrieved,
+  // buildingHasAnalysisData 
 } = useAnalysisStore()
 
 const { 
@@ -126,36 +126,42 @@ const BuildingMenuList = computed(
         panel: 'BuildingPanel',
         icon: 'building',
         name: 'Pand',
-        loading: !! (buildingId.value && ! buildingAnalysisDataHasBeenRetrieved(
-          buildingId.value
-        )),
-        disabled: !! (buildingId.value && ! buildingHasAnalysisData(
-          buildingId.value
-        )),
+        loading: false,
+        disabled: false,
+        // loading: !! (buildingId.value && ! buildingAnalysisDataHasBeenRetrieved(
+        //   buildingId.value
+        // )),
+        // disabled: !! (buildingId.value && ! buildingHasAnalysisData(
+        //   buildingId.value
+        // )),
         route: null
       },
       {
         panel: 'LocationPanel',
         icon: 'pin',
         name: 'Locatie',
-        loading: !! (buildingId.value && ! buildingLocationDataHasBeenRetrieved(
-          buildingId.value
-        )),
-        disabled: !! (buildingId.value && ! buildingHasLocationData(
-          buildingId.value
-        )),
+        loading: false,
+        disabled: false,
+        // loading: !! (buildingId.value && ! buildingLocationDataHasBeenRetrieved(
+        //   buildingId.value
+        // )),
+        // disabled: !! (buildingId.value && ! buildingHasLocationData(
+        //   buildingId.value
+        // )),
         route: null
       },
       {
         panel: 'FoundationPanel',
         icon: 'file-foundation',
         name: 'Fundering',
-        loading: !! (buildingId.value && ! buildingAnalysisDataHasBeenRetrieved(
-          buildingId.value
-        )),
-        disabled: !! (buildingId.value && ! buildingHasAnalysisData(
-          buildingId.value
-        )),
+        loading: false,
+        disabled: false,
+        // loading: !! (buildingId.value && ! buildingAnalysisDataHasBeenRetrieved(
+        //   buildingId.value
+        // )),
+        // disabled: !! (buildingId.value && ! buildingHasAnalysisData(
+        //   buildingId.value
+        // )),
         route: null
       },
       {
@@ -163,10 +169,10 @@ const BuildingMenuList = computed(
         icon: 'graph',
         name: 'Statistiek',
         loading: false,
+        disabled: false,
         // !! (buildingId.value && ! buildingStatisticsDataHasBeenRetrieved(
         //   buildingId.value
         // )),
-        disabled: true,
         // !! (buildingId.value && ! buildingHasStatisticsData(
         //   buildingId.value
         // )),
@@ -178,7 +184,7 @@ const BuildingMenuList = computed(
         icon: 'alert',
         name: 'Funderingsrisico',
         loading: false,
-        disabled: true,
+        disabled: false,
         route: null
       },
     ]

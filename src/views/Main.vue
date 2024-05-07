@@ -44,7 +44,7 @@ const {
   hasAvailableMapsets, 
   hasAvailablePrivateMapsets,
   noMapsetsFound, 
-  firstMapsetId, 
+  defaultMapsetId, 
   activeMapsetId 
 } = storeToRefs( useMapsetStore() )
 const { isAuthenticated } = storeToRefs( useSessionStore() )
@@ -160,7 +160,7 @@ watch(() => route.params.mapsetId, async () => {
   //  redirect the user to the first mapset from the list of available mapsets
   router.push({ 
     name: 'mapset', 
-    params: { mapsetId: firstMapsetId.value as string }
+    params: { mapsetId: defaultMapsetId.value as string }
   })
 }, { immediate: true })
 

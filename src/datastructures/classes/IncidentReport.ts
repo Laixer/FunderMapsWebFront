@@ -16,7 +16,7 @@ import { EnumMethods } from "./EnumMethods";
 
 export class IncidentReport extends EnumMethods implements IIncidentReport {
   id: string;
-  clientId: string;
+  clientId?: string;
   clientName: string;
   foundationType?: EFoundationType;
   chainedBuilding: boolean;
@@ -32,7 +32,7 @@ export class IncidentReport extends EnumMethods implements IIncidentReport {
   email: string;
   name?: string;
   phoneNumber?: string;
-  address: string;
+  address?: string;
   building: string;
   auditStatus: EAuditStatus;
   incidentQuestionType: EIncidentQuestionType;

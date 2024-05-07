@@ -53,7 +53,8 @@ const fieldGroupHeaders: Record<string, string> = {
   front: 'Voorgevel scheur',
   back: 'Achtergevel scheur',
   right: 'Rechtergevel scheur',
-  left: 'Linkergevel scheur'
+  left: 'Linkergevel scheur',
+  report: 'Opmerking uit rapportage'
 }
 
 /**
@@ -149,7 +150,9 @@ const sampleFieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = 
       // Rechter gevel scheur
       new FieldDataConfig({ group: 'right', name: 'crackFacadeRightRestored' }),
       new FieldDataConfig({ group: 'right', name: 'crackFacadeRightType' }),
-      new FieldDataConfig({ group: 'right', name: 'crackFacadeRightSize' })
+      new FieldDataConfig({ group: 'right', name: 'crackFacadeRightSize' }),
+
+      new FieldDataConfig({ group: 'report', name: 'note', source: selectedCaseItem.value?.report }),
     ]
   })
 

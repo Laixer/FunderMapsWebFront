@@ -14,7 +14,11 @@ import { useIncidentReportsStore } from '@/store/building/incidents';
 import { useBuildingStore } from '@/store/buildings';
 import { IIncidentReport } from '@/datastructures/interfaces';
 
-const { getIncidentReportsByBuildingId } = useIncidentReportsStore()
+const { 
+  getIncidentReportsByBuildingId, 
+  buildingIncidentReportDataHasBeenRetrieved,
+  buildingHasIncidentReports 
+} = useIncidentReportsStore()
 const { buildingId } = storeToRefs(useBuildingStore())
 
 /**
@@ -29,6 +33,17 @@ const emit = defineEmits(['close', 'back'])
 const caseItems: ComputedRef<IIncidentReport[]> = computed(() => {
   if (! buildingId.value) return []
   return getIncidentReportsByBuildingId(buildingId.value) || []
+})
+
+/**
+ * Check whether there is relevant data available for this panel
+ */
+const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
+  if (! buildingId.value) return false
+  return (
+    buildingIncidentReportDataHasBeenRetrieved(buildingId.value) 
+    && ! buildingHasIncidentReports(buildingId.value)
+  )
 })
 
 /**
@@ -67,9 +82,9 @@ const fieldsConfig = applyContextToFieldDataConfigs({
   source: selectedCaseItem,
   configs: [
     new FieldDataConfig({ name: 'id' }),
-    new FieldDataConfig({ name: 'address' }),
+    // new FieldDataConfig({ name: 'address' }),
     new FieldDataConfig({ name: 'building' }),
-    new FieldDataConfig({ name: 'clientId' }),
+    new FieldDataConfig({ name: 'clientName' }),
     new FieldDataConfig({ name: 'createDate' }),
     new FieldDataConfig({ name: 'foundationType' }),
     new FieldDataConfig({ name: 'chainedBuilding' }),
@@ -104,6 +119,19 @@ watch(
 )
 
 /**
+ * Close the panel if there is no data for this building
+ */
+watch(
+  () => noCaseItemAvailableForBuilding.value, 
+  (value) => {
+    if (value === true) {
+      emit('back')
+    }
+  }
+)
+
+
+/**
  * Navigation between cases
  */
 const handleNext = function handleNext() {
@@ -119,7 +147,6 @@ const handlePrev = function handlePrev() {
 const resetListValue = function resetListValue() {
   selectedListIndex.value = 0
 }
-
 </script>
 
 <template>

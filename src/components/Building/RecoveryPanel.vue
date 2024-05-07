@@ -17,7 +17,7 @@ import { useRecoveryReportsStore } from '@/store/building/recovery';
 import { useBuildingStore } from '@/store/buildings';
 
 
-const { getCombinedRecoveryDataByBuildingId } = useRecoveryReportsStore()
+const { getCombinedRecoveryDataByBuildingId, buildingHasRecoveryReports, buildingRecoveryReportDataHasBeenRetrieved } = useRecoveryReportsStore()
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useRecoveryReportsStore())
 const { buildingId } = storeToRefs(useBuildingStore())
 
@@ -33,6 +33,17 @@ const emit = defineEmits(['close', 'back'])
 const caseItems: ComputedRef<ICombinedRecoveryData[]> = computed(() => {
   if (! buildingId.value) return []
   return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
+})
+
+/**
+ * Check whether there is relevant data available for this panel
+ */
+const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
+  if (! buildingId.value) return false
+  return (
+    buildingRecoveryReportDataHasBeenRetrieved(buildingId.value) 
+    && ! buildingHasRecoveryReports(buildingId.value)
+  )
 })
 
 
@@ -83,7 +94,7 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'creator', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'reviewer', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'documentFile' }),
-      new FieldDataConfig({ name: 'note' }),
+      // new FieldDataConfig({ name: 'note' }),
       new FieldDataConfig({ name: 'auditStatus' }),
     ]
   })
@@ -105,6 +116,18 @@ const hasSampleData = computed(() => {
 watch(
   () => buildingId.value, 
   () => resetListValue()
+)
+
+/**
+ * Close the panel if there is no data for this building
+ */
+watch(
+  () => noCaseItemAvailableForBuilding.value, 
+  (value) => {
+    if (value === true) {
+      emit('back')
+    }
+  }
 )
 
 /**

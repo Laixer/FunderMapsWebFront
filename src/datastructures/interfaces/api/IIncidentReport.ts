@@ -13,7 +13,7 @@ import { IEnumMethods } from './util'
 
 export interface IIncidentReport extends IEnumMethods {
   id: string,
-  clientId: string,
+  clientId?: string,
   clientName: string,
   foundationType?: EFoundationType, 
   chainedBuilding: boolean,
@@ -29,7 +29,7 @@ export interface IIncidentReport extends IEnumMethods {
   email: string,
   name?: string,
   phoneNumber?: string,
-  address: string,
+  address?: string,
   building: string,
   auditStatus: EAuditStatus, 
   incidentQuestionType: EIncidentQuestionType, 

@@ -201,7 +201,7 @@ const handleSubmit = async function handleSubmit() {
       <Button 
         type="button" 
         label="Terug naar het inlogscherm"
-        @click.prevent="router.push({ name: 'Login' })">
+        @click.prevent="router.push({ name: 'login' })">
         <template v-slot:after>
           <AnimatedArrowIcon />
         </template>

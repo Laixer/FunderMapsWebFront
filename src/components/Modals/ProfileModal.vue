@@ -12,6 +12,8 @@ import Input from '@/components/Common/Inputs/Input.vue';
 import OverlayModal from '@/components//Common/OverlayModal.vue';
 import LoadingIndicator from '@/components/Branding/LoadingIndicator.vue';
 
+import ValidationSuccessIcon from '@assets/svg/icons/validation-success.svg'
+
 import { useSessionStore } from '@/store/session'
 import { useMainStore } from '@/store/main'
 
@@ -35,6 +37,14 @@ const busySaving: Ref<boolean> = ref(false)
  * The profile data (filled with placeholder data to satisfy the validator)
  */
 const profileData = ref()
+
+/**
+ * Whether the api call to store the profile returned successfully recently
+ */
+const recentSuccess = ref(false)
+let recentSuccessTimer: ReturnType<typeof setTimeout>|null = null
+
+
 
 const setCleanProfileData = function setCleanProfileData() {
   profileData.value = { // : Ref<IUserProfile> // Remove to avoid TS error with validator
@@ -90,7 +100,7 @@ const {
   deactivate, 
   activate, 
   getError,
-  errors, 
+  // errors, 
   scrolltoError 
 } = useValidation(validationSchema, profileData) 
 
@@ -131,7 +141,6 @@ watch(
       deactivate()
     } 
     else if (value === true && isValid.value !== true) {
-      console.log("Activate")
       activate()
     }
   }
@@ -147,6 +156,25 @@ watch(
       isProfileModalOpen.value = false
       setCleanProfileData()
       deactivate()
+    }
+  }
+)
+
+/**
+ * After 10 seconds, success is no longer recent
+ */
+watch(
+  () => recentSuccess.value,
+  (value) => {
+    if (value) {
+      if (recentSuccessTimer !== null) {
+        clearTimeout(recentSuccessTimer)
+      }
+
+      recentSuccessTimer = setTimeout(() => {
+        recentSuccess.value = false
+        recentSuccessTimer = null
+      }, 10 * 1000)
     }
   }
 )
@@ -174,36 +202,40 @@ const getStatus = function(path: string): 'none'|'success'|'error' {
  */
 const handleSubmit = async function handleSubmit() {
   
-  console.log("PROFILE - Submit")
-  console.log(busySaving.value, ! isProfileDataAvailable.value, busySaving.value || ! isProfileDataAvailable.value)
+  // console.log(busySaving.value, ! isProfileDataAvailable.value, busySaving.value || ! isProfileDataAvailable.value)
 
   // Ignore submit attempts before we have profile data, 
   // or are already busy saving the data
   if (busySaving.value || ! isProfileDataAvailable.value) return 
 
   busySaving.value = true
+  recentSuccess.value = false
 
   await validate()
 
   if (! isValid.value) {
-    console.log("PROFILE - NOT valid")
-    console.log(errors)
-    
+    // console.log(errors)
     scrolltoError('.validation__message', { offset: 60 });
     busySaving.value = false
 
   } else {
-    
-    await api.userprofile.putUserProfile({
-      email: profileData.value.email, // required input
-      givenName: profileData.value.givenName.trim() || '',
-      lastName: profileData.value.lastName.trim() || '',
-      jobTitle: profileData.value.jobTitle.trim() || null,
-      phoneNumber: profileData.value.phoneNumber.trim() || null
-    }) 
-    
-    // TODO: Error handling & all that fun stuff
+    try {
+      await api.userprofile.putUserProfile({
+        email: profileData.value.email, // required input
+        givenName: profileData.value.givenName.trim() || '',
+        lastName: profileData.value.lastName.trim() || '',
+        jobTitle: profileData.value.jobTitle.trim() || null,
+        phoneNumber: profileData.value.phoneNumber.trim() || null
+      }) 
 
+      recentSuccess.value = true
+
+    } catch(e) {
+      // TODO: Error handling & all that fun stuff
+
+      console.log("API Error while saving profile", e)
+    }
+    
     busySaving.value = false
   }
 }
@@ -290,6 +322,17 @@ const handleClose = function handleClose() {
             :validationStatus="getStatus('phoneNumber')"
             :validationMessage="getError('phoneNumber')"
           />
+
+          <Transition>
+            <div 
+              v-if="recentSuccess"
+              class="bg-green-200 border border-green-500 text-green-500 px-2 py-2 rounded relative flex items-center" role="alert">
+              <span class="px-4 py-3">
+                <ValidationSuccessIcon class="w-4" />
+              </span>
+              <span class="block sm:inline">Uw instellingen zijn opgeslagen</span>
+            </div>
+          </Transition>
 
           <Button 
             type="submit" 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import { ComputedRef, computed, ref, type Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import AccordionGroup from '@/components/Common/Accordion/AccordionGroup.vue';
@@ -27,13 +27,31 @@ const {
 
 const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
 const { availableMapsets, activeMapset, activeMapsetId } = storeToRefs( mapsetStore )
-const { changeLayerVisibility, isLayerVisible } = useLayersStore()
+const { changeLayerVisibility } = useLayersStore() 
+const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
 
 /**
  * Whether to show the list of available mapsets
  *  defaults to false to first show the legend of the active mapset
  */
 const showMapsetSelection: Ref<boolean> = ref(false)
+
+/**
+ * 
+ */
+const legendState: ComputedRef<Record<string, boolean>> = computed(() => {
+  return (activeMapset.value?.layerSet || []).reduce((acc: Record<string, boolean>, layer) => {
+
+    // No known mapset id = not visible. Not that there are any layers to go over with reduce... but TS!
+    acc[layer.id] = activeMapset.value?.id 
+      ? visibleLayersByMapsetId.value?.[activeMapset.value.id]?.includes(layer.id)
+      : false
+
+    console.log("Visibility check", layer.id, acc[layer.id])
+
+    return acc
+  }, {})
+})
 
 /**
  * Change the selected mapset
@@ -70,7 +88,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
 /**
  * Nudge the map controls when the sidebar opens
  */
- useMapboxControlNudge('left', 336, isLeftSidebarOpen)
+useMapboxControlNudge('left', 336, isLeftSidebarOpen)
 
 </script>
 
@@ -152,7 +170,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
               v-for="layer in activeMapset.layerSet || []" 
               :key="`legend_${layer.id || layer.name}`"
               :title="layer.name || ''"
-              :open="isLayerVisible(layer.id, activeMapset.id)"
+              :open="legendState[layer.id]"
               @toggle="(visibility: boolean) => activeMapset && handleToggleLayerById(layer.id, visibility)">
               <ol class="list--legenda">
                 <li 

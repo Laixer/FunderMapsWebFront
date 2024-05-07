@@ -35,6 +35,11 @@ const getVisibleLayersOfActiveMapset = function getVisibleLayersOfActiveMapset()
  * Whether a layer is visible within a mapset context
  */
 const isLayerVisible = function(layerId: string, mapsetId: string) {
+  console.log("Checking if layer is visible")
+  console.log(layerId, mapsetId)
+  console.log(!! visibleLayersByMapsetId.value?.[mapsetId]?.includes(layerId))
+  console.log(visibleLayersByMapsetId.value?.[mapsetId])
+  console.log(visibleLayersByMapsetId.value)
   return !! visibleLayersByMapsetId.value?.[mapsetId]?.includes(layerId)
 }
 
@@ -54,6 +59,8 @@ const retrieveLayerVisibilityFromSessionStorage = function retrieveLayerVisibili
  * Change the visibility of a layer, and keep track of the change in session storage
  */
 const changeLayerVisibility = function changeLayerVisibility(layerId: string, visibility: boolean, mapsetId?: string|null|undefined) {
+
+  console.log("changing layer visibility", layerId, visibility)
 
   if (! mapsetId) {
     const { activeMapsetId } = storeToRefs(useMapsetStore())

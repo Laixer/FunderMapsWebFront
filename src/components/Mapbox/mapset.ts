@@ -205,7 +205,8 @@ const revealVisibleLayers = function revealVisibleLayers(mapset: IMapsetFE) {
       mapInstance && mapInstance.setLayoutProperty(layerId, 'visibility', 'none')
     })
   } 
-  // of if there are none, reveal the first known layer
+  // or if there are none, reveal the first known layer
+  // or if there are none and it is the preferred default mapset, reveal the default layers
   else {
 
     // activate the first layer through the store
@@ -217,7 +218,27 @@ const revealVisibleLayers = function revealVisibleLayers(mapset: IMapsetFE) {
       mapInstance && mapInstance.setLayoutProperty(layerId, 'visibility', 'none')
     })
 
-    changeLayerVisibility(knownLayerIds[0], true, mapset.id)
+    // If the mapset is the preferred default mapset
+    if (mapset.id === (import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99")) {
+      
+      try {
+        const preferredLayers = (import.meta.env.VITE_DEFAULT_LAYERS || 'foundation-type-cluster,foundation-type-established')
+          .split(',')
+          .filter((layerId: string) => knownLayerIds.includes(layerId))
+
+        if (preferredLayers.length === 0) throw new Error('No known layers')
+
+        preferredLayers.forEach((layerId: string) => {
+          changeLayerVisibility(layerId, true, mapset.id)
+        })
+
+      } catch(e) {
+        // if it fails, go with the first known layer
+        changeLayerVisibility(knownLayerIds[0], true, mapset.id) 
+      }
+    } else {
+      changeLayerVisibility(knownLayerIds[0], true, mapset.id)
+    }
   }
 }
 

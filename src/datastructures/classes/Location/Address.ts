@@ -8,7 +8,6 @@ export class Address extends EnumMethods implements IAddress {
   buildingNumber: string;
   postalCode: string | undefined;
   street: string;
-  isActive: boolean;
   city: string;
   buildingId: string | undefined;
   fullAddress: string;
@@ -23,7 +22,6 @@ export class Address extends EnumMethods implements IAddress {
     this.buildingNumber = data.buildingNumber;
     this.postalCode = data.postalCode;
     this.street = data.street;
-    this.isActive = data.isActive;
     this.city = data.city;
     this.buildingId = data.buildingId;
     this.fullAddress = data.fullAddress;

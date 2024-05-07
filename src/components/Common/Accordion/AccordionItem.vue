@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, toRef, watch } from 'vue';
 
 import PlusIcon from '@assets/svg/icons/plus.svg'
 import MinusIcon from '@assets/svg/icons/minus.svg'
 
-const { title, cache, open, sessionKey } = defineProps({
-  open: { type: Boolean, required: false, default: null },
+const props = defineProps({
+  open: { type: Boolean, default: false },
   title: { type: String, required: true },
   cache: { type: Boolean, required: false },
   sessionKey: { type: String, required: false }
 })
+
+const { title, cache, open, sessionKey } = props
 
 const emits = defineEmits<{
   (e: 'open'): void
@@ -19,7 +21,9 @@ const emits = defineEmits<{
 
 // (['open', 'close', 'toggle'])
 
-const isOpen = ref(open || false)
+// TODO: Not quite perfect...
+const isOpenProp = toRef(() => props.open)
+const isOpen = ref(open)
 
 if (cache) {
   const internalSessionKey = sessionKey || `accordion-${title}`
@@ -43,6 +47,14 @@ if (cache) {
     }
   )
 }
+
+watch(
+  () => isOpenProp.value,
+  (value) => {
+    isOpen.value = value
+  },
+  { immediate: true }
+)
 
 const handleToggle = function handleToggle() {
   isOpen.value = ! isOpen.value

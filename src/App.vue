@@ -2,9 +2,11 @@
 import { watch } from 'vue';
 import { refreshAccessToken } from '@/services/jwt.ts'
 import { useSessionStore } from '@/store/session';
+import { storeToRefs } from 'pinia';
 
-
-const { authenticateFromAccessToken, isAuthenticated } = useSessionStore()
+const sessionStore = useSessionStore()
+const { authenticateFromAccessToken } = sessionStore
+const { isAuthenticated } = storeToRefs(sessionStore)
 let accessTokenRefreshInterval: ReturnType<typeof setTimeout>|null = null
 
 /**
@@ -22,7 +24,7 @@ try {
  *  Stop this when logging out
  */
 watch(
-  () => isAuthenticated,
+  () => isAuthenticated.value,
   (isAuthenticated) => {
     if (isAuthenticated) {
       /**
