@@ -30,6 +30,7 @@ import { useStatisticsStore } from '@/store/building/statistics'
 
 import { useMapboxControlNudge } from '@/components/Layout/useMapboxControlNudge'
 import api from '@/services/api';
+import MapsetDetails from '../Building/MapsetDetails.vue';
 
 const { clearBuildingId } = useBuildingStore()
 
@@ -339,7 +340,6 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
       <Panel 
         @close="handleCloseSideBar" 
         title="Pand Informatie">
-
         <Transition>
           <div 
             v-if="fullAddress"
@@ -348,17 +348,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
           </div>
         </Transition>
 
-        <!-- TODO: Bind component based on active mapset / layer using component :is -->
-        <section class="space-y-2 rounded-lg border border-grey-400 p-4">
-          <h6 class="heading-6">Rapportage informatie</h6>
-          <ul class="space-y-1 text-grey-700">
-            <li>Gebouwhoogte: 7,68 meter</li>
-            <li>Rapportage: archieve_research</li>
-            <li>Handhavingstermijn: -23 jaar</li>
-            <li>Funderingskwaliteit: good</li>
-            <li>Inquiry: 120324</li>
-          </ul>
-        </section>
+        <MapsetDetails />
 
         <section class="grid space-y-4">
           <div class="flex justify-between">

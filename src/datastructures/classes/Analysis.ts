@@ -68,6 +68,7 @@ export class Analysis extends EnumMethods implements IAnalysis {
     'dewateringDepthReliability',
     'dewateringDepthRisk',
     'bioInfectionRisk',
+    'bioInfectionReliability',
     'unclassifiedRisk',
     'soil'
   ]
@@ -170,6 +171,11 @@ export class Analysis extends EnumMethods implements IAnalysis {
   // Getter for bioInfectionRisk label
   get bioInfectionRiskLabel(): string {
     return (this.bioInfectionRisk || this.bioInfectionRisk === 0) ? EFoundationRiskLabels.get(this.bioInfectionRisk) || '' : '';
+  }
+
+  // Getter for bioInfectionReliability label
+  get bioInfectionReliabilityLabel(): string {
+    return (this.bioInfectionReliability || this.bioInfectionReliability === 0) ? EReliabilityLabels.get(this.bioInfectionReliability) || '' : '';
   }
 
   // Getter for unclassifiedRisk label

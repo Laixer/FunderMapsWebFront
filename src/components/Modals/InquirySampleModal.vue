@@ -224,8 +224,8 @@ watch(
 </template>
 
 <style>
-.InquirySampleModal .panel__content hr:last-child {
+/* .InquirySampleModal .panel__content hr:last-child {
   display: none;
-}
+} */
 </style>
 

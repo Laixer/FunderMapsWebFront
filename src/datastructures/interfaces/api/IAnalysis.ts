@@ -57,6 +57,7 @@ export interface IAnalysis extends IEnumMethods {
   get dewateringDepthReliabilityLabel(): string;
   get dewateringDepthRiskLabel(): string;
   get bioInfectionRiskLabel(): string;
+  get bioInfectionReliabilityLabel(): string;
   get unclassifiedRiskLabel(): string;
   get soilLabel(): string
 }

@@ -43,6 +43,20 @@ export const analysisFieldLabels = <Record<string, string>> {
   foundationTypeReliability: "Betrouwbaarheid funderingstype",
   restorationCosts: "Indicatieve funderingsherstel kosten",
   velocity: "Pandzakkingsnelheid (InSAR)",
+  drystandRisk: "Droogstandrisico",
+  drystand: "Droogstand",
+  drystandReliability: "Betrouwbaarheid droogstandsrisico",
+  dewateringDepthRisk: "Ontwateringsdiepte risico",
+  dewateringDepth: "Ontwateringsdiepte",
+  dewateringDepthReliability: "Betrouwbaarheid ontwateringsdiepte",
+  bioInfectionRisk: "Bacterieelaantatsing risico",
+  bioInfectionReliability: "Betrouwbaarheid bacteriële aantasting",
+  negativeclingRisk: "Negatieve kleef risico",
+  negativeclingReliability: "Betrouwbaarheid Negatieve kleef",
+  differentialsettlementRisk: "Verschilzakking risico",
+  differentialsettlementReliability: "Betrouwbaarheid Verschilzakking",
+  unclassifiedRisk: "Vastgesteld",
+  facadescanRisk: "Risico GevelScan"
 }
 
 export const recoveryFieldLabels = <Record<string, string>> {
