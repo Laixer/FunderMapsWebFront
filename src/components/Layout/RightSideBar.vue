@@ -17,8 +17,10 @@ import LocationPanel from '@/components/Building/LocationPanel.vue';
 import RecoveryPanel from '@/components/Building/RecoveryPanel.vue';
 import StatisticsPanel from '@/components/Building/StatisticsPanel.vue';
 
-import AlertIcon from '@assets/svg/icons/alert.svg'
-import ChatIcon from '@assets/svg/icons/chat.svg'
+import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
+
+// import AlertIcon from '@assets/svg/icons/alert.svg'
+// import ChatIcon from '@assets/svg/icons/chat.svg'
 
 import { useBuildingStore } from "@/store/buildings";
 import { useGeoLocationsStore } from '@/store/building/geolocations'
@@ -387,50 +389,11 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
           </OutlineButton>
         </section>
       
-        <!-- TODO: Move footer to separate component -->
-        <template v-slot:footer>
-          <div class="flex flex-col w-100 gap-2" style="width: 100%">
-
-            <!-- <a
-              href=""
-              class="link link--outline | group flex-1 justify-center px-2 py-0.5"
-            >
-              <FundermapsIcon
-                name="file-pdf"
-                class="aspect-square w-3 group-hover:text-green-500"
-                aria-hidden="true"
-              />
-              <strong>PDF downloaden</strong>
-            </a>
-            -->
-
-            <div class="flex gap-2" style="width: 100%">
-              <a
-                href=""
-                class="link link--outline | group flex-1 justify-center px-2 py-0.5"
-              >
-                <AlertIcon
-                  class="aspect-square w-3 group-hover:text-green-500"
-                  aria-hidden="true"
-                />
-                <strong>Incident melden</strong>
-              </a>
-              <a
-                href=""
-                class="link link--outline | group flex-grow justify-center px-2 py-0.5"
-              >
-                <ChatIcon
-                  class="aspect-square w-3 group-hover:text-green-500"
-                  aria-hidden="true"
-                />
-                <strong>Feedback</strong>
-              </a>
-            </div>
-          </div>
+        <template v-slot:footer>  
+          <RightSideBarFooterLinks />
         </template>
       </Panel>
 
-      <!-- TODO: Add sub panels -->
       <component 
         :is="availablePanels[selectedPanel]"
         :address="fullAddress"
