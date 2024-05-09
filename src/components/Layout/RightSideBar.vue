@@ -19,9 +19,6 @@ import StatisticsPanel from '@/components/Building/StatisticsPanel.vue';
 
 import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
 
-// import AlertIcon from '@assets/svg/icons/alert.svg'
-// import ChatIcon from '@assets/svg/icons/chat.svg'
-
 import { useBuildingStore } from "@/store/buildings";
 import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { useAnalysisStore } from '@/store/building/analysis'

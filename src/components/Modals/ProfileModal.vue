@@ -252,6 +252,7 @@ const handleClose = function handleClose() {
     v-show="isProfileModalOpen"
     variant="narrow" 
     title="Profiel instellingen"
+    class="ProfileModal"
     @close="handleClose">
 
     <Transition mode="out-in">
@@ -353,3 +354,9 @@ const handleClose = function handleClose() {
   </OverlayModal>
 
 </template>
+
+<style>
+.ProfileModal .panel__content {
+  overflow: hidden;
+}
+</style>
