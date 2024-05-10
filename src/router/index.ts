@@ -12,7 +12,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
 
-    /**
+    /**************************************************************************
      * Authentication
      */
     {
@@ -31,7 +31,7 @@ const router = createRouter({
       component: ResetPassword
     },
 
-    /**
+    /**************************************************************************
      * Main Application
      */
     {
@@ -52,6 +52,11 @@ const router = createRouter({
       path: '/kaart/:mapsetId/gebouw/:buildingId',
       component: Home,
     },
+    {
+      name: 'building-panel',
+      path: '/kaart/:mapsetId/gebouw/:buildingId/:panel',
+      component: Home
+    }
   ],
 })
 

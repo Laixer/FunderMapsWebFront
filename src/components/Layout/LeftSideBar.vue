@@ -47,7 +47,7 @@ const legendState: ComputedRef<Record<string, boolean>> = computed(() => {
       ? visibleLayersByMapsetId.value?.[activeMapset.value.id]?.includes(layer.id)
       : false
 
-    console.log("Visibility check", layer.id, acc[layer.id])
+    // console.log("Visibility check", layer.id, acc[layer.id])
 
     return acc
   }, {})

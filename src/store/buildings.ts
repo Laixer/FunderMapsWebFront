@@ -1,8 +1,8 @@
 
-import { type Ref, ref, computed } from 'vue';
+import { type Ref, ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia'
 
-import { useGeoLocationsStore } from './building/geolocations';
+import { useSessionStore } from './session';
 
 const buildingId: Ref<string|null> = ref(null)
 
@@ -32,26 +32,23 @@ const clearBuildingId = function clearBuildingId() {
 
 
 function useBuildings() {
-
-  const { buildingLocationDataHasBeenRetrieved } = useGeoLocationsStore()
-
   /**
-   * Whether all building related information is retrieved
-   *  TODO: Is this even important? 
+   * Clean up selected building on logout
    */
-  const hasRetrievedAllBuildingRelatedData = function(id: string|null = null): boolean {
-    id = id ? id : buildingId.value 
+  const { isAuthenticated } = useSessionStore()
 
-    if (! id) return false
-
-    return buildingLocationDataHasBeenRetrieved(id)
-  }
+  watch(
+    () => isAuthenticated,
+    (value) => {
+      if (value !== true) {
+        clearBuildingId()
+      }
+    }
+  )
 
   return {
     buildingId,
     hasSelectedBuilding,
-
-    hasRetrievedAllBuildingRelatedData,
 
     setBuildingId,
     clearBuildingId

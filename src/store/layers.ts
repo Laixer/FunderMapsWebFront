@@ -17,7 +17,14 @@ const visibleLayersByMapsetId: Ref<{[key: string]: string[]}> = ref({})
  * Get all visible layers by mapsetId
  */
 const getVisibleLayersByMapsetId = function getVisibleLayersByMapsetId(id: string): string[] {
-  return id && visibleLayersByMapsetId.value[id] ? visibleLayersByMapsetId.value[id] : []
+  const list = id && visibleLayersByMapsetId.value[id] ? visibleLayersByMapsetId.value[id] : []
+
+  if (list.length === 0) return list
+
+  const { getMapsetById } = useMapsetStore()
+  const whitelistedLayerIds = getMapsetById(id)?.layerSet.map(layer => layer.id) || []
+  
+  return list.filter(layerId => whitelistedLayerIds.includes(layerId))
 }
 
 /**
@@ -35,11 +42,11 @@ const getVisibleLayersOfActiveMapset = function getVisibleLayersOfActiveMapset()
  * Whether a layer is visible within a mapset context
  */
 const isLayerVisible = function(layerId: string, mapsetId: string) {
-  console.log("Checking if layer is visible")
-  console.log(layerId, mapsetId)
-  console.log(!! visibleLayersByMapsetId.value?.[mapsetId]?.includes(layerId))
-  console.log(visibleLayersByMapsetId.value?.[mapsetId])
-  console.log(visibleLayersByMapsetId.value)
+  // console.log("Checking if layer is visible")
+  // console.log(layerId, mapsetId)
+  // console.log(!! visibleLayersByMapsetId.value?.[mapsetId]?.includes(layerId))
+  // console.log(visibleLayersByMapsetId.value?.[mapsetId])
+  // console.log(visibleLayersByMapsetId.value)
   return !! visibleLayersByMapsetId.value?.[mapsetId]?.includes(layerId)
 }
 
@@ -113,6 +120,7 @@ const toggleLayerVisibility = function toggleLayerVisibility(layerId: string, ma
 
 
 function useLayers() {
+  
   return {
     visibleLayersByMapsetId,
     isLayerVisible,

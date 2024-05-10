@@ -16,12 +16,11 @@ import { getSuggestions, getLookup, getSuggestionsNearCoordinates } from '@/serv
 import { IPDOKSuggestion } from '@/datastructures/interfaces';
 
 import { useMainStore } from '@/store/main';
-
-import { useBuildingStore } from "@/store/buildings";
-const { setBuildingId } = useBuildingStore()
+import { useBuildingRouting } from '@/router/buildingRouting'
 
 const { mapCenterLatLon } = storeToRefs( useMainStore() )
 
+const buildingRouting = useBuildingRouting()
 
 const queryString = ref('')
 
@@ -156,9 +155,6 @@ const handleGetSuggestions = async function handleGetSuggestions(query: string){
 
     noResults.value = false
     suggestions.value = results.response.docs as IPDOKSuggestion[]
-    
-    console.log("Suggestion results")
-    console.log(results)
 
   } catch(e) {
     console.log(e)
@@ -172,13 +168,14 @@ const handleGetSuggestions = async function handleGetSuggestions(query: string){
  */
 const handleSelectBuilding = async function handleSelectBuilding(id: string, weergavenaam: string) {
   try {
-    // console.log(id)
-
     const results = await getLookup(id)
-    // console.log("First lookup result")
-    // console.log(results.response.docs[0])
 
-    const { centroide_ll, nummeraanduiding_id } = results.response.docs[0] // , weergavenaam
+    if (! Array.isArray(results?.response?.docs) || results.response.docs.length === 0) {
+      console.log("Lookup call failed", id, weergavenaam)
+      throw new Error("Lookup call failed to produce results")
+    }
+
+    const { centroide_ll, nummeraanduiding_id } = results.response.docs[0]
 
     /**
      * Navigating to the lat lng while the API calls are being made
@@ -192,9 +189,9 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     queryString.value = weergavenaam
     handleClose()
 
-    // Set the building id, triggering pin & sidebar
+    // Navigate to the building, which triggers loading the data, opening the sidebar and placing the marker
     if (nummeraanduiding_id) {
-      setBuildingId(nummeraanduiding_id)  
+      buildingRouting.navigateToBuilding(nummeraanduiding_id)
     }
 
   } catch(e) {
@@ -206,6 +203,8 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
 // What more can we do? 
 const handleSubmit = function handleSubmit() {
   handleClose()
+
+  // TODO: Search with API first, then PDOK.
 }
 
 const handleClose = function handleClose() {
@@ -260,28 +259,6 @@ const handleClose = function handleClose() {
               @close="handleClose" />
           </div>
           <div class="dropdown__content">
-            <!-- <ol>
-              <li v-for="suggestion in suggestions" :key="suggestion.id">
-                <a
-                  href="#"
-                  class="flex gap-3 px-8 py-2 hover:bg-grey-100"
-                  @click.prevent="handleSelectBuilding(suggestion.id)"
-                >
-                  <div>
-                    <h6 class="heading-6 leading-none">{{ suggestion.weergavenaam }}</h6>
-                    <div 
-                      class="flex gap-2 text-sm text-green-500">
-                      <FundermapsIcon
-                        name="pin"
-                        class="aspect-square w-4"
-                        aria-hidden="true" 
-                      />
-                      Ga naar deze locatie
-                    </div>
-                  </div>
-                </a>
-              </li>
-            </ol> -->
             <ol>
               <li 
                 v-for="(suggestion, index) in suggestions" :key="suggestion.id"

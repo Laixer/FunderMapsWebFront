@@ -64,8 +64,6 @@ export function hasAccessToken(): boolean {
 export function hasAccessTokenExpired(token?: string|null): boolean {
   token = token ?? getAccessToken();
 
-  console.log("Token check")
-
   if (token === null) {
     console.log("No token available")
     return false;
@@ -73,9 +71,7 @@ export function hasAccessTokenExpired(token?: string|null): boolean {
 
   const parsed = getAccessTokenDecoded(token);
   const time = Math.round((new Date()).getTime() / 1000);
-
-  console.log((parsed?.exp || 0) > time ? 'passed' : 'failed')
-
+  
   return (parsed?.exp || 0) < time;
 }
 

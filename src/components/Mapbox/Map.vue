@@ -1,28 +1,25 @@
 <script setup lang="ts">
-import { WatchStopHandle, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { WatchStopHandle, onBeforeUnmount, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MapBox from '../Common/Mapbox/MapBox.vue';
-import mapboxgl, { type Map } from 'mapbox-gl'
+import { type Map } from 'mapbox-gl'
 
 import { addControls } from './controls';
-import {
-  startWatchingForMapsetChanges,
-  stopWatchingMapsetChanges
-} from './mapset'
+import { useEvents } from './useEvents'
+import { useLayerVisibility } from './useLayerVisibility'
+import { useMunicipalityFilter } from './useMunicipalityFilter'
+import { useMapsetStyle } from './useMapsetStyle'
+import { useMapCenterManagement } from './useMapCenterManagement'
+import { useBuildingMarker } from './marker'
+
 import { 
   getLastKnownPositioning, 
   startTrackingPositioning, 
   stopTrackingPositioning 
 } from './trackpositioning';
-import {
-  useBuildingMarker
-} from './marker'
 
-
-import { useMainStore } from '@/store/main';
 import { useMapsetStore } from '@/store/mapsets';
-const { mapCenterLatLon } = storeToRefs( useMainStore() )
 const { activeMapset } = storeToRefs( useMapsetStore() ) // activeMapsetId, 
 
 const emit = defineEmits(['ready'])
@@ -36,8 +33,13 @@ let buildingMarkerWatchStopHandle: WatchStopHandle|null = null
 // Whether the initial map style has been set
 const hasSetInitialStyle = ref(false)
 
-// A flag we use to track when center changes should be ignored
-let ignoreCenterChange: boolean = true
+
+// Composables to handle map related functionality
+const MapEvents = useEvents()
+const LayerVisibility = useLayerVisibility()
+const MunicipalityFilter = useMunicipalityFilter()
+const MapsetStyle = useMapsetStyle()
+const MapCenterManagement = useMapCenterManagement()
 
 /**
  * The startup options
@@ -75,11 +77,12 @@ const onLoad = function onLoad({ map }: { map: Map }) {
   // Attach the building marker
   buildingMarkerWatchStopHandle = useBuildingMarker(map)
 
-  // Watch map movement
-  map.on('moveend', handleMapMovement)
-  handleMapMovement()
-
-  startWatchingForMapsetChanges(map)
+  // TODO: Enable before going to production... 
+  // MunicipalityFilter.attachMap(map) 
+  MapEvents.attachMap(map)
+  LayerVisibility.attachMap(map)
+  MapsetStyle.attachMap(map)
+  MapCenterManagement.attachMap(map)
 
   addControls(map)
 
@@ -89,49 +92,16 @@ const onLoad = function onLoad({ map }: { map: Map }) {
 }
 
 /**
- * When the map moves, update the known center position
- */
-const handleMapMovement = function handleMapMovement() {
-  ignoreCenterChange = true
-  mapCenterLatLon.value = mapInstance?.getCenter() || null
-
-  // ignore center changes for this iteration
-  nextTick(() => {
-    ignoreCenterChange = false
-  })
-}
-
-/**
- * Fly to a location the mapcenter value is changed
- */
-watch(
-  () => mapCenterLatLon.value,
-  (center: mapboxgl.LngLat|null) => {
-
-    // We ignore changes caused by `handleMapMovement`
-    if (! mapInstance || center === null || ignoreCenterChange === true) {
-      return
-    }
-
-    // Set some zoom limits that make sense when flying
-    let zoom = mapInstance.getZoom()
-    if (zoom > 18) zoom = 18
-    if (zoom < 16) zoom = 16
-
-    mapInstance.flyTo({
-      center,
-      essential: true,
-      zoom
-    })
-  }
-)
-
-/**
- * Cleanup even handlers
+ * Cleanup event handlers
  */
 onBeforeUnmount(() => {
   stopTrackingPositioning()
-  stopWatchingMapsetChanges()
+
+  MunicipalityFilter.disconnect()
+  MapEvents.disconnect()
+  LayerVisibility.disconnect()
+  MapsetStyle.disconnect()
+  MapCenterManagement.disconnect()
 
   if (buildingMarkerWatchStopHandle) {
     buildingMarkerWatchStopHandle()
