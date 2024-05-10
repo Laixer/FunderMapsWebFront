@@ -12,9 +12,10 @@ import { useAnalysisStore } from '@/store/building/analysis';
 import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { useInquiriesStore } from '@/store/building/inquiries';
 import { useRecoveryReportsStore } from '@/store/building/recovery';
+import { useIncidentReportsStore } from '@/store/building/incidents';
 
 import { FieldDataConfig, applyContextToFieldDataConfigs, retrieveAndFormatFieldData, type CompletedFieldData } from '@/utils/fieldData';
-import { ICombinedRecoveryData } from '@/datastructures/interfaces';
+import { ICombinedRecoveryData, IIncidentReport } from '@/datastructures/interfaces';
 
 
 const { activeMapsetId } = storeToRefs(useMapsetStore())
@@ -23,6 +24,7 @@ const { getAnalysisDataByBuildingId } = useAnalysisStore()
 const { getLocationDataByBuildingId } = useGeoLocationsStore()
 const { getCombinedInquiryDataByBuildingId } = useInquiriesStore()
 const { getCombinedRecoveryDataByBuildingId } = useRecoveryReportsStore()
+const { getIncidentReportsByBuildingId } = useIncidentReportsStore()
 
 
 const analysisData = computed(() => {
@@ -45,7 +47,17 @@ const recoveryData: ComputedRef<ICombinedRecoveryData[]> = computed(() => {
   return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
 })
 
+
+const incidentData: ComputedRef<IIncidentReport[]> = computed(() => {
+  if (! buildingId.value) return []
+  return getIncidentReportsByBuildingId(buildingId.value) || []
+})
+
 const title = computed<string|null>(() => {
+
+  // No building = no need for details
+  if (! buildingId.value) return null
+
   switch(activeMapsetId.value) {
     case '0afd6eef-b056-4c33-bf61-883864fdfe98': // Rapportage
       return 'Rapportage informatie'
@@ -66,12 +78,15 @@ const title = computed<string|null>(() => {
 
 const fields: ComputedRef<CompletedFieldData[]> = computed(() => {
 
+  // No building = no need for details
+  if (! buildingId.value) return []
+
   switch(activeMapsetId.value) {
     case '0afd6eef-b056-4c33-bf61-883864fdfe98': // Rapportage
-      if (! Array.isArray(inquiryData.value) || inquiryData.value.length !== 0) return []
+      if (! Array.isArray(inquiryData.value) || inquiryData.value.length === 0) return []
 
       return applyContextToFieldDataConfigs({
-        source: inquiryData.value?.[0].report,
+        source: inquiryData.value?.[0]?.report,
         configs: [
           new FieldDataConfig({ name: 'documentname' }),
           new FieldDataConfig({ name: 'id' }),
@@ -136,7 +151,19 @@ const fields: ComputedRef<CompletedFieldData[]> = computed(() => {
       return []
 
     case '0f3080d3-1ecc-4d05-a55a-62ef3c4c74b7': // Incidenten
-      return []
+      if (! Array.isArray(incidentData.value) || incidentData.value.length === 0) return []
+
+      return applyContextToFieldDataConfigs({
+        source: incidentData.value[0],
+        configs: [
+          new FieldDataConfig({ name: 'id' }),
+          new FieldDataConfig({ name: 'address' }),
+          new FieldDataConfig({ name: 'building' }),
+          new FieldDataConfig({ name: 'clientId' }),
+          new FieldDataConfig({ name: 'createDate' }),
+        ]
+      })
+      .map(retrieveAndFormatFieldData)
   }
 
   return []
