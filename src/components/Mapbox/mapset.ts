@@ -263,8 +263,13 @@ const handleBuildingClick = async function handleBuildingClick(e: any) {
 
   console.log("click", e.features[0], e.features[0].properties)
 
-  const building_id = e.features[0].properties?.building_id || e.features[0].properties?.id || null
-  if (! building_id) return
+  const props = e.features[0].properties
+
+  const building_id = props?.building_id || props?.external_id || props?.id || null
+  if (! building_id) {
+    console.log("No known building id available on clicked feature")
+    return
+  }
 
   // Select the building
   // TODO: trigger the router instead of setting id in store? 
