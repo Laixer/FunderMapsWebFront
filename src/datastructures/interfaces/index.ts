@@ -15,6 +15,7 @@ export type {
   INeighborhood,
   IDistrict,
   IMunicipality,
+  IResidence,
   IState,
   IGeoLocationData
 } from './api/Location'

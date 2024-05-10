@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { WatchStopHandle, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MapBox from '../Common/Mapbox/MapBox.vue';
@@ -15,6 +15,9 @@ import {
   startTrackingPositioning, 
   stopTrackingPositioning 
 } from './trackpositioning';
+import {
+  useBuildingMarker
+} from './marker'
 
 
 import { useMainStore } from '@/store/main';
@@ -24,8 +27,13 @@ const { activeMapset } = storeToRefs( useMapsetStore() ) // activeMapsetId,
 
 const emit = defineEmits(['ready'])
 
+// The Mapbox Map instance
 let mapInstance: Map|null = null
 
+// Handle to stop the watcher that positions the building pin
+let buildingMarkerWatchStopHandle: WatchStopHandle|null = null
+
+// Whether the initial map style has been set
 const hasSetInitialStyle = ref(false)
 
 // A flag we use to track when center changes should be ignored
@@ -63,6 +71,9 @@ watch(() => activeMapset.value, (mapset) => {
 const onLoad = function onLoad({ map }: { map: Map }) {
   
   mapInstance = map
+
+  // Attach the building marker
+  buildingMarkerWatchStopHandle = useBuildingMarker(map)
 
   // Watch map movement
   map.on('moveend', handleMapMovement)
@@ -121,6 +132,10 @@ watch(
 onBeforeUnmount(() => {
   stopTrackingPositioning()
   stopWatchingMapsetChanges()
+
+  if (buildingMarkerWatchStopHandle) {
+    buildingMarkerWatchStopHandle()
+  }
 })
 
 </script>

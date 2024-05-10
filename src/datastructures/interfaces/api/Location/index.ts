@@ -27,6 +27,10 @@ export type {
   IState,
 } from './IState'
 
+export type {
+  IResidence
+} from './IResidence'
+
 export type { 
   IGeoLocationData,
 } from './IGeoLocationData'
