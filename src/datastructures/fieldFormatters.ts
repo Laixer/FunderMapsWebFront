@@ -5,6 +5,7 @@ export const formattersByField = <Record<string, Function>> {
   restorationCosts: toEuro,
   velocity: toMMYear,
   surfaceArea: toSquareM,
+  height: toMeters,
   groundWaterLevel: toNAP,
   groundLevel: toNAP,
   groundwaterLevelNet: toNAP,
