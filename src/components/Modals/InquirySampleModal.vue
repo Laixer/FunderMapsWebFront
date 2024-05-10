@@ -74,7 +74,7 @@ const sampleFieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = 
       new FieldDataConfig({ group: 'building', name: 'note' }),
       new FieldDataConfig({ group: 'building', name: 'builtYear' }),
       new FieldDataConfig({ group: 'building', name: 'substructure' }),
-      new FieldDataConfig({ group: 'building', name: 'foundationType', source: selectedCaseItem.value?.report }),
+      new FieldDataConfig({ group: 'building', name: 'foundationType' }),
       new FieldDataConfig({ group: 'building', name: 'recoveryAdvised' }),
 
       // Omgeving

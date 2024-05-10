@@ -16,9 +16,9 @@ export class InquirySample extends EnumMethods implements IInquirySample {
   substructure?: ESubstructure;
   cpt?: string;
   monitoringWell?: string;
-  groundWaterLevelTemp?: number;
+  groundwaterLevelTemp?: number;
   groundLevel?: number;
-  groundWaterLevelNet?: number;
+  groundwaterLevelNet?: number;
   foundationType?: EFoundationType;
   enforcementTerm?: EEnforcementTerm;
   recoveryAdvised?: boolean;
@@ -86,9 +86,9 @@ export class InquirySample extends EnumMethods implements IInquirySample {
     this.substructure = data.substructure;
     this.cpt = data.cpt;
     this.monitoringWell = data.monitoringWell;
-    this.groundWaterLevelTemp = data.groundWaterLevelTemp;
+    this.groundwaterLevelTemp = data.groundwaterLevelTemp;
     this.groundLevel = data.groundLevel;
-    this.groundWaterLevelNet = data.groundWaterLevelNet;
+    this.groundwaterLevelNet = data.groundwaterLevelNet;
     this.foundationType = data.foundationType;
     this.enforcementTerm = data.enforcementTerm;
     this.recoveryAdvised = data.recoveryAdvised;

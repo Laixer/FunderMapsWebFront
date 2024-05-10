@@ -1,4 +1,4 @@
-import { toEuro, toFormattedDate, toKN, toMM, toMMYear, toMeters, toNAP, toScale, toSquareM, toYear } from "./formatters";
+import { toEuro, toFormattedDate, toMM, toMMYear, toMeters, toNAP, toScale, toSquareM, toYear } from "./formatters";
 
 
 export const formattersByField = <Record<string, Function>> {
