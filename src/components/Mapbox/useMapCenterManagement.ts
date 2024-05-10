@@ -1,8 +1,12 @@
 import mapboxgl, { type Map } from "mapbox-gl"
 import { storeToRefs } from "pinia"
-import { nextTick, watch } from "vue"
+import { ComputedRef, computed, nextTick, watch } from "vue"
 
 import { useMainStore } from '@/store/main';
+import { useBuildingStore } from '@/store/buildings';
+import { useGeoLocationsStore } from '@/store/building/geolocations'
+
+import { IGeoLocationData } from "@/datastructures/interfaces";
 
 /**
  * TODO: Set LngLat in route query string
@@ -11,12 +15,55 @@ import { useMainStore } from '@/store/main';
 export const useMapCenterManagement = function useMapCenterManagement() {
 
   const { mapCenterLatLon } = storeToRefs( useMainStore() )
+  const { buildingId } = storeToRefs(useBuildingStore())
+  const { getLocationDataByBuildingId } = useGeoLocationsStore()  
+
 
   // Reference to the mapbox instance
   let mapInstance: Map|null = null
 
   // A flag we use to track when the watcher should ignore center changes
-  let ignoreCenterChange: boolean = true
+  let ignoreCenterChange: boolean = false
+
+  const locationData: ComputedRef<IGeoLocationData|null> = computed(() => {
+    if (! buildingId.value) return null
+    return getLocationDataByBuildingId(buildingId.value)
+  })
+
+  const flyToCenter = function flyToCenter(center: mapboxgl.LngLat) {
+    if (! mapInstance) return
+
+    // Set some zoom limits that make sense when flying
+    let zoom = mapInstance.getZoom()
+    if (zoom > 18) zoom = 18
+    if (zoom < 16) zoom = 16
+
+    mapInstance.flyTo({
+      center,
+      essential: true,
+      zoom
+    })
+  }
+
+  const flyToBuildingLocation = function flyToBuildingLocation(location: IGeoLocationData) {
+    if (location.residence && mapInstance) {
+      mapCenterLatLon.value = new mapboxgl.LngLat(
+        location.residence.longitude, 
+        location.residence.latitude
+      )
+    }
+  }
+
+  watch(
+    () => locationData.value,
+    (location: IGeoLocationData|null) => {
+      if (location) {
+        flyToBuildingLocation(location)
+      }
+    },
+    { immediate: true }
+  )
+
 
   /**
    * Fly to a location if the mapcenter value is changed
@@ -30,17 +77,9 @@ export const useMapCenterManagement = function useMapCenterManagement() {
         return
       }
 
-      // Set some zoom limits that make sense when flying
-      let zoom = mapInstance.getZoom()
-      if (zoom > 18) zoom = 18
-      if (zoom < 16) zoom = 16
-
-      mapInstance.flyTo({
-        center,
-        essential: true,
-        zoom
-      })
-    }
+      flyToCenter(center)
+    }, 
+    { immediate: true }
   )
 
   /**
@@ -64,7 +103,12 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     mapInstance = map
 
     mapInstance.on('moveend', handleMapMovement)
-    handleMapMovement()
+    
+    if (locationData.value && locationData.value.residence) {
+      flyToBuildingLocation(locationData.value)
+    } else {
+      handleMapMovement()
+    }
   }
 
   const disconnect = function disconnect() {

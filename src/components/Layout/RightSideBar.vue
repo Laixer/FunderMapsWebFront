@@ -263,7 +263,6 @@ watch(
             if (! buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
               setIncidentDataByBuildingId(buildingId, response.incidents)
             }
-            
           })
       }
 
@@ -285,7 +284,8 @@ watch(
       // TODO: Quick fix to support cache
       getAllReportDataUnlessCached(buildingId)
     ])
-  }
+  },
+  { immediate: true }
 )
 
 /**

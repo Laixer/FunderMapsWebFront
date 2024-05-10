@@ -43,6 +43,7 @@ export const useBuildingMarker = function useBuildingMarker(Map: Map): WatchStop
           )
         )
       }
-    }
+    },
+    { immediate: true }
   )
 }
