@@ -74,6 +74,8 @@ export const makeCall = async function makeCall({
     try {
       responseBody = await response.json()
     } catch(e) {
+      console.log(e)
+      
       if (response.ok && response.status !== 204) {
         throw new Error("Failed to process response body")
       }

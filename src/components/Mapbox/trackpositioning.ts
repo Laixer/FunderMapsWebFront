@@ -10,8 +10,17 @@ let mapInstance: Map|null = null;
  **********************************************************************************/
 
 export const getLastKnownPositioning = function getLastKnownPositioning() {
+
+  let center = undefined
+
+  try {
+    center = localStorage.getItem('lastCenterPosition') ? JSON.parse(localStorage.getItem('lastCenterPosition') as string) : undefined
+  } catch(e) {
+    console.log("Failed to retrieve center position from localstorage. Starting from default location.")
+  }
+
   return {
-    center: localStorage.getItem('lastCenterPosition') ? JSON.parse(localStorage.getItem('lastCenterPosition') as string) : undefined,
+    center,
     zoom: localStorage.getItem('lastZoomLevel') ? parseFloat(localStorage.getItem('lastZoomLevel') as string) : undefined,
     pitch: localStorage.getItem('lastPitchDegree') ? parseFloat(localStorage.getItem('lastPitchDegree') as string) : undefined,
     bearing: localStorage.getItem('lastRotation') ? parseFloat(localStorage.getItem('lastRotation') as string) : undefined,

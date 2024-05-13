@@ -6,7 +6,11 @@ const callPDOK = async function callPDOK(endpoint: string) {
   const response = await fetch(`${baseUrl}/${endpoint}`)
 
   if (response.ok) {
-    return response.json()
+    try {
+      return response.json()
+    } catch(e) {
+      console.log("Failed to process PDOK response.")
+    }
   }
 
   return null

@@ -55,11 +55,15 @@ const isLayerVisible = function(layerId: string, mapsetId: string) {
  *  Only needs to be done once at bootup
  */
 const retrieveLayerVisibilityFromSessionStorage = function retrieveLayerVisibilityFromSessionStorage() {
-  const visibilityPerMapset = getItemsStartingWith(sessionStorageKeyPrefix)
-  Object.keys(visibilityPerMapset).forEach(key => {
-    const id = key.split(sessionStorageKeyPrefix).join('')
-    visibleLayersByMapsetId.value[id] = JSON.parse(visibilityPerMapset[key])
-  })
+  try {
+    const visibilityPerMapset = getItemsStartingWith(sessionStorageKeyPrefix)
+    Object.keys(visibilityPerMapset).forEach(key => {
+      const id = key.split(sessionStorageKeyPrefix).join('')
+      visibleLayersByMapsetId.value[id] = JSON.parse(visibilityPerMapset[key])
+    })
+  } catch(e) {
+    console.log("Failed to retrieve previous layer visibility information. Starting from default settings.")
+  }
 }
 
 /**
