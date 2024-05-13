@@ -12,6 +12,7 @@ import { useMunicipalityFilter } from './useMunicipalityFilter'
 import { useMapsetStyle } from './useMapsetStyle'
 import { useMapCenterManagement } from './useMapCenterManagement'
 import { useBuildingMarker } from './marker'
+import { useMapboxControlNudge } from './useMapboxControlNudge';
 
 import { 
   getLastKnownPositioning, 
@@ -20,7 +21,11 @@ import {
 } from './trackpositioning';
 
 import { useMapsetStore } from '@/store/mapsets';
-const { activeMapset } = storeToRefs( useMapsetStore() ) // activeMapsetId, 
+import { useBuildingStore } from '@/store/buildings';
+import { useMainStore } from '@/store/main';
+const { activeMapset } = storeToRefs( useMapsetStore() )
+const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
+const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
 
 const emit = defineEmits(['ready'])
 
@@ -40,6 +45,10 @@ const LayerVisibility = useLayerVisibility()
 const MunicipalityFilter = useMunicipalityFilter()
 const MapsetStyle = useMapsetStyle()
 const MapCenterManagement = useMapCenterManagement()
+
+// Map Control nudging
+const { maybeNudge: maybeNudgeRight } = useMapboxControlNudge('right', 336, hasSelectedBuilding)
+const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeftSidebarOpen)
 
 /**
  * The startup options
@@ -84,7 +93,10 @@ const onLoad = function onLoad({ map }: { map: Map }) {
   MapsetStyle.attachMap(map)
   MapCenterManagement.attachMap(map)
 
+  // Controls & control positioning nudges if sidebars are open
   addControls(map)
+  maybeNudgeRight()
+  maybeNudgeLeft()
 
   startTrackingPositioning(map)
 
@@ -115,4 +127,4 @@ onBeforeUnmount(() => {
     v-if="hasSetInitialStyle"
     :options="options" 
     @load="onLoad" />
-</template>
+</template>./useMapboxControlNudge

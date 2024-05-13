@@ -1,4 +1,7 @@
 <script setup lang="ts">
+
+// TODO: Split component further into sub components - 2 menu's - and move data loading to composable or store
+
 import { ComputedRef, Ref, computed, ref, watch, type Component } from 'vue';
 import { storeToRefs } from 'pinia';
 
@@ -27,7 +30,6 @@ import { useInquiriesStore } from '@/store/building/inquiries'
 import { useIncidentReportsStore } from '@/store/building/incidents'
 import { useStatisticsStore } from '@/store/building/statistics'
 
-import { useMapboxControlNudge } from '@/components/Layout/useMapboxControlNudge'
 import api from '@/services/api';
 import MapsetDetails from '../Building/MapsetDetails.vue';
 
@@ -38,42 +40,33 @@ const { clearBuildingId } = useBuildingStore()
  */
 const { 
   loadLocationDataByBuildingId, 
-  getFullAddressByBuildingId, 
-  // buildingLocationDataHasBeenRetrieved, 
-  // buildingHasLocationData 
+  getFullAddressByBuildingId
 } = useGeoLocationsStore()
 
 const { 
-  loadAnalysisDataByBuildingId,
-  // buildingAnalysisDataHasBeenRetrieved,
-  // buildingHasAnalysisData 
+  loadAnalysisDataByBuildingId
 } = useAnalysisStore()
 
 const { 
-  loadStatisticsDataByBuildingId,
-  // buildingStatisticsDataHasBeenRetrieved,
-  // buildingHasStatisticsData
+  loadStatisticsDataByBuildingId
 } = useStatisticsStore()
 
 /**
  * Green buttons
  */
 const { 
-  // loadRecoveryReportDataByBuildingId,
   buildingRecoveryReportDataHasBeenRetrieved,
   buildingHasRecoveryReports,
   setRecoveryDataByBuildingId
 } = useRecoveryReportsStore()
 
 const { 
-  // loadInquiryDataByBuildingId,
   buildingInquiryDataHasBeenRetrieved,
   buildingHasInquiries,
   setInquiryDataByBuildingId
 } = useInquiriesStore()
 
 const { 
-  // loadIncidentReportDataByBuildingId,
   buildingIncidentReportDataHasBeenRetrieved,
   buildingHasIncidentReports,
   setIncidentDataByBuildingId
@@ -82,13 +75,11 @@ const {
 
 const { hasSelectedBuilding, buildingId } = storeToRefs(useBuildingStore())
 
-useMapboxControlNudge('right', 336, hasSelectedBuilding)
 
 const isOpen = ref(false)
 
 
-// TODO: Split component in multiple sub components
-// TODO: Computed based on route name
+
 const rightPanelSlide = ref(false)
 
 interface IComponents {
@@ -117,8 +108,9 @@ const fullAddress: ComputedRef<string|null> = computed(
   }
 )
 
-// TODO: Move menu lists to separate components
-// TODO: Add route names 
+/**
+ * These menu items are always available
+ */
 const BuildingMenuList = computed(
   () => {
     return [
@@ -128,12 +120,6 @@ const BuildingMenuList = computed(
         name: 'Pand',
         loading: false,
         disabled: false,
-        // loading: !! (buildingId.value && ! buildingAnalysisDataHasBeenRetrieved(
-        //   buildingId.value
-        // )),
-        // disabled: !! (buildingId.value && ! buildingHasAnalysisData(
-        //   buildingId.value
-        // )),
         route: null
       },
       {
@@ -142,12 +128,6 @@ const BuildingMenuList = computed(
         name: 'Locatie',
         loading: false,
         disabled: false,
-        // loading: !! (buildingId.value && ! buildingLocationDataHasBeenRetrieved(
-        //   buildingId.value
-        // )),
-        // disabled: !! (buildingId.value && ! buildingHasLocationData(
-        //   buildingId.value
-        // )),
         route: null
       },
       {
@@ -156,12 +136,6 @@ const BuildingMenuList = computed(
         name: 'Fundering',
         loading: false,
         disabled: false,
-        // loading: !! (buildingId.value && ! buildingAnalysisDataHasBeenRetrieved(
-        //   buildingId.value
-        // )),
-        // disabled: !! (buildingId.value && ! buildingHasAnalysisData(
-        //   buildingId.value
-        // )),
         route: null
       },
       {
@@ -170,15 +144,8 @@ const BuildingMenuList = computed(
         name: 'Statistiek',
         loading: false,
         disabled: false,
-        // !! (buildingId.value && ! buildingStatisticsDataHasBeenRetrieved(
-        //   buildingId.value
-        // )),
-        // !! (buildingId.value && ! buildingHasStatisticsData(
-        //   buildingId.value
-        // )),
         route: null
       },
-      // TODO: There is currently no endpoint available to retrieve this data 
       {
         panel: 'FoundationRiskPanel',
         icon: 'alert',
@@ -190,7 +157,9 @@ const BuildingMenuList = computed(
     ]
   }
 )
-
+/**
+ * These menu items are only available if there is data available
+ */
 const ReportMenuList = computed(
   () => {
     return [
@@ -251,9 +220,6 @@ watch(
         return await api.building.getAllReportDataByBuildingId(buildingId)
           .then(response => {
 
-            console.log("Collective report response")
-            console.log(response)
-
             if (! buildingRecoveryReportDataHasBeenRetrieved(buildingId)) {
               setRecoveryDataByBuildingId(buildingId, response.recoveries, response.recoverySamples)
             }
@@ -276,12 +242,7 @@ watch(
       loadAnalysisDataByBuildingId(buildingId),
       loadStatisticsDataByBuildingId(buildingId),
 
-      // loadRecoveryReportDataByBuildingId(buildingId), // bundle? 
-      // loadInquiryDataByBuildingId(buildingId),  // bunlde? 
-      // loadIncidentReportDataByBuildingId(buildingId), // bundle?
-      
-      // All together now
-      // TODO: Quick fix to support cache
+      // TODO: This implementation is a quick fix to support "cache"
       getAllReportDataUnlessCached(buildingId)
     ])
   },
@@ -399,4 +360,4 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
       
     </div>
   </div>
-</template>
+</template>@/components/Mapbox/useMapboxControlNudge

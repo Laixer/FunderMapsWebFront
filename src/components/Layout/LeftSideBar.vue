@@ -10,8 +10,6 @@ import Panel from '@/components/Common/Panel.vue';
 // import BlockLinkGroup from '@/components/Common/Links/BlockLinkGroup.vue';
 // import BlockLink from '@/components/Common/Links/BlockLink.vue'
 
-import { useMapboxControlNudge } from '@/components/Layout/useMapboxControlNudge'
-
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 import InfoIcon from '@assets/svg/icons/info.svg'
 
@@ -84,11 +82,6 @@ const handleShowConsentModal = function handleShowConsentModal() {
 const handleToggleLayerById = function handleOpenLayerById(layerId: string, visibility: boolean) {
   changeLayerVisibility(layerId, visibility, activeMapsetId.value)
 }
-
-/**
- * Nudge the map controls when the sidebar opens
- */
-useMapboxControlNudge('left', 336, isLeftSidebarOpen)
 
 </script>
 
@@ -186,4 +179,4 @@ useMapboxControlNudge('left', 336, isLeftSidebarOpen)
     </div>
   </div>
 
-</template>
+</template>@/components/Mapbox/useMapboxControlNudge
