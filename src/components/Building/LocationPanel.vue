@@ -33,18 +33,18 @@ const locationData = computed(() => {
  *  TODO: formatter based on 'prefix', 'suffix', 'decimal'
  *  TODO: formatter based on central config, like field labels
  */
-const fieldsConfig = [
-  new FieldDataConfig({ name: 'fullAddress', source: locationData.value?.address }),
-  new FieldDataConfig({ name: 'postalCode', source: locationData.value?.address }),
-  new FieldDataConfig({ name: 'buildingNumber', source: locationData.value?.address }),
-  new FieldDataConfig({ name: 'name', source: locationData.value?.neighborhood }),
-  new FieldDataConfig({ name: 'name', source: locationData.value?.district }),
-  new FieldDataConfig({ name: 'name', source: locationData.value?.municipality }),
-  new FieldDataConfig({ name: 'name', source: locationData.value?.state })
-]
-
 const fieldsWithData = computed(() => {
   if (locationData.value === null) return []
+
+  const fieldsConfig = [
+    new FieldDataConfig({ name: 'fullAddress', source: locationData.value?.address }),
+    new FieldDataConfig({ name: 'postalCode', source: locationData.value?.address }),
+    new FieldDataConfig({ name: 'buildingNumber', source: locationData.value?.address }),
+    new FieldDataConfig({ name: 'name', source: locationData.value?.neighborhood }),
+    new FieldDataConfig({ name: 'name', source: locationData.value?.district }),
+    new FieldDataConfig({ name: 'name', source: locationData.value?.municipality }),
+    new FieldDataConfig({ name: 'name', source: locationData.value?.state })
+  ]
   return fieldsConfig.map(retrieveAndFormatFieldData)
 })
 

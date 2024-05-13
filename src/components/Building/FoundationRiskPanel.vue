@@ -45,32 +45,33 @@ const fieldGroupHeaders: Record<string, string> = {
 /**
  * Fields config
  */
-const fieldsConfig = applyContextToFieldDataConfigs({
-  source: analysisData,
-  configs: [
-    new FieldDataConfig({ group: 'drystand', name: 'drystandRisk' }),
-    new FieldDataConfig({ group: 'drystand', name: 'drystand' }),
-    new FieldDataConfig({ group: 'drystand', name: 'drystandReliability' }),
-    new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepthRisk' }),
-    new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepth' }),
-    new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepthReliability' }),
-    new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionRisk' }),
-    new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionReliability' }),
-    // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingRisk' }),
-    // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingReliability' }),
-    // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementRisk' }),
-    // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementReliability' }),
-    new FieldDataConfig({ group: 'unclassified', name: 'unclassifiedRisk' }),
-    // new FieldDataConfig({ group: 'facadescan', name: 'facadescanRisk' }),
-  ]
-})
-
 interface CompletedFieldDataWithIcon extends CompletedFieldData {
   icon: string|null|undefined
 }
 
 const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithIcon[]>> = computed(() => {
   if (analysisData.value === null) return {}
+
+  const fieldsConfig = applyContextToFieldDataConfigs({
+    source: analysisData,
+    configs: [
+      new FieldDataConfig({ group: 'drystand', name: 'drystandRisk' }),
+      new FieldDataConfig({ group: 'drystand', name: 'drystand' }),
+      new FieldDataConfig({ group: 'drystand', name: 'drystandReliability' }),
+      new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepthRisk' }),
+      new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepth' }),
+      new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepthReliability' }),
+      new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionRisk' }),
+      new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionReliability' }),
+      // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingRisk' }),
+      // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingReliability' }),
+      // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementRisk' }),
+      // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementReliability' }),
+      new FieldDataConfig({ group: 'unclassified', name: 'unclassifiedRisk' }),
+      // new FieldDataConfig({ group: 'facadescan', name: 'facadescanRisk' }),
+    ]
+  })
+  
   return fieldsConfig
     .map(retrieveAndFormatFieldData)
 

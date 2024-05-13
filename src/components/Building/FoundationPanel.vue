@@ -81,17 +81,18 @@ const foundationIconName = computed(() => {
  *  TODO: formatter based on 'prefix', 'suffix', 'decimal'
  *  TODO: formatter based on central config, like field labels
  */
-const fieldsConfig = applyContextToFieldDataConfigs({
-  source: analysisData,
-  configs: [
-    new FieldDataConfig({ name: 'foundationTypeReliability' }),
-    new FieldDataConfig({ name: 'restorationCosts' }),
-    new FieldDataConfig({ name: 'velocity' })
-  ]
-})
-
 const fieldsWithData = computed(() => {
   if (analysisData.value === null) return []
+
+  const fieldsConfig = applyContextToFieldDataConfigs({
+    source: analysisData,
+    configs: [
+      new FieldDataConfig({ name: 'foundationTypeReliability' }),
+      new FieldDataConfig({ name: 'restorationCosts' }),
+      new FieldDataConfig({ name: 'velocity' })
+    ]
+  })
+  
   return fieldsConfig.map(retrieveAndFormatFieldData)
 })
 

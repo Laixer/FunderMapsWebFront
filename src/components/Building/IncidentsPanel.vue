@@ -78,35 +78,36 @@ const selectedCaseItemTitle: ComputedRef<string> = computed(() => {
  *  TODO: formatter based on 'prefix', 'suffix', 'decimal'
  *  TODO: formatter based on central config, like field labels
  */
-const fieldsConfig = applyContextToFieldDataConfigs({
-  source: selectedCaseItem,
-  configs: [
-    new FieldDataConfig({ name: 'id' }),
-    // new FieldDataConfig({ name: 'address' }),
-    new FieldDataConfig({ name: 'building' }),
-    new FieldDataConfig({ name: 'clientName' }),
-    new FieldDataConfig({ name: 'createDate' }),
-    new FieldDataConfig({ name: 'foundationType' }),
-    new FieldDataConfig({ name: 'chainedBuilding' }),
-    new FieldDataConfig({ name: 'owner' }),
-    new FieldDataConfig({ name: 'foundationRecovery' }),
-    new FieldDataConfig({ name: 'neighborRecovery' }),
-    new FieldDataConfig({ name: 'foundationDamageCause' }),
-    new FieldDataConfig({ name: 'note' }),
-    new FieldDataConfig({ name: 'name' }),
-    new FieldDataConfig({ name: 'phoneNumber' }),
-    new FieldDataConfig({ name: 'email' }),
-    new FieldDataConfig({ name: 'foundationDamageCharacteristics' }),
-    new FieldDataConfig({ name: 'environmentDamageCharacteristics' }),
-    new FieldDataConfig({ name: 'auditStatus' }),
-    // new FieldDataConfig({ name: 'documentFile' }),
-    new FieldDataConfig({ name: 'internalNote' }),
-    new FieldDataConfig({ name: 'questionType' })
-  ]
-})
 
 const fieldsWithData = computed(() => {
   if (selectedCaseItem.value === null) return []
+
+  const fieldsConfig = applyContextToFieldDataConfigs({
+    source: selectedCaseItem,
+    configs: [
+      new FieldDataConfig({ name: 'id' }),
+      // new FieldDataConfig({ name: 'address' }),
+      new FieldDataConfig({ name: 'building' }),
+      new FieldDataConfig({ name: 'clientName' }),
+      new FieldDataConfig({ name: 'createDate' }),
+      new FieldDataConfig({ name: 'foundationType' }),
+      new FieldDataConfig({ name: 'chainedBuilding' }),
+      new FieldDataConfig({ name: 'owner' }),
+      new FieldDataConfig({ name: 'foundationRecovery' }),
+      new FieldDataConfig({ name: 'neighborRecovery' }),
+      new FieldDataConfig({ name: 'foundationDamageCause' }),
+      new FieldDataConfig({ name: 'note' }),
+      new FieldDataConfig({ name: 'name' }),
+      new FieldDataConfig({ name: 'phoneNumber' }),
+      new FieldDataConfig({ name: 'email' }),
+      new FieldDataConfig({ name: 'foundationDamageCharacteristics' }),
+      new FieldDataConfig({ name: 'environmentDamageCharacteristics' }),
+      new FieldDataConfig({ name: 'auditStatus' }),
+      // new FieldDataConfig({ name: 'documentFile' }),
+      new FieldDataConfig({ name: 'internalNote' }),
+      new FieldDataConfig({ name: 'questionType' })
+    ]
+  })
   return fieldsConfig.map(retrieveAndFormatFieldData)
 })
 

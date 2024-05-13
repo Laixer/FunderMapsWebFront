@@ -34,29 +34,29 @@ const locationData = computed(() => {
 })
 
 
-
 /**
  * Fields config
  *  TODO: formatter based on 'prefix', 'suffix', 'decimal'
  *  TODO: formatter based on central config, like field labels
  */
-const fieldsConfig = applyContextToFieldDataConfigs({
-  source: analysisData,
-  configs: [
-    new FieldDataConfig({ name: 'externalId', source: locationData.value?.building }),
-    new FieldDataConfig({ name: 'constructionYear' }),
-    // BAG reliability
-    new FieldDataConfig({ name: 'surfaceArea' }),
-    // Volume
-    new FieldDataConfig({ name: 'height' }),
-    new FieldDataConfig({ name: 'groundWaterLevel' }),
-    new FieldDataConfig({ name: 'groundLevel' }),
-    new FieldDataConfig({ name: 'soil' }),
-  ]
-})
-
 const fieldsWithData = computed(() => {
   if (analysisData.value === null) return []
+
+  const fieldsConfig = applyContextToFieldDataConfigs({
+    source: analysisData,
+    configs: [
+      new FieldDataConfig({ name: 'externalId', source: locationData.value?.building }),
+      new FieldDataConfig({ name: 'constructionYear' }),
+      // BAG reliability
+      new FieldDataConfig({ name: 'surfaceArea' }),
+      // Volume
+      new FieldDataConfig({ name: 'height' }),
+      new FieldDataConfig({ name: 'groundWaterLevel' }),
+      new FieldDataConfig({ name: 'groundLevel' }),
+      new FieldDataConfig({ name: 'soil' }),
+    ]
+  })
+  
   return fieldsConfig.map(retrieveAndFormatFieldData)
 })
 
