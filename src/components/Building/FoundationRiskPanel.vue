@@ -3,12 +3,17 @@ import { ComputedRef, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
-import BackLink from '../Common/Links/BackLink.vue';
+import BackLink from '@/components/Common/Links/BackLink.vue';
+import ClassificationIcon from '@/components/Common/Icons/ClassificationIcon.vue';
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs, CompletedFieldData } from '@/utils/fieldData'
 
+import { EFoundationRiskIconNames } from '@/datastructures/enums/EFoundationRisk'
+import { type EFoundationRisk } from '@/datastructures/enums';
+
 import { useAnalysisStore } from '@/store/building/analysis';
 import { useBuildingStore } from '@/store/buildings';
+
 
 const { getAnalysisDataByBuildingId } = useAnalysisStore()
 const { buildingId } = storeToRefs(useBuildingStore())
@@ -60,12 +65,29 @@ const fieldsConfig = applyContextToFieldDataConfigs({
   ]
 })
 
-const fieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = computed(() => {
+interface CompletedFieldDataWithIcon extends CompletedFieldData {
+  icon: string|null|undefined
+}
+
+const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithIcon[]>> = computed(() => {
   if (analysisData.value === null) return {}
   return fieldsConfig
     .map(retrieveAndFormatFieldData)
+
+    // Additional step for risk: add an icon (or null)
+    // TODO: Refactor to a more generic solution
+    .map((fieldWithData: CompletedFieldData): CompletedFieldDataWithIcon => {
+      const icon = [
+        'drystandRisk', 'dewateringDepthRisk', 'bioInfectionRisk', 'unclassifiedRisk'
+      ].includes(fieldWithData.name) 
+        ? EFoundationRiskIconNames.get(fieldWithData.getValue('raw') as EFoundationRisk)
+        : null
+
+      return Object.assign(fieldWithData, { icon })
+    })
+    
     .reduce(
-      (acc: Record<string, CompletedFieldData[]>, fieldData: CompletedFieldData) => {
+      (acc: Record<string, CompletedFieldDataWithIcon[]>, fieldData: CompletedFieldDataWithIcon) => {
 
         const group = fieldData?.group || ''
         if (group) {
@@ -74,9 +96,11 @@ const fieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = comput
         }
 
         return acc
-      }, {} as Record<string, CompletedFieldData[]>
+      }, {} as Record<string, CompletedFieldDataWithIcon[]>
     )
 })
+
+
 
 </script>
 
@@ -96,15 +120,25 @@ const fieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = comput
     >
       <template v-for="group in Object.keys(fieldGroupHeaders)">
         <div 
-          v-if="fieldsWithData[group]"
+          v-if="fieldsWithDataAndIcons[group]"
           class="space-y-3">
           <h6 class="font-bold leading-none">{{ fieldGroupHeaders[group] }}</h6>
           <dl class="space-y-3">
             <div 
-              v-for="field in fieldsWithData[group]" 
+              v-for="field in fieldsWithDataAndIcons[group]" 
               :key="field.name">
-              <dt>{{ field.label }}</dt>
-              <dd class="text-grey-700">{{ field.value }}</dd>
+              <dt>
+                {{ field.label }}
+              </dt>
+              <dd class="text-grey-700 flex gap-2">
+                <template v-if="field.icon">
+                  <ClassificationIcon 
+                    class="aspect-square w-4"
+                    :name="field.icon" />
+                </template>
+
+                <span>{{ field.value }}</span>
+              </dd>
             </div>
           </dl>
         </div>

@@ -35,3 +35,12 @@ export const EFoundationRiskLabels: Map<EFoundationRisk, string> = new Map([
   [EFoundationRisk.D, "D (Hoog)"],
   [EFoundationRisk.E, "E (Aanzienlijk hoog risico)"]
 ]);
+
+
+export const EFoundationRiskIconNames: Map<EFoundationRisk, string> = new Map([
+  [EFoundationRisk.A, "a"],
+  [EFoundationRisk.B, "b"],
+  [EFoundationRisk.C, "c"],
+  [EFoundationRisk.D, "d"],
+  [EFoundationRisk.E, "e"]
+])
