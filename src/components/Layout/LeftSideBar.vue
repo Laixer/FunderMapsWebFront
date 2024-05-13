@@ -179,4 +179,4 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
     </div>
   </div>
 
-</template>@/components/Mapbox/useMapboxControlNudge
+</template>
