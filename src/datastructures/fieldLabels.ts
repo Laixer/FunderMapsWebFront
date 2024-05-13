@@ -107,9 +107,7 @@ export const inquiryFieldLabels = <Record<string, string>> {
   inspection: "Inspectieput gemaakt?",
   jointMeasurement: "Lintvoegmeting uitgevoerd?",
   floorMeasurement: "Vloerveldwaterpassing uitgevoerd?",
-  note: "Opmerking",
-  foundationType: "Type fundering",
-  recoveryAdvised: "Funderingsherstel advies"
+  note: "Opmerking"
 }
 
 export const inquirySampleFieldLabels = <Record<string, string>> {
