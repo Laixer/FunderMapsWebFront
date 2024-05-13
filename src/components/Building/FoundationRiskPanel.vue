@@ -142,7 +142,9 @@ const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithI
             </div>
           </dl>
         </div>
-        <hr class="border-grey-200" />
+        <hr
+          v-if="fieldsWithDataAndIcons[group]"
+          class="border-grey-200" />
       </template>
     </section>
   </Panel>
