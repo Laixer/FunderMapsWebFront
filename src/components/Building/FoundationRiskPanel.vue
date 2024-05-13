@@ -56,12 +56,12 @@ const fieldsConfig = applyContextToFieldDataConfigs({
     new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepthReliability' }),
     new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionRisk' }),
     new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionReliability' }),
-    new FieldDataConfig({ group: 'negativecling', name: 'negativeclingRisk' }),
-    new FieldDataConfig({ group: 'negativecling', name: 'negativeclingReliability' }),
-    new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementRisk' }),
-    new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementReliability' }),
+    // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingRisk' }),
+    // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingReliability' }),
+    // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementRisk' }),
+    // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementReliability' }),
     new FieldDataConfig({ group: 'unclassified', name: 'unclassifiedRisk' }),
-    new FieldDataConfig({ group: 'facadescan', name: 'facadescanRisk' }),
+    // new FieldDataConfig({ group: 'facadescan', name: 'facadescanRisk' }),
   ]
 })
 
