@@ -115,6 +115,9 @@ export const inquiryFieldLabels = <Record<string, string>> {
 export const inquirySampleFieldLabels = <Record<string, string>> {
   address: 'Adres ID',
   building: 'Pand ID',
+
+  foundationType: "Type fundering",
+  recoveryAdvised: "Funderingsherstel advies",
   
   note: "Opmerking",
   builtYear: "Bouwjaar volgens onderzoek",
