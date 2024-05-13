@@ -88,11 +88,11 @@ const fields: ComputedRef<CompletedFieldData[]> = computed(() => {
       return applyContextToFieldDataConfigs({
         source: inquiryData.value?.[0]?.report,
         configs: [
-          new FieldDataConfig({ name: 'documentname' }),
+          new FieldDataConfig({ name: 'documentName' }),
           new FieldDataConfig({ name: 'id' }),
           new FieldDataConfig({ name: 'type' }),
           new FieldDataConfig({ name: 'documentDate' }),
-          new FieldDataConfig({ name: 'contractor' }),
+          new FieldDataConfig({ name: 'contractor', source: inquiryData.value?.[0]?.report?.attribution }),
         ]
       })
       .map(retrieveAndFormatFieldData)
