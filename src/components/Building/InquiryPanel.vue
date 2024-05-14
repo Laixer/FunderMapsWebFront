@@ -197,9 +197,9 @@ const handleOpenRemarkPopover = function handleOpenRemarkPopover() {
 /**
  * Fires when the remarks are clamped
  */
-const handleClamped = function handleClamped(clamped: boolean) {
-  isClamped.value = clamped
-}
+// const handleClamped = function handleClamped(clamped: boolean) {
+//   isClamped.value = clamped
+// }
 
 </script>
 
