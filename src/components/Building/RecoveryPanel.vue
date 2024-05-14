@@ -2,7 +2,7 @@
 import { ComputedRef, computed, onBeforeUnmount, ref, watch } from 'vue'; 
 import { storeToRefs } from 'pinia';
 
-import TextClamp from 'vue3-text-clamp';
+// import TextClamp from 'vue3-text-clamp';
 
 import { ICombinedRecoveryData } from '@/datastructures/interfaces';
 import Panel from '@/components/Common/Panel.vue';
@@ -270,12 +270,12 @@ const handleClamped = function handleClamped(clamped: boolean) {
               </button>
             </dt>
             <dd class="text-grey-700">
-              <TextClamp 
+              <!-- <TextClamp 
                 v-if="field.name === 'note'" 
                 :text="field.value" 
                 :max-lines="3"
                 @clampChange="handleClamped" />
-              <span v-else>{{ field.value }}</span>
+              <span v-else>{{ field.value }}</span> -->
             </dd>
           </div>
         </dl>
