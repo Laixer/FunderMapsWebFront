@@ -2,7 +2,7 @@
 
 // TODO: Split component further into sub components - 2 menu's - and move data loading to composable or store
 
-import { ComputedRef, Ref, computed, ref, watch, type Component } from 'vue';
+import { ComputedRef, Ref, computed, onMounted, ref, watch, type Component } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
@@ -32,6 +32,10 @@ import { useStatisticsStore } from '@/store/building/statistics'
 
 import api from '@/services/api';
 import MapsetDetails from '../Building/MapsetDetails.vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute()
+const router = useRouter()
 
 const { clearBuildingId } = useBuildingStore()
 
@@ -115,6 +119,7 @@ const BuildingMenuList = computed(
   () => {
     return [
       {
+        slug: 'pand',
         panel: 'BuildingPanel',
         icon: 'building',
         name: 'Pand',
@@ -123,6 +128,7 @@ const BuildingMenuList = computed(
         route: null
       },
       {
+        slug: 'locatie',
         panel: 'LocationPanel',
         icon: 'pin',
         name: 'Locatie',
@@ -131,6 +137,7 @@ const BuildingMenuList = computed(
         route: null
       },
       {
+        slug: 'fundering',
         panel: 'FoundationPanel',
         icon: 'file-foundation',
         name: 'Fundering',
@@ -139,6 +146,7 @@ const BuildingMenuList = computed(
         route: null
       },
       {
+        slug: 'statistiek',
         panel: 'StatisticsPanel',
         icon: 'graph',
         name: 'Statistiek',
@@ -147,6 +155,7 @@ const BuildingMenuList = computed(
         route: null
       },
       {
+        slug: 'funderingsrisico',
         panel: 'FoundationRiskPanel',
         icon: 'alert',
         name: 'Funderingsrisico',
@@ -164,7 +173,9 @@ const ReportMenuList = computed(
   () => {
     return [
       {
+        slug: 'onderzoek',
         panel: 'InquiryPanel',
+        icon: null,
         name: 'Bekijk onderzoeks informatie', 
         loading: !! (buildingId.value && ! buildingInquiryDataHasBeenRetrieved(
           buildingId.value
@@ -175,7 +186,9 @@ const ReportMenuList = computed(
         route: null
       },
       {
+        slug: 'herstel',
         panel: 'RecoveryPanel',
+        icon: null,
         name: 'Bekijk herstel informatie',
         loading: !! (buildingId.value && ! buildingRecoveryReportDataHasBeenRetrieved(
           buildingId.value
@@ -186,7 +199,9 @@ const ReportMenuList = computed(
         route: null
       },
       {
+        slug: 'incidenten',
         panel: 'IncidentsPanel',
+        icon: null,
         name: 'Bekijk incidenten',
         loading: !! (buildingId.value && ! buildingIncidentReportDataHasBeenRetrieved(
           buildingId.value
@@ -250,6 +265,25 @@ watch(
 )
 
 /**
+ * If the panel slug changed in the url, open the panel
+ */
+watch(
+  () => route.params.panel,
+  (slug) => {
+    if (slug) {
+      openPanelBySlug(slug as string)
+    }
+  }
+)
+
+// Wait before components are available
+onMounted(() => {
+  if (route.name === 'building-panel') {
+    openPanelBySlug(route.params.panel as string)
+  }
+})
+
+/**
  * Clear the selected building
  *  TODO: also close & clear open details panel ?
  */
@@ -262,13 +296,38 @@ const handleCloseSideBar = function handleCloseSideBar() {
   }, 300)
 }
 
+const openPanelBySlug = function openPanelBySlug(slug: string) {
+  const TabMenuItem = BuildingMenuList.value.find(MenuItem => MenuItem.slug === slug)
+  if (TabMenuItem) {
+    handleOpenPanel(TabMenuItem.panel, TabMenuItem.slug)
+    return
+  }
+
+  const ReportMenuItem = ReportMenuList.value.find(MenuItem => MenuItem.slug === slug)
+  if (ReportMenuItem) {
+    handleOpenPanel(ReportMenuItem.panel, ReportMenuItem.slug)
+  }
+}
+
 /**
  * Open a panel with details
  */
-const handleOpenPanel = function handleOpen(name: string) {
+const handleOpenPanel = function handleOpenPanel(name: string, slug: string) {
   selectedPanel.value = name
   isOpen.value = true
   rightPanelSlide.value = true
+
+  // No redirect to self
+  if (route.name !== 'building-panel' || route.params.panel !== slug) {
+    router.push({
+      name: 'building-panel',
+      params: {
+        buildingId: route.params.buildingId,
+        mapsetId: route.params.mapsetId,
+        panel: slug
+      }
+    })
+  }
 }
 
 /**
@@ -321,7 +380,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
               :label="MenuItem.name"
               :disabled="MenuItem.disabled"
               :loading="MenuItem.loading" 
-              @click.prevent="handleOpenPanel(MenuItem.panel)"
+              @click.prevent="handleOpenPanel(MenuItem.panel, MenuItem.slug)"
             >
               <FundermapsIcon
                 :name="MenuItem.icon"
@@ -339,7 +398,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
             :label="MenuItem.name"
             :disabled="MenuItem.disabled || MenuItem.loading"
             class="w-full"
-            @click.prevent="handleOpenPanel(MenuItem.panel)"
+            @click.prevent="handleOpenPanel(MenuItem.panel, MenuItem.slug)"
           >
             <template v-slot:after>
               <AnimatedArrowIcon />

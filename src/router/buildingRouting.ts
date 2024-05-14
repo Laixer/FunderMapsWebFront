@@ -46,7 +46,7 @@ export const useBuildingRouting = function useBuildingRouting() {
       if (name && ['building', 'building-panel'].includes(name as string)) {
         // name = name
         params = Object.assign(params, {
-          panel: route.params.panel
+          panel: route.params.panel || null
         })
       } else {
         name = 'building'
