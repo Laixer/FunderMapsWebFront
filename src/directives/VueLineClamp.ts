@@ -7,7 +7,7 @@
  */
 
 
-import {  App } from "vue";
+import { Plugin, type App } from "vue";
 
 const currentValueProp = "vLineClampValue";
 const truncateText = function (el: any, bindings: any) {
@@ -24,7 +24,7 @@ const truncateText = function (el: any, bindings: any) {
 
 const isTextClamped = (elm: HTMLElement) => elm.scrollHeight > elm.clientHeight
 
-const VueLineClamp = {
+const VueLineClamp: Plugin = {
   install(app: App, options: any) {
 
     options = Object.assign(
