@@ -86,8 +86,7 @@ const onLoad = function onLoad({ map }: { map: Map }) {
   // Attach the building marker
   buildingMarkerWatchStopHandle = useBuildingMarker(map)
 
-  // TODO: Enable before going to production... 
-  // MunicipalityFilter.attachMap(map) 
+  MunicipalityFilter.attachMap(map) 
   MapEvents.attachMap(map)
   LayerVisibility.attachMap(map)
   MapsetStyle.attachMap(map)

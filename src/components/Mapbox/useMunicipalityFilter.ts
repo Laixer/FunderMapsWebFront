@@ -9,6 +9,8 @@ export const useMunicipalityFilter = function useMunicipalityFilter() {
 
   let mapInstance: Map|null = null
 
+  const enableMapFilter = localStorage.getItem("enableMunicipalityFilter")
+
   /**
    * Apply the municipality filter to the layer presentation
    */
@@ -17,6 +19,8 @@ export const useMunicipalityFilter = function useMunicipalityFilter() {
     if (! activeMapset.value) return // No mapset to work with
 
     if (activeMapset.value.fenceMunicipality === null) return // No filter necessary
+
+    if (enableMapFilter === 'false') return
 
     for (const layer of activeMapset.value.layerSet) {
       mapInstance.setFilter(layer.id, [
