@@ -125,10 +125,11 @@ export const useMapsetRouting = function useMapsetRouting() {
       
       // If no mapset was requested, or the mapset was not available,
       //  redirect the user to the first mapset from the list of available mapsets
-      router.push({ 
-        name: 'mapset', 
-        params: { mapsetId: defaultMapsetId.value as string }
-      })
+      navigateToMapset(defaultMapsetId.value)
+      // router.push({ 
+      //   name: 'mapset', 
+      //   params: { mapsetId: defaultMapsetId.value as string }
+      // })
     }, 
     { immediate: true }
   )
@@ -145,12 +146,50 @@ export const useMapsetRouting = function useMapsetRouting() {
 
     if (value && value !== route.params?.mapsetId) {
       console.log("Main - Yes")
-      router.push({ 
-        name: 'mapset', 
-        params: { mapsetId: value }
-      })
+
+      navigateToMapset(value)
+      // router.push({ 
+      //   name: 'mapset', 
+      //   params: { mapsetId: value }
+      // })
     } else {
       console.log("Main - No")
     }
   })
+
+  /**
+   * Navigate to a mapset
+   *  If we're viewing a building, change only the mapset param and redirect to the building
+   * 
+   * @returns 
+   */
+  function navigateToMapset(id: string|null) {
+
+    // No mapset id => going home (which may redirect to login)
+    if (! id) {
+      router.push({ name: 'home' })
+      return 
+    }
+    let name = route.name
+
+    let params = {
+      mapsetId: id
+    }
+
+    if (name && ['building', 'building-panel'].includes(name as string)) {
+      params = Object.assign(params, {
+        buildingId: route.params.buildingId,
+        panel: route.params.panel || null
+      })
+    } else {
+      name = 'mapset'
+    }
+    
+    router.push({ name, params })
+  }
+
+
+  return {
+    navigateToMapset
+  }
 }
