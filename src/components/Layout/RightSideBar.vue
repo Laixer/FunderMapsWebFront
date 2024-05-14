@@ -325,7 +325,8 @@ const handleOpenPanel = function handleOpenPanel(name: string, slug: string) {
         buildingId: route.params.buildingId,
         mapsetId: route.params.mapsetId,
         panel: slug
-      }
+      },
+      query: route.query
     })
   }
 }
@@ -335,6 +336,10 @@ const handleOpenPanel = function handleOpenPanel(name: string, slug: string) {
  */
 const handleBackToMainMenu = function handleBackToMainMenu() {
   rightPanelSlide.value = false
+
+  if (route.name === 'building-panel') {
+    router.push({ name: 'building', params: route.params, query: route.query })
+  }
 }
 
 </script>

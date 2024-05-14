@@ -23,6 +23,7 @@ import {
 import { useMapsetStore } from '@/store/mapsets';
 import { useBuildingStore } from '@/store/buildings';
 import { useMainStore } from '@/store/main';
+import { useMapCenterRouting } from '@/router/mapCenterRouting';
 const { activeMapset } = storeToRefs( useMapsetStore() )
 const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
 const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
@@ -46,6 +47,9 @@ const MunicipalityFilter = useMunicipalityFilter()
 const MapsetStyle = useMapsetStyle()
 const MapCenterManagement = useMapCenterManagement()
 
+// Update the query string in the route when the map center changes. Navigate to the LngLat from the query string when opening a mapset page
+const { getLatLngFromQueryString } = useMapCenterRouting()
+
 // Map Control nudging
 const { maybeNudge: maybeNudgeRight } = useMapboxControlNudge('right', 336, hasSelectedBuilding)
 const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeftSidebarOpen)
@@ -58,7 +62,7 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
 const lastKnownPositioning = getLastKnownPositioning()
 let options = ref({
   style: <string|undefined> undefined,
-  center: lastKnownPositioning.center || [5.2913, 52.1326],
+  center: lastKnownPositioning.center || getLatLngFromQueryString() || [5.2913, 52.1326],
   zoom: lastKnownPositioning.zoom || 15,
   pitch: lastKnownPositioning.pitch || 45,
   bearing: lastKnownPositioning.bearing || 0,

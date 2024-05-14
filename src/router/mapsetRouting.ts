@@ -1,7 +1,6 @@
 import { watch } from "vue"
 import { storeToRefs } from "pinia";
-import { useRouter } from 'vue-router'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useMapsetStore } from '@/store/mapsets'
 import { useSessionStore } from '@/store/session';
@@ -126,10 +125,6 @@ export const useMapsetRouting = function useMapsetRouting() {
       // If no mapset was requested, or the mapset was not available,
       //  redirect the user to the first mapset from the list of available mapsets
       navigateToMapset(defaultMapsetId.value)
-      // router.push({ 
-      //   name: 'mapset', 
-      //   params: { mapsetId: defaultMapsetId.value as string }
-      // })
     }, 
     { immediate: true }
   )
@@ -148,10 +143,6 @@ export const useMapsetRouting = function useMapsetRouting() {
       console.log("Main - Yes")
 
       navigateToMapset(value)
-      // router.push({ 
-      //   name: 'mapset', 
-      //   params: { mapsetId: value }
-      // })
     } else {
       console.log("Main - No")
     }
@@ -185,7 +176,7 @@ export const useMapsetRouting = function useMapsetRouting() {
       name = 'mapset'
     }
     
-    router.push({ name, params })
+    router.push({ name, params, query: route.query })
   }
 
 

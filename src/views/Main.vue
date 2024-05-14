@@ -86,9 +86,7 @@ watch(() => hasAvailableMapsets.value, (value, oldValue) => {
   if (value === false && oldValue === true) {
     console.log("Main - Yes")
 
-    router.push({
-      name: 'login'
-    })
+    router.push({ name: 'login' })
   } else {
     console.log("Main - No")
   }

@@ -1,4 +1,5 @@
 import { watch } from "vue"
+import { storeToRefs } from 'pinia';
 
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -11,7 +12,9 @@ export const useBuildingRouting = function useBuildingRouting() {
   const router = useRouter()
   const route = useRoute()
 
-  const { setBuildingId, clearBuildingId } = useBuildingStore()
+  const buildingStore = useBuildingStore()
+  const { setBuildingId, clearBuildingId } = buildingStore
+  const { buildingId } = storeToRefs(buildingStore)
 
   /**
    * Navigate to a building, taking the current route context into account
@@ -30,7 +33,8 @@ export const useBuildingRouting = function useBuildingRouting() {
       } else if (route.name !== 'mapset') {
         router.push({ 
           name: 'mapset', 
-          params: { mapsetId: route.params.mapsetId } 
+          params: { mapsetId: route.params.mapsetId },
+          query: route.query
         })
       }
 
@@ -52,7 +56,7 @@ export const useBuildingRouting = function useBuildingRouting() {
         name = 'building'
       }
       
-      router.push({ name, params })
+      router.push({ name, params, query: route.query })
     }
   }
 
@@ -72,6 +76,17 @@ export const useBuildingRouting = function useBuildingRouting() {
       },
       { immediate: true }
     )
+
+    // Navigate away from the building / building-panel page
+    watch(
+      () => buildingId.value,
+      (id) => {
+        if (! id && ['building', 'building-panel'].includes(route.name as string)) {
+          router.push({ name: 'mapset', params: route.params, query: route.query })
+        }
+      }
+    )
+
   }
 
   return {
