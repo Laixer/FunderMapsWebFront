@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ComputedRef, computed, watch } from 'vue'; 
+import { ComputedRef, computed, onBeforeUnmount, ref, watch } from 'vue'; 
 import { storeToRefs } from 'pinia';
+
+import TextClamp from 'vue3-text-clamp';
 
 import { ICombinedRecoveryData } from '@/datastructures/interfaces';
 import Panel from '@/components/Common/Panel.vue';
@@ -10,22 +12,30 @@ import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 
 import LeftArrowIcon from '@assets/svg/icons/arrow-left.svg'
 import RightArrowIcon from '@assets/svg/icons/arrow-right.svg'
+import InfoIcon from '@assets/svg/icons/info.svg'
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs } from '@/utils/fieldData'
 
 import { useRecoveryReportsStore } from '@/store/building/recovery';
 import { useBuildingStore } from '@/store/buildings';
+import { useMainStore } from '@/store/main';
 
 
 const { getCombinedRecoveryDataByBuildingId, buildingHasRecoveryReports, buildingRecoveryReportDataHasBeenRetrieved } = useRecoveryReportsStore()
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useRecoveryReportsStore())
 const { buildingId } = storeToRefs(useBuildingStore())
+const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
 
 /**
  * Props & events
  */ 
 defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
+
+/**
+ * Whether the note is clamped
+ */
+const isClamped = ref(false)
 
 /******************************************************************************
  * Main Recovery report
@@ -94,7 +104,7 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'creator', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'reviewer', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'documentFile' }),
-      // new FieldDataConfig({ name: 'note' }),
+      new FieldDataConfig({ name: 'note' }),
       new FieldDataConfig({ name: 'auditStatus' }),
     ]
   })
@@ -130,6 +140,27 @@ watch(
   }
 )
 
+watch(
+  () => selectedCaseItem.value,
+  (caseItem) => {
+
+    // Whatever changes, close the popover
+    isRemarkPopoverOpen.value = false
+
+    if (caseItem) {
+      const noteFieldData = retrieveAndFormatFieldData(
+        new FieldDataConfig({ name: 'note', source: caseItem.report })
+      )
+
+      remarkPopoverTitle.value = noteFieldData.label || ''
+      remarkPopoverText.value = noteFieldData?.value?.toString() || ''
+    }
+  }, 
+  { immediate: true }
+)
+
+onBeforeUnmount(() => isRemarkPopoverOpen.value = false)
+
 /**
  * Navigation between cases
  */
@@ -155,6 +186,22 @@ const handleOpenModal = function handleOpenModal() {
     isSamplePanelOpen.value = true
   }
 }
+
+
+/**
+ * Handle opening the remark popover
+ */
+const handleOpenRemarkPopover = function handleOpenRemarkPopover() {
+  isRemarkPopoverOpen.value = true
+}
+
+/**
+ * Fires when the remarks are clamped
+ */
+const handleClamped = function handleClamped(clamped: boolean) {
+  isClamped.value = clamped
+}
+
 </script>
 
 <template>
@@ -208,8 +255,28 @@ const handleOpenModal = function handleOpenModal() {
           <div 
             v-for="field in reportFieldsWithData" 
             :key="field.name">
-            <dt>{{ field.label }}</dt>
-            <dd class="text-grey-700">{{ field.value }}</dd>
+            <dt>
+              <span>{{ field.label }}</span>
+              <button
+                v-if="field.name === 'note' && isClamped === true"
+                class="-ml-1 p-2 text-green-500 hover:text-green-700"
+                type="button"
+                @click.prevent="handleOpenRemarkPopover"
+              >
+                <InfoIcon
+                  class="aspect-square w-4"
+                  aria-hidden="true"
+                />
+              </button>
+            </dt>
+            <dd class="text-grey-700">
+              <TextClamp 
+                v-if="field.name === 'note'" 
+                :text="field.value" 
+                :max-lines="3"
+                @clampChange="handleClamped" />
+              <span v-else>{{ field.value }}</span>
+            </dd>
           </div>
         </dl>
       </div>

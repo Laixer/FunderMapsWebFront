@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComputedRef, computed, ref, type Ref } from 'vue';
+import { ComputedRef, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import AccordionGroup from '@/components/Common/Accordion/AccordionGroup.vue';
@@ -23,16 +23,11 @@ const {
   selectMapsetById
 } = mapsetStore
 
-const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
+const { isLeftSidebarOpen, isInfoPopoverOpen, isShowingMapsetSelection } = storeToRefs( useMainStore() )
 const { availableMapsets, activeMapset, activeMapsetId } = storeToRefs( mapsetStore )
 const { changeLayerVisibility } = useLayersStore() 
 const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
 
-/**
- * Whether to show the list of available mapsets
- *  defaults to false to first show the legend of the active mapset
- */
-const showMapsetSelection: Ref<boolean> = ref(false)
 
 /**
  * 
@@ -44,9 +39,7 @@ const legendState: ComputedRef<Record<string, boolean>> = computed(() => {
     acc[layer.id] = activeMapset.value?.id 
       ? visibleLayersByMapsetId.value?.[activeMapset.value.id]?.includes(layer.id)
       : false
-
-    // console.log("Visibility check", layer.id, acc[layer.id])
-
+      
     return acc
   }, {})
 })
@@ -57,22 +50,21 @@ const legendState: ComputedRef<Record<string, boolean>> = computed(() => {
 const handleOpenMapsetLegend = function handleOpenMapsetLegend(id: string) {
   if (id !== activeMapsetId.value) selectMapsetById(id)
 
-  showMapsetSelection.value = false
+  isShowingMapsetSelection.value = false
 }
 
 /**
  * The legend is closed, but the mapset isn't changed until a new one is selected
  */ 
 const handleCloseMapsetLegend = function handleCloseMapsetLegend() {
-  showMapsetSelection.value = true
+  isShowingMapsetSelection.value = true
 }
 
 /**
- * TODO: the UI is for information, but this is not available in the API
- * TODO: The requirements specify a need to show a consent popup before showing some mapsets... would this be it? 
+ * 
  */
-const handleShowConsentModal = function handleShowConsentModal() {
-  console.log("consent info of", activeMapset.value)
+const handleShowInfoPopover = function handleShowInfoPopover() {
+  isInfoPopoverOpen.value = true
 }
 
 /**
@@ -99,7 +91,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
   >
     <div
       class="panels transition-transform duration-300"
-      :class="{'-translate-x-full': showMapsetSelection === false}"
+      :class="{'-translate-x-full': isShowingMapsetSelection === false}"
     >
       <Panel 
         subtitle="Selecteer een kaart"
@@ -139,10 +131,10 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
           <h4 class="heading-4">
             {{ activeMapset?.name }}
             <button
-              v-if="activeMapset?.consent"
+              v-if="activeMapset?.note"
               class="-ml-1 p-2 text-green-500 hover:text-green-700"
               type="button"
-              @click.prevent="handleShowConsentModal"
+              @click.prevent="handleShowInfoPopover"
             >
               <InfoIcon
                 class="aspect-square w-4"

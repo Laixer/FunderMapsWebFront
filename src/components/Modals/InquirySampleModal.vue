@@ -152,7 +152,7 @@ const sampleFieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = 
       new FieldDataConfig({ group: 'right', name: 'crackFacadeRightType' }),
       new FieldDataConfig({ group: 'right', name: 'crackFacadeRightSize' }),
 
-      new FieldDataConfig({ group: 'report', name: 'note', source: selectedCaseItem.value?.report }),
+      // new FieldDataConfig({ group: 'report', name: 'note', source: selectedCaseItem.value?.report }),
     ]
   })
 

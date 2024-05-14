@@ -4,14 +4,16 @@ import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
 
 const { closeable } = defineProps({
   title: { type: String, default: '' },
-  variant: { type: String, default: '', validation: (param: string) => ['narrow', 'full'].includes(param) },
-  closeable: { type: Boolean, default: true }
+  variant: { type: String, default: '', validation: (param: string) => ['narrow', 'full', 'popover'].includes(param) },
+  closeable: { type: Boolean, default: true },
+  placing: { type: String, default: 'center', validation: (param: string) => ['start', 'end', 'center'].includes(param)},
+  wrapper: { type: String, default: 'full', validation: (param: string) => ['full', 'main'].includes(param)}
 })
 
 const emit = defineEmits(['close'])
 
 const handleClose = function handleClose() {
-  if(closeable) {
+  if (closeable) {
     emit('close')
   }
 }
@@ -19,18 +21,22 @@ const handleClose = function handleClose() {
 
 <template>
   <div
-    class="app-modal modal | z-20 grid place-items-center overflow-y-auto bg-blue-900/90 p-4"
-    data-variant="full"
+    class="app-modal modal | z-20 grid overflow-y-auto p-4"
+    :class="`place-items-${placing}`"
+    :data-variant="wrapper"
   >
     <div
-      class="panel pointer-events-auto"
+      class="panel pointer-events-auto mt-8"
       aria-role="dialog"
       aria-describedby="dialog-label"
       aria-modal="true"
       :data-variant="variant"
     >
       <header class="panel__header">
-        <h4 v-if="title" id="dialog-label" class="heading-4">{{ title }}</h4>
+        
+        <slot name="footer">
+          <h4 v-if="title" id="dialog-label" class="heading-4">{{ title }}</h4>
+        </slot>
         
         <CloseBtn 
           v-if="closeable" 

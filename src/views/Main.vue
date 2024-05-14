@@ -14,6 +14,9 @@ import ProfileModal from '@/components/Modals/ProfileModal.vue'
 import NoGroupsModal from '@/components/Modals/NoMapsetsModal.vue';
 import InquirySampleModal from '@/components/Modals/InquirySampleModal.vue';
 import RecoverySampleModal from '@/components/Modals/RecoverySampleModal.vue';
+// Popover modals
+import InfoPopoverModal from '@/components/Modals/InfoPopoverModal.vue';
+import RemarkPopoverModal from '@/components/Modals/RemarkPopoverModal.vue';
 
 // Other
 import LoadingIndicator from '@/components/Branding/LoadingIndicator.vue'
@@ -29,6 +32,7 @@ import { useBuildingStore } from "@/store/buildings";
 
 import { useMapsetRouting } from '@/router/mapsetRouting'
 import { useBuildingRouting } from '@/router/buildingRouting'
+
 
 const router = useRouter()
 
@@ -165,6 +169,14 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
     </Transition>
 
     <Transition>
+      <InfoPopoverModal />
+    </Transition>
+
+    <Transition>
+      <RemarkPopoverModal />
+    </Transition>
+
+    <Transition>
       <InquirySampleModal />
     </Transition>
 
@@ -175,6 +187,7 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
     <Transition>
       <ProfileModal />
     </Transition>
+
 
   </div>
 </template>

@@ -1,19 +1,26 @@
 <script setup lang="ts">
-import { ComputedRef, Ref, computed, ref, watch } from 'vue'; 
+import { ComputedRef, Ref, computed, onBeforeUnmount, ref, watch } from 'vue'; 
 import { storeToRefs } from 'pinia';
 
+import TextClamp from 'vue3-text-clamp';
+
+import { IIncidentReport } from '@/datastructures/interfaces';
+
 import Panel from '@/components/Common/Panel.vue';
-import BackLink from '../Common/Links/BackLink.vue';
+import BackLink from '@/components/Common/Links/BackLink.vue';
 
 import LeftArrowIcon from '@assets/svg/icons/arrow-left.svg'
 import RightArrowIcon from '@assets/svg/icons/arrow-right.svg'
+import InfoIcon from '@assets/svg/icons/info.svg'
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs } from '@/utils/fieldData'
 
 import { useIncidentReportsStore } from '@/store/building/incidents';
 import { useBuildingStore } from '@/store/buildings';
-import { IIncidentReport } from '@/datastructures/interfaces';
+import { useMainStore } from '@/store/main';
 
+
+const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
 const { 
   getIncidentReportsByBuildingId, 
   buildingIncidentReportDataHasBeenRetrieved,
@@ -26,6 +33,11 @@ const { buildingId } = storeToRefs(useBuildingStore())
  */ 
 defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
+
+/**
+ * Whether the note is clamped
+ */
+const isClamped = ref(false)
 
 /**
  * Data source for panel
@@ -131,6 +143,27 @@ watch(
   }
 )
 
+watch(
+  () => selectedCaseItem.value,
+  (caseItem) => {
+
+    // Whatever changes, close the popover
+    isRemarkPopoverOpen.value = false
+
+    if (caseItem) {
+      const noteFieldData = retrieveAndFormatFieldData(
+        new FieldDataConfig({ name: 'note', source: caseItem })
+      )
+
+      remarkPopoverTitle.value = noteFieldData.label || ''
+      remarkPopoverText.value = noteFieldData?.value?.toString() || ''
+    }
+  }, 
+  { immediate: true }
+)
+
+onBeforeUnmount(() => isRemarkPopoverOpen.value = false)
+
 
 /**
  * Navigation between cases
@@ -148,6 +181,21 @@ const handlePrev = function handlePrev() {
 const resetListValue = function resetListValue() {
   selectedListIndex.value = 0
 }
+
+/**
+ * Handle opening the remark popover
+ */
+const handleOpenRemarkPopover = function handleOpenRemarkPopover() {
+  isRemarkPopoverOpen.value = true
+}
+
+/**
+ * Fires when the remarks are clamped
+ */
+const handleClamped = function handleClamped(clamped: boolean) {
+  isClamped.value = clamped
+}
+
 </script>
 
 <template>
@@ -201,8 +249,28 @@ const resetListValue = function resetListValue() {
           <div 
             v-for="field in fieldsWithData" 
             :key="field.name">
-            <dt>{{ field.label }}</dt>
-            <dd class="text-grey-700">{{ field.value }}</dd>
+            <dt>
+              <span>{{ field.label }}</span>
+              <button
+                v-if="field.name === 'note' && isClamped === true"
+                class="-ml-1 p-2 text-green-500 hover:text-green-700"
+                type="button"
+                @click.prevent="handleOpenRemarkPopover"
+              >
+                <InfoIcon
+                  class="aspect-square w-4"
+                  aria-hidden="true"
+                />
+              </button>
+            </dt>
+            <dd class="text-grey-700">
+              <TextClamp 
+                v-if="field.name === 'note'" 
+                :text="field.value" 
+                :max-lines="3"
+                @clampChange="handleClamped" />
+              <span v-else>{{ field.value }}</span>
+            </dd>
           </div>
         </dl>
       </div>

@@ -2,7 +2,7 @@
 
 import Modal from '@/components/Common/Modal.vue'
 
-const { closeable } = defineProps({
+defineProps({
   title: { type: String, default: '' },
   variant: { type: String, default: '', validation: (param: string) => ['narrow', 'full'].includes(param) },
   closeable: { type: Boolean, default: true }

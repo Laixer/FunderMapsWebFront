@@ -22,6 +22,7 @@ const handleClose = function handleClose() {
     :title="title" 
     :variant="variant" 
     :closeable="closeable" 
+    class="bg-blue-900/90"
     @click.self="handleClose"
     @close="emit('close')">
     <slot />
