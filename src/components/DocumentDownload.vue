@@ -8,7 +8,7 @@ import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 
 
 const { sourceType, filename, id } = defineProps({
-  id: { type: String, required: true },
+  id: { type: [String,Number], required: true },
   sourceType: { type: String, required: true, validator: (value: string) => ['incident', 'inquiry', 'recovery'].includes(value) },
   filename: { type: String, required: true },
   title: { type: String, default: 'Onderzoeksbestand' },

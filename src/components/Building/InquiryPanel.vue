@@ -153,7 +153,7 @@ const downloadDetails = computed(() => {
   }
 
   return {
-    id: buildingId.value,
+    id: selectedCaseItem.value.report.id,
     type: 'inquiry',
     filename
   }
