@@ -7,8 +7,10 @@
  */
 
 
+import {  App } from "vue";
+
 const currentValueProp = "vLineClampValue";
-const truncateText = function (el, bindings) {
+const truncateText = function (el: any, bindings: any) {
   let limit = parseInt(bindings.value);
 
   if (isNaN(limit)) {
@@ -20,14 +22,13 @@ const truncateText = function (el, bindings) {
   }
 };
 
-const isTextClamped = elm => elm.scrollHeight > elm.clientHeight
+const isTextClamped = (elm: HTMLElement) => elm.scrollHeight > elm.clientHeight
 
 const VueLineClamp = {
-  install(app, options) {
+  install(app: App, options: any) {
 
     options = Object.assign(
       {
-        useClass: false,
         useImportant: false,
         textOverflow: "",
         wordBreak: "break-word",
@@ -45,31 +46,11 @@ const VueLineClamp = {
       text-overflow: ${options.textOverflow} ${imp};
     `;
 
-    if (options.useClass) {
-      const stylesheets = window.document.styleSheets;
-      const rule = `.vue-line-clamp{${styles}}`;
-
-      if (stylesheets && stylesheets[0] && stylesheets.insertRule) {
-        stylesheets.insertRule(rule);
-      } else {
-        let link = window.document.createElement("style");
-
-        link.appendChild(window.document.createTextNode(rule));
-        window.document.head.appendChild(link);
-      }
-    }
-
     app.directive("line-clamp", {
-      currentValue: 0,
-
-      beforeMount(el) {
-        if (!options.useClass) {
-          el.style.cssText += styles;
-        } else {
-          el.classList.add("vue-line-clamp");
-        }
+      beforeMount(el: HTMLElement) {
+        el.style.cssText += styles;
       },
-      mounted: (el, bindings) => {
+      mounted: (el: HTMLElement, bindings: any) => {
         truncateText(el, bindings)
 
         el.dispatchEvent(
@@ -79,7 +60,7 @@ const VueLineClamp = {
           }),
         )
       },
-      updated: (el, bindings) => {
+      updated: (el: HTMLElement, bindings: any) => {
         truncateText(el, bindings)
 
         el.dispatchEvent(
