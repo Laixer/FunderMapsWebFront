@@ -192,9 +192,9 @@ const handleOpenRemarkPopover = function handleOpenRemarkPopover() {
 /**
  * Fires when the remarks are clamped
  */
-// const handleClamped = function handleClamped(clamped: boolean) {
-//   isClamped.value = clamped
-// }
+const handleClamped = function handleClamped(clamped: CustomEvent) {
+  isClamped.value = !!clamped.detail
+}
 
 </script>
 
@@ -264,12 +264,11 @@ const handleOpenRemarkPopover = function handleOpenRemarkPopover() {
               </button>
             </dt>
             <dd class="text-grey-700">
-              <!-- <TextClamp 
+              <p 
                 v-if="field.name === 'note'" 
-                :text="field.value" 
-                :max-lines="3"
-                @clampChange="handleClamped" />
-              <span v-else>{{ field.value }}</span> -->
+                v-line-clamp="3"
+                @clamped="handleClamped">{{ field.value }}</p>
+              <span v-else>{{ field.value }}</span>
             </dd>
           </div>
         </dl>
