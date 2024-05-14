@@ -1,4 +1,4 @@
-import { watch, onMounted } from "vue"
+import { watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useMainStore } from "@/store/main"
 import { useSessionStore } from "@/store/session"
