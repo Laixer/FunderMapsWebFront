@@ -19,6 +19,7 @@ import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataCon
 import { useBuildingStore } from '@/store/buildings';
 import { useInquiriesStore } from '@/store/building/inquiries';
 import { useMainStore } from '@/store/main';
+import DocumentDownload from '../DocumentDownload.vue';
 
 const { getCombinedInquiryDataByBuildingId, buildingInquiryDataHasBeenRetrieved, buildingHasInquiries } = useInquiriesStore()
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useInquiriesStore())
@@ -30,6 +31,10 @@ const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRe
  */ 
 defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
+
+/******************************************************************************
+ * Refs & Computed 
+ */
 
 /**
  * Whether the note is clamped
@@ -102,7 +107,7 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'auditStatus', source: selectedCaseItem.value?.report.state }),
       new FieldDataConfig({ name: 'standardF3o' }),
       new FieldDataConfig({ name: 'inspection' }),
-      // new FieldDataConfig({ name: 'link naar rapport' }),
+      new FieldDataConfig({ name: 'documentName' }),
       new FieldDataConfig({ name: 'jointMeasurement' }),
       new FieldDataConfig({ name: 'floorMeasurement' }),
       new FieldDataConfig({ name: 'note' })
@@ -118,6 +123,45 @@ const reportFieldsWithData = computed(() => {
 const hasSampleData = computed(() => {
   return !! (selectedCaseItem.value?.sample)
 })
+
+/**
+ * Download information
+ */
+const downloadDetails = computed(() => {
+
+  if (! buildingId.value) return null
+
+  const documentFile = selectedCaseItem.value?.report.documentFile
+  if (! documentFile) return null
+
+  let filename = selectedCaseItem.value?.report.documentName || 'Onderzoeksdocument'
+
+  // If we have a filename, that does not look to have an extension, while the document file appears to have one
+  if (
+    filename && 
+    // No extension here
+    filename.charAt(filename.length - 4) !== '.' && 
+    filename.charAt(filename.length - 5) !== '.' && 
+    // We do have an extension here
+    ( 
+      documentFile.charAt(documentFile.length - 4) === '.' ||
+      documentFile.charAt(documentFile.length - 5) === '.' 
+    )
+  ) {
+    const ext = documentFile.split('.').reverse()[0]
+    filename = `${filename}.${ext}`
+  }
+
+  return {
+    id: buildingId.value,
+    type: 'inquiry',
+    filename
+  }
+})
+
+/******************************************************************************
+ * Watchers & Lifecycle
+ */
 
 /**
  * When the building changes, reset the selectedIndex
@@ -139,6 +183,9 @@ watch(
   }
 )
 
+/**
+ * Remarks popover
+ */
 watch(
   () => selectedCaseItem.value,
   (caseItem) => {
@@ -157,9 +204,12 @@ watch(
   }, 
   { immediate: true }
 )
-
 onBeforeUnmount(() => isRemarkPopoverOpen.value = false)
 
+
+/******************************************************************************
+ * Event handlers
+ */
 
 /**
  * Navigation between cases
@@ -178,18 +228,12 @@ const resetListValue = function resetListValue() {
   shownReportIndex.value = 0
 }
 
-/**
- * Handle opening the sample modal
- */
 const handleOpenModal = function handleOpenModal() {
   if (hasSampleData.value) {
     isSamplePanelOpen.value = true
   }
 }
 
-/**
- * Handle opening the remark popover
- */
 const handleOpenRemarkPopover = function handleOpenRemarkPopover() {
   isRemarkPopoverOpen.value = true
 }
@@ -277,6 +321,12 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
             </dd>
           </div>
         </dl>
+        <template v-if="downloadDetails">
+          <DocumentDownload 
+            :id="downloadDetails.id" 
+            :source-type="downloadDetails.type" 
+            :filename="downloadDetails.filename" />
+        </template>
       </div>
 
       <OutlineButton
