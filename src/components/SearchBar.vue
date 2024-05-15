@@ -153,11 +153,8 @@ const onHover = function onHover(index: number) {
 const verifyBuildingId = async function verifyBuildingId(id: string) {
   try {
     await getLocationInformationByBuildingId(id)
-
     return true
   } catch(e) {
-
-    console.log(e)
     return false
   }
 }
