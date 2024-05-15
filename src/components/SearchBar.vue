@@ -17,6 +17,7 @@ import { IPDOKSuggestion } from '@/datastructures/interfaces';
 
 import { useMainStore } from '@/store/main';
 import { useBuildingRouting } from '@/router/buildingRouting'
+import { getLocationInformationByBuildingId } from '@/services/api/building';
 
 const { mapCenterLatLon } = storeToRefs( useMainStore() )
 
@@ -42,7 +43,33 @@ const error = ref(false)
  */
 watch(
   () => debouncedQueryString.value,
-  async (value: string) => await handleGetSuggestions(value)
+  async (value: string) => {
+
+    value = value.trim()
+
+    // Directly open a known buildingId
+    if (
+      (value.length === 16 && /^[0-9]+$/.test(value)) ||
+      (value.includes('BAG') || value.includes('bag'))
+    ) {
+      const buildingIdVerified = await verifyBuildingId(value)
+      if (buildingIdVerified) {
+        buildingRouting.navigateToBuilding(value)
+        return
+      }
+    }
+    
+    await handleGetSuggestions(value)
+
+    // no results and query string longer than 10 characters? Let's give the Fundermaps API a try
+    if (suggestions.length === 0 && value.length > 10) {
+      const buildingIdVerified = await verifyBuildingId(value)
+      if (buildingIdVerified) {
+        buildingRouting.navigateToBuilding(value)
+        return
+      }
+    }
+  }
 )
 
 /**
@@ -119,6 +146,22 @@ const handleKeyDown = async function handleKeyDown(event: KeyboardEvent) {
 const onHover = function onHover(index: number) {
   focusedSuggestion.value = index
 }
+
+/**
+ * Get the building Id from Fundermaps API
+ */
+const verifyBuildingId = async function verifyBuildingId(id: string) {
+  try {
+    await getLocationInformationByBuildingId(id)
+
+    return true
+  } catch(e) {
+
+    console.log(e)
+    return false
+  }
+}
+
 
 /**
  * Handle getting the suggestions from PDOK
