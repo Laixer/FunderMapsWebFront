@@ -13,6 +13,7 @@ let accessTokenRefreshInterval: ReturnType<typeof setTimeout>|null = null
  * Try to continue from the access token if there is one
  */ 
 try {
+  console.log("test build")
   authenticateFromAccessToken()
   refreshAccessToken()
 } catch(e) {
