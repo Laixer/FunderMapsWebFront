@@ -26,7 +26,7 @@ const handleClose = function handleClose() {
     :data-variant="wrapper"
   >
     <div
-      class="panel pointer-events-auto mt-8"
+      class="panel pointer-events-auto"
       aria-role="dialog"
       aria-describedby="dialog-label"
       aria-modal="true"
