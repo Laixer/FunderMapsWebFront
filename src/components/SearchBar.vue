@@ -62,7 +62,7 @@ watch(
     await handleGetSuggestions(value)
 
     // no results and query string longer than 10 characters? Let's give the Fundermaps API a try
-    if (suggestions.length === 0 && value.length > 10) {
+    if (suggestions.value.length === 0 && value.length > 10) {
       const buildingIdVerified = await verifyBuildingId(value)
       if (buildingIdVerified) {
         buildingRouting.navigateToBuilding(value)
