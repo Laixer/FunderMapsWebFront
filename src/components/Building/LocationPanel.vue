@@ -53,6 +53,7 @@ const fieldsWithData = computed(() => {
 <template>
   <Panel 
     title="Locatie" 
+    icon="pin"
     :subtitle="address || ''"
     @close="emit('close')">
 

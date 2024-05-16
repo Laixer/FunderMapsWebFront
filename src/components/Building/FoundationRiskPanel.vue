@@ -108,6 +108,7 @@ const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithI
 <template>
   <Panel 
     title="Funderingsrisico" 
+    icon="alert"
     :subtitle="address || ''"
     @close="emit('close')"
     class="FoundationRiskPanel">

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
+import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 
 const { closeable } = defineProps({
   title: { type: String, default: null },
+  icon: { type: String, default: null },
   subtitle: { type: String, default: null },
   closeable: { type: Boolean, default: true }
 })
@@ -18,7 +20,13 @@ const handleClose = function handleClose() {
 
 <template>
   <div class="panel">
-    <div class="panel__header">
+    <div class="panel__header items-center gap-2">
+      <FundermapsIcon
+        v-if="icon"
+        :name="icon"
+        class="accent-color-blue aspect-square w-4"
+        aria-hidden="true"
+      />
       <h6 v-if="title" class="heading-6">{{ title }}</h6>
       <CloseBtn 
         v-if="closeable"

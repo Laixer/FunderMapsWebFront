@@ -101,6 +101,7 @@ const fieldsWithData = computed(() => {
 <template>
   <Panel 
     title="Fundering" 
+    icon="file-foundation"
     :subtitle="address || ''"
     @close="emit('close')">
 

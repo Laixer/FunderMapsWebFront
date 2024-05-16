@@ -65,6 +65,7 @@ const fieldsWithData = computed(() => {
 <template>
   <Panel 
     title="Pand" 
+    icon="building"
     :subtitle="address || ''"
     @close="emit('close')">
 
