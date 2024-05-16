@@ -7,8 +7,6 @@ import AccordionItem from '@/components/Common/Accordion/AccordionItem.vue';
 import MenuLink from '@/components/Common/Links/MenuLink.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
 import Panel from '@/components/Common/Panel.vue';
-// import BlockLinkGroup from '@/components/Common/Links/BlockLinkGroup.vue';
-// import BlockLink from '@/components/Common/Links/BlockLink.vue'
 
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 import InfoIcon from '@assets/svg/icons/info.svg'
@@ -109,15 +107,6 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
             />
           </MenuLink>
         </section>
-
-        <!-- <BlockLinkGroup>
-          <BlockLink 
-            title="Verhouding aantal fundering in de buurt"
-            label="Bekijk grafiek" />
-          <BlockLink 
-            title="Verhouding aantal soorten risico's in de buurt"
-            label="Bekijk grafiek" />
-        </BlockLinkGroup> -->
       </Panel>
 
       <Panel
