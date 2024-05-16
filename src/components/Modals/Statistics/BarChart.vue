@@ -2,7 +2,7 @@
 
 // import StatisticsModal from '@/components/Modals/StatisticsModal.vue'
 import { CHART_TRANSPARENT_COLORS, CHART_COLORS } from '@/config';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 import { onMounted, ref } from 'vue';
 
 const { 
