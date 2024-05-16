@@ -32,6 +32,7 @@ import { useBuildingStore } from "@/store/buildings";
 
 import { useMapsetRouting } from '@/router/mapsetRouting'
 import { useBuildingRouting } from '@/router/buildingRouting'
+import StatisticsModal from '@/components/Modals/StatisticsModal.vue';
 
 
 const router = useRouter()
@@ -180,6 +181,10 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
 
     <Transition>
       <RecoverySampleModal />
+    </Transition>
+
+    <Transition>
+      <StatisticsModal />
     </Transition>
 
     <Transition>

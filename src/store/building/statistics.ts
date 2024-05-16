@@ -7,6 +7,16 @@ import { useSessionStore } from '../session';
 
 
 /**
+ * Whether to show the statistics modal
+ */
+const showStatisticsModal = ref(false)
+
+/**
+ * 
+ */
+const statisticsGraph: Ref<string|null> = ref(null)
+
+/**
  * Statistics data by Building Id
  */
 const statisticsDataByBuildingId: Ref<Record<string, IStatistics>> = ref({})
@@ -15,6 +25,8 @@ const statisticsDataByBuildingId: Ref<Record<string, IStatistics>> = ref({})
  * Whether currently data for a building is being loaded
  */
 const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
+
+
 
 /**
  * Whether the statistics data for a building have been retrieved previously
@@ -104,7 +116,12 @@ function useStatistics() {
     buildingHasStatisticsData,
     getStatisticsDataByBuildingId,
 
-    loadStatisticsDataByBuildingId
+    loadStatisticsDataByBuildingId,
+
+    // Statistics modal
+    showStatisticsModal,
+    statisticsGraph
+    
   }
 }
 
