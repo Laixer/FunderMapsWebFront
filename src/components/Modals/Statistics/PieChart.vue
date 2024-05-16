@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
+import { onMounted, ref } from 'vue';
+
 // import StatisticsModal from '@/components/Modals/StatisticsModal.vue'
 import { CHART_TRANSPARENT_COLORS } from '@/config';
 import Chart from 'chart.js/auto';
-import { onMounted, ref } from 'vue';
 
 const { 
   title, labels, data, backgroundColors 
@@ -11,7 +12,7 @@ const {
   title?: string,
   labels?: string[],
   data?: string[]|number[],
-  backgroundColor?: string[]
+  backgroundColors?: string[]
 }>(), {
   title: 'Statistiek',
   labels: () => ['red', 'blue', 'green'],
@@ -19,6 +20,12 @@ const {
   backgroundColors: () => Object.values(CHART_TRANSPARENT_COLORS)
 })
 
+
+onMounted(() => {
+  console.log(title)
+  console.log(data)
+  console.log(backgroundColors)
+})
 
 // const emit = defineEmits(['close'])
 

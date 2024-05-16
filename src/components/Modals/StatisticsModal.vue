@@ -10,7 +10,8 @@ import HorizontalBarChart from '@/components/Modals/Statistics/HorizontalBarChar
 
 import { useBuildingStore } from "@/store/buildings";
 import { useStatisticsStore } from '@/store/building/statistics';
-import { IConstructionYearPair, IFoundationTypePair } from '@/datastructures/interfaces/api/IStatistics';
+import { IConstructionYearPair, IFoundationTypePair, IIncidentYearPair, IInquiryYearPair } from '@/datastructures/interfaces/api/IStatistics';
+import { CHART_COLORS, CHART_TRANSPARENT_COLORS } from '@/config';
 
 const { buildingId } = storeToRefs(useBuildingStore())
 const { getStatisticsDataByBuildingId } = useStatisticsStore()
@@ -110,6 +111,39 @@ const labels = computed(() => {
       return Object.keys(buildingStatistics.value?.foundationRiskDistribution)
         .map(key => key.replace('percentage', ''))
 
+    // TODO: API does not yet provide graph data
+    case 'totalBuildingRestoredCount':
+      if (! buildingStatistics.value?.totalBuildingRestoredCount) return []
+
+      return [ 'Aantal' ]
+
+    case 'totalIncidentCount':
+      if (! buildingStatistics.value?.totalIncidentCount) return []
+
+      return buildingStatistics.value.totalIncidentCount.map((decade: IIncidentYearPair) => {
+        return decade.year
+      })
+
+    case 'municipalityIncidentCount':
+      if (! buildingStatistics.value?.municipalityIncidentCount) return []
+
+      return buildingStatistics.value.municipalityIncidentCount.map((decade: IIncidentYearPair) => {
+        return decade.year
+      })
+
+    case 'totalReportCount': 
+      if (! buildingStatistics.value?.totalReportCount) return []
+
+      return buildingStatistics.value.totalReportCount.map((decade: IInquiryYearPair) => {
+        return decade.year
+      })
+
+    case 'municipalityReportCount': 
+      if (! buildingStatistics.value?.municipalityReportCount) return []
+
+      return buildingStatistics.value.municipalityReportCount.map((decade: IInquiryYearPair) => {
+        return decade.year
+      })
 
   }
 
@@ -172,9 +206,42 @@ const data = computed(() => {
     case 'foundationRiskDistribution':
       if (! buildingStatistics.value?.foundationRiskDistribution) return []
 
-      return Object.values(buildingStatistics.value?.foundationRiskDistribution)
+      return Object.values(buildingStatistics.value.foundationRiskDistribution)
+
+    // TODO: API does not yet provide graph data
+    case 'totalBuildingRestoredCount':
+      if (! buildingStatistics.value?.totalBuildingRestoredCount) return []
+
+      return [ buildingStatistics.value.totalBuildingRestoredCount ]
+
+    case 'totalIncidentCount':
+      if (! buildingStatistics.value?.totalIncidentCount) return []
+
+      return buildingStatistics.value.totalIncidentCount.map((decade: IIncidentYearPair) => {
+        return decade.totalCount
+      })
+
+    case 'municipalityIncidentCount':
+      if (! buildingStatistics.value?.municipalityIncidentCount) return []
+
+      return buildingStatistics.value.municipalityIncidentCount.map((decade: IIncidentYearPair) => {
+        return decade.totalCount
+      })
+
+    case 'totalReportCount': 
+      if (! buildingStatistics.value?.totalReportCount) return []
+
+      return buildingStatistics.value.totalReportCount.map((decade: IInquiryYearPair) => {
+        return decade.totalCount
+      })
 
 
+    case 'municipalityReportCount': 
+      if (! buildingStatistics.value?.municipalityReportCount) return []
+
+      return buildingStatistics.value.municipalityReportCount.map((decade: IInquiryYearPair) => {
+        return decade.totalCount
+      })
   }
 
   return [300, 200, 600]
@@ -194,19 +261,21 @@ const backgroundColors = computed(() => {
         'E': '#ED1C24'
       }
 
-      return labels.value.map((label: string) => riskColorMap[label as keyof typeof riskColorMap] || '')
-
-    case '':
-      return []
+      return labels.value
+        // @ts-ignore 
+        .map((label: string) => (riskColorMap[label as keyof typeof riskColorMap] || ''))
   }
 
-  return []
+  return Object.values(CHART_TRANSPARENT_COLORS)
+})
+
+const borderColors = computed(() => {
+  return Object.values(CHART_COLORS)
 })
 
 
 const handleClose = function handleClose() {
   showStatisticsModal.value = false
-  
 }
 
 </script>
@@ -225,7 +294,8 @@ const handleClose = function handleClose() {
         :title="title" 
         :labels="labels"
         :data="data"
-        :backgroundColors="backgroundColors"
+        :background-colors="backgroundColors"
+        :border-colors="borderColors"
       />
     </div>
   </OverlayModal>
