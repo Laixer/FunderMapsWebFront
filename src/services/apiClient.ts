@@ -28,7 +28,7 @@ const passAuthCheckOrExit = function passAuthOrThrowException(requireAuth: boole
       const route = useRoute()
       if (route.name !== 'Login') {
         const router = useRouter()
-        router.push({ name: 'Login' })
+        router.push({ name: 'login' })
       }
       return
     } else {
