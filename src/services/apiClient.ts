@@ -23,6 +23,9 @@ const passAuthCheckOrExit = function passAuthOrThrowException(requireAuth: boole
       }
     }
   } catch(e) {
+    console.log("failed to pass auth check")
+    console.log(e)
+
     // When auth is required & missing / expired => redirect to login
     if (autoredirect) {
       const route = useRoute()
@@ -49,6 +52,8 @@ export const makeCall = async function makeCall({
   let fetchOptions = {}
   let responseBody = null
 
+  console.log(endpoint, body, requireAuth)
+
   try {
     passAuthCheckOrExit(requireAuth, autoredirect)
 
@@ -56,7 +61,7 @@ export const makeCall = async function makeCall({
       method,
       headers: Object.assign(
         // Note: requireAuth = false also includes the header if it is available
-        getAuthHeader() as object, 
+        requireAuth ? getAuthHeader() as object : {}, 
         {
           "Content-Type": "application/json",
         }

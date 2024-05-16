@@ -47,7 +47,7 @@ export const getAvailableMapsets = async function getAvailableMapsets(): Promise
 
 export const getPublicAndAvailableMapsetsById = async function getAvailableMapsets(id: string): Promise<IMapsetFE[]|null> {
   console.log(id)
-  const response = await get({ endpoint: `/mapset/${id}` }) // TODO: Change endpoint
+  const response = await get({ endpoint: `/mapset/${id}`, requireAuth: false }) // TODO: Change endpoint
   if (response) {
     return response.map(mapMapset)
   }
