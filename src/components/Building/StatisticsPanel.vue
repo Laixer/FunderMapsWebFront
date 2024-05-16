@@ -49,7 +49,8 @@ const handleOpenChart = function handleOpenChart(name: string) {
           @click="handleOpenChart('foundationTypeDistribution')" />
         <BlockLink 
           title="Verhouding aantal soorten risico's in de buurt"
-          label="Bekijk grafiek" />
+          label="Bekijk grafiek"
+          @click="handleOpenChart('constructionYearDistribution')" />
       </BlockLinkGroup>
     </section>
   </Panel>

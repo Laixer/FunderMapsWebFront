@@ -10,7 +10,7 @@ import HorizontalBarChart from '@/components/Modals/Statistics/HorizontalBarChar
 
 import { useBuildingStore } from "@/store/buildings";
 import { useStatisticsStore } from '@/store/building/statistics';
-import { IFoundationTypePair } from '@/datastructures/interfaces/api/IStatistics';
+import { IConstructionYearPair, IFoundationTypePair } from '@/datastructures/interfaces/api/IStatistics';
 
 const { buildingId } = storeToRefs(useBuildingStore())
 const { getStatisticsDataByBuildingId } = useStatisticsStore()
@@ -95,6 +95,22 @@ const labels = computed(() => {
     case 'foundationTypeDistribution': 
 
       return ['Betonnen', 'Houten paal met betonoplanger', 'Houten palen', 'Niet onderheid', 'Overige']
+
+    case 'constructionYearDistribution':
+  
+      if (! buildingStatistics.value?.constructionYearDistribution) return []
+
+      return buildingStatistics.value.constructionYearDistribution.decades.map((decade: IConstructionYearPair) => {
+        return `${decade.decade.yearFrom.substring(0, 4)}-${decade.decade.yearTo.substring(0, 4)}`
+      })
+
+    case 'foundationRiskDistribution':
+      if (! buildingStatistics.value?.foundationRiskDistribution) return []
+
+      return Object.keys(buildingStatistics.value?.foundationRiskDistribution)
+        .map(key => key.replace('percentage', ''))
+
+
   }
 
   return ['red', 'blue', 'yellow']
@@ -144,6 +160,21 @@ const data = computed(() => {
             return acc
         }
       }, [0, 0, 0, 0, 0])
+
+    case 'constructionYearDistribution':
+  
+      if (! buildingStatistics.value?.constructionYearDistribution) return []
+
+      return buildingStatistics.value.constructionYearDistribution.decades.map((decade: IConstructionYearPair) => {
+        return decade.totalCount
+      })
+
+    case 'foundationRiskDistribution':
+      if (! buildingStatistics.value?.foundationRiskDistribution) return []
+
+      return Object.values(buildingStatistics.value?.foundationRiskDistribution)
+
+
   }
 
   return [300, 200, 600]
@@ -153,7 +184,20 @@ const backgroundColors = computed(() => {
  switch(statisticsGraph.value) {
     case 'foundationTypeDistribution': 
       return ['#7f8fa4', '#c9b441', '#7b2a2d', '#ce0015', '#ffcc69']
-    
+
+    case 'foundationRiskDistribution':
+      const riskColorMap = {
+        'A': '#28CC8B',
+        'B': '#A7DDB7',
+        'C': '#FFCC69',
+        'D': '#FF7D1F',
+        'E': '#ED1C24'
+      }
+
+      return labels.value.map((label: string) => riskColorMap[label as keyof typeof riskColorMap] || '')
+
+    case '':
+      return []
   }
 
   return []
