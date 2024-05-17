@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { WatchStopHandle, onBeforeUnmount, ref, watch } from 'vue';
+import { Ref, onBeforeUnmount, ref, watch } from 'vue'; 
 import { storeToRefs } from 'pinia';
 
 import MapBox from '../Common/Mapbox/MapBox.vue';
@@ -11,7 +11,7 @@ import { useLayerVisibility } from './useLayerVisibility'
 import { useMunicipalityFilter } from './useMunicipalityFilter'
 import { useMapsetStyle } from './useMapsetStyle'
 import { useMapCenterManagement } from './useMapCenterManagement'
-import { useBuildingMarker } from './marker'
+import { useBuildingMarker } from './useBuildingMarker'
 import { useMapboxControlNudge } from './useMapboxControlNudge';
 
 import { 
@@ -31,10 +31,7 @@ const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
 const emit = defineEmits(['ready'])
 
 // The Mapbox Map instance
-let mapInstance: Map|null = null
-
-// Handle to stop the watcher that positions the building pin
-let buildingMarkerWatchStopHandle: WatchStopHandle|null = null
+let mapInstance: Ref<Map|null> = ref(null)
 
 // Whether the initial map style has been set
 const hasSetInitialStyle = ref(false)
@@ -46,6 +43,8 @@ const LayerVisibility = useLayerVisibility()
 const MunicipalityFilter = useMunicipalityFilter()
 const MapsetStyle = useMapsetStyle()
 const MapCenterManagement = useMapCenterManagement()
+useBuildingMarker(mapInstance)
+
 
 // Update the query string in the route when the map center changes. Navigate to the LngLat from the query string when opening a mapset page
 const { getLatLngFromQueryString } = useMapCenterRouting()
@@ -74,7 +73,7 @@ let options = ref({
  * Whenever the mapset changes for the first time, set the options.style
  */
 watch(() => activeMapset.value, (mapset) => {
-  if (! mapInstance && mapset?.style !== undefined) {
+  if (! mapInstance.value && mapset?.style !== undefined) {
     options.value.style = mapset?.style
 
     setTimeout(() => {
@@ -85,10 +84,7 @@ watch(() => activeMapset.value, (mapset) => {
 
 const onLoad = function onLoad({ map }: { map: Map }) {
   
-  mapInstance = map
-
-  // Attach the building marker
-  buildingMarkerWatchStopHandle = useBuildingMarker(map)
+  mapInstance.value = map
 
   MunicipalityFilter.attachMap(map) 
   MapEvents.attachMap(map)
@@ -117,10 +113,6 @@ onBeforeUnmount(() => {
   LayerVisibility.disconnect()
   MapsetStyle.disconnect()
   MapCenterManagement.disconnect()
-
-  if (buildingMarkerWatchStopHandle) {
-    buildingMarkerWatchStopHandle()
-  }
 })
 
 </script>
@@ -130,4 +122,4 @@ onBeforeUnmount(() => {
     v-if="hasSetInitialStyle"
     :options="options" 
     @load="onLoad" />
-</template>./useMapboxControlNudge
+</template>
