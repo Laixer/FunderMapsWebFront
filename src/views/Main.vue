@@ -33,6 +33,7 @@ import { useBuildingStore } from "@/store/buildings";
 import { useMapsetRouting } from '@/router/mapsetRouting'
 import { useBuildingRouting } from '@/router/buildingRouting'
 import StatisticsModal from '@/components/Modals/StatisticsModal.vue';
+import DisclaimerModal from '@/components/Modals/DisclaimerModal.vue';
 
 
 const router = useRouter()
@@ -188,9 +189,12 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
     </Transition>
 
     <Transition>
-      <ProfileModal />
+      <DisclaimerModal />
     </Transition>
 
+    <Transition>
+      <ProfileModal />
+    </Transition>
 
   </div>
 </template>
