@@ -1,14 +1,12 @@
 <script setup lang="ts">
 
-import { onMounted, ref } from 'vue';
+import { onMounted, watch, ref } from 'vue';
 
 // import StatisticsModal from '@/components/Modals/StatisticsModal.vue'
 import { CHART_TRANSPARENT_COLORS } from '@/config';
 import Chart from 'chart.js/auto';
 
-const { 
-  title, labels, data, backgroundColors 
-} = withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   title?: string,
   labels?: string[],
   data?: string[]|number[],
@@ -20,26 +18,22 @@ const {
   backgroundColors: () => Object.values(CHART_TRANSPARENT_COLORS)
 })
 
-
-onMounted(() => {
-  console.log(title)
-  console.log(data)
-  console.log(backgroundColors)
-})
-
-// const emit = defineEmits(['close'])
+// @ts-ignore: No time to deep dive into all the TS particulars of Chart.js
+let chart: any|null = null
 
 // Reference to Chart canvas element
 const canvas = ref<HTMLCanvasElement>();
 
-onMounted(() => {
+const createChart = function createChart(
+  title: string, labels: string[], data: string[]|number[], backgroundColors: string[]
+) {
   if (! canvas.value || ! canvas.value.getContext("2d")) {
     console.log("No canvas available...", title)
     return
   } 
 
   // eslint-disable-next-line no-unused-vars
-  const chart = new Chart(
+  chart = new Chart(
     canvas.value.getContext("2d") as CanvasRenderingContext2D, 
     {
       type: "pie",
@@ -59,7 +53,34 @@ onMounted(() => {
 
   // Disable animation in the popup, it is too much
   chart.options.animation = false; 
+}
+
+onMounted(() => {
+  createChart(
+    props.title,
+    props.labels,
+    props.data,
+    props.backgroundColors
+  )
 })
+
+watch(
+  () => props,
+  (props) => {
+    if (! chart) return 
+
+    chart.destroy()
+    createChart(
+      props.title,
+      props.labels,
+      props.data,
+      props.backgroundColors
+    )
+  },
+  {
+    deep: true
+  }
+)
 
 </script>
 
