@@ -348,10 +348,10 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
 
 <template>
   <div
+    v-if="isOpen && hasSelectedBuilding && isAuthenticated"
     class="sidebar app-sidebar--right"
     role="dialog"
     aria-modal="true"
-    v-show="isOpen && hasSelectedBuilding && isAuthenticated"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="translate-x-full"
     x-transition:enter-end="translate-x-0"
