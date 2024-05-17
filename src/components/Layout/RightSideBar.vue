@@ -22,6 +22,7 @@ import StatisticsPanel from '@/components/Building/StatisticsPanel.vue';
 
 import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
 
+import { useSessionStore } from '@/store/session';
 import { useBuildingStore } from "@/store/buildings";
 import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { useAnalysisStore } from '@/store/building/analysis'
@@ -37,6 +38,7 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute()
 const router = useRouter()
 
+const { isAuthenticated } = storeToRefs(useSessionStore())
 const { clearBuildingId } = useBuildingStore()
 
 /**
@@ -349,7 +351,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
     class="sidebar app-sidebar--right"
     role="dialog"
     aria-modal="true"
-    v-show="isOpen && hasSelectedBuilding"
+    v-show="isOpen && hasSelectedBuilding && isAuthenticated"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="translate-x-full"
     x-transition:enter-end="translate-x-0"

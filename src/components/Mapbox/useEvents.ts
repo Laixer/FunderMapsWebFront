@@ -10,11 +10,15 @@ import { storeToRefs } from "pinia";
 import { useMapsetStore } from '@/store/mapsets';
 import { useBuildingRouting } from '@/router/buildingRouting'
 import { IMapsetFE } from "@/datastructures/interfaces";
+import { useSessionStore } from "@/store/session";
 
 export const useEvents = function useEvents() {
 
   const { activeMapset } = storeToRefs( useMapsetStore() )
   const buildingRouting = useBuildingRouting()
+
+  const sessionStore = useSessionStore()
+  const { isAuthenticated } = storeToRefs(sessionStore)
 
   let mapInstance: Map|null = null
 
@@ -72,6 +76,11 @@ export const useEvents = function useEvents() {
    * Attach the event handlers to the layers of the active mapset
    */
   const attachEventHandlers = function attachEventHandlers() {
+
+    // Only attach events for authenticated users
+    if (! isAuthenticated.value) return 
+
+    // No mapset to work with
     if (! activeMapset.value) return
 
     activeMapset.value.layerSet
@@ -94,6 +103,20 @@ export const useEvents = function useEvents() {
     (_, oldMapset) => {
       if (mapInstance !== null && oldMapset) {
         removeEventHandlers(oldMapset)
+      }
+    }
+  )
+
+  /**
+   * Attach or remove event handlers if auth state changes
+   */
+  watch(
+    () => isAuthenticated.value,
+    (authenticated) => {
+      if (authenticated) {
+        attachEventHandlers()
+      } else if (activeMapset.value) {
+        removeEventHandlers(activeMapset.value)
       }
     }
   )
