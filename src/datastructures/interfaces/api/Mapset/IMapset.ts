@@ -4,10 +4,13 @@ export interface IMapset {
 
   /**
    * Unique identifier in uuid format
-   *  id & identifier contain duplicate data
    */
   id: string,
-  identifier?: string,
+
+  /**
+   * Unique identifier
+   */
+  slug: string,
   
   /**
    * The readable name

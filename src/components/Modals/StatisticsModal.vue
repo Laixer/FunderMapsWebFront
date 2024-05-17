@@ -262,7 +262,7 @@ const backgroundColors = computed(() => {
       }
 
       return labels.value
-        // @ts-ignore 
+        // @ts-ignore - things became too complex for TS to evaluate properly
         .map((label: string) => (riskColorMap[label as keyof typeof riskColorMap] || ''))
   }
 

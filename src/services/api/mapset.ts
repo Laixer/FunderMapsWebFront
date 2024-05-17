@@ -19,6 +19,7 @@ const mapMapset = function mapMapset(rawmapset: IMapset): IMapsetFE {
 
   return {
     id: rawmapset.id,
+    slug: rawmapset.slug,
     name: rawmapset?.name || 'Onbekende laag',
     style: rawmapset.style,
     layers: rawmapset?.layers || [],
@@ -28,7 +29,8 @@ const mapMapset = function mapMapset(rawmapset: IMapset): IMapsetFE {
     note: rawmapset?.note || null,
     icon: rawmapset?.icon || 'home-info',
     fenceMunicipality: rawmapset?.fenceMunicipality || null,
-    layerSet
+    layerSet,
+    loadedAT: Date.now()
   }
 }
 

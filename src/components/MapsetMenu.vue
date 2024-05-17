@@ -26,7 +26,7 @@ const {
 } = MapsetStore
 
 const { 
-  availableMapsets,
+  availableMapsetsByLoadingOrder,
   hasAvailableMapsets, 
   activeMapset, 
   activeMapsetId
@@ -65,7 +65,7 @@ const handleSelectMapset = function(id: string) {
       class="relative">
 
       <button 
-        v-if="availableMapsets.length !== 1"
+        v-if="availableMapsetsByLoadingOrder.length !== 1"
         @click.prevent="handleToggle" 
         class="button group flex p-0">
 
@@ -94,7 +94,7 @@ const handleSelectMapset = function(id: string) {
 
       <Transition>
         <div
-          v-if="isOpen && availableMapsets.length !== 1"
+          v-if="isOpen && availableMapsetsByLoadingOrder.length !== 1"
           class="dropdown arrow arrow--top-left | absolute -left-7 top-full origin-top-left outline-none"
         >
           <div
@@ -110,7 +110,7 @@ const handleSelectMapset = function(id: string) {
             </div>
             <div class="dropdown__content">
               <ol>
-                <li v-for="Mapset in availableMapsets" :key="Mapset.id">
+                <li v-for="Mapset in availableMapsetsByLoadingOrder" :key="Mapset.id">
                   <a
                     href="#"
                     class="flex gap-3 px-8 py-2 hover:bg-grey-100"

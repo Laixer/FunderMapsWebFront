@@ -22,7 +22,7 @@ const {
 } = mapsetStore
 
 const { isLeftSidebarOpen, isInfoPopoverOpen, isShowingMapsetSelection } = storeToRefs( useMainStore() )
-const { availableMapsets, activeMapset, activeMapsetId } = storeToRefs( mapsetStore )
+const { availableMapsetsByLoadingOrder, activeMapset, activeMapsetId } = storeToRefs( mapsetStore )
 const { changeLayerVisibility } = useLayersStore() 
 const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
 
@@ -96,7 +96,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
         @close="isLeftSidebarOpen = false">
         <section class="grid space-y-2">
           <MenuLink 
-            v-for="mapset in availableMapsets" 
+            v-for="mapset in availableMapsetsByLoadingOrder" 
             :key="mapset.id"
             :label="mapset.name"
             @click.prevent="handleOpenMapsetLegend(mapset.id)">

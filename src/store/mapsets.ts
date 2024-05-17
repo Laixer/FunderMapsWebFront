@@ -12,15 +12,28 @@ import { useSessionStore } from '@/store/session'
 
 /**
  * The map groups available to the user
- *  TODO: Store by id instead of as array ?
  */
-const availableMapsets: Ref<IMapsetFE[]> = ref([])
+const availableMapsetsById: Ref<Record<string, IMapsetFE>> = ref({})
+
+
+const mapsetIdsBySlug = computed(() => {
+  return Object.values(availableMapsetsById.value)
+    .reduce((acc: Record<string, string>, mapset: IMapsetFE) => {
+      acc[mapset.slug] = mapset.id
+      return acc
+    }, {})
+})
+
+const availableMapsetsByLoadingOrder = computed(() => {
+  return Object.values(availableMapsetsById.value)
+    .sort((a, b) => a.loadedAT - b.loadedAT)
+})
 
 /**
  * Used to indicate whether map groups are loaded
  */
 const hasAvailableMapsets = computed<boolean>(() => {
-  return availableMapsets.value.length !== 0
+  return Object.keys(availableMapsetsById.value).length !== 0
 })
 
 /**
@@ -28,7 +41,7 @@ const hasAvailableMapsets = computed<boolean>(() => {
  */
 const hasAvailablePrivateMapsets = computed<boolean>(() => {
   return hasAvailableMapsets.value 
-    && availableMapsets.value.some(mapset => mapset.public !== true)
+    && Object.values(availableMapsetsById.value).some(mapset => mapset.public !== true)
 })
 
 
@@ -61,7 +74,7 @@ const activeMapsetId: Ref<string|null> = ref(null)
 const firstMapsetId = computed<string|null>(() => {
   if (! hasAvailableMapsets.value) return null
 
-  return availableMapsets.value[0].id
+  return availableMapsetsByLoadingOrder.value[0].id
 })
 
 /**
@@ -71,7 +84,7 @@ const defaultMapsetId = computed<string|null>(() => {
 
   const preferredMapsetId = import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99"
 
-  if (getMapsetById(preferredMapsetId)) {
+  if (getMapsetByIdentifier(preferredMapsetId)) {
     return preferredMapsetId
   }
 
@@ -84,23 +97,33 @@ const defaultMapsetId = computed<string|null>(() => {
 const getMapsetById = function getMapsetById(id: string) {
   if (! hasAvailableMapsets.value) return null
 
-  return availableMapsets.value.find( (group: IMapsetFE) => {
-    return group.id === id
-  }) || null
+  return availableMapsetsById.value[id] || null
+}
+
+const getMapsetBySlug = function getMapsetBySlug(slug: string) {
+  const id = mapsetIdsBySlug.value[slug] 
+  return getMapsetById(id)
+}
+
+/**
+ * Accept either id or slug
+ */
+const getMapsetByIdentifier = function getMapsetByIdentifier(identifier: string) {
+  return getMapsetById(identifier) || getMapsetBySlug(identifier)
 }
 
 /**
  * Whether a specific mapset is available
  */
 const isMapsetAvailable = function isMapsetAvailable(mapsetId: string) {
-  return !! getMapsetById(mapsetId)
+  return !! getMapsetByIdentifier(mapsetId)
 }
 
 /**
  * Whether a specific mapset is available & public
  */
 const isPublicMapset = function isPublicMapset(mapsetId: string) {
-  return getMapsetById(mapsetId)?.public === true
+  return getMapsetByIdentifier(mapsetId)?.public === true
 }
 
 /**
@@ -108,7 +131,7 @@ const isPublicMapset = function isPublicMapset(mapsetId: string) {
  */
 const activeMapset = computed<IMapsetFE|null>(() => {
   if (activeMapsetId.value === null) return null
-  return getMapsetById(activeMapsetId.value as string)
+  return getMapsetByIdentifier(activeMapsetId.value as string)
 })
 
 /**
@@ -141,9 +164,7 @@ function useMapsets() {
     if (activeMapset.value?.id === id) return 
 
     // First check whether the group actually is available to the user and loaded
-    const Mapset = availableMapsets.value.find( (group: IMapsetFE) => {
-      return group.id === id
-    }) || null
+    const Mapset = getMapsetByIdentifier(id)
 
     if (Mapset) {
       activeMapsetId.value = id
@@ -163,13 +184,14 @@ function useMapsets() {
     if (response) {
 
       // Merge new (private) mapsets with public mapsets already present
-      availableMapsets.value = availableMapsets.value
-        .filter(mapset => mapset.public === true)
-        .concat(response)
+      removePrivateMapsets()
+      response.forEach((mapset: IMapsetFE) => {
+        availableMapsetsById.value[mapset.id] = mapset
+      })
 
     } else {
       // TODO: Error handling 
-      availableMapsets.value = []
+      removePrivateMapsets()
     }
     
 
@@ -193,9 +215,10 @@ function useMapsets() {
 
       if (response) {
         // Merge the new mapsets with public mapsets already present
-        availableMapsets.value = availableMapsets.value
-          .filter(mapset => mapset.public === true)
-          .concat(response)
+        removePrivateMapsets()
+        response.forEach((mapset: IMapsetFE) => {
+          availableMapsetsById.value[mapset.id] = mapset
+        })
       }
 
     } catch(err) {
@@ -215,9 +238,11 @@ function useMapsets() {
     if (! hasAvailableMapsets.value) return
 
     // Only public mapsets may remain
-    availableMapsets.value = availableMapsets.value
-      .filter(mapset => {
-        return mapset.public === true
+    Object.values(availableMapsetsById.value)
+      .forEach((mapset: IMapsetFE) => {
+        if (! mapset.public) {
+          delete availableMapsetsById.value[mapset.id]
+        }
       })
   }
 
@@ -229,7 +254,8 @@ function useMapsets() {
     // No cleanup needed
     if (! hasAvailableMapsets.value) return
 
-    availableMapsets.value = []
+    // availableMapsets.value = []
+    availableMapsetsById.value = {}
   }
 
   return {
@@ -238,11 +264,13 @@ function useMapsets() {
     loadAvailableMapsets,
     loadAvailableMapsetsById,
     selectMapsetById,
-    availableMapsets,
+    availableMapsetsByLoadingOrder,
     activeMapsetId,
     firstMapsetId,
     defaultMapsetId,
     getMapsetById,
+    getMapsetBySlug,
+    getMapsetByIdentifier,
     activeMapset,
     hasAvailableMapsets,
     hasAvailablePrivateMapsets,

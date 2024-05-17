@@ -4,9 +4,13 @@ export interface IMapsetFE {
 
   /**
    * Unique identifier in uuid format
-   *  id & identifier contain duplicate data
    */
   id: string,
+
+  /**
+   * Unique string identifier
+   */
+  slug: string,
   
   /**
    * The readable name
@@ -58,5 +62,11 @@ export interface IMapsetFE {
   /**
    * Layer styling / legend config
    */
-  layerSet: IMapsetLayer[]
+  layerSet: IMapsetLayer[],
+
+
+  /**
+   * Timestamp to mark when the mapset was loaded (allows presentation in order by which the mapsest were loaded)
+   */
+  loadedAT: number
 }

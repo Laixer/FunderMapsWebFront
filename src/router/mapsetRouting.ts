@@ -55,7 +55,7 @@ export const useMapsetRouting = function useMapsetRouting() {
       console.log("Main - MapsetId param changed", mapsetId)
 
       /**
-       * A specific (public) mapset is requested
+       * A specific (perhaps public) mapset is requested
        */ 
       if (mapsetId) {
 
@@ -68,10 +68,17 @@ export const useMapsetRouting = function useMapsetRouting() {
           // TODO:  This failed call is handled further on, but perhaps it could be avoided, without 
           // TODO:  negating the option to load public mapsets for logged in users by opening an url
           await loadAvailableMapsetsById(mapsetId as string)
+          
+          // For users that are authenticated, also get their private mapsets
+          // TODO: Sort public mapsets in a "public" org
+          if (isAuthenticated.value && isPublicMapset(mapsetId as string)) {
+            await loadAvailableMapsets()
+          }
         }
 
         // If the mapset is (now) available and public, store the id as last viewed public mapset
         if (isPublicMapset(mapsetId as string)) {
+          console.log("Main - is public mapset")
           sessionStorage.setItem(publicMapsetSessionKey, mapsetId.toString())
         }
 
@@ -80,6 +87,9 @@ export const useMapsetRouting = function useMapsetRouting() {
           console.log("Main - is available")
           selectMapsetById(mapsetId as string)
           return
+        } else {
+          console.log("Main - mapset still not available")
+          console.log(mapsetId)
         }
       }
 
