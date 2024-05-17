@@ -284,6 +284,7 @@ const handleClose = function handleClose() {
   <OverlayModal 
     v-if="showStatisticsModal && buildingStatistics"
     :title="title"
+    :transparent="true"
     class="xl:pointer-events-none xl:bg-transparent"
     @close="handleClose">
     <div 

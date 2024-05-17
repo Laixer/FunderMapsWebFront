@@ -2375,6 +2375,13 @@ html, body {
   color: rgb(40 204 139 / var(--tw-text-opacity));
 }
 
+.pointer-events-none {
+  pointer-events: none;
+}
+.bg-transparent {
+  background-color: #0000;
+}
+
 @media (min-width: 1280px) {
   .xl\:pointer-events-none {
     pointer-events: none;
