@@ -16,10 +16,12 @@ import { getSuggestions, getLookup, getSuggestionsNearCoordinates } from '@/serv
 import { IPDOKSuggestion } from '@/datastructures/interfaces';
 
 import { useMainStore } from '@/store/main';
+import { useSessionStore } from '@/store/session';
 import { useBuildingRouting } from '@/router/buildingRouting'
 import { getLocationInformationByBuildingId } from '@/services/api/building';
 
 const { mapCenterLatLon } = storeToRefs( useMainStore() )
+const { isAuthenticated } = storeToRefs(useSessionStore())
 
 const buildingRouting = useBuildingRouting()
 
@@ -152,6 +154,8 @@ const onHover = function onHover(index: number) {
  */
 const verifyBuildingId = async function verifyBuildingId(id: string) {
   try {
+    if (!! isAuthenticated.value) return false
+
     await getLocationInformationByBuildingId(id)
     return true
   } catch(e) {
@@ -230,7 +234,7 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     handleClose()
 
     // Navigate to the building, which triggers loading the data, opening the sidebar and placing the marker
-    if (nummeraanduiding_id) {
+    if (nummeraanduiding_id && isAuthenticated.value) {
       buildingRouting.navigateToBuilding(nummeraanduiding_id)
     }
 
