@@ -154,7 +154,7 @@ const onHover = function onHover(index: number) {
  */
 const verifyBuildingId = async function verifyBuildingId(id: string) {
   try {
-    if (!! isAuthenticated.value) return false
+    if (! isAuthenticated.value) return false
 
     await getLocationInformationByBuildingId(id)
     return true
