@@ -2,7 +2,6 @@
 
 import { onMounted, ref, watch } from 'vue';
 
-// import StatisticsModal from '@/components/Modals/StatisticsModal.vue'
 import { CHART_TRANSPARENT_COLORS, CHART_COLORS } from '@/config';
 import Chart from 'chart.js/auto';
 
@@ -37,7 +36,7 @@ const createChart = function createChart(
   } 
 
   // eslint-disable-next-line no-unused-vars
-  const chart = new Chart(
+  chart = new Chart(
     canvas.value.getContext("2d") as CanvasRenderingContext2D, 
     {
       type: "bar",
@@ -85,6 +84,7 @@ onMounted(() => {
 watch(
   () => props,
   (props) => {
+    console.log("CHANGE DAMN IT")
     if (! chart) return 
 
     chart.destroy()

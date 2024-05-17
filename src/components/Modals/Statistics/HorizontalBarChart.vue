@@ -3,9 +3,7 @@
 import { CHART_COLORS, CHART_TRANSPARENT_COLORS } from '@/config';
 import BarChart from './BarChart.vue'
 
-const { 
-  title, labels, data, borderColors, backgroundColors 
-} = withDefaults(defineProps<{
+withDefaults(defineProps<{
   title?: string,
   labels?: string[],
   data?: string[]|number[],
