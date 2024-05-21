@@ -49,6 +49,9 @@ watch(
 
     value = value.trim()
 
+    // No repeat please
+    if (value === lastQuery.value) return
+
     // Directly open a known buildingId
     if (
       (value.length === 16 && /^[0-9]+$/.test(value)) ||
@@ -221,13 +224,6 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
 
     const { centroide_ll, nummeraanduiding_id } = results.response.docs[0]
 
-    /**
-     * Navigating to the lat lng while the API calls are being made
-     *  The lat lng from the API may differ, but that should not be a big enough difference to matter here
-     */ 
-    const [ Lng, Lat ] = centroide_ll.replace('POINT(', '').replace(')', '').split(' ')
-    mapCenterLatLon.value = new mapboxgl.LngLat(Lng, Lat)
-    
     // Insert the selected address in the search box, and close the suggestion list
     lastQuery.value = weergavenaam // this prevents a Lookup API call to PDOK
     queryString.value = weergavenaam
@@ -236,6 +232,13 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     // Navigate to the building, which triggers loading the data, opening the sidebar and placing the marker
     if (nummeraanduiding_id && isAuthenticated.value) {
       buildingRouting.navigateToBuilding(nummeraanduiding_id)
+    } else {
+      /**
+       * Navigating to the lat lng while the API calls are being made
+       *  The lat lng from the API may differ, but that should not be a big enough difference to matter here
+       */ 
+      const [ Lng, Lat ] = centroide_ll.replace('POINT(', '').replace(')', '').split(' ')
+      mapCenterLatLon.value = new mapboxgl.LngLat(Lng, Lat)
     }
 
   } catch(e) {
