@@ -14,7 +14,7 @@ export const login = async function login(email: string, password: string) {
 export const refresh = async function refresh() {
   return await get({
     endpoint: 'auth/token-refresh',
-    requireAuth: false
+    requireAuth: true
   })
 }
 
