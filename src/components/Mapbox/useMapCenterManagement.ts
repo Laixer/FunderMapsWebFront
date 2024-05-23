@@ -4,6 +4,7 @@ import { ComputedRef, computed, nextTick, watch } from "vue"
 
 import { useMainStore } from '@/store/main';
 import { useBuildingStore } from '@/store/buildings';
+import { useMapsetStore } from '@/store/mapsets';
 import { useGeoLocationsStore } from '@/store/building/geolocations'
 
 import { IGeoLocationData } from "@/datastructures/interfaces";
@@ -17,6 +18,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
   const { mapCenterLatLon } = storeToRefs( useMainStore() )
   const { buildingId } = storeToRefs(useBuildingStore())
   const { getLocationDataByBuildingId } = useGeoLocationsStore()  
+  const { activeMapset } = storeToRefs( useMapsetStore() )
 
 
   // Reference to the mapbox instance
@@ -30,7 +32,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     return getLocationDataByBuildingId(buildingId.value)
   })
 
-  const flyToCenter = function flyToCenter(center: mapboxgl.LngLat) {
+  const flyToCenter = function flyToCenter(center: mapboxgl.LngLatLike) {
     if (! mapInstance) return
 
     // Set some zoom limits that make sense when flying
@@ -82,6 +84,26 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     { immediate: true }
   )
 
+  watch(
+    () => activeMapset.value,
+    (mapset) => {
+      console.log("active mapset", mapset)
+
+      // We use `ignoreCenterChange` to ignore changes caused by `handleMapMovement`
+      if (! mapInstance || ! mapset || ignoreCenterChange === true) {
+        console.log("ABORT", mapInstance, ignoreCenterChange)
+        return
+      }
+
+      console.log("center", mapset.options.center)
+
+      if (mapset.options?.center) {
+        flyToCenter(mapset.options.center.reverse() as mapboxgl.LngLatLike)
+      }
+    },
+    { immediate: true }
+  )
+
   /**
    * When the map moves, update the known center position
    */
@@ -106,6 +128,10 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     
     if (locationData.value && locationData.value.residence) {
       flyToBuildingLocation(locationData.value)
+    } else if (activeMapset.value?.options?.center) {
+      flyToCenter(
+        activeMapset.value.options.center.reverse() as mapboxgl.LngLatLike
+      )
     } else {
       handleMapMovement()
     }
