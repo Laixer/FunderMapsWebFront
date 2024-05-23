@@ -103,10 +103,15 @@ export const useMapsetRouting = function useMapsetRouting() {
        * Unable to load the requested mapset and _not_ logged in?
        */
       if (! isAuthenticated.value) {
+        console.log('Mapset - visitor is not logged in')
+
         // Try to redirect to the last visited public mapset, if not already the currently requested mapset
         if (sessionStorage.getItem(publicMapsetSessionKey) && mapsetId !== sessionStorage.getItem(publicMapsetSessionKey)) {
+          console.log('Mapset - redirecting to last visited public mapset')
           navigateToMapset(sessionStorage.getItem(publicMapsetSessionKey))
         } else {
+          console.log('Mapset - redirecting to login')
+
           // Otherwise back to start
           router.push({ name: 'login' })
         }
@@ -123,20 +128,24 @@ export const useMapsetRouting = function useMapsetRouting() {
 
         // Perhaps there is a public mapset we can show?
         if (sessionStorage.getItem(publicMapsetSessionKey) && mapsetId !== sessionStorage.getItem(publicMapsetSessionKey)) {
+          console.log('Mapset - no (private) mapsets available. Redirecting to last viewed public mapset')
           navigateToMapset(sessionStorage.getItem(publicMapsetSessionKey))
+        } else {
+          console.log('Mapset - no (private) mapsets available, an no known public mapset to redirect to')
         }
-
         return
       } else {
 
-        if (mapsetId !== defaultMapsetId.value) {        
+        if (mapsetId !== defaultMapsetId.value) {
+          console.log('Mapset - redirecting to default mapset')
           navigateToMapset(defaultMapsetId.value)
         } else if (mapsetId !== firstMapsetId.value) {
+          console.log('Mapset - redirecting to first available mapset')
           navigateToMapset(firstMapsetId.value)
         } else {
           console.log("Mapset - something is going wrong")
         }
-      }  
+      }
     }, 
     { immediate: true }
   )
