@@ -36,7 +36,7 @@ export interface IMapsetFE {
    * Configuration options for the layers
    * TODO: Which options? How do they differ for multiple layers?
    */
-  options: { center: number[] },
+  options: { center?: number[] },
 
   /**
    * Whether the mapset can be shared with others
