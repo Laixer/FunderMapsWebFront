@@ -48,5 +48,6 @@ const handleLogout = async function() {
         </template>
       </Button>
     </template>
+    
   </OverlayModal>
 </template>

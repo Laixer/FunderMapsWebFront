@@ -33,8 +33,7 @@ const handleClose = function handleClose() {
     <slot />
     
     <template 
-      v-if="$slots.footer" 
-      v-slot:footer>
+      v-if="$slots.footer" >
       <slot name="footer" />
     </template>
 
