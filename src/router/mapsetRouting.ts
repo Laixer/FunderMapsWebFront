@@ -28,8 +28,10 @@ export const useMapsetRouting = function useMapsetRouting() {
     hasAvailableMapsets, 
     hasAvailablePrivateMapsets,
     defaultMapsetId, 
-    activeMapsetId 
+    activeMapsetId,
+    firstMapsetId
   } = storeToRefs( mapsetStore )
+
 
   /**
    * Handle changes in the mapsetId in the path
@@ -42,7 +44,7 @@ export const useMapsetRouting = function useMapsetRouting() {
        * The sessionStorage key used to store the id of the last viewed public mapset
        */
       const publicMapsetSessionKey = 'last-viewed-public-mapset'
-      // const privateMapsetSessionKey = 'last-viewd-private-mapset'
+      const privateMapsetSessionKey = 'last-viewd-private-mapset'
 
       /**
        * When opening the application without a specific mapset in mind, 
@@ -51,90 +53,90 @@ export const useMapsetRouting = function useMapsetRouting() {
        */
       const mapsetId = route.params?.mapsetId 
         || sessionStorage.getItem(publicMapsetSessionKey)
+        || sessionStorage.getItem(privateMapsetSessionKey)
 
-      console.log("Main - MapsetId param changed", mapsetId)
+      console.log("Mapset - MapsetId param changed", route.params?.mapsetId, mapsetId)
 
-      /**
-       * A specific (perhaps public) mapset is requested
-       */ 
-      if (mapsetId) {
 
-        // Avoid loading a mapset twice
-        if (! isMapsetAvailable(mapsetId as string)) {
-          console.log("Main - is not available")
-
-          // Note: This also loads all other available mapsets for a logged in user.
-          // TODO: This generates a failed API call for logged in users that have not yet loaded any mapsets
-          // TODO:  This failed call is handled further on, but perhaps it could be avoided, without 
-          // TODO:  negating the option to load public mapsets for logged in users by opening an url
-          await loadAvailableMapsetsById(mapsetId as string)
-          
-          // For users that are authenticated, also get their private mapsets
-          // TODO: Sort public mapsets in a "public" org
-          if (isAuthenticated.value && isPublicMapset(mapsetId as string)) {
-            await loadAvailableMapsets()
-          }
-        }
-
-        // If the mapset is (now) available and public, store the id as last viewed public mapset
-        if (isPublicMapset(mapsetId as string)) {
-          console.log("Main - is public mapset")
-          sessionStorage.setItem(publicMapsetSessionKey, mapsetId.toString())
-        }
-
-        // All went well, time to show the requested mapset
-        if (isMapsetAvailable(mapsetId as string)) {
-          console.log("Main - is available")
-          selectMapsetById(mapsetId as string)
-          return
-        } else {
-          console.log("Main - mapset still not available")
-          console.log(mapsetId)
-        }
-      }
-
-      /**
-       * Not logged in and not requesting a specific public mapset,
-       *  or is the requested mapset not public?
-       * => redirect to login
-       */
-      if (! isAuthenticated.value) {
-        console.log("Main - user not logged in")
-        router.push({ name: 'login' })
-        return
-      }
-
-      /**
-       * Beyond this point we're dealing with a logged in user
-       */
-
-      // Load the available mapsets, if this has not been done yet
-      if (! hasAvailablePrivateMapsets.value) {
-        console.log("Main - no mapsets available yet")
+      /** 
+       * Logged in, but no private mapsets available yet? Load all private mapsets before going any further
+       **/ 
+      if (isAuthenticated.value && ! hasAvailablePrivateMapsets.value) {
+        console.log("Mapset - Loading private mapsets")
         await loadAvailableMapsets()
       }
 
-      // Aparently the user has no access to any mapsets
-      // A modal will be shown to the user if this is the case
+      /** 
+       * A mapset Id was set in the url
+       */ 
+      if (mapsetId) {
+
+        // If not available yet, try to specifically load this mapset
+        if (! isMapsetAvailable(mapsetId as string)) {
+          console.log("Mapset - requested mapset is not yet available")
+
+          await loadAvailableMapsetsById(mapsetId as string)
+        }
+
+        // If (now) available, mark it as the last visited mapset and select it
+        if (isMapsetAvailable(mapsetId as string)) {
+          console.log("Mapset - requested mapset is now available")
+
+          if (isPublicMapset(mapsetId as string)) {
+            console.log("Mapset - is public mapset")
+            sessionStorage.setItem(publicMapsetSessionKey, mapsetId.toString())
+          } else {
+            console.log("Mapset - is private mapset")
+            sessionStorage.setItem(privateMapsetSessionKey, mapsetId.toString())
+          }
+
+          selectMapsetById(mapsetId as string)
+
+          return // Done
+
+        } else {
+          console.log("Mapset - unable to load requested mapset")
+        }
+      }
+
+      /**
+       * Unable to load the requested mapset and _not_ logged in?
+       */
+      if (! isAuthenticated.value) {
+        // Try to redirect to the last visited public mapset, if not already the currently requested mapset
+        if (sessionStorage.getItem(publicMapsetSessionKey) && mapsetId !== sessionStorage.getItem(publicMapsetSessionKey)) {
+          navigateToMapset(sessionStorage.getItem(publicMapsetSessionKey))
+        } else {
+          // Otherwise back to start
+          router.push({ name: 'login' })
+        }
+
+        return // Done
+      } 
+
+      // Unable to load the requested mapset and logged in? 
+
+      /**
+       * Logged in and no mapsets available at all... 
+       */
       if (! hasAvailableMapsets.value) {
-        console.log("Main - Failed to load any mapsets")
+
+        // Perhaps there is a public mapset we can show?
+        if (sessionStorage.getItem(publicMapsetSessionKey) && mapsetId !== sessionStorage.getItem(publicMapsetSessionKey)) {
+          navigateToMapset(sessionStorage.getItem(publicMapsetSessionKey))
+        }
+
         return
-      }
+      } else {
 
-      // The requested mapset was one of the private mapsets available to the user
-      // Note: private mapsets cannot be requested through the endpoint to retrieve public + available private mapsets
-      if (mapsetId && isMapsetAvailable(mapsetId as string)) {
-        console.log("Main - requested mapset is now available")
-        selectMapsetById(mapsetId as string)
-        return 
-      }
-
-      console.log("Main - redirecting to first available mapset")
-      // TODO: Maybe skip loading loadAvailableMapsetsById first for authenticated users and fall back to it here? 
-      
-      // If no mapset was requested, or the mapset was not available,
-      //  redirect the user to the first mapset from the list of available mapsets
-      navigateToMapset(defaultMapsetId.value)
+        if (mapsetId !== defaultMapsetId.value) {        
+          navigateToMapset(defaultMapsetId.value)
+        } else if (mapsetId !== firstMapsetId.value) {
+          navigateToMapset(firstMapsetId.value)
+        } else {
+          console.log("Mapset - something is going wrong")
+        }
+      }  
     }, 
     { immediate: true }
   )
@@ -147,14 +149,14 @@ export const useMapsetRouting = function useMapsetRouting() {
    *  TODO: Include building route param
    */
   watch(() => activeMapsetId.value, (value) => {
-    console.log("Main - Redirect to different mapset?", value)
+    console.log("Mapset - Redirect to different mapset?", value)
 
     if (value && value !== route.params?.mapsetId) {
-      console.log("Main - Yes")
+      console.log("Mapset - Yes")
 
       navigateToMapset(value)
     } else {
-      console.log("Main - No")
+      console.log("Mapset - No")
     }
   })
 
