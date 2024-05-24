@@ -214,8 +214,7 @@ function useMapsets() {
       const response = await api.mapset.getPublicAndAvailableMapsetsById(mapsetId)
 
       if (response) {
-        // Merge the new mapsets with public mapsets already present
-        removePrivateMapsets()
+        // Merge the new mapsets with the mapsets already present
         response.forEach((mapset: IMapsetFE) => {
           availableMapsetsById.value[mapset.id] = mapset
         })
