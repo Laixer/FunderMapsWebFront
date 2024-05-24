@@ -19,10 +19,7 @@ export const getOrgs = async function getOrgs() {
           name: org.name,
           active: true
         }
-      }).concat([{
-        id: 'fake-inc',
-        name: 'Demo organisatie'
-      }])
+      })
     })
 }
 
