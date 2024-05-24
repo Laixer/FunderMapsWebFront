@@ -175,7 +175,7 @@ export const useLayerVisibility = function useLayerVisibility() {
         .filter(layerId => ! currentlyVisibleLayers.includes(layerId))
         .concat(newlyHidden)
     },
-    { deep: true }
+    { deep: true, immediate: true }
   )
 
   /**
