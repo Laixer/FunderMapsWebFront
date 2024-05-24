@@ -26,7 +26,16 @@ const mapsetIdsBySlug = computed(() => {
 
 const availableMapsetsByLoadingOrder = computed(() => {
   return Object.values(availableMapsetsById.value)
-    .sort((a, b) => a.loadedAT - b.loadedAT)
+    .sort((a, b) => {
+      // Public mapsets always go first
+      if (a.public) {
+        return b.public ? a.loadedAt - b.loadedAt : -1
+      } else if (b.public) {
+        return 1
+      }
+
+      return a.loadedAt - b.loadedAt
+    })
 })
 
 /**

@@ -68,5 +68,5 @@ export interface IMapsetFE {
   /**
    * Timestamp to mark when the mapset was loaded (allows presentation in order by which the mapsest were loaded)
    */
-  loadedAT: number
+  loadedAt: number
 }

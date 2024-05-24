@@ -30,7 +30,7 @@ const mapMapset = function mapMapset(rawmapset: IMapset): IMapsetFE {
     icon: rawmapset?.icon || 'home-info',
     fenceMunicipality: rawmapset?.fenceMunicipality || null,
     layerSet,
-    loadedAT: Date.now()
+    loadedAt: Date.now()
   }
 }
 
