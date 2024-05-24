@@ -98,7 +98,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
       console.log("center", mapset.options.center)
 
       if (mapset.options?.center) {
-        flyToCenter(mapset.options.center.reverse() as mapboxgl.LngLatLike)
+        flyToCenter(mapset.options.center.slice().reverse() as mapboxgl.LngLatLike)
       }
     },
     { immediate: true }
@@ -130,7 +130,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
       flyToBuildingLocation(locationData.value)
     } else if (activeMapset.value?.options?.center) {
       flyToCenter(
-        activeMapset.value.options.center.reverse() as mapboxgl.LngLatLike
+        activeMapset.value.options.center.slice().reverse() as mapboxgl.LngLatLike
       )
     } else {
       handleMapMovement()
