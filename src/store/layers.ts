@@ -72,7 +72,7 @@ const retrieveLayerVisibilityFromSessionStorage = function retrieveLayerVisibili
  */
 const changeLayerVisibility = function changeLayerVisibility(layerId: string, visibility: boolean, mapsetId?: string|null|undefined) {
 
-  console.log("changing layer visibility", layerId, visibility)
+  console.log("layer store - changing layer visibility", mapsetId, layerId, visibility)
 
   if (! mapsetId) {
     const { activeMapsetId } = storeToRefs(useMapsetStore())
@@ -100,6 +100,8 @@ const changeLayerVisibility = function changeLayerVisibility(layerId: string, vi
     future.push(layerId)
   }
   // visibility === false? The layerId is already removed
+
+  console.log('layer store - change layer visibility', mapsetId, current, future)
 
   // Make the future now
   visibleLayersByMapsetId.value[mapsetId] = future
