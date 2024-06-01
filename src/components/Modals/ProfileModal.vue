@@ -273,6 +273,7 @@ const handleClose = function handleClose() {
             :disabled="busySaving"
             :validationStatus="getStatus('givenName')"
             :validationMessage="getError('givenName')"
+            :tabindex="1"
             required />
 
           <Input 
@@ -285,6 +286,7 @@ const handleClose = function handleClose() {
             :disabled="busySaving"
             :validationStatus="getStatus('lastName')"
             :validationMessage="getError('lastName')"
+            :tabindex="2"
             required />
 
           <Input 
@@ -310,6 +312,7 @@ const handleClose = function handleClose() {
             :disabled="busySaving"
             :validationStatus="getStatus('jobTitle')"
             :validationMessage="getError('jobTitle')"
+            :tabindex="3"
           />
 
           <Input 
@@ -322,6 +325,7 @@ const handleClose = function handleClose() {
             :disabled="busySaving"
             :validationStatus="getStatus('phoneNumber')"
             :validationMessage="getError('phoneNumber')"
+            :tabindex="4"
           />
 
           <Transition>

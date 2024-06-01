@@ -116,6 +116,7 @@ const handleSubmit = async function handleSubmit() {
           autocomplete="username"
           :validationStatus="getStatus('email')"
           :validationMessage="getError('email')"
+          :tabindex="1"
           required />
 
         <Input 
@@ -127,6 +128,7 @@ const handleSubmit = async function handleSubmit() {
           autocomplete="new-password"
           :validationStatus="getStatus('password')"
           :validationMessage="getError('password')" 
+          :tabindex="2"
           required>
 
           <template #before>
