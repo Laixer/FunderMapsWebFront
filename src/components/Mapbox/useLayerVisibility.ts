@@ -156,6 +156,8 @@ export const useLayerVisibility = function useLayerVisibility(
     () => visibleLayersByMapsetId.value, 
     () => {
 
+      console.log("Layer visibility - change in visibility")
+
       if (! activeMapset.value) {
         console.log("Layer visibility - no active mapset")
         return
@@ -165,6 +167,8 @@ export const useLayerVisibility = function useLayerVisibility(
       const visibleLayers = toRaw(
         getVisibleLayersByMapsetId(activeMapset.value.id)
       )
+
+      console.log("Layer visibility - visible layers", visibleLayers)
 
       // has anything changed? 
       const newlyHidden = currentlyVisibleLayers.filter(layerId => ! visibleLayers.includes(layerId))
