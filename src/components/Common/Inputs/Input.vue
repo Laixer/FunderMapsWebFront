@@ -13,7 +13,8 @@ const props = withDefaults(defineProps<{
   required?: boolean,
   disabled?: boolean,
   validationStatus?: 'none' | 'success' | 'error',
-  validationMessage?: ZodIssue[]|string
+  validationMessage?: ZodIssue[]|string,
+  tabindex?: number
 }>(), {
   type: 'text',
   required: false,
@@ -61,6 +62,7 @@ const isDisabled = computed<boolean>(() => !! props.disabled)
         :autocomplete="autocomplete"
         :required="required"
         :disabled="isDisabled"
+        :tabindex="tabindex"
         v-model="model"
         @focus="emit('focus')" />
 
