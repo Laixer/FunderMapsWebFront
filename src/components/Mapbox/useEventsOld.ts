@@ -4,7 +4,7 @@
  **********************************************************************************/
 
 import { type Map } from "mapbox-gl";
-import { type MaybeRef, watch, ref } from "vue";
+import { watch } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';
@@ -12,9 +12,7 @@ import { useBuildingRouting } from '@/router/buildingRouting'
 import { IMapsetFE } from "@/datastructures/interfaces";
 import { useSessionStore } from "@/store/session";
 
-export const useEvents = function useEvents(
-  Map: MaybeRef<Map | null | undefined>
-) {
+export const useEvents = function useEvents() {
 
   const { activeMapset } = storeToRefs( useMapsetStore() )
   const buildingRouting = useBuildingRouting()
@@ -22,17 +20,17 @@ export const useEvents = function useEvents(
   const sessionStore = useSessionStore()
   const { isAuthenticated } = storeToRefs(sessionStore)
 
-  const mapInstance = ref(Map)
+  let mapInstance: Map|null = null
 
   /****************************************************************************
    * Event handlers
    */
 
   const mouseEnter = function mouseEnter() {
-    mapInstance.value && (mapInstance.value.getCanvas().style.cursor = "pointer")
+    mapInstance && (mapInstance.getCanvas().style.cursor = "pointer")
   }
   const mouseLeave = function mouseLeave() {
-    mapInstance.value && (mapInstance.value.getCanvas().style.cursor = "")
+    mapInstance && (mapInstance.getCanvas().style.cursor = "")
   }
 
   /**
@@ -66,11 +64,11 @@ export const useEvents = function useEvents(
     mapset.layerSet
       .map(layer => layer.id)
       .forEach(layerId => {
-        if (! mapInstance.value) return
+        if (! mapInstance) return
         
-        mapInstance.value.off("mouseenter", layerId, mouseEnter)
-        mapInstance.value.off("mouseleave", layerId, mouseLeave)
-        mapInstance.value.off("click", layerId, handleBuildingClick)
+        mapInstance.off("mouseenter", layerId, mouseEnter)
+        mapInstance.off("mouseleave", layerId, mouseLeave)
+        mapInstance.off("click", layerId, handleBuildingClick)
       })
   }
 
@@ -88,11 +86,11 @@ export const useEvents = function useEvents(
     activeMapset.value.layerSet
       .map(layer => layer.id)
       .forEach(layerId => {
-        if (! mapInstance.value) return
+        if (! mapInstance) return
         
-        mapInstance.value.on("mouseenter", layerId, mouseEnter)
-        mapInstance.value.on("mouseleave", layerId, mouseLeave)
-        mapInstance.value.on("click", layerId, handleBuildingClick)
+        mapInstance.on("mouseenter", layerId, mouseEnter)
+        mapInstance.on("mouseleave", layerId, mouseLeave)
+        mapInstance.on("click", layerId, handleBuildingClick)
       }) 
   }
 
@@ -109,7 +107,6 @@ export const useEvents = function useEvents(
     }
   )
 
-  
   /**
    * Attach or remove event handlers if auth state changes
    */
@@ -125,22 +122,31 @@ export const useEvents = function useEvents(
   )
 
 
-  /**
-   * When the map instantiates, attach the style event
+  /****************************************************************************
+   * connect / disconnect composable
    */
-  watch(
-    () => mapInstance.value,
-    (mapInstance, oldMapInstance) => {
-      if (mapInstance) {
-        mapInstance?.on('style.load', attachEventHandlers)
 
-        /**
-         * The first map style has been loaded just before the map is attached
-         */
-        attachEventHandlers()
-      } else {
-        oldMapInstance?.off('style.load', attachEventHandlers)
-      }
+  /**
+   * Attach the map instance
+   *  Map is not yet available during setup & watcher needs to start during setup
+   */
+  const attachMap = function attachMap(map: Map) {
+    mapInstance = map
+    mapInstance.on('style.load', attachEventHandlers)
+
+    // Attach event handlers to initial style
+    attachEventHandlers()
+  }
+
+  const disconnect = function disconnect() {
+    if (mapInstance) {
+      mapInstance.off('style.load', attachEventHandlers)
     }
-  )
+    mapInstance = null
+  }
+
+  return {
+    attachMap,
+    disconnect
+  }
 }

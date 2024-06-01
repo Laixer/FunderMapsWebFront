@@ -5,18 +5,17 @@ import { useMapsetStore } from '@/store/mapsets';
 import { useLayersStore } from "@/store/layers";
 
 import { type IMapsetFE } from "@/datastructures/interfaces";
-import { type MaybeRef, toRaw, watch, ref } from "vue";
+import { toRaw, watch } from "vue";
 
 
-export const useLayerVisibility = function useLayerVisibility(
-  Map: MaybeRef<Map | null | undefined>
-) {
+
+export const useLayerVisibility = function useLayerVisibility() {
 
   const { activeMapset } = storeToRefs( useMapsetStore() )
   const { getVisibleLayersByMapsetId, changeLayerVisibility } = useLayersStore()
   const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
 
-  const mapInstance = ref(Map)
+  let mapInstance: Map|null = null
 
   /**
    * Layer id of currently shown layers
@@ -36,10 +35,10 @@ export const useLayerVisibility = function useLayerVisibility(
    */
   const applyVisibilityOfLayers = function applyVisibilityOfLayers( idsOfVisibleLayers: string[], allKnownLayerIds: string[] ) {
 
-    console.log('Layer visibility - applyVisibilityOfLayers', idsOfVisibleLayers, allKnownLayerIds)
+    console.log(mapInstance, idsOfVisibleLayers)
 
     idsOfVisibleLayers.forEach(function (layerId) {
-      mapInstance.value && mapInstance.value.setLayoutProperty(layerId, 'visibility', 'visible')
+      mapInstance && mapInstance.setLayoutProperty(layerId, 'visibility', 'visible')
     })
 
     // Update the local lists
@@ -48,7 +47,7 @@ export const useLayerVisibility = function useLayerVisibility(
 
     // Not all layers are hidden by default
     currentlyHiddenLayers.forEach(layerId => {
-      mapInstance.value && mapInstance.value.setLayoutProperty(layerId, 'visibility', 'none')
+      mapInstance && mapInstance.setLayoutProperty(layerId, 'visibility', 'none')
     })
   }
 
@@ -56,8 +55,6 @@ export const useLayerVisibility = function useLayerVisibility(
    * Reveal the first of the known layers
    */
   const revealFirstLayer = function revealFirstLayer(allKnownLayerIds: string[], id: string) {
-    console.log("Layer visibility - reveal first layer", allKnownLayerIds, id)
-
     if (allKnownLayerIds.length === 0) return 
 
     // This changes the visibility in the store. The map will react
@@ -77,9 +74,6 @@ export const useLayerVisibility = function useLayerVisibility(
    *  If so, the first known layer will be revealed.
    */
   const revealDefaultLayers = function revealDefaultLayers(allKnownLayerIds: string[], id: string) {
-
-    console.log("Layer visibility - reveal default layers", allKnownLayerIds, id)
-
     try {
       const preferredLayerIds = preferredDefaultLayerIds
         .split(',')
@@ -103,12 +97,8 @@ export const useLayerVisibility = function useLayerVisibility(
    *  If none were enabled, enable the first layer of the layerSet
    */
   const handleMapsetChange = function handleMapsetChange() {
-    console.log("Layer visibility - mapset change")
 
-    if (! activeMapset.value) {
-      console.log("Layer visibility - no active mapset")
-      return
-    } 
+    if (! activeMapset.value) return // Make TS happy
 
     const mapset: IMapsetFE = activeMapset.value
 
@@ -122,12 +112,10 @@ export const useLayerVisibility = function useLayerVisibility(
     // See if the store has information about layer visibility for this mapset
     const visibleLayers = getVisibleLayersByMapsetId(mapset.id)
     
-    console.log("Layer visibility - visible layers", visibleLayers)
-
     // If so, reveal those layers
     if (visibleLayers.length !== 0) {
 
-      console.log("Layer visibility - Not going for defaults", visibleLayers)
+      console.log("Not going for defaults", visibleLayers)
 
       applyVisibilityOfLayers(visibleLayers, allKnownLayerIds)
     } 
@@ -135,7 +123,7 @@ export const useLayerVisibility = function useLayerVisibility(
     // Otherwise go for the defaults
     else {
 
-      console.log("Layer visibility - Going for defaults")
+      console.log("Going for defaults")
 
       // Start by making sure all are hidden
       applyVisibilityOfLayers([], allKnownLayerIds)
@@ -156,10 +144,7 @@ export const useLayerVisibility = function useLayerVisibility(
     () => visibleLayersByMapsetId.value, 
     () => {
 
-      if (! activeMapset.value) {
-        console.log("Layer visibility - no active mapset")
-        return
-      } 
+      if (! activeMapset.value) return 
 
       // Get the visible layers
       const visibleLayers = toRaw(
@@ -173,14 +158,14 @@ export const useLayerVisibility = function useLayerVisibility(
       // Only bother mapbox with the actual changes
       if (newlyVisible.length !== 0) {
         newlyVisible.forEach(layerId => {
-          mapInstance.value && mapInstance.value.setLayoutProperty(layerId, 'visibility', 'visible');
+          mapInstance && mapInstance.setLayoutProperty(layerId, 'visibility', 'visible');
         })
       }
 
       // Only bother mapbox with the actual changes
       if (newlyHidden.length !== 0) {
         newlyHidden.forEach(layerId => {
-          mapInstance.value && mapInstance.value.setLayoutProperty(layerId, 'visibility', 'none');
+          mapInstance && mapInstance.setLayoutProperty(layerId, 'visibility', 'none');
         })
       }
 
@@ -194,26 +179,32 @@ export const useLayerVisibility = function useLayerVisibility(
   )
 
   /**
-   * When the map instantiates, attach the style event
+   * Attach the map instance
+   *  Map is not yet available during setup & watcher needs to start during setup
    */
-  watch(
-    () => mapInstance.value,
-    (mapInstance, oldMapInstance) => {
-      if (mapInstance) {
-        console.log("Layer visibility - activate")
+  const attachMap = function attachMap(map: Map) {
+    mapInstance = map
 
-        mapInstance?.on('style.load', handleMapsetChange)
+    // handle style ( = mapset ) changes
+    mapInstance.on('style.load', handleMapsetChange)
 
-        /**
-         * The first map style has been loaded just before the map is attached
-         */
-        handleMapsetChange()
-      } else {
+    /**
+     * The first map style has been loaded just before the map is attached
+     */
+    handleMapsetChange()
+  }
 
-        console.log("Layer visibility - deactivate")
-        oldMapInstance?.off('style.load', handleMapsetChange)
-      }
-    }
-  )
+  /**
+   * Disconnect the event handler
+   */
+  const disconnect = function disconnect() {
+    mapInstance?.off('style.load', handleMapsetChange)
+    mapInstance = null
+  }
+
+  return {
+    attachMap,
+    disconnect
+  }
 }
 

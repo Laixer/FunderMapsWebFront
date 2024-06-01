@@ -2,12 +2,15 @@ import { type Map } from "mapbox-gl"
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';
+import { ref, watch, type MaybeRef } from "vue";
 
-export const useMunicipalityFilter = function useMunicipalityFilter() {
+export const useMunicipalityFilter = function useMunicipalityFilter(
+  Map: MaybeRef<Map | null | undefined>
+) {
 
   const { activeMapset } = storeToRefs( useMapsetStore() )
 
-  let mapInstance: Map|null = null
+  const mapInstance = ref(Map)
 
   const enableMapFilter = localStorage.getItem("enableMunicipalityFilter")
 
@@ -15,17 +18,36 @@ export const useMunicipalityFilter = function useMunicipalityFilter() {
    * Apply the municipality filter to the layer presentation
    */
   const applyMunicipalityFilterToLayers = function applyMunicipalityFilterToLayers() {
-    if (mapInstance === null) return // No map to work with
-    if (! activeMapset.value) return // No mapset to work with
+    console.log("Municipality Filter - apply")
 
-    if (activeMapset.value.fenceMunicipality === null) return // No filter necessary
+    // No map to work with
+    if (! mapInstance.value) {
+      console.log("Municipality Filter - no map instance")
+      return
+    } 
 
-    if (enableMapFilter === 'false') return
+    // No mapset to work with
+    if (! activeMapset.value) {
+      console.log("Municipality Filter - no active mapset")
+      return
+    } 
+
+    // No filter necessary
+    if (activeMapset.value.fenceMunicipality === null) {
+      console.log("Municipality Filter - no fence")
+      return
+    } 
+
+    // Disabled
+    if (enableMapFilter === 'false')  {
+      console.log("Municipality Filter - functionality disabled")
+      return
+    } 
 
     for (const layer of activeMapset.value.layerSet) {
-      mapInstance.setFilter(layer.id, [
+      mapInstance.value.setFilter(layer.id, [
         'all',
-        mapInstance.getFilter(layer.id),
+        mapInstance.value.getFilter(layer.id),
         [
           "match",
           ["get", "municipality_id"],
@@ -39,25 +61,29 @@ export const useMunicipalityFilter = function useMunicipalityFilter() {
     }
   }
 
-  // Map could be supplied directly, but this way it fits in with the rest
-  const attachMap = function attachMap(map: Map) {
-    mapInstance = map
-    mapInstance.on('style.load', applyMunicipalityFilterToLayers)
 
-    // When attached, the initial style has already been loaded
-    applyMunicipalityFilterToLayers()
-  }
+  /**
+   * When the map instantiates, attach the style event
+   */
+  watch(
+    () => mapInstance.value,
+    (mapInstance, oldMapInstance) => {
+      if (mapInstance) {
+        console.log("Municipality Filter - activate")
 
-  const disconnect = function disconnect() {
-    if (mapInstance) {
-      mapInstance.off('style.load', applyMunicipalityFilterToLayers)
+        mapInstance?.on('style.load', applyMunicipalityFilterToLayers)
+
+        /**
+         * The first map style has been loaded just before the map is attached
+         */
+        applyMunicipalityFilterToLayers()
+      } else {
+        console.log("Municipality Filter - deactivate")
+        
+        oldMapInstance?.off('style.load', applyMunicipalityFilterToLayers)
+      }
     }
-  }
-
-  return {
-    attachMap,
-    disconnect
-  }
+  )
 }
 
 

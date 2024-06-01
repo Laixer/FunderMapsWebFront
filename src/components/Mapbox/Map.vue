@@ -38,12 +38,14 @@ const hasSetInitialStyle = ref(false)
 
 
 // Composables to handle map related functionality
-const MapEvents = useEvents()
-const LayerVisibility = useLayerVisibility()
-const MunicipalityFilter = useMunicipalityFilter()
 const MapsetStyle = useMapsetStyle()
 const MapCenterManagement = useMapCenterManagement()
+
+useEvents(mapInstance)
+useLayerVisibility(mapInstance)
+useMunicipalityFilter(mapInstance)
 useBuildingMarker(mapInstance)
+
 
 
 // Update the query string in the route when the map center changes. Navigate to the LngLat from the query string when opening a mapset page
@@ -86,9 +88,6 @@ const onLoad = function onLoad({ map }: { map: Map }) {
   
   mapInstance.value = map
 
-  MunicipalityFilter.attachMap(map) 
-  MapEvents.attachMap(map)
-  LayerVisibility.attachMap(map)
   MapsetStyle.attachMap(map)
   MapCenterManagement.attachMap(map)
 
@@ -107,10 +106,7 @@ const onLoad = function onLoad({ map }: { map: Map }) {
  */
 onBeforeUnmount(() => {
   stopTrackingPositioning()
-
-  MunicipalityFilter.disconnect()
-  MapEvents.disconnect()
-  LayerVisibility.disconnect()
+  
   MapsetStyle.disconnect()
   MapCenterManagement.disconnect()
 })
