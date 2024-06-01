@@ -1,9 +1,10 @@
 
-import { getItemsStartingWith } from '@/utils/sessionStorage'
 import { defineStore, storeToRefs} from 'pinia'
 import { Ref, ref } from 'vue'
+import { validate as uuidValidate } from 'uuid';
 
 import { useMapsetStore } from '@/store/mapsets'
+import { getItemsStartingWith } from '@/utils/sessionStorage'
 
 // A full session storage key = prefix + mapsetId
 const sessionStorageKeyPrefix = 'layer_visibility_'
@@ -80,6 +81,14 @@ const changeLayerVisibility = function changeLayerVisibility(layerId: string, vi
     }
 
     mapsetId = activeMapsetId.value
+  } else if (! uuidValidate(mapsetId)) {
+    const { getMapsetIdByIdentifier } = useMapsetStore()
+    mapsetId = getMapsetIdByIdentifier(mapsetId)
+  }
+
+  // No go
+  if (! mapsetId) {
+    return 
   }
 
   // Get the current list of visibile layers, or a empty list
@@ -113,7 +122,16 @@ const toggleLayerVisibility = function toggleLayerVisibility(layerId: string, ma
     }
 
     mapsetId = activeMapsetId.value
+  } else if (! uuidValidate(mapsetId)) {
+    const { getMapsetIdByIdentifier } = useMapsetStore()
+    mapsetId = getMapsetIdByIdentifier(mapsetId)
   }
+
+  // No go
+  if (! mapsetId) {
+    return 
+  }
+
   
   changeLayerVisibility(
     layerId, 

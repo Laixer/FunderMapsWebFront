@@ -122,6 +122,14 @@ const getMapsetByIdentifier = function getMapsetByIdentifier(identifier: string)
 }
 
 /**
+ * 
+ */
+const getMapsetIdByIdentifier = function getMapsetByIdentifier(identifier: string) {
+  const mapset = getMapsetById(identifier) || getMapsetBySlug(identifier)
+  return mapset?.id || undefined
+}
+
+/**
  * Whether a specific mapset is available
  */
 const isMapsetAvailable = function isMapsetAvailable(mapsetId: string) {
@@ -279,6 +287,7 @@ function useMapsets() {
     getMapsetById,
     getMapsetBySlug,
     getMapsetByIdentifier,
+    getMapsetIdByIdentifier,
     activeMapset,
     hasAvailableMapsets,
     hasAvailablePrivateMapsets,
