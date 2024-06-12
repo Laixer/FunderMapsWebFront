@@ -160,7 +160,11 @@ const setRecoveryDataByBuildingId = function setRecoveryDataByBuildingId(buildin
     sample = new RecoverySample(sample)
     const reportId = sample.recovery
     recoverySamplesByRecoveryReportId.value[reportId] = recoverySamplesByRecoveryReportId.value[reportId] || []
-    recoverySamplesByRecoveryReportId.value[reportId].push(sample)
+    
+    // Only add unknown samples
+    if (! recoverySamplesByRecoveryReportId.value[reportId].map(sample => sample.id).includes(sample.id)) {
+      recoverySamplesByRecoveryReportId.value[reportId].push(sample)
+    }
 
     recoverySamplesByBuildingId.value[buildingId] = recoverySamplesByBuildingId.value[buildingId] || []
     recoverySamplesByBuildingId.value[buildingId].push(sample)

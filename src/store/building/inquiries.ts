@@ -101,7 +101,7 @@ const getCombinedInquiryDataByBuildingId = function getCombinedInquiryDataByBuil
   // Match reports & samples for every entry
   const combinedData: ICombinedInquiryData[] = []
 
-  console.log("Get Combined inquiry data")
+  console.log("Get Combined inquiry data", getInquiryByBuildingId(buildingId))
 
   // Go over all inquires related to the building
   getInquiryByBuildingId(buildingId)
@@ -145,7 +145,7 @@ const getCombinedInquiryDataByBuildingId = function getCombinedInquiryDataByBuil
  */
 const setInquiryDataByBuildingId = function setInquiryDataByBuildingId(buildingId: string, reports: IInquiryReport[], samples: IInquirySample[]) {
 
-  console.log(buildingId, reports, samples)
+  console.log('setInquiryDataByBuildingId', buildingId, reports, samples)
 
   reports.forEach((inquiry: IInquiryReport) => {
     inquiriesById.value[inquiry.id] = new Inquiry(inquiry)
@@ -158,7 +158,11 @@ const setInquiryDataByBuildingId = function setInquiryDataByBuildingId(buildingI
     sample = new InquirySample(sample)
     const reportId = sample.inquiry
     inquirySamplesByInquiryId.value[reportId] = inquirySamplesByInquiryId.value[reportId] || []
-    inquirySamplesByInquiryId.value[reportId].push(sample)
+
+    // Only add unknown samples
+    if (! inquirySamplesByInquiryId.value[reportId].map(sample => sample.id).includes(sample.id)) {
+      inquirySamplesByInquiryId.value[reportId].push(sample)
+    }
 
     inquirySamplesByBuildingId.value[buildingId] = inquirySamplesByBuildingId.value[buildingId] || []
     inquirySamplesByBuildingId.value[buildingId].push(sample)
