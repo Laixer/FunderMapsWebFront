@@ -19,7 +19,7 @@ import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataCon
 import { useBuildingStore } from '@/store/buildings';
 import { useInquiriesStore } from '@/store/building/inquiries';
 import { useMainStore } from '@/store/main';
-import DocumentDownload from '../DocumentDownload.vue';
+import DocumentDownload from '@/components/DocumentDownload.vue';
 
 const { getCombinedInquiryDataByBuildingId, buildingInquiryDataHasBeenRetrieved, buildingHasInquiries } = useInquiriesStore()
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useInquiriesStore())

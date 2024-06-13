@@ -7,7 +7,7 @@ import { getInquiryReportDownloadLink, getRecoveryReportDownloadLink } from '@/s
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 
 
-const { sourceType, filename, id } = defineProps({
+const props = defineProps({
   id: { type: [String,Number], required: true },
   sourceType: { type: String, required: true, validator: (value: string) => ['incident', 'inquiry', 'recovery'].includes(value) },
   filename: { type: String, required: true },
@@ -19,7 +19,7 @@ const { sourceType, filename, id } = defineProps({
  * Get the callback associated with the source type
  */
 const callback = computed<Function>(() => {
-  switch(sourceType) {
+  switch(props.sourceType) {
     case 'incident':
       return getRecoveryReportDownloadLink
     case 'inquiry':
@@ -34,10 +34,10 @@ const callback = computed<Function>(() => {
 })
 
 const handleDownload = async function handleDownload() {
-  const link: IDownloadLink = await callback.value(id) 
+  const link: IDownloadLink = await callback.value(props.id) 
   
   if (link && link.accessLink) {
-    saveAs(link.accessLink, filename)
+    saveAs(link.accessLink, props.filename)
     // console.log(link.accessLink, filename)
   } else {
     console.log("Failed to retrieve download link")
