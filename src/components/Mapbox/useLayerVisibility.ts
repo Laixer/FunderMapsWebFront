@@ -12,6 +12,7 @@ export const useLayerVisibility = function useLayerVisibility(
   Map: MaybeRef<Map | null | undefined>
 ) {
 
+  const { isPublicMapset } = useMapsetStore()
   const { activeMapset } = storeToRefs( useMapsetStore() )
   const { getVisibleLayersByMapsetId, changeLayerVisibility } = useLayersStore()
   const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
@@ -30,6 +31,7 @@ export const useLayerVisibility = function useLayerVisibility(
    */
   const preferredDefaultMapsetId = (import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99")
   const preferredDefaultLayerIds = (import.meta.env.VITE_DEFAULT_LAYERS || 'foundation-type-cluster,foundation-type-established') 
+  const preferredDefaultPublicLayerIds = (import.meta.env.VITE_DEFAULT_PUBLIC_LAYERS || 'foundation-recovery,foundation-type-established' )
 
   /**
    * Reveal the specified layers (and hide all others we know about)
@@ -98,6 +100,28 @@ export const useLayerVisibility = function useLayerVisibility(
     }
   }
 
+  const revealDefaultPublicLayers = function revealDefaultPublicLayers(allKnownLayerIds: string[], id: string) {
+
+    console.log("Layer visibility - reveal default public layers", allKnownLayerIds, id)
+
+    try {
+      const preferredLayerIds = preferredDefaultPublicLayerIds
+        .split(',')
+        .filter((layerId: string) => allKnownLayerIds.includes(layerId))
+
+      if (preferredLayerIds.length === 0) throw new Error('No known layers')
+
+      // This changes the visibility in the store. The map will react
+      preferredLayerIds.forEach((layerId: string) => {
+        changeLayerVisibility(layerId, true, id) 
+      })
+
+    } catch(e) {
+      // If it fails, go with the first known layer
+      revealFirstLayer(allKnownLayerIds, id)
+    }
+  }
+
   /**
    * Reveal layers that were previously enabled (by referencing sessionStorage)
    *  If none were enabled, enable the first layer of the layerSet
@@ -141,7 +165,9 @@ export const useLayerVisibility = function useLayerVisibility(
       applyVisibilityOfLayers([], allKnownLayerIds)
 
       // If the mapset is the preferred default mapset
-      if (isDefaultMapset(mapset.id)) {
+      if (isPublicMapset(mapset.id)) {
+        revealDefaultPublicLayers(allKnownLayerIds, mapset.id)
+      } else if (isDefaultMapset(mapset.id)) {
         revealDefaultLayers(allKnownLayerIds, mapset.id)
       } else {
         revealFirstLayer(allKnownLayerIds, mapset.id)
