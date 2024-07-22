@@ -1,16 +1,13 @@
 
 import { type Ref, ref } from 'vue';
 import { defineStore} from 'pinia'
+import { useSessionStore } from './session';
 
 /**
  * Whether the profile modal is shown
  */
 const isProfileModalOpen: Ref<boolean> = ref(false)
 
-/**
- * Whether the left sidebar is open
- */
-const isLeftSidebarOpen: Ref<boolean> = ref(false)
 
 /**
  * Whether the info popover is shown
@@ -37,6 +34,17 @@ const isShowingMapsetSelection: Ref<boolean> = ref(false)
 const mapCenterLatLon: Ref<mapboxgl.LngLat|null> = ref(null)
 
 function useMain() {
+
+  const SessionStore = useSessionStore()
+
+  /**
+   * Whether the left sidebar is open
+   *  Initial state depends on whether a user is logged in. 
+   */
+  const isLeftSidebarOpen: Ref<boolean> = ref(! SessionStore.isAuthenticated)
+
+
+
   return {
     isProfileModalOpen,
 
