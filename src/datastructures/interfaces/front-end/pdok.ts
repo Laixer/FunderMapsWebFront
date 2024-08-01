@@ -5,7 +5,7 @@
 export interface IPDOKSuggestion {
   type: string,
   weergavenaam: string,
-  adrestype: string,
-  id: string, 
+  adrestype: null | string
+  id: string,
   score: number
 }
