@@ -28,7 +28,7 @@ const buildingRouting = useBuildingRouting()
 const queryString = ref('')
 
 // Debounce the query string to avoid spamming PDOK when holding key down
-const debouncedQueryString = debouncedRef(queryString, 50, { maxWait: 150 } )
+const debouncedQueryString = debouncedRef(queryString, 10, { maxWait: 150 } )
 
 // Results from the suggestion query
 const lastQuery: Ref<string> = ref('')
@@ -52,6 +52,7 @@ watch(
     // No repeat please
     if (value === lastQuery.value) return
 
+    // TODO: We have more tests to do here
     // Directly open a known buildingId
     if (
       (value.length === 16 && /^[0-9]+$/.test(value)) ||
