@@ -189,10 +189,10 @@ const handleGetSuggestions = async function handleGetSuggestions(query: string){
         query, 
         mapCenterLatLon.value.lat, 
         mapCenterLatLon.value.lng,
-        5
+        10
       )
     } else {
-      results = await getSuggestions(query, 5)
+      results = await getSuggestions(query, 10)
     }
     
     if (! results) {
