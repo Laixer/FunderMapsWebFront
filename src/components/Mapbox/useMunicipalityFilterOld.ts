@@ -18,6 +18,7 @@ export const useMunicipalityFilter = function useMunicipalityFilter() {
     if (mapInstance === null) return // No map to work with
     if (! activeMapset.value) return // No mapset to work with
 
+    // TODO: fenceMunicipality is now an array
     if (activeMapset.value.fenceMunicipality === null) return // No filter necessary
 
     if (enableMapFilter === 'false') return

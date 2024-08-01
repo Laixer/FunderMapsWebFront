@@ -11,7 +11,7 @@ export interface IMapsetFE {
    * Unique string identifier
    */
   slug: string,
-  
+
   /**
    * The readable name
    */
@@ -46,18 +46,30 @@ export interface IMapsetFE {
   /**
    * An optional disclaimer, to be shown in a popup that needs to be accepted before presentation of the layer
    */
-  consent: null|string,
+  consent: null | string,
 
   /**
    * An optional explanation about the layers included in this mapset
    */
-  note: null|string,
-  
+  note: null | string,
+
+  /**
+   * The neighborhood reference that should be used as mask on the layerdata.
+   *  If no value is provided, all data should be accessible.
+   */
+  fenceNeighborhood: string[],
+
+  /**
+   * The district reference that should be used as mask on the layerdata.
+   *  If no value is provided, all data should be accessible.
+   */
+  fenceDistrict: string[],
+
   /**
    * The municipality reference that should be used as mask on the layerdata.
    *  If no value is provided, all data should be accessible.
    */
-  fenceMunicipality: null|string,
+  fenceMunicipality: string[],
 
   /**
    * Layer styling / legend config

@@ -32,6 +32,7 @@ export const useMunicipalityFilter = function useMunicipalityFilter(
       return
     } 
 
+    // TODO: fenceMunicipality is now an array
     // No filter necessary
     if (activeMapset.value.fenceMunicipality === null) {
       console.log("Municipality Filter - no fence")
@@ -51,9 +52,7 @@ export const useMunicipalityFilter = function useMunicipalityFilter(
         [
           "match",
           ["get", "municipality_id"],
-          [
-            activeMapset.value.fenceMunicipality
-          ],
+          activeMapset.value.fenceMunicipality, // TODO: Not sure if this is correct
           true,
           false
         ]
