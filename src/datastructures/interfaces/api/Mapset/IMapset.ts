@@ -11,7 +11,7 @@ export interface IMapset {
    * Unique identifier
    */
   slug: string,
-  
+
   /**
    * The readable name
    */
@@ -54,10 +54,22 @@ export interface IMapset {
   icon?: string,
 
   /**
+   * The neighborhood reference that should be used as mask on the layerdata.
+   *  If no value is provided, all data should be accessible.
+   */
+  fenceNeighborhood?: string[],
+
+  /**
+   * The district reference that should be used as mask on the layerdata.
+   *  If no value is provided, all data should be accessible.
+   */
+  fenceDistrict?: string[],
+
+  /**
    * The municipality reference that should be used as mask on the layerdata.
    *  If no value is provided, all data should be accessible.
    */
-  fenceMunicipality?: string,
+  fenceMunicipality?: string[],
 
   /**
    * Layer styling / legend config in JSON format

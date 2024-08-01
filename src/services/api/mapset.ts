@@ -28,7 +28,9 @@ const mapMapset = function mapMapset(rawmapset: IMapset): IMapsetFE {
     consent: rawmapset?.consent || null,
     note: rawmapset?.note || null,
     icon: rawmapset?.icon || 'home-info',
-    fenceMunicipality: rawmapset?.fenceMunicipality || null,
+    fenceNeighborhood: rawmapset?.fenceNeighborhood || [],
+    fenceDistrict: rawmapset?.fenceDistrict || [],
+    fenceMunicipality: rawmapset?.fenceMunicipality || [],
     layerSet,
     loadedAt: Date.now()
   }
