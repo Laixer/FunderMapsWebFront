@@ -40,26 +40,24 @@ const router = createRouter({
       component: Home,
     },
     // openbaar/:mapsetId
-    // :org/kaart/:mapsetId
-    // :org/kaart/:mapsetId/gebouw/:buildingId
+    // :org/map/:mapsetId
+    // :org/map/:mapsetId/gebouw/:buildingId
     {
       name: 'mapset',
-      path: '/kaart/:mapsetId',
+      path: '/map/:mapsetId',
       component: Home,
     },
     {
       name: 'building',
-      path: '/kaart/:mapsetId/gebouw/:buildingId',
+      path: '/map/:mapsetId/gebouw/:buildingId',
       component: Home,
     },
     {
       name: 'building-panel',
-      path: '/kaart/:mapsetId/gebouw/:buildingId/:panel',
+      path: '/map/:mapsetId/gebouw/:buildingId/:panel',
       component: Home
     }
   ],
 })
-
-
 
 export default router
