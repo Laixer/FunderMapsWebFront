@@ -28,8 +28,8 @@ export const useMapCenterRouting = function useMapCenterRouting() {
 
         let query = route.query || {}
 
-        query.lat = `${LatLng.lat}`
-        query.lng = `${LatLng.lng}` 
+        query.lat = `${LatLng.lat.toFixed(5)}`
+        query.lng = `${LatLng.lng.toFixed(5)}` 
 
         router.push({
           name: route.name,
