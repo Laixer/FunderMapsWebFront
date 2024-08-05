@@ -8,7 +8,7 @@ import { type Map } from 'mapbox-gl'
 import { addControls } from './controls';
 import { useEvents } from './useEvents'
 import { useLayerVisibility } from './useLayerVisibility'
-import { useMunicipalityFilter } from './useMunicipalityFilter'
+import { useGeographyFilter } from './useGeographyFilter'
 import { useMapsetStyle } from './useMapsetStyle'
 import { useMapCenterManagement } from './useMapCenterManagement'
 import { useBuildingMarker } from './useBuildingMarker'
@@ -43,7 +43,7 @@ const MapCenterManagement = useMapCenterManagement()
 
 useEvents(mapInstance)
 useLayerVisibility(mapInstance)
-useMunicipalityFilter(mapInstance)
+useGeographyFilter(mapInstance)
 useBuildingMarker(mapInstance)
 
 
@@ -118,4 +118,4 @@ onBeforeUnmount(() => {
     v-if="hasSetInitialStyle"
     :options="options" 
     @load="onLoad" />
-</template>
+</template>./useGeographyFilter
