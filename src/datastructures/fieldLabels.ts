@@ -72,6 +72,10 @@ export const AttributionControlFieldLabels = <Record<string, string>> {
   owner: "Opdrachtgever",
   creator: "Verwerkt door",
   reviewer: "Gecontroleerd door",
+  contractorName: "Uitvoerder",
+  ownerName: "Opdrachtgever",
+  creatorName: "Verwerkt door",
+  reviewerName: "Gecontroleerd door"
 }
 
 export const StateControlFieldLabels = <Record<string, string>> {

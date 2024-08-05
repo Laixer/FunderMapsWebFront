@@ -92,7 +92,7 @@ const fields: ComputedRef<CompletedFieldData[]> = computed(() => {
           new FieldDataConfig({ name: 'id' }),
           new FieldDataConfig({ name: 'type' }),
           new FieldDataConfig({ name: 'documentDate' }),
-          new FieldDataConfig({ name: 'contractor', source: inquiryData.value?.[0]?.report?.attribution }),
+          new FieldDataConfig({ name: 'contractorName', source: inquiryData.value?.[0]?.report?.attribution }),
         ]
       })
       .map(retrieveAndFormatFieldData)
