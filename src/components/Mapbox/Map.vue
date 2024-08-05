@@ -63,7 +63,7 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
 const lastKnownPositioning = getLastKnownPositioning()
 let options = ref({
   style: <string|undefined> undefined,
-  center: getLatLngFromQueryString() || lastKnownPositioning.center || [5.2913, 52.1326],
+  center: getLatLngFromQueryString() || lastKnownPositioning.center || [4.897070, 52.377956], // [5.2913, 52.1326],
   zoom: lastKnownPositioning.zoom || 15,
   pitch: lastKnownPositioning.pitch || 45,
   bearing: lastKnownPositioning.bearing || 0,
