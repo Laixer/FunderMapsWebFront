@@ -12,6 +12,14 @@ export const useLayerVisibility = function useLayerVisibility(
   Map: MaybeRef<Map | null | undefined>
 ) {
 
+  /**
+   * Basically a killswitch to this composable
+   *  TODO: Refactor composable after test
+   */
+  if (localStorage.getItem('TILESERVERTEST') === 'TRUE') {
+    return
+  }
+
   const { activeMapset } = storeToRefs( useMapsetStore() )
   const { getVisibleLayersByMapsetId, changeLayerVisibility } = useLayersStore()
   const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())

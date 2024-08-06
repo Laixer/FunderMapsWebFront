@@ -13,6 +13,7 @@ import { useMapsetStyle } from './useMapsetStyle'
 import { useMapCenterManagement } from './useMapCenterManagement'
 import { useBuildingMarker } from './useBuildingMarker'
 import { useMapboxControlNudge } from './useMapboxControlNudge';
+import { useTileServerTest } from './useTileServerTest'
 
 import { 
   getLastKnownPositioning, 
@@ -34,7 +35,7 @@ const emit = defineEmits(['ready'])
 let mapInstance: Ref<Map|null> = ref(null)
 
 // Whether the initial map style has been set
-const hasSetInitialStyle = ref(false)
+const hasSetInitialStyle = ref(localStorage.getItem('TILESERVERTEST') === 'TRUE')
 
 
 // Composables to handle map related functionality
@@ -46,6 +47,25 @@ useLayerVisibility(mapInstance)
 useGeographyFilter(mapInstance)
 useBuildingMarker(mapInstance)
 
+useTileServerTest(
+  mapInstance, 
+  'incident-source', 
+  {
+    type: 'vector',
+    tiles: [import.meta.env.VITE_FUNDERMAPS_TILES_URL || ''],
+    minzoom: 10,
+    maxzoom: 15
+  },
+  {
+    id: 'incident-layer',
+    source: 'incident-source',
+    type: 'fill',
+    'source-layer': 'incident',
+    paint: {
+      'fill-color': 'rgba(0, 0, 255, 1.0)'
+    }
+  }
+)
 
 
 // Update the query string in the route when the map center changes. Navigate to the LngLat from the query string when opening a mapset page
@@ -62,7 +82,7 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
  */
 const lastKnownPositioning = getLastKnownPositioning()
 let options = ref({
-  style: <string|undefined> undefined,
+  style: <string|undefined> (hasSetInitialStyle.value ? 'mapbox://styles/mapbox/standard' : undefined), // default style
   center: getLatLngFromQueryString() || lastKnownPositioning.center || [4.897070, 52.377956], // [5.2913, 52.1326],
   zoom: lastKnownPositioning.zoom || 15,
   pitch: lastKnownPositioning.pitch || 45,
@@ -73,9 +93,14 @@ let options = ref({
 
 /**
  * Whenever the mapset changes for the first time, set the options.style
+ *  This is relevant for loading the right style if it switches early
  */
 watch(() => activeMapset.value, (mapset) => {
-  if (! mapInstance.value && mapset?.style !== undefined) {
+  if (
+    hasSetInitialStyle.value === false 
+    && ! mapInstance.value 
+    && mapset?.style !== undefined
+  ) {
     options.value.style = mapset?.style
 
     setTimeout(() => {
@@ -88,7 +113,7 @@ const onLoad = function onLoad({ map }: { map: Map }) {
   
   mapInstance.value = map
 
-  MapsetStyle.attachMap(map)
+  MapsetStyle?.attachMap(map)
   MapCenterManagement.attachMap(map)
 
   // Controls & control positioning nudges if sidebars are open
@@ -107,7 +132,7 @@ const onLoad = function onLoad({ map }: { map: Map }) {
 onBeforeUnmount(() => {
   stopTrackingPositioning()
   
-  MapsetStyle.disconnect()
+  MapsetStyle?.disconnect()
   MapCenterManagement.disconnect()
 })
 
