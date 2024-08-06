@@ -14,6 +14,7 @@ const sessionStorageKeyPrefix = 'layer_visibility_'
  */
 const visibleLayersByMapsetId: Ref<{[key: string]: string[]}> = ref({})
 
+
 /**
  * Get all visible layers by mapsetId
  */
