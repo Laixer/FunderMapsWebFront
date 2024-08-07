@@ -46,9 +46,25 @@ export const resetPassword = async function resetPassword(email: string, token: 
   })
 }
 
+/**
+ * Send a request to change a password
+ *  Note: this is only for users who are logged in
+ */
+export const changePassword = async function changePassword(oldPassword: string, newPassword: string) {
+  return await post({ 
+    endpoint: '/auth/change-password',
+    body: {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    },
+    requireAuth: true
+  })
+}
+
 export default {
   login,
   refresh,
   requestPasswordReset,
-  resetPassword
+  resetPassword,
+  changePassword
 }

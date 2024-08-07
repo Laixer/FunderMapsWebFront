@@ -8,6 +8,11 @@ import { defineStore} from 'pinia'
 const isProfileModalOpen: Ref<boolean> = ref(false)
 
 /**
+ * Whether the password modal is shown
+ */
+const isPasswordModalOpen: Ref<boolean> = ref(false)
+
+/**
  * Whether the left sidebar is open
  */
 const isLeftSidebarOpen: Ref<boolean> = ref(false)
@@ -39,6 +44,7 @@ const mapCenterLatLon: Ref<mapboxgl.LngLat|null> = ref(null)
 function useMain() {
   return {
     isProfileModalOpen,
+    isPasswordModalOpen,
 
     // Left sidebar
     isLeftSidebarOpen,
