@@ -265,7 +265,7 @@ const handleClose = function handleClose() {
 <template>
   <div 
     v-on-click-outside="handleClose"
-    class="relative">
+    class="relative grow">
 
     <form 
       class="search-bar | flex gap-2"
@@ -293,7 +293,7 @@ const handleClose = function handleClose() {
     <Transition>
       <div
         v-if="suggestions.length"
-        class="dropdown arrow arrow--top-left | absolute -left-7 top-full origin-top-left outline-none"
+        class="search-dropdown dropdown arrow arrow--top-left | absolute -left-7 top-full origin-top-left outline-none"
       >
         <div
           class="dropdown__main | relative grid rounded-lg bg-white py-4 shadow-float"
@@ -318,7 +318,7 @@ const handleClose = function handleClose() {
                   @click.prevent="handleSelectBuilding(suggestion.id, suggestion.weergavenaam)"
                 >
                   <div class="flex gap-2">
-                    <span class="text-green-500"> 
+                    <span class="text-green-500 inline-block w4"> 
                       <FundermapsIcon
                         name="pin"
                         class="aspect-square w-4"
@@ -336,3 +336,16 @@ const handleClose = function handleClose() {
     </Transition>
   </div>
 </template>
+
+<style>
+
+/** TODO: move to css files after fixing dynamic css generation */
+
+.search-bar .input--text {
+  flex-grow: 1;
+}
+
+.search-bar .input-field {
+  width: auto;
+}
+</style>
