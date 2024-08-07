@@ -14,6 +14,10 @@ const sessionStorageKeyPrefix = 'layer_visibility_'
  */
 const visibleLayersByMapsetId: Ref<{[key: string]: string[]}> = ref({})
 
+/**
+ * Whether the administrative boundaries are shown
+ */
+const showAdministrativeBoundaries: Ref<boolean> = ref(false)
 
 /**
  * Get all visible layers by mapsetId
@@ -148,12 +152,13 @@ function useLayers() {
   
   return {
     visibleLayersByMapsetId,
+    showAdministrativeBoundaries,
     isLayerVisible,
     retrieveLayerVisibilityFromSessionStorage,
     getVisibleLayersByMapsetId,
     getVisibleLayersOfActiveMapset,
     changeLayerVisibility,
-    toggleLayerVisibility
+    toggleLayerVisibility,
   }
 }
 

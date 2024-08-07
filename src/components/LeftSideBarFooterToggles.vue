@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { watch } from 'vue';
-
+import { onBeforeMount, watch } from 'vue';
 import Toggle from '@/components/Common/Inputs/Toggle.vue'
 
-const Ownership = defineModel('ownership')
-const Borders = defineModel('borders')
+import { useLayersStore } from "@/store/layers";
+import { storeToRefs } from 'pinia';
+const { showAdministrativeBoundaries } = storeToRefs(useLayersStore())
+
+const Ownership = defineModel('Ownership')
+const AdministrativeBoundaries = defineModel('AdministrativeBoundaries')
 
 watch(Ownership, (value) => {
   console.log("Ownerschip", value)
 })
- 
-watch(Borders, (value) => {
-  console.log("Borders", value)
+
+watch(AdministrativeBoundaries, (value) => {
+  showAdministrativeBoundaries.value = value === true
+  localStorage.setItem("administative-boundaries", value === true ? 'true' : 'false')
+})
+
+onBeforeMount(() => {
+  
 })
 
 </script>
@@ -19,7 +27,7 @@ watch(Borders, (value) => {
 <template>
   <div class="LayerToggleWrapper">
     <Toggle v-model="Ownership" label="Filter op eigendom" />
-    <Toggle v-model="Borders" label="Administratieve grenzen" />
+    <Toggle v-model="AdministrativeBoundaries" label="Administratieve grenzen" />
   </div>
 </template>
 
