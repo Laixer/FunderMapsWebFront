@@ -55,6 +55,10 @@ export const useGeographyFilter = function useGeographyFilter(
         true,
         false
       ])
+      // in case municipality_id prop is not available
+      geoFilter.push([
+        '!', ["has", "municipality_id"] 
+      ])
     }
 
     // District
@@ -72,6 +76,10 @@ export const useGeographyFilter = function useGeographyFilter(
         true,
         false
       ]) 
+      // in case district_id prop is not available
+      geoFilter.push([
+        '!', ["has", "district_id"] 
+      ])
     }
     
     // Neighborhood
@@ -88,6 +96,10 @@ export const useGeographyFilter = function useGeographyFilter(
         activeMapset.value.fenceNeighborhood, 
         true,
         false
+      ])
+      // in case neightborhood_id prop is not available
+      geoFilter.push([
+        '!', ["has", "neighborhood_id"]
       ])
     }
 
