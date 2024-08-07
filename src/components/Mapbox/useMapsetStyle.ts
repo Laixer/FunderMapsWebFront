@@ -10,6 +10,16 @@ import { useMapsetStore } from '@/store/mapsets';
 export const useMapsetStyle = function useMapsetStyle() {
   const { activeMapset } = storeToRefs( useMapsetStore() )
 
+
+  /**
+   * Basically a killswitch to this composable
+   *  TODO: Refactor composable after test
+   */
+  if (localStorage.getItem('TILESERVERTEST') === 'TRUE') {
+    return
+  }
+  
+
   let mapInstance: Map|null = null
 
   watch(

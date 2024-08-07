@@ -11,6 +11,7 @@ import RightSidebar from '@/components/Layout/RightSideBar.vue'
 
 // Modals
 import ProfileModal from '@/components/Modals/ProfileModal.vue'
+import PasswordModal from '@/components/Modals/PasswordModal.vue'
 import NoGroupsModal from '@/components/Modals/NoMapsetsModal.vue';
 import InquirySampleModal from '@/components/Modals/InquirySampleModal.vue';
 import RecoverySampleModal from '@/components/Modals/RecoverySampleModal.vue';
@@ -194,6 +195,10 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
 
     <Transition>
       <ProfileModal />
+    </Transition>
+
+    <Transition>
+      <PasswordModal />
     </Transition>
 
   </div>

@@ -100,7 +100,7 @@ const handleSubmit = async function handleSubmit() {
         v-if="resetFailed"
         class="flex justify-between">
         <p class="text-red-500">
-          Het wijzigen van het wachtwoord is onjuist. 
+          Het wijzigen van het wachtwoord is niet gelukt. 
           Mogelijk is de eenmalige reset sleutel reeds verlopen. 
           In dat geval moet je <router-link :to="{ name: 'forgotten' }">een nieuw verzoek indienen om het wachtwoord te wijzigen</router-link>.
         </p>
@@ -123,7 +123,7 @@ const handleSubmit = async function handleSubmit() {
           id="password"
           label="Nieuw wachtwoord"
           :type="showPassword ? 'text' : 'password'"
-          v-model="formData.passwordConfirm"
+          v-model="formData.password"
           placeholder="Voer je nieuwe nieuwe wachtwoord in"
           autocomplete="new-password"
           :validationStatus="getStatus('password')"
@@ -155,7 +155,7 @@ const handleSubmit = async function handleSubmit() {
           id="confirm-password"
           label="Herhaal nieuw wachtwoord"
           :type="showPassword ? 'text' : 'password'"
-          v-model="formData.password"
+          v-model="formData.passwordConfirm"
           placeholder="Herhaal hier je nieuwe wachtwoord"
           autocomplete="new-password"
           :validationStatus="getStatus('passwordConfirm')"

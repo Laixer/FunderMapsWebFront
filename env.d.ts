@@ -13,7 +13,10 @@ interface ImportMetaEnv {
   
   // Default Mapset
   readonly VITE_DEFAULT_MAPSET_ID: string
-  readonly VITE_DEFAULT_LAYERS: string
+  readonly VITE_DEFAULT_LAYERS: string,
+
+  // Fundermaps Tile server 
+  readonly VITE_FUNDERMAPS_TILES_URL: string
 }
 
 interface ImportMeta {

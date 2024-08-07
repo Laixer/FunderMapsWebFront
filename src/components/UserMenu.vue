@@ -18,7 +18,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
-const { isProfileModalOpen } = storeToRefs( useMainStore() )
+const { isProfileModalOpen, isPasswordModalOpen } = storeToRefs( useMainStore() )
 const { isAuthenticated, currentUser } = storeToRefs( sessionStore )
 
 /**
@@ -42,7 +42,18 @@ const handleClose = function handleClose() {
  *  Note: The profile popup has no navigation attached
  */
 const handleOpenProfileModal = function() {
+  isPasswordModalOpen.value = false
   isProfileModalOpen.value = true
+  isOpen.value = false
+}
+
+/**
+ * Open the Password modal, and close the menu
+ *  Note: The password popup has no navigation attached
+ */
+const handleOpenPasswordModal = function() {
+  isProfileModalOpen.value = false
+  isPasswordModalOpen.value = true
   isOpen.value = false
 }
 
@@ -96,7 +107,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
     </button>
 
     <div 
-      v-show="isOpen"
+      v-show="isOpen && isAuthenticated"
       class="dropdown arrow arrow--top-right | absolute right-0 top-full z-20 min-w-48 origin-top-right outline-none">
       <div class="dropdown__main | divide-y divide-grey-200 rounded-lg bg-white py-1 shadow-float">
 
@@ -107,6 +118,16 @@ const handleLoginRedirect = function handleLoginRedirect() {
           :class="{'text-green-500': isProfileModalOpen}"
         >
           <span class="whitespace-nowrap">Ga naar profiel</span>
+          <AnimatedArrowIcon />
+        </a>
+
+        <a
+          href="#"
+          @click.prevent="handleOpenPasswordModal"
+          class="group flex w-full cursor-pointer items-center justify-between gap-2 px-8 py-4 transition-colors hover:text-green-500"
+          :class="{'text-green-500': isPasswordModalOpen}"
+        >
+          <span class="whitespace-nowrap">Wijzig wachtwoord</span>
           <AnimatedArrowIcon />
         </a>
 
