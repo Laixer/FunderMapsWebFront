@@ -26,9 +26,10 @@ export const useBuildingMarker = function useBuildingMarker(
     return getLocationDataByBuildingId(buildingId.value)
   })
 
-
   function show(LngLat: LngLat) {
     if (mapInstance.value) {
+      // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
+      // @ts-ignore 
       Marker.setLngLat(LngLat).addTo(mapInstance.value)
     }
   }

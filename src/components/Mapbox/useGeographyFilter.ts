@@ -1,4 +1,4 @@
-import { type Map } from "mapbox-gl"
+import { FilterSpecification, type Map } from "mapbox-gl"
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';
@@ -103,11 +103,19 @@ export const useGeographyFilter = function useGeographyFilter(
      * Apply the Geography Filter to all active mapset layers 
      */
     for (const layer of activeMapset.value.layerSet) {
-      mapInstance.value.setFilter(layer.id, [
-        'all',
-        mapInstance.value.getFilter(layer.id),
-        geoFilter
-      ])
+
+      const currentFilter = mapInstance.value.getFilter(layer.id)
+      if (currentFilter) {
+        mapInstance.value.setFilter(layer.id, [
+          'all',
+          currentFilter,
+          geoFilter as FilterSpecification
+        ])
+      } else {
+        mapInstance.value.setFilter(layer.id, 
+          geoFilter as FilterSpecification
+        )
+      }
     }
   }
 
