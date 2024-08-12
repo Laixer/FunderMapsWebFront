@@ -2,7 +2,7 @@
 import { type ComputedRef, type Ref, computed, onBeforeUnmount, ref, watch } from 'vue'; 
 import { storeToRefs } from 'pinia';
 
-import MapBox from '../Common/Mapbox/MapBox.vue';
+import MapBox from '@/components/Common/Mapbox/MapBox.vue';
 import { type Map } from 'mapbox-gl'
 
 import { addControls } from './controls';

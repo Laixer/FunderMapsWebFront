@@ -8,6 +8,9 @@ import Login from '@/views/auth/Login.vue'
 import PasswordForgotten from '@/views/auth/PasswordForgotten.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 
+// 404
+import NotFound from '@/views/NotFound.vue' 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -56,7 +59,13 @@ const router = createRouter({
       name: 'building-panel',
       path: '/map/:mapsetId/gebouw/:buildingId/:panel',
       component: Home
-    }
+    },
+
+    { 
+      path: '/:pathMatch(.*)*', 
+      name: 'NotFound', 
+      component: NotFound 
+    },
   ],
 })
 
