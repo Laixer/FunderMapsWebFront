@@ -25,7 +25,10 @@ const emit = defineEmits(['close', 'back'])
  * Data source for panel
  */
 const locationData = computed(() => {
-  if (! buildingId.value) return null
+  if (! buildingId.value) { 
+    return null
+  }
+
   return getLocationDataByBuildingId(buildingId.value)
 })
 
@@ -35,9 +38,16 @@ const locationData = computed(() => {
  */
 const pdokLink = computed(() => {
   try {
-    if (! buildingId.value) return null
+    if (! buildingId.value) { 
+      return null 
+    }
+
     const objectId = buildingId.value.split('.').reverse()[0]
-    return `https://bagviewer.kadaster.nl/lvbag/bag-viewer/?objectId=${objectId}`
+    if (objectId.length === 16 && /^\d+$/.test(objectId)) {
+      return `https://bagviewer.kadaster.nl/lvbag/bag-viewer/?objectId=${objectId}`
+    } 
+
+    return null
   } catch(e) {
     return null
   }
@@ -49,7 +59,9 @@ const pdokLink = computed(() => {
  *  TODO: formatter based on central config, like field labels
  */
 const fieldsWithData = computed(() => {
-  if (locationData.value === null) return []
+  if (locationData.value === null) { 
+    return [] 
+  }
 
   const fieldsConfig = [
     new FieldDataConfig({ name: 'fullAddress', source: locationData.value?.address }),
@@ -76,6 +88,7 @@ const fieldsWithData = computed(() => {
     
     <section
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
+      :class="{ 'rounded-b-lg' : !! pdokLink }"
     >
       <div class="space-y-3">
         <h6 class="font-bold leading-none">Locatie informatie</h6>
@@ -90,9 +103,8 @@ const fieldsWithData = computed(() => {
       </div>      
     </section>
 
-    <template v-slot:footer>  
+    <template v-slot:footer v-if="pdokLink">  
       <a
-        v-if="pdokLink"
         :href="pdokLink"
         class="link link--outline | group flex-1 justify-center px-2 py-0.5"
         target="_blank"
@@ -107,3 +119,9 @@ const fieldsWithData = computed(() => {
   </Panel>
 </template>
 
+<style>
+.rounded-b-lg {
+  border-bottom-left-radius: .5rem;
+  border-bottom-right-radius: .5rem;
+}
+</style>
