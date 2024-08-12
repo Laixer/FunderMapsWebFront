@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, onBeforeUnmount, ref, watch } from 'vue'; 
+import { type ComputedRef, type Ref, computed, onBeforeUnmount, ref, watch } from 'vue'; 
 import { storeToRefs } from 'pinia';
 
 import MapBox from '../Common/Mapbox/MapBox.vue';
@@ -20,14 +20,17 @@ import {
   startTrackingPositioning, 
   stopTrackingPositioning 
 } from './trackpositioning';
+import { useMapCenterRouting } from '@/router/mapCenterRouting';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { useBuildingStore } from '@/store/buildings';
 import { useMainStore } from '@/store/main';
-import { useMapCenterRouting } from '@/router/mapCenterRouting';
+import { useMetadataStore } from '@/store/metadata';
+
 const { activeMapset } = storeToRefs( useMapsetStore() )
 const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
 const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
+const { isAvailable: hasUserMetaData } = storeToRefs(useMetadataStore())
 
 const emit = defineEmits(['ready'])
 
@@ -80,16 +83,22 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
  *  Set as ref because options.style is updated once the mapset is available
  *  Reference the last known position from the last visit if available
  */
-const lastKnownPositioning = getLastKnownPositioning()
-let options = ref({
-  style: <string|undefined> (hasSetInitialStyle.value ? 'mapbox://styles/mapbox/standard' : undefined), // default style
-  center: getLatLngFromQueryString() || lastKnownPositioning.center || [4.897070, 52.377956], // [5.2913, 52.1326],
-  zoom: lastKnownPositioning.zoom || 15,
-  pitch: lastKnownPositioning.pitch || 45,
-  bearing: lastKnownPositioning.bearing || 0,
-  antialias: true,
-  attributionControl: false,
+
+const mapStyle: Ref<string|undefined> = ref((hasSetInitialStyle.value ? 'mapbox://styles/mapbox/standard' : undefined)) // default style)
+const options: ComputedRef<object> = computed(() => {
+  const lastKnownPositioning = getLastKnownPositioning()
+  return {
+    style: mapStyle.value,
+    center: getLatLngFromQueryString() || lastKnownPositioning.center || [4.897070, 52.377956], // [5.2913, 52.1326],
+    zoom: lastKnownPositioning.zoom || 15,
+    pitch: lastKnownPositioning.pitch || 45,
+    bearing: lastKnownPositioning.bearing || 0,
+    antialias: true,
+    attributionControl: false,
+  }
 })
+
+console.log("MAPBOX OPTIONS", options.value)
 
 /**
  * Whenever the mapset changes for the first time, set the options.style
@@ -101,7 +110,7 @@ watch(() => activeMapset.value, (mapset) => {
     && ! mapInstance.value 
     && mapset?.style !== undefined
   ) {
-    options.value.style = mapset?.style
+    mapStyle.value = mapset?.style
 
     setTimeout(() => {
       hasSetInitialStyle.value = true
@@ -140,7 +149,7 @@ onBeforeUnmount(() => {
 
 <template>
   <MapBox 
-    v-if="hasSetInitialStyle"
+    v-if="hasSetInitialStyle && hasUserMetaData"
     :options="options" 
     @load="onLoad" />
 </template>
