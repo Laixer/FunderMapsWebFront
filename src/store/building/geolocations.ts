@@ -50,6 +50,17 @@ const getFullAddressByBuildingId = function getFullAddressByBuildingId(buildingI
   return location?.address?.fullAddress || null
 }
 
+/**
+ * Get the street name and building number of a building
+ */
+const getAddressByBuildingId = function getAddressByBuildingId(buildingId: string) : string|null {
+  const location = getLocationDataByBuildingId(buildingId)
+  if (location?.address?.street) {
+    return `${location?.address?.street} ${location?.address?.buildingNumber}`.trim()
+  }
+  return null
+}
+
 
 const loadLocationDataByBuildingId = async function loadLocationDataByBuildingId(buildingId: string, cache: boolean = true) {
   try {
@@ -118,6 +129,7 @@ function useGeoLocations() {
     buildingHasLocationData,
     getLocationDataByBuildingId,
     getFullAddressByBuildingId,
+    getAddressByBuildingId,
 
     loadLocationDataByBuildingId
   }

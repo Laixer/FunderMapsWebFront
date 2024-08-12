@@ -5,6 +5,8 @@ import { storeToRefs } from 'pinia';
 import Panel from '@/components/Common/Panel.vue';
 import BackLink from '../Common/Links/BackLink.vue';
 
+import MapIcon from '@assets/svg/icons/fundermaps/map.svg'
+
 import { retrieveAndFormatFieldData, FieldDataConfig } from '@/utils/fieldData'
 
 import { useGeoLocationsStore } from '@/store/building/geolocations'
@@ -29,6 +31,19 @@ const locationData = computed(() => {
 
 
 /**
+ * Link to a building in the PDOK viewer.
+ */
+const pdokLink = computed(() => {
+  try {
+    if (! buildingId.value) return null
+    const objectId = buildingId.value.split('.').reverse()[0]
+    return `https://bagviewer.kadaster.nl/lvbag/bag-viewer/?objectId=${objectId}`
+  } catch(e) {
+    return null
+  }
+})
+
+/**
  * Fields config
  *  TODO: formatter based on 'prefix', 'suffix', 'decimal'
  *  TODO: formatter based on central config, like field labels
@@ -38,8 +53,6 @@ const fieldsWithData = computed(() => {
 
   const fieldsConfig = [
     new FieldDataConfig({ name: 'fullAddress', source: locationData.value?.address }),
-    new FieldDataConfig({ name: 'postalCode', source: locationData.value?.address }),
-    new FieldDataConfig({ name: 'buildingNumber', source: locationData.value?.address }),
     new FieldDataConfig({ name: 'name', source: locationData.value?.neighborhood }),
     new FieldDataConfig({ name: 'name', source: locationData.value?.district }),
     new FieldDataConfig({ name: 'name', source: locationData.value?.municipality }),
@@ -74,7 +87,23 @@ const fieldsWithData = computed(() => {
             <dd class="text-grey-700">{{ field.value }}</dd>
           </div>
         </dl>
-      </div>
+      </div>      
     </section>
+
+    <template v-slot:footer>  
+      <a
+        v-if="pdokLink"
+        :href="pdokLink"
+        class="link link--outline | group flex-1 justify-center px-2 py-0.5"
+        target="_blank"
+      >
+        <MapIcon
+          class="aspect-square w-3 group-hover:text-green-500"
+          aria-hidden="true"
+        />
+        <strong>PDOK Viewer</strong>
+      </a>
+    </template>
   </Panel>
 </template>
+

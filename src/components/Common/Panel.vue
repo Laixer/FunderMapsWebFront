@@ -48,3 +48,11 @@ const handleClose = function handleClose() {
     </div>
   </div>
 </template>
+
+<style>
+
+.panel .panel__content h4 {
+  font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
+}
+
+</style>
