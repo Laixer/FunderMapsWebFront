@@ -41,13 +41,13 @@ export const useGeographyFilter = function useGeographyFilter(
     if (
       applyOwnershipFilter.value
     ) {
-      ownershipFilter = [
-        "match",
-        ["get", "ownership_id"],
-        activeMapset.value.fenceMunicipality, 
-        true,
-        false
-      ]
+      // ownershipFilter = [
+      //   "match",
+      //   ["get", "ownership_id"],
+      //   activeMapset.value.fenceMunicipality, 
+      //   true,
+      //   false
+      // ]
     }
 
     /**
