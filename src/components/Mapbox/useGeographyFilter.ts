@@ -1,8 +1,8 @@
+import { ref, watch, type MaybeRef } from "vue";
 import { FilterSpecification, type Map } from "mapbox-gl"
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';
-import { ref, watch, type MaybeRef } from "vue";
 
 export const useGeographyFilter = function useGeographyFilter(
   Map: MaybeRef<Map | null | undefined>

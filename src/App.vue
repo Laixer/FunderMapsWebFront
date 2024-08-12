@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { watch } from 'vue';
+import { onBeforeMount, watch } from 'vue';
 import { refreshAccessToken } from '@/services/jwt.ts'
 import { useSessionStore } from '@/store/session';
+import { useMetadataStore } from '@/store/metadata'
 import { storeToRefs } from 'pinia';
 
 const sessionStore = useSessionStore()
+const { retrieve: retrieveUserMetaData } = useMetadataStore()
 const { authenticateFromAccessToken } = sessionStore
 const { isAuthenticated } = storeToRefs(sessionStore)
 let accessTokenRefreshInterval: ReturnType<typeof setTimeout>|null = null
@@ -18,6 +20,10 @@ try {
 } catch(e) {
   // no luck, no harm
 }
+
+onBeforeMount(async () => {
+  await retrieveUserMetaData()
+})
 
 /**
  * When logged in, start refreshing the token.

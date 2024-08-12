@@ -8,6 +8,8 @@ import MenuLink from '@/components/Common/Links/MenuLink.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
 import Panel from '@/components/Common/Panel.vue';
 
+// import LeftSideBarFooterToggles from '@/components/LeftSideBarFooterToggles.vue'
+
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 import InfoIcon from '@assets/svg/icons/info.svg'
 
@@ -107,6 +109,10 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
             />
           </MenuLink>
         </section>
+
+        <!-- <template v-slot:footer>  
+          <LeftSideBarFooterToggles />
+        </template> -->
       </Panel>
 
       <Panel

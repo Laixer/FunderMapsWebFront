@@ -77,7 +77,9 @@ export const makeCall = async function makeCall({
     // Get the response body, preferrably processed as json
     // Note: A failed call can often still have a valid json body, containing info about the error
     try {
-      responseBody = await response.json()
+      if (response.status !== 204) {
+        responseBody = await response.json()
+      }
     } catch(e) {
       console.log(e)
       
