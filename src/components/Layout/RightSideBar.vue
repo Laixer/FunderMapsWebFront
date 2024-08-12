@@ -46,7 +46,7 @@ const { clearBuildingId } = useBuildingStore()
  */
 const { 
   loadLocationDataByBuildingId, 
-  getFullAddressByBuildingId
+  getAddressByBuildingId
 } = useGeoLocationsStore()
 
 const { 
@@ -110,7 +110,7 @@ const selectedPanel: Ref<string> = ref('')
 const fullAddress: ComputedRef<string|null> = computed(
   () => {
     if (buildingId.value === null) return null
-    return getFullAddressByBuildingId(buildingId.value) // || "De pand informatie wordt opgehaald"
+    return getAddressByBuildingId(buildingId.value) // || "De pand informatie wordt opgehaald"
   }
 )
 
@@ -369,7 +369,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
         <Transition>
           <div 
             v-if="fullAddress"
-            class="flex items-center gap-3">
+            class="sidebar__heading flex items-center gap-3">
             <h4 class="heading-4">{{ fullAddress }}</h4>
           </div>
         </Transition>
@@ -427,3 +427,10 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
     </div>
   </div>
 </template>
+
+<style>
+.sidebar .sidebar__heading h4 {
+  font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
+}
+
+</style>
