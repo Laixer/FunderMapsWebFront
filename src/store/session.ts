@@ -8,6 +8,7 @@ import { hasNonExpiredToken, getClaimFromAccessToken, removeAccessToken, storeAc
 
 import { useMapsetStore } from '@/store/mapsets'
 import { useOrgsStore } from '@/store/orgs'
+import { useMetadataStore } from './metadata';
 
 /**
  * Holds the basic information of the logged in user
@@ -96,6 +97,10 @@ function useSession() {
       removeOrgs
     } = useOrgsStore()
 
+    const {
+      clear
+    } = useMetadataStore()
+
     removeAccessToken()
 
     // remove profile info - effect of unloading component
@@ -105,6 +110,10 @@ function useSession() {
     removeOrgs()
 
     currentUser.value = null
+
+    // clear meta data 
+    // after clearing user, to prevent api call
+    clear()
   }
 
   return {

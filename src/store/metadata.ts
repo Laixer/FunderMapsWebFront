@@ -122,13 +122,9 @@ function useMetadata() {
   }
   
   const clear = function clear() {
-    if (! isAuthenticated.value) {
-      localStorage.clear()
-    } else {
-      metadata.value = {}
-    
-      store() // fire & forget
-    }
+    localStorage.clear()
+    metadata.value = {}
+    store() // fire & forget
   }
 
   return {
