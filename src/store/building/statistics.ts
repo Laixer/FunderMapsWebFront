@@ -27,6 +27,11 @@ const statisticsDataByBuildingId: Ref<Record<string, IStatistics>> = ref({})
 const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
 
 
+/**
+ * List of buildingIds that failed to load, along with info about the reason
+ */
+const failedToLoadByBuildingId: Ref<Record<string, Record<string, any>>> = ref({})
+
 
 /**
  * Whether the statistics data for a building have been retrieved previously
@@ -35,6 +40,12 @@ const buildingStatisticsDataHasBeenRetrieved = function buildingStatisticsDataHa
   return statisticsDataByBuildingId.value.hasOwnProperty(buildingId)
 }
 
+/**
+ * Whether the data failed to load (for whatever reason)
+ */
+const buildingStatisticsDataFailedToLoad = function buildingStatisticsDataFailedToLoad(buildingId: string): boolean {
+  return failedToLoadByBuildingId.value.hasOwnProperty(buildingId)
+}
 /**
  * Whether there is currently any statistics data available for a building
  *  Note: the data may still be loading
@@ -78,6 +89,10 @@ const loadStatisticsDataByBuildingId = async function loadStatisticsDataByBuildi
     console.log("Error loading statistics data by building id", e)
 
     // TODO: Catch-em all... and maybe do something with them?
+    // TODO: Create structure for failures
+    failedToLoadByBuildingId.value[buildingId] = {
+      'reason': 404
+    }
   }
 
   // Success or fail, we're no longer retrieving the data for this building
@@ -113,6 +128,7 @@ function useStatistics() {
 
   return {
     buildingStatisticsDataHasBeenRetrieved,
+    buildingStatisticsDataFailedToLoad,
     buildingHasStatisticsData,
     getStatisticsDataByBuildingId,
 

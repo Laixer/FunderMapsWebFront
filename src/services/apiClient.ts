@@ -136,6 +136,7 @@ export class APIErrorResponse extends APIClientError{
 }
 
 export class APITokenError extends APIClientError {
+  status = 403
   message: string
 
   constructor(message: string) {

@@ -18,10 +18,22 @@ const locationDataByBuildingId: Ref<Record<string, IGeoLocationData|null>> = ref
 const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
 
 /**
+ * List of buildingIds that failed to load, along with info about the reason
+ */
+const failedToLoadByBuildingId: Ref<Record<string, Record<string, any>>> = ref({})
+
+/**
  * Whether the location data for a building have been retrieved previously
  */
 const buildingLocationDataHasBeenRetrieved = function buildingLocationDataHasBeenRetrieved(buildingId: string): boolean {
   return locationDataByBuildingId.value.hasOwnProperty(buildingId)
+}
+
+/**
+ * Whether the location data failed to load (for whatever reason)
+ */
+const buildingLocationDataFailedToLoad = function buildingLocationDataFailedToLoad(buildingId: string): boolean {
+  return failedToLoadByBuildingId.value.hasOwnProperty(buildingId)
 }
 
 /**
@@ -67,15 +79,20 @@ const loadLocationDataByBuildingId = async function loadLocationDataByBuildingId
 
     // TODO: HARDCODED FOR DEBUG
     // buildingId = 'NL.IMBAG.PAND.0599100000610651'
+    // buildingId = 'NL.IMBAG.PAND.0606100000000733' => 404 on geolocation
 
     // Data for this building is currently already being retrieved
-    if (isLoadingBuildingDataById.value[buildingId] === true) return 
+    if (isLoadingBuildingDataById.value[buildingId] === true) { 
+      return 
+    }
     isLoadingBuildingDataById.value[buildingId] = true
 
     /**
      * If we use 'cache', and the building data has already been loaded, we got nothing to do.
      */
-    if (cache === true && buildingLocationDataHasBeenRetrieved(buildingId)) return
+    if (cache === true && buildingLocationDataHasBeenRetrieved(buildingId)) {
+      return
+    }
 
     /**
      * Otherwise we start by retrieving the location data associated with the building
@@ -90,7 +107,11 @@ const loadLocationDataByBuildingId = async function loadLocationDataByBuildingId
   } catch(e) {
     console.log("Error loading location data by building id", e)
 
-    // TODO: Catch-em all... and maybe do something with them?
+    // TODO: Catch-em all... and maybe do something more with them?
+    // TODO: Create structure for failures
+    failedToLoadByBuildingId.value[buildingId] = {
+      'reason': 404
+    }
   }
 
   // Success or fail, we're no longer retrieving the data for this building
@@ -127,6 +148,7 @@ function useGeoLocations() {
   return {
     buildingLocationDataHasBeenRetrieved,
     buildingHasLocationData,
+    buildingLocationDataFailedToLoad,
     getLocationDataByBuildingId,
     getFullAddressByBuildingId,
     getAddressByBuildingId,

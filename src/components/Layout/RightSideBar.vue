@@ -45,16 +45,19 @@ const { clearBuildingId } = useBuildingStore()
  * Menu items
  */
 const { 
-  loadLocationDataByBuildingId, 
+  loadLocationDataByBuildingId,
+  buildingLocationDataFailedToLoad, 
   getAddressByBuildingId
 } = useGeoLocationsStore()
 
 const { 
-  loadAnalysisDataByBuildingId
+  loadAnalysisDataByBuildingId,
+  buildingAnalysisDataFailedToLoad
 } = useAnalysisStore()
 
 const { 
-  loadStatisticsDataByBuildingId
+  loadStatisticsDataByBuildingId,
+  buildingStatisticsDataFailedToLoad
 } = useStatisticsStore()
 
 /**
@@ -115,6 +118,19 @@ const fullAddress: ComputedRef<string|null> = computed(
 )
 
 /**
+ * Without either location or analysis data there are too many gaps to present the building information
+ */
+const failedToLoad: ComputedRef<boolean> = computed(
+  () => {
+    if (buildingId.value) {
+      return buildingLocationDataFailedToLoad(buildingId.value) 
+        || buildingAnalysisDataFailedToLoad(buildingId.value)
+    }
+    return false
+  }
+)
+
+/**
  * These menu items are always available
  */
 const BuildingMenuList = computed(
@@ -153,7 +169,7 @@ const BuildingMenuList = computed(
         icon: 'graph',
         name: 'Statistiek',
         loading: false,
-        disabled: false,
+        disabled: !! (buildingId.value && buildingStatisticsDataFailedToLoad(buildingId.value)),
         route: null
       },
       {
@@ -364,6 +380,16 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
       :class="{'-translate-x-full': rightPanelSlide}"
     >
       <Panel 
+        v-if="failedToLoad"@close="handleCloseSideBar" 
+        title="Pand Informatie">
+        <Transition>
+          <p>
+            Helaas, de informatie over dit pand kon niet geladen worden.
+          </p>
+        </Transition>
+      </Panel>
+      <Panel 
+        v-else
         @close="handleCloseSideBar" 
         title="Pand Informatie">
         <Transition>

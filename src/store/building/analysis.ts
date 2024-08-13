@@ -17,10 +17,22 @@ const analysisDataByBuildingId: Ref<Record<string, IAnalysis>> = ref({})
 const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
 
 /**
+ * List of buildingIds that failed to load, along with info about the reason
+ */
+const failedToLoadByBuildingId: Ref<Record<string, Record<string, any>>> = ref({})
+
+/**
  * Whether the analysis data for a building have been retrieved previously
  */
 const buildingAnalysisDataHasBeenRetrieved = function buildingAnalysisDataHasBeenRetrieved(buildingId: string): boolean {
   return analysisDataByBuildingId.value.hasOwnProperty(buildingId)
+}
+
+/**
+ * Whether the data failed to load (for whatever reason)
+ */
+const buildingAnalysisDataFailedToLoad = function buildingAnalysisDataFailedToLoad(buildingId: string): boolean {
+  return failedToLoadByBuildingId.value.hasOwnProperty(buildingId)
 }
 
 /**
@@ -66,6 +78,10 @@ const loadAnalysisDataByBuildingId = async function loadAnalysisDataByBuildingId
     console.log("Error loading analysis data by building id", e)
 
     // TODO: Catch-em all... and maybe do something with them?
+    // TODO: Create structure for failures
+    failedToLoadByBuildingId.value[buildingId] = {
+      'reason': 404
+    }
   }
 
   // Success or fail, we're no longer retrieving the data for this building
@@ -101,6 +117,7 @@ function useAnalysis() {
 
   return {
     buildingAnalysisDataHasBeenRetrieved,
+    buildingAnalysisDataFailedToLoad,
     buildingHasAnalysisData,
     getAnalysisDataByBuildingId,
 
