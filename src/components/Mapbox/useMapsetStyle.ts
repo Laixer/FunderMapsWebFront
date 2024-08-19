@@ -3,6 +3,7 @@ import { watch } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';
+import { isTileserverTest } from "@/utils/tileserverTest";
 
 /**
  * Change the map style when the active mapset id changes
@@ -15,8 +16,8 @@ export const useMapsetStyle = function useMapsetStyle() {
    * Basically a killswitch to this composable
    *  TODO: Refactor composable after test
    */
-  if (localStorage.getItem('TILESERVERTEST') === 'TRUE') {
-    return
+  if (isTileserverTest()) {
+    return 
   }
   
 

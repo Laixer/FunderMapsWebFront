@@ -15,6 +15,8 @@ import { useBuildingMarker } from './useBuildingMarker'
 import { useMapboxControlNudge } from './useMapboxControlNudge';
 import { useTileServerTest } from './useTileServerTest'
 
+import { isTileserverTest, getTileserverSource, getTileserverLayer } from "@/utils/tileserverTest";
+
 import { 
   getLastKnownPositioning, 
   startTrackingPositioning, 
@@ -38,7 +40,9 @@ const emit = defineEmits(['ready'])
 let mapInstance: Ref<Map|null> = ref(null)
 
 // Whether the initial map style has been set
-const hasSetInitialStyle = ref(localStorage.getItem('TILESERVERTEST') === 'TRUE')
+const hasSetInitialStyle = ref(
+  isTileserverTest()
+)
 
 
 // Composables to handle map related functionality
@@ -50,26 +54,27 @@ useLayerVisibility(mapInstance)
 useGeographyFilter(mapInstance)
 useBuildingMarker(mapInstance)
 
-useTileServerTest(
-  mapInstance, 
-  'incident-source', 
-  {
-    type: 'vector',
-    tiles: [import.meta.env.VITE_FUNDERMAPS_TILES_URL || ''],
-    minzoom: 10,
-    maxzoom: 15
-  },
-  {
-    id: 'incident-layer',
-    source: 'incident-source',
-    type: 'fill',
-    'source-layer': 'incident',
-    paint: {
-      'fill-color': 'rgba(0, 0, 255, 1.0)'
+if (isTileserverTest()) {
+  useTileServerTest(
+    mapInstance, 
+    'tileserver', 
+    {
+      type: 'vector',
+      tiles: [(import.meta.env.VITE_FUNDERMAPS_TILES_URL+'' || '').replace('{SOURCE}', getTileserverSource() || '')],
+      minzoom: 10,
+      maxzoom: 15
+    },
+    {
+      id: 'tileserver-layer',
+      source: 'tileserver',
+      type: 'fill',
+      'source-layer': getTileserverLayer() || '',
+      paint: {
+        'fill-color': 'rgba(0, 0, 255, 1.0)'
+      }
     }
-  }
-)
-
+  )
+}
 
 // Update the query string in the route when the map center changes. Navigate to the LngLat from the query string when opening a mapset page
 const { getLatLngFromQueryString } = useMapCenterRouting()
@@ -84,7 +89,13 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
  *  Reference the last known position from the last visit if available
  */
 
-const mapStyle: Ref<string|undefined> = ref((hasSetInitialStyle.value ? 'mapbox://styles/mapbox/standard' : undefined)) // default style)
+const mapStyle: Ref<string|undefined> = ref(
+  (
+    hasSetInitialStyle.value 
+    ? (import.meta.env.VITE_FUNDERMAPS_BASE_STYLE || 'mapbox://styles/laixer/clcz2iorf003414p22imzzhnk') 
+    : undefined
+  )
+) 
 const options: ComputedRef<object> = computed(() => {
   const lastKnownPositioning = getLastKnownPositioning()
   return {

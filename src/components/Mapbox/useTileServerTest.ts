@@ -1,6 +1,7 @@
 
 import { type MaybeRef, watch, ref } from "vue";
 import { type AnyLayer, type AnySourceData, type Map } from "mapbox-gl";
+import { isTileserverTest } from "@/utils/tileserverTest";
 
 
 export const useTileServerTest = function useTileServerTest(
@@ -11,6 +12,9 @@ export const useTileServerTest = function useTileServerTest(
 ) {
 
   const mapInstance = ref(Map)
+  if (! isTileserverTest()) {
+    return
+  }
 
   /**
    * mapInstance is set during mapbox onLoad event
@@ -18,10 +22,8 @@ export const useTileServerTest = function useTileServerTest(
   watch(
     () => mapInstance.value,
     (mapInstance) => {
-      if (localStorage.getItem('TILESERVERTEST') === 'TRUE') {
-        mapInstance?.addSource(sourceName, sourceConfig)
-        mapInstance?.addLayer(layerConfig)
-      }
+      mapInstance?.addSource(sourceName, sourceConfig)
+      mapInstance?.addLayer(layerConfig)
     }
   )
 }

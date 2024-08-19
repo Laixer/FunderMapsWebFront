@@ -6,6 +6,7 @@ import { useLayersStore } from "@/store/layers";
 
 import { type IMapsetFE } from "@/datastructures/interfaces";
 import { type MaybeRef, toRaw, watch, ref } from "vue";
+import { isTileserverTest } from "@/utils/tileserverTest";
 
 
 export const useLayerVisibility = function useLayerVisibility(
@@ -16,7 +17,7 @@ export const useLayerVisibility = function useLayerVisibility(
    * Basically a killswitch to this composable
    *  TODO: Refactor composable after test
    */
-  if (localStorage.getItem('TILESERVERTEST') === 'TRUE') {
+  if (isTileserverTest()) {
     return
   }
 
