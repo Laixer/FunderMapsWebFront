@@ -99,11 +99,7 @@ function useMetadata() {
   const setItem = function setItem(name: string, value: any) {
     if (! isAuthenticated.value) {
       if (typeof value !== 'string') {
-        if (value.toString) {
-          value = value.toString()
-        } else {
-          value = JSON.stringify(value)
-        }
+        value = JSON.stringify(value)
       }
       return localStorage.setItem(name, value)
     } else {
