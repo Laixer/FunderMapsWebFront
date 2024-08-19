@@ -63,7 +63,7 @@ useTileServerTest(
     id: 'incident-layer',
     source: 'incident-source',
     type: 'fill',
-    'source-layer': 'analysis_building',
+    'source-layer': 'incident',
     paint: {
       'fill-color': 'rgba(0, 0, 255, 1.0)'
     }
