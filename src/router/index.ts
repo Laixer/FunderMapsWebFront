@@ -58,22 +58,34 @@ const router = createRouter({
     },
     {
       name: 'building',
-      path: '/map/:mapsetId/gebouw/:buildingId',
+      path: '/map/:mapsetId/building/:buildingId',
       component: Home,
     },
     { // Depreciated path to building route
-      path: '/kaart/:mapsetId/building/:buildingId',
+      path: '/map/:mapsetId/gebouw/:buildingId',
+      redirect: to => {
+        return { name: 'building', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId } }
+      }
+    },
+    { // Depreciated path to building route
+      path: '/kaart/:mapsetId/gebouw/:buildingId',
       redirect: to => {
         return { name: 'building', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId } }
       }
     },
     {
       name: 'building-panel',
-      path: '/map/:mapsetId/gebouw/:buildingId/:panel',
+      path: '/map/:mapsetId/building/:buildingId/:panel',
       component: Home
     },
     { // Depreciated path to building-panel route
-      path: '/kaart/:mapsetId/building/:buildingId',
+      path: '/map/:mapsetId/gebouw/:buildingId/:panel',
+      redirect: to => {
+        return { name: 'building-panel', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId, panel: to.params.panel } }
+      }
+    },
+    { // Depreciated path to building-panel route
+      path: '/kaart/:mapsetId/gebouw/:buildingId/:panel',
       redirect: to => {
         return { name: 'building-panel', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId, panel: to.params.panel } }
       }
