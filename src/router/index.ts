@@ -50,17 +50,34 @@ const router = createRouter({
       path: '/map/:mapsetId',
       component: Home,
     },
+    { // Depreciated path to mapset route
+      path: '/kaart/:mapsetId',
+      redirect: to => {
+        return { name: 'mapset', params: { mapsetId: to.params.mapsetId } }
+      }
+    },
     {
       name: 'building',
       path: '/map/:mapsetId/gebouw/:buildingId',
       component: Home,
+    },
+    { // Depreciated path to building route
+      path: '/kaart/:mapsetId/building/:buildingId',
+      redirect: to => {
+        return { name: 'building', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId } }
+      }
     },
     {
       name: 'building-panel',
       path: '/map/:mapsetId/gebouw/:buildingId/:panel',
       component: Home
     },
-
+    { // Depreciated path to building-panel route
+      path: '/kaart/:mapsetId/building/:buildingId',
+      redirect: to => {
+        return { name: 'building-panel', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId, panel: to.params.panel } }
+      }
+    },
     { 
       path: '/:pathMatch(.*)*', 
       name: 'NotFound', 
