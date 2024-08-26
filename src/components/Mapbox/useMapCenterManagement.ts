@@ -10,8 +10,7 @@ import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { IGeoLocationData } from "@/datastructures/interfaces";
 
 /**
- * TODO: Set LngLat in route query string
- * TODO: Use LngLat from route query string on page load (note potential conflict with LngLat from building id)
+ * TODO: Refactor to useEvent structure, being self reliant 
  */
 export const useMapCenterManagement = function useMapCenterManagement() {
 
@@ -39,6 +38,8 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     let zoom = mapInstance.getZoom()
     if (zoom > 18) zoom = 18
     if (zoom < 16) zoom = 16
+
+    console.log("Map Center - flying to", center, zoom)
 
     mapInstance.flyTo({
       center,
@@ -87,15 +88,10 @@ export const useMapCenterManagement = function useMapCenterManagement() {
   watch(
     () => activeMapset.value,
     (mapset) => {
-      console.log("active mapset", mapset)
-
       // We use `ignoreCenterChange` to ignore changes caused by `handleMapMovement`
       if (! mapInstance || ! mapset || ignoreCenterChange === true) {
-        console.log("ABORT", mapInstance, ignoreCenterChange)
         return
       }
-
-      console.log("center", mapset.options.center)
 
       if (mapset.options?.center) {
         flyToCenter(mapset.options.center as mapboxgl.LngLatLike)

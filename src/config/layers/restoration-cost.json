@@ -1,0 +1,34 @@
+{
+  "id": "restoration-cost",
+  "type": "fill-extrusion",
+  "source": "analysis_risk",
+  "source-layer": "analysis_risk",
+  "filter": ["has", "restoration_costs"],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["get", "restoration_costs"],
+          25000,
+          "#ffffff",
+          50000,
+          "#f7fbff",
+          75000,
+          "#d8e7f5",
+          100000,
+          "#b0d2e8",
+          125000,
+          "#73b3d8",
+          150000,
+          "#3e8ec4",
+          175000,
+          "#1563aa",
+          200000,
+          "#08306b",
+          207099600,
+          "#010d1d"
+      ]
+  }
+}

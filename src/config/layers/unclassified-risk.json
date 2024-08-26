@@ -1,0 +1,45 @@
+{
+  "id": "unclassified-risk",
+  "type": "fill-extrusion",
+  "source": "analysis_risk",
+  "source-layer": "analysis_risk",
+  "minzoom": 13,
+  "filter": [
+      "all",
+      [
+          "match",
+          ["get", "unclassified_risk"],
+          ["a", "b", "d", "e"],
+          true,
+          false
+      ],
+      ["!=", ["get", "address_count"], 0]
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          ["get", "height"],
+          22,
+          ["get", "height"]
+      ],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "unclassified_risk"],
+          ["a"],
+          "#41ff33",
+          ["b"],
+          "#cfff33",
+          ["c"],
+          "#ffeb33",
+          ["d"],
+          "#ffad33",
+          ["e"],
+          "#ff5533",
+          "#000000"
+      ]
+  }
+}

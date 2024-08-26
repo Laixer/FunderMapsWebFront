@@ -1,0 +1,26 @@
+{
+  "id": "skewed-perpendicular",
+  "type": "fill-extrusion",
+  "source": "facade_scan",
+  "source-layer": "facade_scan",
+  "filter": ["has", "skewed_parallel_facade"],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "skewed_parallel_facade"],
+          ["very_big"],
+          "#ff5533",
+          ["big"],
+          "#ffac33",
+          ["mediocre"],
+          "#ffec33",
+          ["small"],
+          "#d1ff33",
+          ["nil"],
+          "#42ff33",
+          "hsl(0, 0%, 0%)"
+      ]
+  }
+}

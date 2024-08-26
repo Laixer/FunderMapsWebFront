@@ -1,0 +1,147 @@
+{
+  "id": "inquiry-type",
+  "type": "fill-extrusion",
+  "source": "analysis_report",
+  "source-layer": "analysis_report",
+  "filter": [
+      "match",
+      ["get", "inquiry_type"],
+      [
+          "soil_investigation",
+          "foundation_advice",
+          "demolition_research",
+          "foundation_research",
+          "unknown",
+          "inspectionpit",
+          "monitoring",
+          "quickscan",
+          "additional_research",
+          "note",
+          "ground_water_level_research",
+          "second_opinion",
+          "archieve_research",
+          "architectural_research",
+          "facade_scan"
+      ],
+      true,
+      false
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "case",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["monitoring"],
+              true,
+              false
+          ],
+          "#b54cb0",
+          ["match", ["get", "inquiry_type"], ["note"], true, false],
+          "#8c4bb6",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["quickscan"],
+              true,
+              false
+          ],
+          "#5b4ab7",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              [
+                  "demolition_research",
+                  "additional_research",
+                  "architectural_research"
+              ],
+              true,
+              false
+          ],
+          "#4767b8",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["second_opinion"],
+              true,
+              false
+          ],
+          "#489bb9",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["archieve_research"],
+              true,
+              false
+          ],
+          "#47baa5",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["architectural_research"],
+              true,
+              false
+          ],
+          "#4ebc77",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["foundation_advice"],
+              true,
+              false
+          ],
+          "#5cbe55",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["inspectionpit"],
+              true,
+              false
+          ],
+          "#90c05d",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["foundation_research"],
+              true,
+              false
+          ],
+          "#bdc262",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["ground_water_level_research"],
+              true,
+              false
+          ],
+          "#c67f71",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["unknown"],
+              true,
+              false
+          ],
+          "#6a6c70",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["soil_investigation"],
+              true,
+              false
+          ],
+          "#f4a9e2",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["facade_scan"],
+              true,
+              false
+          ],
+          "#ec0909",
+          "#000000"
+      ]
+  }
+}

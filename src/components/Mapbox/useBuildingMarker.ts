@@ -1,7 +1,7 @@
 /**
  * Create a single marker on the specified coordinates
  */
-import { type ComputedRef, computed, watch, MaybeRef, ref } from "vue"; // WatchStopHandle, 
+import { type ComputedRef, computed, watch, MaybeRef, ref } from "vue"; 
 import mapboxgl, { type Map, type LngLat } from "mapbox-gl";
 import { storeToRefs } from "pinia";
 
@@ -26,17 +26,34 @@ export const useBuildingMarker = function useBuildingMarker(
     return getLocationDataByBuildingId(buildingId.value)
   })
 
+  function hide() {
+    // Remove from map, not destroy
+    Marker.remove() 
+  }
+
   function show(LngLat: LngLat) {
+    if (! isAuthenticated.value) {
+      return
+    }
+
     if (mapInstance.value) {
       // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
       // @ts-ignore 
       Marker.setLngLat(LngLat).addTo(mapInstance.value)
     }
   }
-  function hide() {
-    Marker.remove() // Remove from map, not destroy
-  }
 
+  function maybeShownResidence() {
+    if (locationData.value && locationData.value.residence) {
+      show(
+        new mapboxgl.LngLat(
+          locationData.value.residence.longitude, 
+          locationData.value.residence.latitude
+        )
+      )
+    }
+  }
+  
   /**
    * Show a marker if we have location data with coordinates
    */
@@ -45,14 +62,8 @@ export const useBuildingMarker = function useBuildingMarker(
     (value: IGeoLocationData|null) => {
       if (value === null) {
         hide()
-      }
-      else if (value.residence) {
-        show(
-          new mapboxgl.LngLat(
-            value.residence.longitude, 
-            value.residence.latitude
-          )
-        )
+      } else {
+        maybeShownResidence()
       }
     },
     { immediate: true }
@@ -67,14 +78,18 @@ export const useBuildingMarker = function useBuildingMarker(
     (isAuthenticated) => {
       if (! isAuthenticated) {
         hide()
-      } else if (locationData.value && locationData.value.residence) {
-        show(
-          new mapboxgl.LngLat(
-            locationData.value.residence.longitude, 
-            locationData.value.residence.latitude
-          )
-        )
+      } else {
+        maybeShownResidence()
       }
     }
+  )
+
+  /**
+   * When the map instantiates, show the marker if one can be shown
+   */
+  watch(
+    () => mapInstance.value,
+    () => maybeShownResidence(), 
+    { once: true }
   )
 }

@@ -1,0 +1,106 @@
+{
+  "id": "damage-cause",
+  "type": "fill-extrusion",
+  "source": "analysis_report",
+  "source-layer": "analysis_report",
+  "filter": [
+      "match",
+      ["get", "damage_cause"],
+      [
+          "vibrations",
+          "construction_heave",
+          "overcharge_negative_cling",
+          "drainage",
+          "overcharge",
+          "construction_flaw",
+          "drystand",
+          "vegetation",
+          "negative_cling",
+          "bio_fungus_infection",
+          "subsidence",
+          "gas",
+          "fungus_infection",
+          "bio_infection"
+      ],
+      true,
+      false
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-color": [
+          "case",
+          [
+              "match",
+              ["get", "damage_cause"],
+              ["drainage"],
+              true,
+              false
+          ],
+          "#55b5a7",
+          [
+              "match",
+              ["get", "damage_cause"],
+              ["overcharge"],
+              true,
+              false
+          ],
+          "#4b8fbf",
+          [
+              "match",
+              ["get", "damage_cause"],
+              [
+                  "bio_fungus_infection",
+                  "fungus_infection",
+                  "drystand"
+              ],
+              true,
+              false
+          ],
+          "#8a35d4",
+          [
+              "match",
+              ["get", "damage_cause"],
+              ["bio_infection", "bio_fungus_infection"],
+              true,
+              false
+          ],
+          "#4045c9",
+          [
+              "match",
+              ["get", "damage_cause"],
+              ["subsidence", "construction_heave"],
+              true,
+              false
+          ],
+          "#de2bcf",
+          [
+              "match",
+              ["get", "damage_cause"],
+              ["vegetation"],
+              true,
+              false
+          ],
+          "#d2376d",
+          ["match", ["get", "damage_cause"], ["gas"], true, false],
+          "hsl(12, 54%, 52%)",
+          [
+              "match",
+              ["get", "damage_cause"],
+              ["negative_cling", "overcharge_negative_cling"],
+              true,
+              false
+          ],
+          "#6ea366",
+          [
+              "match",
+              ["get", "damage_cause"],
+              ["construction_flaw", "vibrations", "foundation_flaw"],
+              true,
+              false
+          ],
+          "#94af5a",
+          "#000000"
+      ],
+      "fill-extrusion-height": ["get", "height"]
+  }
+}

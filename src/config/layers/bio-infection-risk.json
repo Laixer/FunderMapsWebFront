@@ -1,0 +1,36 @@
+{
+  "id": "bio-infection-risk",
+  "type": "fill-extrusion",
+  "source": "analysis_risk",
+  "source-layer": "analysis_risk",
+  "filter": [
+      "all",
+      [
+          "match",
+          ["get", "bio_infection_risk"],
+          ["a", "b", "c", "d", "e"],
+          true,
+          false
+      ],
+      ["!=", ["get", "address_count"], 0]
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "bio_infection_risk"],
+          ["a"],
+          "hsl(116, 100%, 60%)",
+          ["b"],
+          "hsl(74, 100%, 60%)",
+          ["c"],
+          "hsl(54, 100%, 60%)",
+          ["d"],
+          "hsl(36, 100%, 60%)",
+          ["e"],
+          "hsl(10, 100%, 60%)",
+          "#000000"
+      ]
+  }
+}

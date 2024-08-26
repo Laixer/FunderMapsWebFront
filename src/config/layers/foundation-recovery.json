@@ -1,0 +1,36 @@
+{
+  "id": "foundation-recovery",
+  "type": "fill-extrusion",
+  "source": "analysis_foundation",
+  "source-layer": "analysis_foundation",
+  "filter": [
+      "all",
+      [
+          "match",
+          ["get", "recovery_type"],
+          ["pile_in_wall", "table", "pile_lowering", "unknown"],
+          true,
+          false
+      ],
+      ["!=", ["get", "address_count"], 0]
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "recovery_type"],
+          ["table"],
+          "#5cbe55",
+          ["pile_in_wall"],
+          "#47baa5",
+          ["unknown"],
+          "#5949b6",
+          ["pilelowering"],
+          "#8a4ab5",
+          ["groundreinforcement"],
+          "#c67f71",
+          "hsl(0, 94%, 55%)"
+      ]
+  }
+}

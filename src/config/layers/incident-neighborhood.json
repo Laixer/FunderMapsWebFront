@@ -1,0 +1,25 @@
+{
+  "id": "incident-neighborhood",
+  "type": "fill",
+  "source": "incident_neighborhood",
+  "source-layer": "incident_neighborhood",
+  "minzoom": 10,
+  "maxzoom": 14,
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-color": [
+          "interpolate",
+          ["linear"],
+          ["get", "incident_count"],
+          1,
+          "#c1d4e6",
+          3,
+          "#91bad6",
+          5,
+          "hsl(203, 36%, 50%)",
+          10,
+          "hsl(213, 55%, 26%)"
+      ],
+      "fill-outline-color": "#ffffff"
+  }
+}

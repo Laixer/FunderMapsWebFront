@@ -39,6 +39,12 @@ const availableMapsetsByLoadingOrder = computed(() => {
 })
 
 /**
+ * The ids and slugs of the available mapsets
+ */
+const availableMapsetIds = computed(() => Object.keys(availableMapsetsById.value)) 
+const availableMapsetSlugs = computed(() => Object.values(availableMapsetsById.value).map(mapset => mapset.slug)) 
+
+/**
  * Used to indicate whether map groups are loaded
  */
 const hasAvailableMapsets = computed<boolean>(() => {
@@ -281,6 +287,8 @@ function useMapsets() {
     loadAvailableMapsetsById,
     selectMapsetById,
     availableMapsetsByLoadingOrder,
+    availableMapsetIds,
+    availableMapsetSlugs,
     activeMapsetId,
     firstMapsetId,
     defaultMapsetId,

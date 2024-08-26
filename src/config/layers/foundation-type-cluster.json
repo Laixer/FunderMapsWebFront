@@ -1,0 +1,95 @@
+{
+  "id": "foundation-type-cluster",
+  "type": "fill-extrusion",
+  "source": "analysis_foundation",
+  "source-layer": "analysis_foundation",
+  "filter": [
+      "all",
+      [
+          "match",
+          ["get", "foundation_type_reliability"],
+          ["supercluster", "cluster"],
+          true,
+          false
+      ],
+      [
+          "match",
+          ["get", "recovery_type"],
+          ["pile_in_wall", "pile_lowering", "table", "unknown"],
+          false,
+          true
+      ],
+      ["!=", ["get", "address_count"], 0]
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "foundation_type"],
+          [
+              "wood",
+              "wood_rotterdam",
+              "wood_amsterdam",
+              "wood_rotterdam_amsterdam",
+              "wood_amsterdam_arch",
+              "wood_rotterdam_arch"
+          ],
+          [
+              "match",
+              ["get", "foundation_type_reliability"],
+              ["cluster", "supercluster"],
+              "#8c3a28",
+              "hsl(0, 0%, 100%)"
+          ],
+          ["wood_charger"],
+          [
+              "match",
+              ["get", "foundation_type_reliability"],
+              ["cluster", "supercluster"],
+              "#b59e3c",
+              "hsl(0, 0%, 100%)"
+          ],
+          [
+              "no_pile",
+              "no_pile_masonry",
+              "no_pile_strips",
+              "no_pile_bearing_floor",
+              "no_pile_concrete_floor",
+              "no_pile_slit"
+          ],
+          [
+              "match",
+              ["get", "foundation_type_reliability"],
+              ["cluster", "supercluster"],
+              "#ce0015",
+              "hsl(0, 0%, 100%)"
+          ],
+          ["concrete", "steel_pile", "weighted_pile"],
+          [
+              "match",
+              ["get", "foundation_type_reliability"],
+              ["cluster", "indicative", "supercluster"],
+              "#7f8fa4",
+              "hsl(0, 0%, 100%)"
+          ],
+          ["other"],
+          [
+              "match",
+              ["get", "foundation_type_reliability"],
+              ["cluster", "supercluster"],
+              "#ffec33",
+              "#ffffff"
+          ],
+          ["combined"],
+          [
+              "match",
+              ["get", "foundation_type_reliability"],
+              ["supercluster", "cluster"],
+              "#b271de",
+              "#fcfcfc"
+          ],
+          "#71decc"
+      ]
+  }
+}

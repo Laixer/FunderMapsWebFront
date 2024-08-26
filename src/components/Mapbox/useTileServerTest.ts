@@ -1,14 +1,14 @@
 
 import { type MaybeRef, watch, ref } from "vue";
-import { type AnyLayer, type AnySourceData, type Map } from "mapbox-gl";
+import { type LayerSpecification, type SourceSpecification, type Map } from "mapbox-gl";
 import { isTileserverTest } from "@/utils/tileserverTest";
 
 
 export const useTileServerTest = function useTileServerTest(
   Map: MaybeRef<Map | null | undefined>,
   sourceName: string,
-  sourceConfig: AnySourceData,
-  layerConfig: AnyLayer
+  sourceConfig: SourceSpecification,
+  layerConfig: LayerSpecification
 ) {
 
   const mapInstance = ref(Map)

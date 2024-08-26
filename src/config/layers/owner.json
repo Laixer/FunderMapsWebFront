@@ -1,0 +1,73 @@
+{
+  "id": "owner",
+  "type": "fill-extrusion",
+  "source": "analysis_building",
+  "source-layer": "analysis_building",
+  "minzoom": 13,
+  "filter": [
+      "match",
+      ["get", "owner"],
+      [
+          "Elkien",
+          "Wetland Wonen",
+          "Woonborg",
+          "HW Wonen",
+          "Bastion",
+          "Accolade",
+          "Groen Wonen Vlist",
+          "Qua Wonen",
+          "Baston Wonen",
+          "Accolade - VVE",
+          "Woonkracht10",
+          "Trivire",
+          "Woonbron",
+          "Gemeente Rotterdam/Woonbron",
+          "Particulier/Woonbron",
+          "Havensteder"
+      ],
+      true,
+      false
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "owner"],
+          [
+              "Particulier",
+              "Wetland Wonen",
+              "Woonstad",
+              "Havensteder",
+              "Gemeente Rotterdam/Woonstad",
+              "Particulier/Woonstad",
+              "Woonborg",
+              "Woonstad/Havensteder",
+              "HW Wonen",
+              "Bastion"
+          ],
+          "#bfc5c3",
+          ["Trivire"],
+          "#a1368e",
+          ["Woonkracht10"],
+          "#e00532",
+          [
+              "Woonbron",
+              "Gemeente Rotterdam/Woonbron",
+              "Particulier/Woonbron"
+          ],
+          "#5a7c00",
+          ["Accolade", "Accolade - VVE"],
+          "#ec6820",
+          ["Elkien"],
+          "#d6005b",
+          ["Qua Wonen"],
+          "#008688",
+          ["Baston Wonen"],
+          "#007abd",
+          ["Groen Wonen Vlist"],
+          "hsl(195, 84%, 80%)",
+          "#000000"
+      ]
+  }
+}
