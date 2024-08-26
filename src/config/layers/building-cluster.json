@@ -1,0 +1,8 @@
+{
+  "id": "building-cluster",
+  "type": "line",
+  "source": "building_cluster",
+  "source-layer": "building_cluster",
+  "layout": {"visibility": "none"},
+  "paint": {"line-color": "#0039d6"}
+}

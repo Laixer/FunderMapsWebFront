@@ -1,0 +1,41 @@
+{
+  "id": "overall-quality",
+  "type": "fill-extrusion",
+  "source": "analysis_report",
+  "source-layer": "analysis_report",
+  "filter": [
+      "match",
+      ["get", "overall_quality"],
+      [
+          "bad",
+          "good",
+          "mediocre",
+          "mediocre_bad",
+          "mediocre_good",
+          "tolerable"
+      ],
+      true,
+      false
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "overall_quality"],
+          ["good"],
+          "#96ed51",
+          ["mediocre_good"],
+          "#ffec33",
+          ["tolerable"],
+          "#d3e14d",
+          ["mediocre"],
+          "#c9b441",
+          ["mediocre_bad"],
+          "#9d592d",
+          ["bad"],
+          "#7b2a2d",
+          "#000000"
+      ]
+  }
+}

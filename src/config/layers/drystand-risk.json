@@ -1,0 +1,44 @@
+{
+  "id": "drystand-risk",
+  "type": "fill-extrusion",
+  "source": "analysis_risk",
+  "source-layer": "analysis_risk",
+  "filter": [
+      "all",
+      [
+          "match",
+          ["get", "drystand_risk"],
+          ["a", "b", "c", "e", "d"],
+          true,
+          false
+      ],
+      ["!=", ["get", "address_count"], 0]
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          ["get", "height"],
+          22,
+          ["get", "height"]
+      ],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "drystand_risk"],
+          ["a"],
+          "#42ff33",
+          ["b"],
+          "#d1ff33",
+          ["c"],
+          "#ffec33",
+          ["d"],
+          "#ffac33",
+          ["e"],
+          "#ff5533",
+          "hsla(0, 0%, 0%, 0)"
+      ]
+  }
+}

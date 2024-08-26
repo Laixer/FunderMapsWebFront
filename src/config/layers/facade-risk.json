@@ -1,0 +1,26 @@
+{
+  "id": "facade-risk",
+  "type": "fill-extrusion",
+  "source": "facade_scan",
+  "source-layer": "facade_scan",
+  "filter": ["has", "risk"],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "risk"],
+          ["e"],
+          "#ff5533",
+          ["d"],
+          "#ffac33",
+          ["c"],
+          "#ffec33",
+          ["b"],
+          "#d1ff33",
+          ["a"],
+          "#42ff33",
+          "#000000"
+      ]
+  }
+}

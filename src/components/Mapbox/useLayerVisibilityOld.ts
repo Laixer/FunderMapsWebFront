@@ -6,6 +6,7 @@ import { useLayersStore } from "@/store/layers";
 
 import { type IMapsetFE } from "@/datastructures/interfaces";
 import { type MaybeRef, toRaw, watch, ref } from "vue";
+import { isTileserverTest } from "@/utils/tileserverTest";
 
 /**
  * TODO: Refactor MapSet change
@@ -14,6 +15,12 @@ export const useLayerVisibility = function useLayerVisibility(
   Map: MaybeRef<Map | null | undefined>
 ) {
 
+  /**
+   * Basically a killswitch to this composable
+   */
+  if (isTileserverTest()) {
+    return
+  }
 
   const { activeMapset } = storeToRefs( useMapsetStore() )
   const { getVisibleLayersByMapsetId, changeLayerVisibility } = useLayersStore()
@@ -109,17 +116,15 @@ export const useLayerVisibility = function useLayerVisibility(
    * Reveal layers that were previously enabled (by referencing sessionStorage)
    *  If none were enabled, enable the first layer of the layerSet
    */
-  const setLayerVisibilityForMapset = function setLayerVisibilityForMapset(
-    mapset?: IMapsetFE|undefined
-  ) {
-    console.log("Layer visibility - setLayerVisibilityForMapset")
+  const handleMapsetChange = function handleMapsetChange() {
+    console.log("Layer visibility - mapset change")
 
-    mapset = mapset || activeMapset.value || undefined
+    if (! activeMapset.value) {
+      console.log("Layer visibility - no active mapset")
+      return
+    } 
 
-    if (! mapset) {
-      console.log("Layer visibility - requires mapset")
-      return 
-    }
+    const mapset: IMapsetFE = activeMapset.value
 
     // Reset the local trackers when the map style changes
     currentlyVisibleLayers = []
@@ -210,8 +215,13 @@ export const useLayerVisibility = function useLayerVisibility(
     { deep: true, immediate: true }
   )
 
-  return {
-    setLayerVisibilityForMapset
-  }
+  /**
+   * When the map instantiates, attach the style event
+   */
+  watch(
+    () => mapInstance.value,
+    () => handleMapsetChange(),
+    { once: true }
+  )
 }
 

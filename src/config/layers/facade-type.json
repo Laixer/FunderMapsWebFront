@@ -1,0 +1,26 @@
+{
+  "id": "facade-type",
+  "type": "fill-extrusion",
+  "source": "facade_scan",
+  "source-layer": "facade_scan",
+  "filter": ["has", "facade_type"],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "facade_type"],
+          ["big"],
+          "#ff5533",
+          ["mediocre"],
+          "#ffac33",
+          ["small"],
+          "#ffec33",
+          ["nil"],
+          "#d1ff33",
+          ["none"],
+          "#42ff33",
+          "#000000"
+      ]
+  }
+}

@@ -19,6 +19,9 @@ export const useMapCenterRouting = function useMapCenterRouting() {
     useMainStore()
   )
 
+  /**
+   * Update the query string params whenever the center location in the store changes
+   */
   watch(
     () => mapCenterLatLon.value,
     (LatLng) => {
@@ -41,10 +44,16 @@ export const useMapCenterRouting = function useMapCenterRouting() {
     }
   )
   
+  /**
+   * Check whether both lat & lng are available as query string params
+   */
   const hasLatLngInQueryString = function hasLatLngInQueryString() {
     return route.query.lat && route.query.lng
   }
 
+  /**
+   * Generate a LngLat object from the query string params or return null
+   */
   const getLatLngFromQueryString = function getLatLngFromQueryString() {
     try {
       if (hasLatLngInQueryString()) {

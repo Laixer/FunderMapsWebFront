@@ -1,0 +1,38 @@
+{
+  "id": "enforcement-term",
+  "type": "fill-extrusion",
+  "source": "analysis_report",
+  "source-layer": "analysis_report",
+  "filter": ["has", "enforcement_term"],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["get", "enforcement_term"],
+          -46,
+          "#86222a",
+          -25,
+          "#973321",
+          -20,
+          "#a75420",
+          -15,
+          "#bb7f1e",
+          -10,
+          "#ceb31b",
+          -5,
+          "#d0e218",
+          5,
+          "#aef614",
+          10,
+          "#77f025",
+          15,
+          "#4ceb36",
+          20,
+          "#46e65f",
+          25,
+          "#55e293"
+      ]
+  }
+}
