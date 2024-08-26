@@ -39,7 +39,7 @@ export const useGeographyFilter = function useGeographyFilter() {
       Array.isArray(mapset?.[source]) 
       && mapset[source].length !== 0
     ) {
-      geoFilter.push('any')
+      // geoFilter.push('any')
       geoFilter.push([
         "match",
         ["get", property],
@@ -79,6 +79,10 @@ export const useGeographyFilter = function useGeographyFilter() {
     // No geofilter = no need to modify the layer style
     if (geoFilter.length === 0) {
       return specification
+    } else {
+      geoFilter.unshift(
+        'any'
+      )
     }
 
     /**
