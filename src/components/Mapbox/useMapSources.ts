@@ -34,8 +34,8 @@ export const useMapSources = function useMapSources(
       {
         type: 'vector',
         tiles: [sourcePath],
-        minzoom: 10,
-        maxzoom: 15
+        // minzoom: 10,
+        // maxzoom: 15
       }
     )
 
