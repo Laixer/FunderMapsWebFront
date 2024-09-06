@@ -5,6 +5,8 @@
 
 import { type JwtPayload, jwtDecode } from "jwt-decode";
 import api from "./api";
+import { useRouter } from 'vue-router'
+
 
 // ****************************************************************************
 //  Interface
@@ -130,8 +132,9 @@ export function refreshAccessToken(): void {
       .refresh()
       .then(response => storeAccessToken(response.token))
       .catch(() => {
-        // TODO: Redirect to Login?
         // console.error(error)
+        const router = useRouter()
+        router.push({ name: 'login' })
       })
   }
 }
