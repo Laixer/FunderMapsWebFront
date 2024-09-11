@@ -33,7 +33,7 @@ const feedbackLinkWithId = computed<string>(() => {
       <strong>PDF downloaden</strong>
     </a>
     -->
-    <div class="flex gap-2" style="width: 100%">
+    <!-- <div class="flex gap-2" style="width: 100%"> -->
       <a
         :href="incidentLink"
         class="link link--outline | group flex-1 justify-center px-2 py-0.5"
@@ -56,6 +56,6 @@ const feedbackLinkWithId = computed<string>(() => {
         />
         <strong>Feedback</strong>
       </a>
-    </div>
+    <!-- </div> -->
   </div>
 </template>
