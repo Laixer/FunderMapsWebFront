@@ -6,16 +6,19 @@ import OverlayModal from '@/components/Common/OverlayModal.vue'
 
 import BarChart from '@/components/Modals/Statistics/BarChart.vue'
 import PieChart from '@/components/Modals/Statistics/PieChart.vue'
+import ScatterChart from '@/components/Modals/Statistics/ScatterChart.vue';
 import HorizontalBarChart from '@/components/Modals/Statistics/HorizontalBarChart.vue'
 
 import { useBuildingStore } from "@/store/buildings";
 import { useStatisticsStore } from '@/store/building/statistics';
+import { useSubsidenceStore } from '@/store/building/subsidence';
 import { IConstructionYearPair, IFoundationTypePair, IIncidentYearPair, IInquiryYearPair } from '@/datastructures/interfaces/api/IStatistics';
 import { CHART_COLORS, CHART_TRANSPARENT_COLORS } from '@/config';
 
 const { buildingId } = storeToRefs(useBuildingStore())
 const { getStatisticsDataByBuildingId } = useStatisticsStore()
 const { showStatisticsModal, statisticsGraph } = storeToRefs(useStatisticsStore())
+const { getSubsidenceDataByBuildingId } = useSubsidenceStore()
 
 const emit = defineEmits(['close'])
 
@@ -25,7 +28,8 @@ interface IComponents {
 const availableChartComponents: IComponents = {
   BarChart,
   PieChart,
-  HorizontalBarChart
+  HorizontalBarChart,
+  ScatterChart
 }
 
 
@@ -34,11 +38,23 @@ const buildingStatistics = computed(() => {
   return getStatisticsDataByBuildingId(buildingId.value)
 })
 
+
+const subsidenceData = computed(() => {
+  if (! buildingId.value) return []
+
+  return getSubsidenceDataByBuildingId(buildingId.value)
+})
+
+
 /**
  * The chart title, based on the statistic name
  */
 const title: ComputedRef<string> = computed(() => {
   switch(statisticsGraph.value) {
+
+    case 'displacement':
+      return 'Pandzakkingssnelheid (mm/jaar)'
+    
     case 'foundationTypeDistribution': 
       return 'Verhouding funderingstype in de buurt'
 
@@ -72,6 +88,9 @@ const title: ComputedRef<string> = computed(() => {
  */
 const chartComponentName: ComputedRef<string>  = computed(() => {
   switch(statisticsGraph.value) {
+    case 'displacement':
+      return 'ScatterChart'
+
     case 'foundationTypeDistribution': 
     case 'foundationRiskDistribution':
       return 'PieChart'
@@ -93,6 +112,9 @@ const chartComponentName: ComputedRef<string>  = computed(() => {
 const labels = computed(() => {
 
   switch(statisticsGraph.value) {
+    case 'displacement':
+      return []
+
     case 'foundationTypeDistribution': 
 
       return ['Betonnen', 'Houten paal met betonoplanger', 'Houten palen', 'Niet onderheid', 'Overige']
@@ -155,6 +177,16 @@ const data = computed(() => {
   if (! buildingStatistics.value) return []
 
   switch(statisticsGraph.value) {
+
+    case 'displacement':
+      return subsidenceData.value?.map(item => {
+        return {
+          y: item.velocity,
+          x: Date.parse(item.markAt),
+          r: 2
+        }
+      })
+
     case 'foundationTypeDistribution': 
       if (! buildingStatistics.value.foundationTypeDistribution.foundationTypes) return []
 
@@ -249,6 +281,9 @@ const data = computed(() => {
 
 const backgroundColors = computed(() => {
  switch(statisticsGraph.value) {
+    case 'displacement':
+      return ['#191e3c']
+
     case 'foundationTypeDistribution': 
       return ['#7f8fa4', '#c9b441', '#7b2a2d', '#ce0015', '#ffcc69']
 
@@ -270,6 +305,11 @@ const backgroundColors = computed(() => {
 })
 
 const borderColors = computed(() => {
+  switch(statisticsGraph.value) {
+    case 'displacement':
+      return ['#191e3c']
+  }
+
   return Object.values(CHART_COLORS)
 })
 

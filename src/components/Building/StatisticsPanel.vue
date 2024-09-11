@@ -65,6 +65,11 @@ const handleOpenChart = function handleOpenChart(name: string) {
     >
       <BlockLinkGroup>
         <BlockLink 
+          title="Pandzakkingssnelheid (mm/jaar)"
+          label="Bekijk grafiek"
+          @click="handleOpenChart('displacement')" />
+
+        <BlockLink 
           title="Verhouding aantal fundering in de buurt"
           label="Bekijk grafiek"
           @click="handleOpenChart('foundationTypeDistribution')" />

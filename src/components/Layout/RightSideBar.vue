@@ -30,6 +30,7 @@ import { useRecoveryReportsStore } from '@/store/building/recovery'
 import { useInquiriesStore } from '@/store/building/inquiries'
 import { useIncidentReportsStore } from '@/store/building/incidents'
 import { useStatisticsStore } from '@/store/building/statistics'
+import { useSubsidenceStore } from '@/store/building/subsidence';
 
 import api from '@/services/api';
 import MapsetDetails from '../Building/MapsetDetails.vue';
@@ -60,6 +61,8 @@ const {
   buildingStatisticsDataFailedToLoad
 } = useStatisticsStore()
 
+const { loadSubsidenceDataByBuildingId } = useSubsidenceStore()
+
 /**
  * Green buttons
  */
@@ -80,7 +83,6 @@ const {
   buildingHasIncidentReports,
   setIncidentDataByBuildingId
 } = useIncidentReportsStore()
-
 
 const { hasSelectedBuilding, buildingId } = storeToRefs(useBuildingStore())
 
@@ -274,6 +276,7 @@ watch(
       loadLocationDataByBuildingId(buildingId),
       loadAnalysisDataByBuildingId(buildingId),
       loadStatisticsDataByBuildingId(buildingId),
+      loadSubsidenceDataByBuildingId(buildingId),
 
       // TODO: This implementation is a quick fix to support "cache"
       getAllReportDataUnlessCached(buildingId)
