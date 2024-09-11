@@ -31,17 +31,15 @@ provide('loaded', readonly(loaded))
 /**
  * Props
  */ 
-const { accessToken, mapStyle, options } = withDefaults(defineProps<{
+const { 
+  accessToken = import.meta.env.VITE_MAPBOX_TOKEN, 
+  mapStyle = import.meta.env.VITE_MAPBOX_STYLE, 
+  options = {} 
+} = defineProps<{
   accessToken?: string,
   mapStyle?: string,
   options?: object
-}>(), {
-  accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
-  mapStyle: import.meta.env.VITE_MAPBOX_STYLE,
-  options: () => {
-    return {}
-  }
-})
+}>()
 
 const emit = defineEmits<{
   load: [{ map: Map, sdk?: object }]
