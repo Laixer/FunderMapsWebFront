@@ -20,6 +20,9 @@ interface ImportMetaEnv {
 
   // Fundermaps base mapbox style
   readonly VITE_FUNDERMAPS_BASE_STYLE: string
+
+  // Fundermaps API Key
+  readonly VITE_AUTH_KEY: string
 }
 
 interface ImportMeta {
