@@ -56,6 +56,10 @@ export type {
   ICombinedReportData
 } from './api/ICombinedReportData'
 
+export type {
+  ISubsidence
+} from './api/ISubsidence'
+
 /******************************************************************************
  * Front-end Interfaces
  */
