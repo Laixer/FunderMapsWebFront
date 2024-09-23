@@ -1,11 +1,11 @@
 {
-  "id": "incident",
+  "id": "monitoring",
   "type": "fill-extrusion",
-  "source": "incident",
-  "source-layer": "incident",
+  "source": "monitoring",
+  "source-layer": "monitoring",
   "layout": {"visibility": "none"},
   "paint": {
-      "fill-extrusion-color": "#1e3f67",
+      "fill-extrusion-color": "#ce007c",
       "fill-extrusion-height": ["get", "height"]
   }
 }
