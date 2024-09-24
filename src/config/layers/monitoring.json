@@ -1,8 +1,8 @@
 {
   "id": "monitoring",
   "type": "fill-extrusion",
-  "source": "monitoring",
-  "source-layer": "monitoring",
+  "source": "analysis_monitoring",
+  "source-layer": "analysis_monitoring",
   "layout": {"visibility": "none"},
   "paint": {
       "fill-extrusion-color": "#ce007c",
