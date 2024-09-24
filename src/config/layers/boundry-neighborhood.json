@@ -1,0 +1,12 @@
+{
+  "id": "boundry-neighborhood",
+  "type": "line",
+  "source": "boundry_neighborhood",
+  "source-layer": "boundry_neighborhood",
+  "minzoom": 10,
+  "layout": {"visibility": "none"},
+  "paint": {
+      "line-color": "#fe7c7c",
+      "line-width": 3
+  }
+}

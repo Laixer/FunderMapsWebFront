@@ -1,0 +1,12 @@
+{
+  "id": "boundry-district",
+  "type": "line",
+  "source": "boundry_district",
+  "source-layer": "boundry_district",
+  "minzoom": 10,
+  "layout": {"visibility": "none"},
+  "paint": {
+    "line-color": "#c60101",
+    "line-width": 3
+  }
+}

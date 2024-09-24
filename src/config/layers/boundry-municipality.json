@@ -1,0 +1,12 @@
+{
+  "id": "boundry-municipality",
+  "type": "line",
+  "source": "boundry_municipality",
+  "source-layer": "boundry_municipality",
+  "minzoom": 10,
+  "layout": {"visibility": "none"},
+  "paint": {
+      "line-color": "#570505",
+      "line-width": 5
+  }
+}

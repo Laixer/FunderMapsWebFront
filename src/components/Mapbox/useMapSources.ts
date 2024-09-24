@@ -13,6 +13,28 @@ export const useMapSources = function useMapSources(
 
   const currentSources: string[] = []
 
+  const defaultMinMaxZoomLevels = {
+    min: 12,
+    max: 16
+  }
+
+  const sourceZoomLevels: Record<string, { min?: number, max?: number }> = {
+    'boundry_municipality': {
+      min: 7,
+      max: 11
+    },
+    'incident_neighboorhood': {
+      min: 10
+    }, 
+    'incident_municipality': {
+      min: 7,
+      max: 11
+    },
+    'incident_district': {
+      min: 10
+    }
+  }
+
   /**
    * Add a map source
    */
@@ -28,14 +50,20 @@ export const useMapSources = function useMapSources(
     const sourcePath = (import.meta.env.VITE_FUNDERMAPS_TILES_URL+'' || '')
       .replace('{SOURCE}', sourceName || '')
 
+    /**
+     * Use source specific or default min / max zoom
+     */
+    const minzoom = sourceZoomLevels?.[sourceName]?.min || defaultMinMaxZoomLevels.min
+    const maxzoom = sourceZoomLevels?.[sourceName]?.max || defaultMinMaxZoomLevels.max
+
     // TODO: Is the zoom always the same? 
     mapInstance.value.addSource(
       sourceName, 
       {
         type: 'vector',
         tiles: [sourcePath],
-        // minzoom: 10,
-        maxzoom: 16
+        minzoom,
+        maxzoom
       }
     )
 

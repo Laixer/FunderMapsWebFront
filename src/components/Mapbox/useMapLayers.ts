@@ -1,9 +1,7 @@
 /**
- * 
  * TODO:
  *  - layer specs from API
  *  - API returns boolean 'hasBuildingEvents' prop per layer
- * 
  */
 
 import { LayerSpecification, type Map } from "mapbox-gl";
@@ -16,6 +14,7 @@ import { type IMapsetFE } from "@/datastructures/interfaces";
 import { useLayerEvents } from './useLayerEvents'
 import { useMapSources } from "./useMapSources";
 import { useGeographyFilter } from "./useGeographyFilter";
+import { useOwnershipFilter } from "./useOwnershipFilter";
 import { useLayerVisibility } from "./useLayerVisibility";
 
 export const useMapLayers = function useMapLayers(
@@ -25,6 +24,9 @@ export const useMapLayers = function useMapLayers(
   const { activeMapset } = storeToRefs( useMapsetStore() )
 
   const mapInstance = ref(Map)
+
+  let currentMapset: IMapsetFE
+  let currentLayerIds: string[] = []
 
   const {
     attachEventHandlers,
@@ -40,8 +42,20 @@ export const useMapLayers = function useMapLayers(
   } = useGeographyFilter()
 
   const {
+    applyOwnershipFilterToLayerSpecification,
+    applyOwnershipFilterToggle
+  } = useOwnershipFilter()
+
+  const {
     setLayerVisibilityForMapset
   } = useLayerVisibility(Map)
+
+
+  // TODO: Get from API 
+  const getLayerSpecificationById = async function getLayerSpecificationById(layerId: string) {
+    const layer = (await import(`../../config/layers/${layerId}.json`)).default
+    return JSON.parse(JSON.stringify(layer))
+  }
 
   /**
    * Add layers
@@ -54,22 +68,26 @@ export const useMapLayers = function useMapLayers(
     if (! mapInstance.value) {
       return
     }
+
+    // Update the current list of layer ids & mapset
+    currentLayerIds = mapset.layerSet.map(layer => layer.id)
+    currentMapset = currentMapset
     
-    for(let layerId of mapset.layerSet.map(layer => layer.id)) {
+    for(let layerId of currentLayerIds) {
       if (! mapInstance.value.getLayer(layerId)) {
-        
         try {
-          // Get the layer specification
-          // TODO: Move to API
-          const layerSpecification: LayerSpecification = (await import(`../../config/layers/${layerId}.json`)).default
-          console.log(layerId, layerSpecification)
+          // Get the base layer specification
+          const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
 
           if (layerSpecification.source) {
             addSource(layerSpecification.source)
           }
 
           // Add geo fencing to specification
-          applyGeographyFilterToLayerSpecification(layerSpecification, mapset)
+          applyGeographyFilterToLayerSpecification(layerSpecification, currentMapset)
+
+          // Add ownership fencing
+          applyOwnershipFilterToLayerSpecification(layerSpecification)
 
           mapInstance.value.addLayer(layerSpecification)
 
@@ -129,4 +147,47 @@ export const useMapLayers = function useMapLayers(
     () => activeMapset.value && addLayers(activeMapset.value), 
     { once: true }
   )
+
+  /**
+   * 
+   */
+  const updateLayerFilters = async function updateLayerFilters() {
+
+    // Too eager
+    if (! mapInstance.value) {
+      return
+    }
+    
+    for(let layerId of currentLayerIds) {
+
+      // Only continue if the layer is available
+      if (mapInstance.value.getLayer(layerId)) {
+        try {
+          // Get the base layer specification
+          // TODO: Move to API
+          const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
+
+          // Add geo fencing to specification
+          applyGeographyFilterToLayerSpecification(layerSpecification, currentMapset)
+
+          // Add ownership fencing
+          applyOwnershipFilterToLayerSpecification(layerSpecification)
+
+          mapInstance.value.setFilter(layerId, layerSpecification.filter)
+
+        } catch(e) {
+          console.error(e)
+        }
+      }
+    }
+  }
+
+  /**
+   * When the ownerschip toggle is flipped we want to update the layer filters
+   */
+  watch(
+    () => applyOwnershipFilterToggle.value, 
+    updateLayerFilters
+  )
+
 }

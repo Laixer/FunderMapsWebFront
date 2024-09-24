@@ -11,6 +11,7 @@ import { useBuildingMarker } from './useBuildingMarker'
 import { useMapboxControlNudge } from './useMapboxControlNudge';
 import { useTrackPositioning } from './useTrackPositioning'
 import { useMapLayers } from './useMapLayers'
+import { useAdminstrativeBoundaries } from '@/components/Mapbox/useAdministrativeBoundries.ts';
 
 import { useMapCenterRouting } from '@/router/mapCenterRouting';
 
@@ -31,6 +32,7 @@ let mapInstance: Ref<Map|null> = ref(null)
 const MapCenterManagement = useMapCenterManagement()
 
 useBuildingMarker(mapInstance)
+useAdminstrativeBoundaries(mapInstance)
 useMapLayers(mapInstance)
 const { getLastKnownPositioning } = useTrackPositioning(mapInstance)
 
