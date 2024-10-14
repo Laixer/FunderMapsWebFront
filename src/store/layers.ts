@@ -20,6 +20,11 @@ const visibleLayersByMapsetId: Ref<{[key: string]: string[]}> = ref({})
 const showAdministrativeBoundaries: Ref<boolean> = ref(false)
 
 /**
+ * Whether the building cluster (bouwkundige eenheid) layer is shown
+ */
+const showBuildingCluster: Ref<boolean> = ref(false)
+
+/**
  * Get all visible layers by mapsetId
  */
 const getVisibleLayersByMapsetId = function getVisibleLayersByMapsetId(id: string): string[] {
@@ -153,6 +158,7 @@ function useLayers() {
   return {
     visibleLayersByMapsetId,
     showAdministrativeBoundaries,
+    showBuildingCluster,
     isLayerVisible,
     retrieveLayerVisibilityFromSessionStorage,
     getVisibleLayersByMapsetId,

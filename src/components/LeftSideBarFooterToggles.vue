@@ -6,7 +6,7 @@ import Toggle from '@/components/Common/Inputs/Toggle.vue'
 import { useLayersStore } from "@/store/layers";
 import { useFiltersStore } from "@/store/filters"
 
-const { showAdministrativeBoundaries } = storeToRefs(useLayersStore())
+const { showAdministrativeBoundaries, showBuildingCluster } = storeToRefs(useLayersStore())
 const { applyOwnershipFilter } = storeToRefs(useFiltersStore())
 </script>
 
@@ -14,6 +14,7 @@ const { applyOwnershipFilter } = storeToRefs(useFiltersStore())
   <div class="LayerToggleWrapper">
     <Toggle v-model="applyOwnershipFilter" label="Filter op eigendom" />
     <Toggle v-model="showAdministrativeBoundaries" label="Administratieve grenzen" />
+    <Toggle v-model="showBuildingCluster" label="Bouwkundige eenheid" />
   </div>
 </template>
 
