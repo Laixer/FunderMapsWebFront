@@ -32,7 +32,7 @@ export const useLayerVisibility = function useLayerVisibility(
    * Defaults for first initial load
    */
   const preferredDefaultMapsetId = (import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99")
-  const preferredDefaultLayerIds = (import.meta.env.VITE_DEFAULT_LAYERS || 'foundation-type-cluster,foundation-type-established') 
+  const preferredDefaultLayerIds = (import.meta.env.VITE_DEFAULT_LAYERS || 'foundation-type-cluster,foundation-type-established,foundation-type-indicative') 
 
   /**
    * Reveal the specified layers (and hide all others we know about)
@@ -75,7 +75,15 @@ export const useLayerVisibility = function useLayerVisibility(
    * Whether the provided mapset id is the id of the preferred default mapset
    */
   const isDefaultMapset = function isDefaultMapset(id: string) {
+    console.log(id, preferredDefaultMapsetId)
     return id === preferredDefaultMapsetId
+  }
+
+  /**
+   * Whether the mapset contains any of the preferred default layers
+   */
+  const mapsetHasPreferredDefaultLayer = function mapsetHasPreferredDefaultLayer(allKnownLayerIds: string[]) {
+    return preferredDefaultLayerIds.split(',').filter((id: string) => allKnownLayerIds.includes(id)).length !== 0
   }
 
   /**
@@ -151,6 +159,8 @@ export const useLayerVisibility = function useLayerVisibility(
 
       // If the mapset is the preferred default mapset
       if (isDefaultMapset(mapset.id)) {
+        revealDefaultLayers(allKnownLayerIds, mapset.id)
+      } else if (mapsetHasPreferredDefaultLayer(allKnownLayerIds)) {
         revealDefaultLayers(allKnownLayerIds, mapset.id)
       } else {
         revealFirstLayer(allKnownLayerIds, mapset.id)
