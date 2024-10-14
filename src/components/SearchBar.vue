@@ -20,7 +20,7 @@ import { useSessionStore } from '@/store/session';
 import { useBuildingRouting } from '@/router/buildingRouting'
 import { getLocationInformationByBuildingId } from '@/services/api/building';
 
-const { mapCenterLatLon } = storeToRefs( useMainStore() )
+const { mapCenterLatLon, mapMarkerLatLon } = storeToRefs(useMainStore())
 const { isAuthenticated } = storeToRefs(useSessionStore())
 
 const buildingRouting = useBuildingRouting()
@@ -240,6 +240,7 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
        */ 
       const [ Lng, Lat ] = centroide_ll.replace('POINT(', '').replace(')', '').split(' ')
       mapCenterLatLon.value = new mapboxgl.LngLat(Lng, Lat)
+      mapMarkerLatLon.value = new mapboxgl.LngLat(Lng, Lat)
     }
 
   } catch(e) {

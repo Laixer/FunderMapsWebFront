@@ -41,6 +41,12 @@ const isShowingMapsetSelection: Ref<boolean> = ref(false)
  */
 const mapCenterLatLon: Ref<mapboxgl.LngLat|null> = ref(null)
 
+/**
+ * These coordinates are used to drop a marker, unless a building has been selected.
+ */
+const mapMarkerLatLon: Ref<mapboxgl.LngLat|null> = ref(null)
+
+
 function useMain() {
   return {
     isProfileModalOpen,
@@ -57,7 +63,10 @@ function useMain() {
     remarkPopoverText,
 
     // LatLng of Mapbox map
-    mapCenterLatLon
+    mapCenterLatLon,
+
+    // LatLng of Mapbox marker
+    mapMarkerLatLon
   }
 }
 

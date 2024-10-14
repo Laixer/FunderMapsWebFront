@@ -6,10 +6,11 @@ import mapboxgl, { type Map, type LngLat } from "mapbox-gl";
 import { storeToRefs } from "pinia";
 
 import { useBuildingStore } from '@/store/buildings';
+import { useMainStore } from "@/store/main";
 import { useGeoLocationsStore } from '@/store/building/geolocations'
-import { useSessionStore } from "@/store/session";
 
 import { IGeoLocationData } from "@/datastructures/interfaces";
+
 
 export const useBuildingMarker = function useBuildingMarker(
   Map: MaybeRef<Map | null | undefined>
@@ -17,9 +18,11 @@ export const useBuildingMarker = function useBuildingMarker(
   const Marker = new mapboxgl.Marker()
   const mapInstance = ref(Map)
 
-  const { isAuthenticated } = storeToRefs(useSessionStore())
   const { buildingId } = storeToRefs(useBuildingStore())
   const { getLocationDataByBuildingId } = useGeoLocationsStore()  
+
+
+  const { mapMarkerLatLon } = storeToRefs( useMainStore() )
 
   const locationData: ComputedRef<IGeoLocationData|null> = computed(() => {
     if (! buildingId.value) return null
@@ -32,10 +35,7 @@ export const useBuildingMarker = function useBuildingMarker(
   }
 
   function show(LngLat: LngLat) {
-    if (! isAuthenticated.value) {
-      return
-    }
-
+    
     if (mapInstance.value) {
       // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
       // @ts-ignore 
@@ -70,18 +70,22 @@ export const useBuildingMarker = function useBuildingMarker(
   )
 
   /**
-   * Hide marker when user logs out
-   *  If a user logs in and we have location data with coordinates, we can show a marker
+   * Show a marker if LngLat coordinates are provided, and no building is selected
    */
   watch(
-    () => isAuthenticated.value,
-    (isAuthenticated) => {
-      if (! isAuthenticated) {
+    () => mapMarkerLatLon.value,
+    (value: LngLat|null) => {
+      if (locationData.value && locationData.value.residence) {
+        return
+      }
+
+      if (value === null) {
         hide()
       } else {
-        maybeShownResidence()
+        show(value)
       }
-    }
+    },
+   { immediate: true }
   )
 
   /**
