@@ -54,9 +54,17 @@ const pdokLink = computed(() => {
 })
 
 /**
+ * Append the external id to the value
+ */
+const appendExternalId = (value: string, config: FieldDataConfig) => {
+  if (! value || value.length === 0) return value
+
+  // @ts-ignore - 
+  return `${value} (${config.source?.externalId})`
+}
+
+/**
  * Fields config
- *  TODO: formatter based on 'prefix', 'suffix', 'decimal'
- *  TODO: formatter based on central config, like field labels
  */
 const fieldsWithData = computed(() => {
   if (locationData.value === null) { 
@@ -65,10 +73,10 @@ const fieldsWithData = computed(() => {
 
   const fieldsConfig = [
     new FieldDataConfig({ name: 'fullAddress', source: locationData.value?.address }),
-    new FieldDataConfig({ name: 'name', source: locationData.value?.neighborhood }),
-    new FieldDataConfig({ name: 'name', source: locationData.value?.district }),
-    new FieldDataConfig({ name: 'name', source: locationData.value?.municipality }),
-    new FieldDataConfig({ name: 'name', source: locationData.value?.state })
+    new FieldDataConfig({ name: 'name', source: locationData.value?.neighborhood, formatter: appendExternalId }),
+    new FieldDataConfig({ name: 'name', source: locationData.value?.district, formatter: appendExternalId }),
+    new FieldDataConfig({ name: 'name', source: locationData.value?.municipality, formatter: appendExternalId }),
+    new FieldDataConfig({ name: 'name', source: locationData.value?.state, formatter: appendExternalId })
   ]
   return fieldsConfig.map(retrieveAndFormatFieldData)
 })

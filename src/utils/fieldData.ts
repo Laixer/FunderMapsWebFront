@@ -247,7 +247,7 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
   } else {
     // Apply formatting if there is a field formatter
     if (config.formatter) {
-      dataObj.formattedFieldValueLabel = config.formatter(dataObj.fieldValueLabel)
+      dataObj.formattedFieldValueLabel = config.formatter(dataObj.fieldValueLabel, config)
     } else if (formattersByField[config.name]) {
       dataObj.formattedFieldValueLabel = formattersByField[config.name](dataObj.fieldValueLabel)
     } else {
