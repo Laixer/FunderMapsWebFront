@@ -56,7 +56,8 @@ export const analysisFieldLabels = <Record<string, string>> {
   differentialsettlementRisk: "Verschilzakking risico",
   differentialsettlementReliability: "Betrouwbaarheid Verschilzakking",
   unclassifiedRisk: "Vastgesteld",
-  facadescanRisk: "Risico GevelScan"
+  facadescanRisk: "Risico GevelScan",
+  recoveryType: "Herstelmethode"
 }
 
 export const recoveryFieldLabels = <Record<string, string>> {

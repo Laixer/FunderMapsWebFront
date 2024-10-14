@@ -89,7 +89,8 @@ const fieldsWithData = computed(() => {
     configs: [
       new FieldDataConfig({ name: 'foundationTypeReliability' }),
       new FieldDataConfig({ name: 'restorationCosts' }),
-      new FieldDataConfig({ name: 'velocity' })
+      new FieldDataConfig({ name: 'velocity' }),
+      new FieldDataConfig({ name: 'recoveryType' })
     ]
   })
   
