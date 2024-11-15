@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
+import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '../Common/Links/BackLink.vue';
 
 import FoundationIcon from '../Common/Icons/FoundationIcon.vue';
@@ -18,7 +19,6 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */ 
-defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
 
 /**
@@ -103,8 +103,11 @@ const fieldsWithData = computed(() => {
   <Panel 
     title="Fundering" 
     icon="file-foundation"
-    :subtitle="address || ''"
     @close="emit('close')">
+
+    <Transition>
+      <BuildingIdHeader />
+    </Transition>
 
     <BackLink 
       @click.prevent="emit('back')"

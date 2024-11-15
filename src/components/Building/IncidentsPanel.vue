@@ -7,6 +7,7 @@ import { storeToRefs } from 'pinia';
 import { IIncidentReport } from '@/datastructures/interfaces';
 
 import Panel from '@/components/Common/Panel.vue';
+import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
 
 import LeftArrowIcon from '@assets/svg/icons/arrow-left.svg'
@@ -31,7 +32,6 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */ 
-defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
 
 /**
@@ -201,8 +201,11 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
 <template>
   <Panel 
     title="Incident rapportage" 
-    :subtitle="address || ''"
     @close="emit('close')">
+
+    <Transition>
+      <BuildingIdHeader />
+    </Transition>
 
     <BackLink 
       @click.prevent="emit('back')"

@@ -3,6 +3,7 @@ import { ComputedRef, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
+import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
 import ClassificationIcon from '@/components/Common/Icons/ClassificationIcon.vue';
 
@@ -21,7 +22,6 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */ 
-defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
 
 /**
@@ -109,9 +109,13 @@ const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithI
   <Panel 
     title="Funderingsrisico" 
     icon="alert"
-    :subtitle="address || ''"
     @close="emit('close')"
     class="FoundationRiskPanel">
+
+    <Transition>
+      <BuildingIdHeader />
+    </Transition>
+
 
     <BackLink 
       @click.prevent="emit('back')"

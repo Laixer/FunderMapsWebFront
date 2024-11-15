@@ -6,6 +6,7 @@ import { ComputedRef, Ref, computed, onMounted, ref, watch, type Component } fro
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
+import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import MenuLink from '@/components/Common/Links/MenuLink.vue';
 import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
@@ -35,6 +36,7 @@ import { useSubsidenceStore } from '@/store/building/subsidence';
 import api from '@/services/api';
 import MapsetDetails from '../Building/MapsetDetails.vue';
 import { useRoute, useRouter } from 'vue-router';
+
 
 const route = useRoute()
 const router = useRouter()
@@ -88,8 +90,6 @@ const { hasSelectedBuilding, buildingId } = storeToRefs(useBuildingStore())
 
 
 const isOpen = ref(false)
-
-
 
 const rightPanelSlide = ref(false)
 
@@ -396,11 +396,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
         @close="handleCloseSideBar" 
         title="Pand Informatie">
         <Transition>
-          <div 
-            v-if="fullAddress"
-            class="sidebar__heading flex items-center gap-3">
-            <h4 class="heading-4">{{ fullAddress }}</h4>
-          </div>
+          <BuildingIdHeader />
         </Transition>
 
         <MapsetDetails />
@@ -449,17 +445,9 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
 
       <component 
         :is="availablePanels[selectedPanel]"
-        :address="fullAddress"
         @close="handleCloseSideBar"
         @back="handleBackToMainMenu" />
       
     </div>
   </div>
 </template>
-
-<style>
-.sidebar .sidebar__heading h4 {
-  font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
-}
-
-</style>

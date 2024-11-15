@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
+import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '../Common/Links/BackLink.vue';
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs } from '@/utils/fieldData'
@@ -18,7 +19,6 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */ 
-defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
 
 /**
@@ -66,8 +66,11 @@ const fieldsWithData = computed(() => {
   <Panel 
     title="Pand" 
     icon="building"
-    :subtitle="address || ''"
     @close="emit('close')">
+
+    <Transition>
+      <BuildingIdHeader />
+    </Transition>
 
     <BackLink 
       @click.prevent="emit('back')"

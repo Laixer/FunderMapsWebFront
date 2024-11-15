@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia';
 
 import { ICombinedInquiryData } from '@/datastructures/interfaces';
 import Panel from '@/components/Common/Panel.vue';
+import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
 import OutlineButton from '@/components/Common/Buttons/OutlineButton.vue';
 import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
@@ -29,7 +30,6 @@ const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRe
 /**
  * Props & events
  */ 
-defineProps({ address: { type: String } })
 const emit = defineEmits(['close', 'back'])
 
 /******************************************************************************
@@ -250,8 +250,11 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
 <template>
   <Panel 
     title="Onderzoeks informatie" 
-    :subtitle="address || ''"
     @close="emit('close')">
+
+    <Transition>
+      <BuildingIdHeader />
+    </Transition>
 
     <BackLink 
       @click.prevent="emit('back')"
