@@ -53,7 +53,7 @@ const title: ComputedRef<string> = computed(() => {
   switch(statisticsGraph.value) {
 
     case 'displacement':
-      return 'Pandzakkingssnelheid (mm/jaar)'
+      return 'Pandzakking (mm)'
     
     case 'foundationTypeDistribution': 
       return 'Verhouding funderingstype in de buurt'
