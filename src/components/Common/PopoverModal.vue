@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import VueMarkdown from 'vue-markdown-render'
 import Modal from '@/components/Common/Modal.vue'
 
 defineProps({
@@ -20,9 +21,7 @@ const emit = defineEmits(['close'])
     class="pointer-events-none p-0 py-4 mt-8 px-0"
     @close="emit('close')">
 
-    <p class="text-grey-700">
-      {{ text }}
-    </p>
+    <VueMarkdown :source="text" class="text-grey-700" />    
 
     <template v-slot:header>
       <h5 id="dialog-label" class="heading-5">{{ title }}</h5>
