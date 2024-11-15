@@ -90,7 +90,7 @@ export const useMapLayers = function useMapLayers(
           // Add ownership fencing
           applyOwnershipFilterToLayerSpecification(layerSpecification)
 
-          mapInstance.value.addLayer(layerSpecification)
+          mapInstance.value.addLayer(layerSpecification, import.meta.env.VITE_FUNDERMAPS_NUMBER_LAYER || 'building-number-label-hover')
 
           attachEventHandlers(layerId)
 
