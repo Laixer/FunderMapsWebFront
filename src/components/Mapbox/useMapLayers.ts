@@ -70,7 +70,8 @@ export const useMapLayers = function useMapLayers(
     }
 
     // Update the current list of layer ids & mapset
-    currentLayerIds = mapset.layerSet.map(layer => layer.id)
+    // Reverse the order of the layers, so that the top legend matches the top layer
+    currentLayerIds = mapset.layerSet.map(layer => layer.id).reverse()
     currentMapset = currentMapset
     
     for(let layerId of currentLayerIds) {
