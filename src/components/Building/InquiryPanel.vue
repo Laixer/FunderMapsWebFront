@@ -20,12 +20,16 @@ import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataCon
 import { useBuildingStore } from '@/store/buildings';
 import { useInquiriesStore } from '@/store/building/inquiries';
 import { useMainStore } from '@/store/main';
+import { useOrgsStore } from '@/store/orgs.ts';
+
 import DocumentDownload from '@/components/DocumentDownload.vue';
+
 
 const { getCombinedInquiryDataByBuildingId, buildingInquiryDataHasBeenRetrieved, buildingHasInquiries } = useInquiriesStore()
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useInquiriesStore())
 const { buildingId } = storeToRefs(useBuildingStore())
 const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
+const { isOrgAvailable } = useOrgsStore()
 
 /**
  * Props & events
@@ -129,12 +133,21 @@ const hasSampleData = computed(() => {
  */
 const downloadDetails = computed(() => {
 
-  if (! buildingId.value) return null
+  if (! buildingId.value) { 
+    return null
+  }
 
   const documentFile = selectedCaseItem.value?.report.documentFile
-  if (! documentFile) return null
+  if (! documentFile) { 
+    return null
+  }
 
   let filename = selectedCaseItem.value?.report.documentName || 'Onderzoeksdocument'
+
+  // Only show the download button if the logged in user belongs to the org that owns the report
+  if (! isOrgAvailable(selectedCaseItem.value?.report?.attribution?.owner)) {
+    return null
+  }
 
   // If we have a filename, that does not look to have an extension, while the document file appears to have one
   if (

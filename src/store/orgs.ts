@@ -33,6 +33,10 @@ const getOrgById = function getOrgById(id: string): IOrg|null {
   }) || null
 }
 
+const isOrgAvailable = function(id: string): boolean {
+  return getOrgById(id) !== null
+}
+
 const selectedOrg: Ref<IOrg|null> = computed(() => {
   if (! hasSelectedOrg.value) return null
   return getOrgById(selectedOrgId.value as string)
@@ -89,6 +93,7 @@ function useOrgs() {
     selectedOrg,
     hasSelectedOrg,
     getOrgById,
+    isOrgAvailable,
 
     // Mutations
     selectOrgById,
