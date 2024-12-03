@@ -277,7 +277,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
     >
       <div class="flex gap-4 w-full justify-between">
-        <h5 class="truncate">{{ selectedCaseItemTitle }}</h5>
+        <h5 class="truncate" :title="selectedCaseItemTitle+''">{{ selectedCaseItemTitle }}</h5>
 
         <!-- START Prev / next nav component -->
         <div 
