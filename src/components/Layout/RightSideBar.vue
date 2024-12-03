@@ -49,8 +49,7 @@ const { clearBuildingId } = useBuildingStore()
  */
 const { 
   loadLocationDataByBuildingId,
-  buildingLocationDataFailedToLoad, 
-  getAddressByBuildingId
+  buildingLocationDataFailedToLoad
 } = useGeoLocationsStore()
 
 const { 
@@ -108,16 +107,6 @@ const availablePanels: IComponents = {
 }
 const selectedPanel: Ref<string> = ref('')
 
-/**
- * The full address of the selected building
- *  TODO: watch failed to load Geolocation data => show modal ?
- */
-const fullAddress: ComputedRef<string|null> = computed(
-  () => {
-    if (buildingId.value === null) return null
-    return getAddressByBuildingId(buildingId.value) // || "De pand informatie wordt opgehaald"
-  }
-)
 
 /**
  * Without either location or analysis data there are too many gaps to present the building information
