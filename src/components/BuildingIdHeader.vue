@@ -40,9 +40,9 @@ watch(
     v-if="buildingIdTitle"
     class="sidebar__heading flex items-center justify-between gap-3">
     <h4 class="heading-4">
+      <!-- <sup>{{ buildingIdTitle.top }}</sup>
+      <br v-if="buildingIdTitle.top"/>  -->
       {{ buildingIdTitle.bottom }} 
-      <br v-if="buildingIdTitle.top"/> 
-      <sub>{{ buildingIdTitle.top }}</sub>
     </h4>
 
     <button v-if="isSupported" @click="copy(copySource)">
@@ -60,11 +60,23 @@ watch(
   position: relative;
   font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
 }
+/** Not used for now, but kept to allow for quick restoration */
 .sidebar .sidebar__heading h4 sub {
   position: absolute;
   color: rgb(127 143 164 / var(--tw-text-opacity, 1));
-  font-size: clamp(0.5rem, 0.5rem + 0.5229vw, 1rem);
+  font-size: clamp(0.4rem, 0.4rem + 0.5229vw, 0.8rem);
+  font-weight: 400;
+  letter-spacing: 0;
 }
+.sidebar .sidebar__heading h4 sup {
+  position: absolute;
+  color: rgb(127 143 164 / var(--tw-text-opacity, 1));
+  font-size: clamp(0.4rem, 0.4rem + 0.5229vw, 0.8rem);
+  font-weight: 400;
+  letter-spacing: 0;
+  top: 1.1rem;
+}
+
 .sidebar .sidebar__heading button {
   padding: 4px
 }
