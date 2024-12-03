@@ -21,7 +21,7 @@ const emit = defineEmits(['close'])
     class="pointer-events-none p-0 py-4 mt-8 px-0"
     @close="emit('close')">
 
-    <VueMarkdown :source="text" :options="{ breaks: true }" class="text-grey-700" />    
+    <VueMarkdown :source="text" :options="{ breaks: true, linkify: true }" class="markdown text-grey-700" />
 
     <template v-slot:header>
       <h5 id="dialog-label" class="heading-5">{{ title }}</h5>
