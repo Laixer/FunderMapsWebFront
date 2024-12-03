@@ -7,7 +7,8 @@
     }
 
     &[data-variant="popover"] {
-      @apply max-w-xs rounded-none rounded-r-lg p-8 shadow-none;
+      @apply max-w-prose rounded-none rounded-r-lg p-8 shadow-none;
+      /* max-w-xs */
     }
 
     &__footer {
