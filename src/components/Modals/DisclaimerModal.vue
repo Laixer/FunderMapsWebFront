@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
+import VueMarkdown from 'vue-markdown-render'
 import Button from '@/components/Common/Buttons/Button.vue';
 import OverlayModal from '@/components//Common/OverlayModal.vue';
 
@@ -78,9 +79,7 @@ const handleAccept = function handleAccept() {
     title="Disclaimer"
     :closeable="false">
 
-    <p>
-      {{ disclaimerText }}
-    </p>
+    <VueMarkdown :source="disclaimerText" :options="{ breaks: true }" />
 
     <Button 
       @click.prevent="handleAccept" 
