@@ -15,6 +15,16 @@ import { useSessionStore } from '@/store/session'
  */
 const availableMapsetsById: Ref<Record<string, IMapsetFE>> = ref({})
 
+const enforceGeoFencingOnPublicMapsets = function enforceGeoFencingOnPublicMapsets(mapset: IMapsetFE) {
+  if (mapset.slug === 'schiedam-publiek') {
+    mapset.fenceMunicipality = ['GM0606']
+  }
+  if (mapset.slug === 'woerden-publiek') {
+    mapset.fenceMunicipality = ['GM0632']
+  }
+
+  return mapset
+}
 
 const mapsetIdsBySlug = computed(() => {
   return Object.values(availableMapsetsById.value)
@@ -209,6 +219,7 @@ function useMapsets() {
       // Merge new (private) mapsets with public mapsets already present
       removePrivateMapsets()
       response.forEach((mapset: IMapsetFE) => {
+        mapset = enforceGeoFencingOnPublicMapsets(mapset)
         availableMapsetsById.value[mapset.id] = mapset
       })
 
@@ -239,6 +250,7 @@ function useMapsets() {
       if (response) {
         // Merge the new mapsets with the mapsets already present
         response.forEach((mapset: IMapsetFE) => {
+          mapset = enforceGeoFencingOnPublicMapsets(mapset)
           availableMapsetsById.value[mapset.id] = mapset
         })
       }
