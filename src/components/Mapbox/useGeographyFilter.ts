@@ -65,7 +65,7 @@ export const useGeographyFilter = function useGeographyFilter() {
     specification: LayerSpecification,
     mapset?: IMapsetFE|undefined
   ) {
-    if (enableMapFilter === 'false')  {
+    if (enableMapFilter === 'false' && mapset?.public === false)  {
       return specification
     }
     

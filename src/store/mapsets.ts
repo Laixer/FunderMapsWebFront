@@ -11,10 +11,8 @@ import { computed } from '@vue/reactivity';
 import { useSessionStore } from '@/store/session'
 
 /**
- * The map groups available to the user
+ * Helper function to enforce geo fencing on public mapsets
  */
-const availableMapsetsById: Ref<Record<string, IMapsetFE>> = ref({})
-
 const enforceGeoFencingOnPublicMapsets = function enforceGeoFencingOnPublicMapsets(mapset: IMapsetFE) {
   if (mapset.slug === 'schiedam-publiek') {
     mapset.fenceMunicipality = ['GM0606']
@@ -25,6 +23,11 @@ const enforceGeoFencingOnPublicMapsets = function enforceGeoFencingOnPublicMapse
 
   return mapset
 }
+
+/**
+ * The map groups available to the user
+ */
+const availableMapsetsById: Ref<Record<string, IMapsetFE>> = ref({})
 
 const mapsetIdsBySlug = computed(() => {
   return Object.values(availableMapsetsById.value)
