@@ -25,6 +25,10 @@ export const toNAP = function toNAP(value: string|number): string {
   return `${parseFloat(value+'').toFixed(2)} m t.o.v. NAP`
 }
 
+export const toMaaiveld = function toMaaiveld(value: string|number): string {
+  return `${parseFloat(value+'').toFixed(2)} beneden maaiveldniveau`
+}
+
 export const toMM = function toMM(value: string|number): string {
   return `${parseFloat(value+'').toFixed(2)} mm`
 }

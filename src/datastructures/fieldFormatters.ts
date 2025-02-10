@@ -1,4 +1,4 @@
-import { toEuro, toFormattedDate, toMM, toMMYear, toMeters, toNAP, toScale, toSquareM, toYear } from "./formatters";
+import { toEuro, toFormattedDate, toMM, toMMYear, toMeters, toNAP, toMaaiveld, toScale, toSquareM, toYear } from "./formatters";
 
 
 export const formattersByField = <Record<string, Function>> {
@@ -6,7 +6,7 @@ export const formattersByField = <Record<string, Function>> {
   velocity: toMMYear,
   surfaceArea: toSquareM,
   height: toMeters,
-  groundWaterLevel: toNAP,
+  groundWaterLevel: toMaaiveld,
   groundLevel: toNAP,
   groundwaterLevelNet: toNAP,
   groundwaterLevelTemp: toNAP,
