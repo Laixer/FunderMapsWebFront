@@ -1,4 +1,3 @@
-import { type MaybeRef, toRaw, watch, ref } from "vue";
 import { type Map } from "mapbox-gl";
 import { storeToRefs } from "pinia";
 
@@ -6,7 +5,7 @@ import { useMapsetStore } from '@/store/mapsets';
 import { useLayersStore } from "@/store/layers";
 
 import { type IMapsetFE } from "@/datastructures/interfaces";
-
+import { type MaybeRef, toRaw, watch, ref } from "vue";
 
 /**
  * TODO: Refactor MapSet change

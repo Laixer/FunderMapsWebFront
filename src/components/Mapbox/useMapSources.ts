@@ -1,6 +1,6 @@
 
 import { type Map } from "mapbox-gl";
-import { type MaybeRef, ref, watch } from "vue";
+import { type MaybeRef, ref } from "vue";
 
 /**
  * TODO: Remove a source ?
@@ -11,7 +11,7 @@ export const useMapSources = function useMapSources(
 
   const mapInstance = ref(Map)
 
-  let currentSources: string[] = []
+  const currentSources: string[] = []
 
   const defaultMinMaxZoomLevels = {
     min: 12,
@@ -56,13 +56,6 @@ export const useMapSources = function useMapSources(
     const minzoom = sourceZoomLevels?.[sourceName]?.min || defaultMinMaxZoomLevels.min
     const maxzoom = sourceZoomLevels?.[sourceName]?.max || defaultMinMaxZoomLevels.max
 
-    /**
-     * Avoid loading a source twice
-     */
-    if (mapInstance.value.getSource(sourceName)) {
-      return 
-    }
-
     // TODO: Is the zoom always the same? 
     mapInstance.value.addSource(
       sourceName, 
@@ -77,27 +70,8 @@ export const useMapSources = function useMapSources(
     currentSources.push(sourceName)
   }
 
-  /**
-   * Reset the list of loaded sources
-   */
-  const resetSources = function resetSources() {
-    currentSources = []
-  }
-
-  /**
-   * Reset the list of loaded sources upon changing styles
-   */
-  watch(
-    () => mapInstance.value,
-    () => {
-      mapInstance.value?.on('style.load', resetSources)
-    },
-    { once: true }
-  )
-
   return {
-    addSource,
-    resetSources
+    addSource
   }
 }
 

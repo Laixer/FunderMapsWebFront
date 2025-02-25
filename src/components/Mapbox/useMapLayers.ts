@@ -69,11 +69,6 @@ export const useMapLayers = function useMapLayers(
       return
     }
 
-    if (! mapInstance.value.isStyleLoaded()) {
-      console.log("Style is still loading - add")
-      return
-    }
-
     // Update the current list of layer ids & mapset
     // Reverse the order of the layers, so that the top legend matches the top layer
     currentLayerIds = mapset.layerSet.map(layer => layer.id).reverse()
@@ -95,12 +90,7 @@ export const useMapLayers = function useMapLayers(
           // Add ownership fencing
           applyOwnershipFilterToLayerSpecification(layerSpecification)
 
-          mapInstance.value.addLayer(
-            layerSpecification, 
-            mapInstance.value.getLayer(import.meta.env.VITE_FUNDERMAPS_NUMBER_LAYER || 'building-number-label-hover')
-              ? import.meta.env.VITE_FUNDERMAPS_NUMBER_LAYER || 'building-number-label-hover'
-              : undefined
-          )
+          mapInstance.value.addLayer(layerSpecification, import.meta.env.VITE_FUNDERMAPS_NUMBER_LAYER || 'building-number-label-hover')
 
           attachEventHandlers(layerId)
 
@@ -164,14 +154,8 @@ export const useMapLayers = function useMapLayers(
    */
   const updateLayerFilters = async function updateLayerFilters() {
 
-    console.log("Update layers")
-
     // Too eager
     if (! mapInstance.value) {
-      return
-    }
-    if (! mapInstance.value.isStyleLoaded()) {
-      console.log("Style is still loading - update")
       return
     }
     

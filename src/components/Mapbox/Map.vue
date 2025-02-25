@@ -10,7 +10,6 @@ import { useMapCenterManagement } from './useMapCenterManagement'
 import { useBuildingMarker } from './useBuildingMarker'
 import { useMapboxControlNudge } from './useMapboxControlNudge';
 import { useTrackPositioning } from './useTrackPositioning'
-import { useMapStyles } from './useMapStyles'
 import { useMapLayers } from './useMapLayers'
 import { useAdminstrativeBoundaries } from '@/components/Mapbox/useAdministrativeBoundries.ts';
 import { useBuildingCluster } from '@/components/Mapbox/useBuildingCluster.ts'
@@ -36,9 +35,7 @@ const MapCenterManagement = useMapCenterManagement()
 useBuildingMarker(mapInstance)
 useAdminstrativeBoundaries(mapInstance)
 useBuildingCluster(mapInstance)
-useMapStyles(mapInstance)
 useMapLayers(mapInstance)
-
 const { getLastKnownPositioning } = useTrackPositioning(mapInstance)
 
 

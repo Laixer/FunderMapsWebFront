@@ -25,7 +25,7 @@ export interface IMapsetFE {
   /**
    * A mapbox style url
    */
-  style: string|null,
+  style: string,
 
   /**
    * Mapbox layer names
