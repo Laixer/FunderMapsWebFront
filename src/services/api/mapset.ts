@@ -7,7 +7,7 @@ const mapMapset = function mapMapset(rawmapset: IMapset): IMapsetFE {
   let layerSet = []
 
   try {
-    layerSet =rawmapset.layerSet ? JSON.parse(rawmapset.layerSet) : []  
+    layerSet = rawmapset.layerSet ? JSON.parse(rawmapset.layerSet) : []  
   } catch(e) {
     console.log(`Failed to process layerSet information. ${rawmapset?.name || rawmapset.id} will have no interactive layers.`)
   }
@@ -17,12 +17,15 @@ const mapMapset = function mapMapset(rawmapset: IMapset): IMapsetFE {
     console.log("Failed to process mapset options. Loading without options.")
   }
 
+  // TODO: Remove hardcoded exceptions for "risicokaartnl"
+  
+
   return {
     id: rawmapset.id,
     slug: rawmapset.slug,
     name: rawmapset?.name || 'Onbekende laag',
-    style: rawmapset.style,
-    layers: rawmapset?.layers || [],
+    style: rawmapset?.slug === 'risicokaartnl' ? rawmapset.style : null,
+    layers: rawmapset?.layers || (rawmapset?.slug === 'risicokaartnl' ? ['statistics-foundation-risk']: []),
     options,
     public: (!! rawmapset?.public) || false,
     consent: rawmapset?.consent || null,
