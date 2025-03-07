@@ -1,0 +1,23 @@
+{
+    "id": "statistics-foundation-risk",
+    "type": "fill",
+    "source": "composite",
+    "source-layer": "statistics_foundation_risk",
+    "paint": {
+        "fill-color": [
+            "match",
+            ["get", "foundation_risk"],
+            ["a"],
+            "#099509",
+            ["b"],
+            "#f0f641",
+            ["c"],
+            "#d2a204",
+            ["d"],
+            "#d2a204",
+            ["e"],
+            "#ed0c0c",
+            "#ffffff"
+        ]
+    }
+}
