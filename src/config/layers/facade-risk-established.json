@@ -3,13 +3,13 @@
   "type": "fill-extrusion",
   "source": "facade_scan",
   "source-layer": "facade_scan",
-  "filter": ["has", "risk_established"],
+  "filter": ["has", "facade_scan_risk"],
   "layout": {"visibility": "none"},
   "paint": {
       "fill-extrusion-height": ["get", "height"],
       "fill-extrusion-color": [
           "match",
-          ["get", "risk_established"],
+          ["get", "facade_scan_risk"],
           ["e"],
           "#ff5533",
           ["d"],
