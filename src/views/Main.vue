@@ -39,7 +39,7 @@ import DisclaimerModal from '@/components/Modals/DisclaimerModal.vue';
 
 const router = useRouter()
 
-const { 
+const {
   removeAllMapsets
 } = useMapsetStore()
 
@@ -47,13 +47,13 @@ const {
   retrieveLayerVisibilityFromSessionStorage
 } = useLayersStore()
 
-const { 
-  isLoadingMapsetsDebounced, 
-  hasAvailableMapsets, 
-  noMapsetsFound, 
-} = storeToRefs( useMapsetStore() )
-const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
-const { hasSelectedBuilding } = storeToRefs( useBuildingStore() )
+const {
+  isLoadingMapsetsDebounced,
+  hasAvailableMapsets,
+  noMapsetsFound,
+} = storeToRefs(useMapsetStore())
+const { isLeftSidebarOpen } = storeToRefs(useMainStore())
+const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
 
 /**
  * Whether mapbox has initiated
@@ -64,8 +64,8 @@ const mapboxIsReady = ref(false)
  * Loaded when not currently loading and mapsets are available or no mapsets were found
  */
 const loaded = computed(() => {
-  return isLoadingMapsetsDebounced.value === false 
-    && (hasAvailableMapsets.value === true || noMapsetsFound.value === true) 
+  return isLoadingMapsetsDebounced.value === false
+    && (hasAvailableMapsets.value === true || noMapsetsFound.value === true)
     && mapboxIsReady.value
 })
 
@@ -123,18 +123,13 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
 <template>
   <div class="page-dashboard">
     <Header />
-    
+
     <!-- Map view -->
-    <div
-      class="app-view | map-placeholder-bg relative bg-grey-200"
-    >
+    <div class="app-view | map-placeholder-bg relative bg-grey-200">
       <Map @ready="handleMapboxIsReady" />
 
       <Transition name="short">
-        <div
-          v-show="hasAvailableMapsets && ! isLeftSidebarOpen"
-          class="map__actions | absolute left-8 top-12"
-        >
+        <div v-show="hasAvailableMapsets && !isLeftSidebarOpen" class="map__actions | absolute left-8 top-12">
           <Button @click.prevent="handleOpenLeftSidebar" label="Open filter">
             <template v-slot:before>
               <FilterIcon class="w-3" aria-hidden="true" />
@@ -146,14 +141,11 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
 
     <!-- Loading overlay -->
     <Transition>
-      <div 
-        v-if="! loaded"
-        class="app-view | relative grid place-items-center bg-grey-200"
-        aria-busy="true">
+      <div v-if="!loaded" class="app-view | relative grid place-items-center bg-grey-200" aria-busy="true">
         <LoadingIndicator />
       </div>
     </Transition>
-    
+
 
     <!-- Sidebars -->
     <Transition>
@@ -163,7 +155,7 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
     <Transition>
       <RightSidebar v-show="hasSelectedBuilding" />
     </Transition>
-    
+
     <!-- Modals - keep in mind the order of these -->
     <Transition>
       <NoGroupsModal />

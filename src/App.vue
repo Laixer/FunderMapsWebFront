@@ -9,15 +9,15 @@ const sessionStore = useSessionStore()
 const { retrieve: retrieveUserMetaData } = useMetadataStore()
 const { authenticateFromAccessToken } = sessionStore
 const { isAuthenticated } = storeToRefs(sessionStore)
-let accessTokenRefreshInterval: ReturnType<typeof setTimeout>|null = null
+let accessTokenRefreshInterval: ReturnType<typeof setTimeout> | null = null
 
 /**
  * Try to continue from the access token if there is one
- */ 
+ */
 try {
   authenticateFromAccessToken()
   refreshAccessToken()
-} catch(e) {
+} catch (e) {
   // no luck, no harm
 }
 
@@ -65,11 +65,13 @@ watch(
 .v-leave-active {
   transition: opacity .5s ease;
 }
+
 /* This is for the Transitions named "short" */
 .short-enter-active,
 .short-leave-active {
   transition: opacity .25s ease;
 }
+
 .v-enter-from,
 .v-leave-to,
 .short-enter-from,

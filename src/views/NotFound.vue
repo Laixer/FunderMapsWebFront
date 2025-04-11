@@ -10,7 +10,7 @@ import MapBox from '@/components/Common/Mapbox/MapBox.vue';
 
 const options = {
   style: 'mapbox://styles/mapbox/standard',
-  center: [4.503663, 52.530826], 
+  center: [4.503663, 52.530826],
   zoom: 15,
   pitch: 45,
   bearing: 0,
@@ -25,17 +25,11 @@ const options = {
   <div class="page-dashboard">
     <Header />
 
-    <div
-      class="app-view | map-placeholder-bg relative bg-grey-200"
-    >
-
-      <MapBox 
-        :options="options" />
+    <div class="app-view | map-placeholder-bg relative bg-grey-200">
+      <MapBox :options="options" />
     </div>
 
-    <OverlayModal 
-      title="Oh nee! Deze pagina is verzakt (404)" 
-      :closeable="false">
+    <OverlayModal title="Oh nee! Deze pagina is verzakt (404)" :closeable="false">
 
       <p>
         Het lijkt erop dat deze pagina niet op stevige grond staat en in een gat is gevallen.
@@ -46,9 +40,7 @@ const options = {
       </p>
 
       <template v-slot:footer>
-        <Button 
-          @click.prevent="router.push({ name: 'home' })" 
-          label="Home">
+        <Button @click.prevent="router.push({ name: 'home' })" label="Home">
         </Button>
       </template>
 

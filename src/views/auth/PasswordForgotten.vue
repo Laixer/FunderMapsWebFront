@@ -25,24 +25,16 @@ const handleSubmit = async function handleSubmit() {
 
 <template>
   <AuthWrapper title="Wachtwoord vergeten pagina voor de Fundermaps Applicatie">
-    <Card 
-      v-if="! requestSubmitted"
-      title="Wachtwoord vergeten" shadow rounded wide>
+    <Card v-if="!requestSubmitted" title="Wachtwoord vergeten" shadow rounded wide>
       <p>
         Om een nieuw wachtwoord aan te maken dien je eerst je e-mail
         in te vullen. Daarna ontvang je een link waarmee je
         een nieuw wachtwoord in kan stellen.
       </p>
 
-      <form class="space-y-6"  @submit.prevent="handleSubmit">
-        <Input 
-          id="email" 
-          label="E-mail" 
-          type="email" 
-          v-model="email" 
-          placeholder="Voer je e-mail in"
-          autocomplete="username"
-          required />
+      <form class="space-y-6" @submit.prevent="handleSubmit">
+        <Input id="email" label="E-mail" type="email" v-model="email" placeholder="Voer je e-mail in"
+          autocomplete="username" required />
 
         <Button type="submit" label="Vraag een nieuw wachtwoord aan">
           <template v-slot:after>
@@ -58,13 +50,11 @@ const handleSubmit = async function handleSubmit() {
         </router-link>
       </template>
     </Card>
-    <Card 
-      v-else
-      title="Wachtwoord vergeten" shadow rounded wide>
-    
+    <Card v-else title="Wachtwoord vergeten" shadow rounded wide>
+
       <p>
-        Indien het e-mail adres "{{ email }}" bekend is, ontvang je binnen enkele minuten een e-mail. 
-        Daarin staat de link waarmee je een nieuw wachtwoord in kan stellen. 
+        Indien het e-mail adres "{{ email }}" bekend is, ontvang je binnen enkele minuten een e-mail.
+        Daarin staat de link waarmee je een nieuw wachtwoord in kan stellen.
       </p>
 
       <template v-slot:footer>

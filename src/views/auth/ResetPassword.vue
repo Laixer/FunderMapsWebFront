@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { type Ref, ref, onBeforeMount } from 'vue';
 import { z } from 'zod'
@@ -22,7 +21,7 @@ const router = useRouter()
 
 // No reset key = No go!
 onBeforeMount(() => {
-  if (! route.params?.resetKey) {
+  if (!route.params?.resetKey) {
     router.push({ name: 'forgotten' })
   }
 })
@@ -30,8 +29,8 @@ onBeforeMount(() => {
 /**
  * Form information
  */
-const resetFailed: Ref<boolean> = ref(false) 
-const resetSucceeded: Ref<boolean> = ref(false) 
+const resetFailed: Ref<boolean> = ref(false)
+const resetSucceeded: Ref<boolean> = ref(false)
 const showPassword: Ref<boolean> = ref(true)
 const formData = ref({
   email: '',
@@ -47,31 +46,31 @@ const validationSchema = z.object({
   password: z.string({ required_error: 'Dit veld is vereist' }).trim().min(5, 'Het wachtwoord moet minimaal 5 karakters lang zijn.'),
   passwordConfirm: z.string({ required_error: 'Dit veld is vereist' }).trim()
 })
-.strict()
-.refine((data) => data.password === data.passwordConfirm, {
-  message: "De wachtwoorden komen niet overeen.",
-  path: ["passwordConfirm"], // path of error
-})
+  .strict()
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "De wachtwoorden komen niet overeen.",
+    path: ["passwordConfirm"], // path of error
+  })
 
 // Activate validator
-const { 
-  validate, 
-  isValid, 
+const {
+  validate,
+  isValid,
   getError,
   getStatus,
-  scrolltoError 
-} = useValidation(validationSchema, formData) 
+  scrolltoError
+} = useValidation(validationSchema, formData)
 
 const handleSubmit = async function handleSubmit() {
-  if (! route.params.resetKey) return
-  
+  if (!route.params.resetKey) return
+
   try {
     resetFailed.value = false
     resetSucceeded.value = false
 
     await validate()
 
-    if (! isValid.value) {
+    if (!isValid.value) {
       scrolltoError('.validation__message', { offset: 60 })
     } else {
       await api.auth.resetPassword(
@@ -81,8 +80,8 @@ const handleSubmit = async function handleSubmit() {
       )
 
       resetSucceeded.value = true
-    } 
-  } catch(e) {
+    }
+  } catch (e) {
     resetFailed.value = true
   }
 }
@@ -92,93 +91,51 @@ const handleSubmit = async function handleSubmit() {
 
 <template>
   <AuthWrapper title="Wachtwoord wijzigen pagina voor de Fundermaps Applicatie">
-    <Card 
-      v-if="! resetSucceeded"
-      title="Voer nieuw wachtwoord in" shadow rounded wide>
+    <Card v-if="!resetSucceeded" title="Voer nieuw wachtwoord in" shadow rounded wide>
 
-      <div 
-        v-if="resetFailed"
-        class="flex justify-between">
+      <div v-if="resetFailed" class="flex justify-between">
         <p class="text-red-500">
-          Het wijzigen van het wachtwoord is niet gelukt. 
-          Mogelijk is de eenmalige reset sleutel reeds verlopen. 
-          In dat geval moet je <router-link :to="{ name: 'forgotten' }">een nieuw verzoek indienen om het wachtwoord te wijzigen</router-link>.
+          Het wijzigen van het wachtwoord is niet gelukt.
+          Mogelijk is de eenmalige reset sleutel reeds verlopen.
+          In dat geval moet je <router-link :to="{ name: 'forgotten' }">een nieuw verzoek indienen om het wachtwoord te
+            wijzigen</router-link>.
         </p>
       </div>
 
-      <form  class="space-y-6" @submit.prevent="handleSubmit">
-        <Input 
-          id="email" 
-          label="E-mail" 
-          type="email"
-          v-model="formData.email" 
-          placeholder="Voer je e-mail in"
-          autocomplete="username"
-          :validationStatus="getStatus('email')"
-          :validationMessage="getError('email')"
-          :tabindex="1"
-          required />
+      <form class="space-y-6" @submit.prevent="handleSubmit">
+        <Input id="email" label="E-mail" type="email" v-model="formData.email" placeholder="Voer je e-mail in"
+          autocomplete="username" :validationStatus="getStatus('email')" :validationMessage="getError('email')"
+          :tabindex="1" required />
 
-        <Input 
-          id="password"
-          label="Nieuw wachtwoord"
-          :type="showPassword ? 'text' : 'password'"
-          v-model="formData.password"
-          placeholder="Voer je nieuwe nieuwe wachtwoord in"
-          autocomplete="new-password"
-          :validationStatus="getStatus('password')"
-          :validationMessage="getError('password')" 
-          :tabindex="2"
-          required>
+        <Input id="password" label="Nieuw wachtwoord" :type="showPassword ? 'text' : 'password'"
+          v-model="formData.password" placeholder="Voer je nieuwe nieuwe wachtwoord in" autocomplete="new-password"
+          :validationStatus="getStatus('password')" :validationMessage="getError('password')" :tabindex="2" required>
 
-          <template #before>
-            <button type="button">
-              <LockedIcon
-                v-show="! showPassword"
-                class="aspect-square w-4 text-grey-700"
-                aria-hidden="true"
-                @click="() => showPassword = true"
-              />
-              <UnlockedIcon
-                v-show="showPassword"
-                class="aspect-square w-4 text-grey-700"
-                aria-hidden="true"
-                @click="() => showPassword = false"
-              />
-              <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
-            </button>
-          </template>
+        <template #before>
+          <button type="button">
+            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
+              @click="() => showPassword = true" />
+            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
+              @click="() => showPassword = false" />
+            <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
+          </button>
+        </template>
 
         </Input>
 
-        <Input 
-          id="confirm-password"
-          label="Herhaal nieuw wachtwoord"
-          :type="showPassword ? 'text' : 'password'"
-          v-model="formData.passwordConfirm"
-          placeholder="Herhaal hier je nieuwe wachtwoord"
-          autocomplete="new-password"
-          :validationStatus="getStatus('passwordConfirm')"
-          :validationMessage="getError('passwordConfirm')"  
-          required>
+        <Input id="confirm-password" label="Herhaal nieuw wachtwoord" :type="showPassword ? 'text' : 'password'"
+          v-model="formData.passwordConfirm" placeholder="Herhaal hier je nieuwe wachtwoord" autocomplete="new-password"
+          :validationStatus="getStatus('passwordConfirm')" :validationMessage="getError('passwordConfirm')" required>
 
-          <template #before>
-            <button type="button">
-              <LockedIcon
-                v-show="! showPassword"
-                class="aspect-square w-4 text-grey-700"
-                aria-hidden="true"
-                @click="() => showPassword = true"
-              />
-              <UnlockedIcon
-                v-show="showPassword"
-                class="aspect-square w-4 text-grey-700"
-                aria-hidden="true"
-                @click="() => showPassword = false"
-              />
-              <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
-            </button>
-          </template>
+        <template #before>
+          <button type="button">
+            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
+              @click="() => showPassword = true" />
+            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
+              @click="() => showPassword = false" />
+            <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
+          </button>
+        </template>
 
         </Input>
 
@@ -200,15 +157,12 @@ const handleSubmit = async function handleSubmit() {
     <Card v-else title="Gelukt">
       <p>Je wachtwoord is nu veranderd en je kunt hier vanaf nu mee inloggen.</p>
 
-      <Button 
-        type="button" 
-        label="Terug naar het inlogscherm"
-        @click.prevent="router.push({ name: 'login' })">
+      <Button type="button" label="Terug naar het inlogscherm" @click.prevent="router.push({ name: 'login' })">
         <template v-slot:after>
           <AnimatedArrowIcon />
         </template>
       </Button>
     </Card>
-    
+
   </AuthWrapper>
 </template>

@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { type Ref, ref } from 'vue';
 import { z } from 'zod'
@@ -27,7 +26,7 @@ const metadataStore = useMetadataStore()
 /**
  * Form information
  */
-const loginFailed: Ref<boolean> = ref(false) 
+const loginFailed: Ref<boolean> = ref(false)
 const showPassword: Ref<boolean> = ref(false)
 const formData = ref({
   email: '',
@@ -43,28 +42,28 @@ const validationSchema = z.object({
 }).strict()
 
 // Activate validator
-const { 
-  validate, 
-  isValid, 
+const {
+  validate,
+  isValid,
   getError,
   getStatus,
-  scrolltoError 
-} = useValidation(validationSchema, formData) 
+  scrolltoError
+} = useValidation(validationSchema, formData)
 
 /**
  * Handle form submit
  */
-const handleSubmit = async function() {  
+const handleSubmit = async function () {
   try {
     loginFailed.value = false
 
     await validate()
 
-    if (! isValid.value) {
+    if (!isValid.value) {
       scrolltoError('.validation__message', { offset: 60 })
     } else {
       await sessionStore.login(
-        formData.value.email, 
+        formData.value.email,
         formData.value.password
       )
 
@@ -75,7 +74,7 @@ const handleSubmit = async function() {
       // TODO: Get previous route before 'Login' & redirect back to that route
       router.push({ name: 'home' })
     }
-  } catch(e) {
+  } catch (e) {
     console.log(e)
     loginFailed.value = true
   }
@@ -86,56 +85,30 @@ const handleSubmit = async function() {
   <AuthWrapper title="Inlogpagina voor de Fundermaps Applicatie">
     <Card title="Inloggen" shadow rounded wide>
 
-      <div 
-        v-if="loginFailed"
-        class="flex justify-between">
+      <div v-if="loginFailed" class="flex justify-between">
         <p class="text-red-500">
           De e-mail en wachtwoord combinatie is onjuist.
         </p>
       </div>
-      
+
       <form class="space-y-6" @submit.prevent="handleSubmit">
-        <Input 
-          id="email" 
-          label="E-mail" 
-          type="email"
-          v-model="formData.email" 
-          placeholder="Voer je e-mail in"
-          autocomplete="username"
-          :validationStatus="getStatus('email')"
-          :validationMessage="getError('email')"
-          :tabindex="1"
-          required />
+        <Input id="email" label="E-mail" type="email" v-model="formData.email" placeholder="Voer je e-mail in"
+          autocomplete="username" :validationStatus="getStatus('email')" :validationMessage="getError('email')"
+          :tabindex="1" required />
 
-        <Input 
-          id="password"
-          label="Wachtwoord"
-          :type="showPassword ? 'text' : 'password'"
-          v-model="formData.password"
-          placeholder="Voer je wachtwoord in"
-          autocomplete="current-password" 
-          :validationStatus="getStatus('password')"
-          :validationMessage="getError('password')"
-          :tabindex="2"
-          required >
+        <Input id="password" label="Wachtwoord" :type="showPassword ? 'text' : 'password'" v-model="formData.password"
+          placeholder="Voer je wachtwoord in" autocomplete="current-password" :validationStatus="getStatus('password')"
+          :validationMessage="getError('password')" :tabindex="2" required>
 
-          <template #before>
-            <button type="button">
-              <LockedIcon
-                v-show="! showPassword"
-                class="aspect-square w-4 text-grey-700"
-                aria-hidden="true"
-                @click="() => showPassword = true"
-              />
-              <UnlockedIcon
-                v-show="showPassword"
-                class="aspect-square w-4 text-grey-700"
-                aria-hidden="true"
-                @click="() => showPassword = false"
-              />
-              <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
-            </button>
-          </template>
+        <template #before>
+          <button type="button">
+            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
+              @click="() => showPassword = true" />
+            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
+              @click="() => showPassword = false" />
+            <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
+          </button>
+        </template>
 
         </Input>
 
