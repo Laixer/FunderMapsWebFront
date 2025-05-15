@@ -1,147 +1,158 @@
-
-
-/**
- * Meta data
- * 
- *  Implemented based on the (local)Storage API 
- *    https://developer.mozilla.org/en-US/docs/Web/API/Storage
- * 
- * Meta data to be stored at API
- *  administative-boundaries
- *  ownership-filter
- * 
- *  lastCenterPosition
- *  lastZoomLevel
- *  lastPitchDegree
- *  lastRotation
- */
-
-
 import { type Ref, ref } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 import api from "@/services/api";
-
 import { useSessionStore } from '@/store/session';
-
 import { useDebounceFn } from "@vueuse/core";
 
 /**
- * Meta data store
- *  TODO: Improve typing (any...)
+ * Defines the type for individual metadata values.
+ * Can be any serializable JSON value.
  */
-const metadata: Ref<Record<string, any>> = ref({}) 
+type MetadataValue = any; // Using 'any' for flexibility with localStorage and unknown API response structures.
 
 /**
- * 
+ * Defines the type for the metadata object, a record of string keys to MetadataValues.
  */
-const isAvailable = ref(false) 
+type MetadataObject = Record<string, MetadataValue>;
 
+/**
+ * @module store/metadata
+ * @description Pinia store for managing application-specific metadata.
+ * This store handles the retrieval and persistence of metadata, adapting its behavior
+ * based on user authentication status. For authenticated users, metadata is synchronized
+ * with a backend API. For guest users, metadata is stored in `localStorage`.
+ */
+export const useMetadataStore = defineStore('metadata', () => {
+  const metadataState: Ref<MetadataObject> = ref({});
+  const isAvailable: Ref<boolean> = ref(false);
 
+  const sessionStore = useSessionStore();
+  const { isAuthenticated } = storeToRefs(sessionStore);
 
-function useMetadata() {
-
-  // TODO: maybe no ref necessary ?
-  const sessionStore = useSessionStore()
-  const { isAuthenticated } = storeToRefs(sessionStore)
-
-  /**
-   * Retrieve from / store at API
-   */
-  const retrieve = async function retrieve() {
+  const retrieve = async (): Promise<void> => {
     try {
-      if (! isAuthenticated.value) {
-        isAvailable.value = true
-        return
+      if (!isAuthenticated.value) {
+        isAvailable.value = true;
+        return;
       }
 
-      const response = await api.metadata.getMetadata()
-      
-      console.log("RETRIEVE", JSON.parse(JSON.stringify(response)))
-
+      const response: MetadataObject | null | undefined = await api.metadata.getMetadata();
       if (response) {
-        metadata.value = response || {}
+        metadataState.value = response;
+      } else {
+        metadataState.value = {}; // Ensure it's an object if API returns null/undefined
       }
-
-      console.log(metadata)
       isAvailable.value = true;
-
-    } catch(e) {
+    } catch (error) {
+      console.error("Failed to retrieve metadata:", error);
+      // Even on error, mark as available so the app doesn't hang,
+      // allowing potential fallback to localStorage or an empty state.
       isAvailable.value = true;
     }
-  }
+  };
 
-  const store = useDebounceFn(
-    async function store() {
-      if (isAuthenticated.value) {
-        await api.metadata.setMetadata(metadata.value)
+  /**
+   * Persists the current `metadataState` to the backend API.
+   * This operation is debounced to prevent excessive API calls.
+   * It only proceeds if the user is authenticated.
+   * @async
+   * @returns {Promise<void>} A promise that resolves when the metadata is successfully sent or if not authenticated.
+   */
+  const storeToApi = useDebounceFn(async (): Promise<void> => {
+    if (isAuthenticated.value) {
+      try {
+        // Assume api.metadata.setMetadata(data: MetadataObject) returns Promise<void>
+        await api.metadata.setMetadata(metadataState.value);
+      } catch (error) {
+        console.error("Failed to store metadata to API:", error);
       }
-  }, 500)
+    }
+  }, 500);
 
-  const getItem = function getMetaDataItem(name: string) {
-    if (! isAuthenticated.value) {
-      const value = localStorage.getItem(name)
-      if (value) {
+  /**
+   * Retrieves a metadata item by its key.
+   * If the user is authenticated, it reads from the in-memory `metadataState`.
+   * If not authenticated, it reads from `localStorage`. Values from `localStorage`
+   * are attempted to be parsed as JSON; if parsing fails, the raw string is returned.
+   * @param {string} name - The key of the metadata item.
+   * @returns {MetadataValue | undefined} The value of the metadata item, or `undefined` if not found.
+   */
+  const getItem = (name: string): MetadataValue | undefined => {
+    if (!isAuthenticated.value) {
+      const value = localStorage.getItem(name);
+      if (value !== null) { // Explicitly check for null
         try {
-          return JSON.parse(value)
-        } catch(err) {
-          return value
+          return JSON.parse(value);
+        } catch (err) {
+          // If JSON.parse fails, it might be a plain string value
+          return value;
         }
       }
-      return value
+      return undefined; // Item not found in localStorage
     } else {
-      return metadata.value[name] || undefined
+      return metadataState.value[name]; // Returns undefined if key doesn't exist
     }
-  }
-  
+  };
+
   /**
-   * localStorage.setItem only accepts string. 
+   * Sets a metadata item with a given key and value.
+   * If the user is authenticated, it updates the in-memory `metadataState` and triggers
+   * a debounced call to `storeToApi`.
+   * If not authenticated, it writes to `localStorage`. Non-string values are stringified.
+   * @param {string} name - The key of the metadata item.
+   * @param {MetadataValue} value - The value to set for the metadata item.
+   * @returns {void}
    */
-  const setItem = function setItem(name: string, value: any) {
-    if (! isAuthenticated.value) {
-      if (typeof value !== 'string') {
-        value = JSON.stringify(value)
-      }
-      return localStorage.setItem(name, value)
+  const setItem = (name: string, value: MetadataValue): void => {
+    if (!isAuthenticated.value) {
+      const valueToStore: string = typeof value === 'string' ? value : JSON.stringify(value);
+      localStorage.setItem(name, valueToStore);
     } else {
-      metadata.value[name] = value
-      store() // fire & forget
+      metadataState.value[name] = value;
+      storeToApi(); // Debounced call to persist to API
     }
-  }
-  
-  const removeItem = function remove(name: string) {
-    if (! isAuthenticated.value) {
-      localStorage.removeItem(name)
+  };
+
+  /**
+   * Removes a metadata item by its key.
+   * If the user is authenticated, it deletes the item from the in-memory `metadataState`
+   * and triggers a debounced call to `storeToApi`.
+   * If not authenticated, it removes the item from `localStorage`.
+   * @param {string} name - The key of the metadata item to remove.
+   * @returns {void}
+   */
+  const removeItem = (name: string): void => {
+    if (!isAuthenticated.value) {
+      localStorage.removeItem(name);
     } else {
-      delete metadata.value[name]
-      store() // fire & forget
+      delete metadataState.value[name];
+      storeToApi(); // Debounced call to persist to API
     }
-  }
-  
-  const clear = function clear() {
-    localStorage.clear()
-    metadata.value = {}
-    store() // fire & forget
-  }
+  };
+
+  /**
+   * Clears all metadata.
+   * This action clears all items from `localStorage` (regardless of authentication status).
+   * Note: `localStorage.clear()` affects the entire domain, not just items set by this store.
+   * It also resets the in-memory `metadataState` to an empty object.
+   * If the user is authenticated, it triggers a debounced call to `storeToApi` to persist
+   * the cleared state to the backend.
+   * @returns {void}
+   */
+  const clear = (): void => {
+    localStorage.clear();
+    metadataState.value = {};
+    storeToApi();
+  };
 
   return {
     isAvailable,
-
-    // storage methods
+    metadata: metadataState,
     getItem,
     setItem,
     removeItem,
     clear,
-
-    // API methods
     retrieve,
-    store
-  }
-}
-
-export const useMetadataStore = defineStore(
-  'metadata',
-  useMetadata
-)
-
-
-
+    storeToApi,
+  };
+});

@@ -1,4 +1,3 @@
-
 import { Ref, computed, ref } from 'vue';
 import { defineStore } from 'pinia'
 import { IOrg } from '@/datastructures/interfaces';
@@ -12,7 +11,7 @@ const isLoadingOrgs: Ref<boolean> = ref(false)
 
 const availableOrgs: Ref<IOrg[]> = ref([])
 
-const selectedOrgId: Ref<string|null> = ref(null)
+const selectedOrgId: Ref<string | null> = ref(null)
 
 /******************************************************************************
  * Getters
@@ -25,20 +24,20 @@ const hasSelectedOrg: Ref<boolean> = computed(() => {
   return selectedOrgId.value !== null
 })
 
-const getOrgById = function getOrgById(id: string): IOrg|null {
-  if (! hasAvailableOrgs.value) return null
+const getOrgById = function getOrgById(id: string): IOrg | null {
+  if (!hasAvailableOrgs.value) return null
 
-  return availableOrgs.value.find( (org: IOrg) => {
+  return availableOrgs.value.find((org: IOrg) => {
     return org.id === id
   }) || null
 }
 
-const isOrgAvailable = function(id: string): boolean {
+const isOrgAvailable = function (id: string): boolean {
   return getOrgById(id) !== null
 }
 
-const selectedOrg: Ref<IOrg|null> = computed(() => {
-  if (! hasSelectedOrg.value) return null
+const selectedOrg: Ref<IOrg | null> = computed(() => {
+  if (!hasSelectedOrg.value) return null
   return getOrgById(selectedOrgId.value as string)
 })
 
@@ -46,7 +45,7 @@ const selectedOrg: Ref<IOrg|null> = computed(() => {
  * Mutating the store data
  */
 
-const selectOrgById = function(id: string) {
+const selectOrgById = function (id: string) {
   if (getOrgById(id) !== null) {
     selectedOrgId.value = id
   }
@@ -55,18 +54,18 @@ const selectOrgById = function(id: string) {
 /**
  * This only happens when the user logs in / session is restored
  */
-const loadAvailableOrgs = async function() {
+const loadAvailableOrgs = async function () {
   isLoadingOrgs.value = true
 
   try {
     const orgs = await api.org.getOrgs()
 
     availableOrgs.value = orgs
-    if(hasAvailableOrgs.value) {
+    if (hasAvailableOrgs.value) {
       selectOrgById(availableOrgs.value[0].id)
     }
 
-  } catch(e) {
+  } catch (e) {
     console.log(e)
 
     throw e
@@ -78,7 +77,7 @@ const loadAvailableOrgs = async function() {
 /**
  * Clean up - used on logout
  */
-const removeOrgs = function() {
+const removeOrgs = function () {
   availableOrgs.value = []
   selectedOrgId.value = null
 }
