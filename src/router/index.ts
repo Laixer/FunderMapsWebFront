@@ -9,7 +9,7 @@ import PasswordForgotten from '@/views/auth/PasswordForgotten.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 
 // 404
-import NotFound from '@/views/NotFound.vue' 
+import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -90,10 +90,10 @@ const router = createRouter({
         return { name: 'building-panel', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId, panel: to.params.panel } }
       }
     },
-    { 
-      path: '/:pathMatch(.*)*', 
-      name: 'NotFound', 
-      component: NotFound 
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound
     },
   ],
 })
