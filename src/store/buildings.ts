@@ -62,4 +62,3 @@ export const useBuildingStore = defineStore('buildings', () => {
     clearBuildingId,
   };
 });
-

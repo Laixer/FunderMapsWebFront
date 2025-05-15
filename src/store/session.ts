@@ -42,16 +42,10 @@ export const useSessionStore = defineStore('session', () => {
    */
   const setUserNameFromToken = (): void => {
     const username = getClaimFromAccessToken('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name');
-
     if (username) {
-      currentUser.value = {
-        name: username.toString(),
-      };
+      currentUser.value = { name: username.toString() };
     } else {
-      // TODO: What if we got a user with no name?
-      currentUser.value = {
-        name: 'Anoniem',
-      };
+      currentUser.value = { name: 'Anoniem' };
     }
   };
 
