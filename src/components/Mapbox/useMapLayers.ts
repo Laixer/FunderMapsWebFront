@@ -21,7 +21,7 @@ export const useMapLayers = function useMapLayers(
   Map: MaybeRef<Map | null | undefined>
 ) {
 
-  const { activeMapset } = storeToRefs( useMapsetStore() )
+  const { activeMapset } = storeToRefs(useMapsetStore())
 
   const mapInstance = ref(Map)
 
@@ -65,7 +65,7 @@ export const useMapLayers = function useMapLayers(
     console.log("map layers - add layers", mapset.layerSet, mapset.layerSet.map(layer => layer.id))
 
     // Too eager
-    if (! mapInstance.value) {
+    if (!mapInstance.value) {
       return
     }
 
@@ -73,9 +73,9 @@ export const useMapLayers = function useMapLayers(
     // Reverse the order of the layers, so that the top legend matches the top layer
     currentLayerIds = mapset.layerSet.map(layer => layer.id).reverse()
     currentMapset = currentMapset
-    
-    for(let layerId of currentLayerIds) {
-      if (! mapInstance.value.getLayer(layerId)) {
+
+    for (let layerId of currentLayerIds) {
+      if (!mapInstance.value.getLayer(layerId)) {
         try {
           // Get the base layer specification
           const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
@@ -94,7 +94,7 @@ export const useMapLayers = function useMapLayers(
 
           attachEventHandlers(layerId)
 
-        } catch(e) {
+        } catch (e) {
           console.error(e)
         }
       }
@@ -110,11 +110,11 @@ export const useMapLayers = function useMapLayers(
   const removeLayers = function removeLayers(mapset: IMapsetFE) {
 
     // Too late ?
-    if (! mapInstance.value) {
+    if (!mapInstance.value) {
       return
     }
 
-    for(let layerId of mapset.layerSet.map(layer => layer.id)) {
+    for (let layerId of mapset.layerSet.map(layer => layer.id)) {
       if (mapInstance.value.getLayer(layerId)) {
         removeEventHandlers(layerId)
         mapInstance.value.removeLayer(layerId)
@@ -127,7 +127,7 @@ export const useMapLayers = function useMapLayers(
    * When the active mapset changes we remove the layers of the previous mapset, and add the layers of the new mapset
    */
   watch(
-    () => activeMapset.value, 
+    () => activeMapset.value,
     (activeMapset, oldMapset) => {
       if (oldMapset) {
         removeLayers(oldMapset)
@@ -145,7 +145,7 @@ export const useMapLayers = function useMapLayers(
    */
   watch(
     () => mapInstance.value,
-    () => activeMapset.value && addLayers(activeMapset.value), 
+    () => activeMapset.value && addLayers(activeMapset.value),
     { once: true }
   )
 
@@ -155,11 +155,11 @@ export const useMapLayers = function useMapLayers(
   const updateLayerFilters = async function updateLayerFilters() {
 
     // Too eager
-    if (! mapInstance.value) {
+    if (!mapInstance.value) {
       return
     }
-    
-    for(let layerId of currentLayerIds) {
+
+    for (let layerId of currentLayerIds) {
 
       // Only continue if the layer is available
       if (mapInstance.value.getLayer(layerId)) {
@@ -176,7 +176,7 @@ export const useMapLayers = function useMapLayers(
 
           mapInstance.value.setFilter(layerId, layerSpecification.filter)
 
-        } catch(e) {
+        } catch (e) {
           console.error(e)
         }
       }
@@ -187,7 +187,7 @@ export const useMapLayers = function useMapLayers(
    * When the ownerschip toggle is flipped we want to update the layer filters
    */
   watch(
-    () => applyOwnershipFilterToggle.value, 
+    () => applyOwnershipFilterToggle.value,
     updateLayerFilters
   )
 

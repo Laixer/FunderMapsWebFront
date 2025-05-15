@@ -25,7 +25,7 @@ export const useMapSources = function useMapSources(
     },
     'incident_neighboorhood': {
       min: 10
-    }, 
+    },
     'incident_municipality': {
       min: 7,
       max: 11
@@ -40,14 +40,14 @@ export const useMapSources = function useMapSources(
    */
   const addSource = function addSource(sourceName: string) {
     if (currentSources.includes(sourceName)) {
-      return 
+      return
     }
 
-    if (! mapInstance.value) {
-      return 
+    if (!mapInstance.value) {
+      return
     }
 
-    const sourcePath = (import.meta.env.VITE_FUNDERMAPS_TILES_URL+'' || '')
+    const sourcePath = (import.meta.env.VITE_FUNDERMAPS_TILES_URL + '' || '')
       .replace('{SOURCE}', sourceName || '')
 
     /**
@@ -58,7 +58,7 @@ export const useMapSources = function useMapSources(
 
     // TODO: Is the zoom always the same? 
     mapInstance.value.addSource(
-      sourceName, 
+      sourceName,
       {
         type: 'vector',
         tiles: [sourcePath],

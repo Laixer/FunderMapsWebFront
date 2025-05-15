@@ -1,6 +1,5 @@
-
 import { type Ref, ref, watch } from 'vue';
-import { defineStore, storeToRefs} from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import { refDebounced } from '@vueuse/core'
 
 import { type IMapsetFE } from '@/datastructures/interfaces';
@@ -54,8 +53,8 @@ const availableMapsetsByLoadingOrder = computed(() => {
 /**
  * The ids and slugs of the available mapsets
  */
-const availableMapsetIds = computed(() => Object.keys(availableMapsetsById.value)) 
-const availableMapsetSlugs = computed(() => Object.values(availableMapsetsById.value).map(mapset => mapset.slug)) 
+const availableMapsetIds = computed(() => Object.keys(availableMapsetsById.value))
+const availableMapsetSlugs = computed(() => Object.values(availableMapsetsById.value).map(mapset => mapset.slug))
 
 /**
  * Used to indicate whether map groups are loaded
@@ -68,7 +67,7 @@ const hasAvailableMapsets = computed<boolean>(() => {
  * Has mapsets available, and at least is not public
  */
 const hasAvailablePrivateMapsets = computed<boolean>(() => {
-  return hasAvailableMapsets.value 
+  return hasAvailableMapsets.value
     && Object.values(availableMapsetsById.value).some(mapset => mapset.public !== true)
 })
 
@@ -94,13 +93,13 @@ const requestedMapsetNotFound = ref(false)
 /**
  * The currently selected map group
  */
-const activeMapsetId: Ref<string|null> = ref(null)
+const activeMapsetId: Ref<string | null> = ref(null)
 
 /**
  * The id of the first of the available mapsets
  */
-const firstMapsetId = computed<string|null>(() => {
-  if (! hasAvailableMapsets.value) return null
+const firstMapsetId = computed<string | null>(() => {
+  if (!hasAvailableMapsets.value) return null
 
   return availableMapsetsByLoadingOrder.value[0].id
 })
@@ -108,7 +107,7 @@ const firstMapsetId = computed<string|null>(() => {
 /**
  * If available we use the preferred default, otherwise go for the first mapset
  */
-const defaultMapsetId = computed<string|null>(() => {
+const defaultMapsetId = computed<string | null>(() => {
 
   const preferredMapsetId = import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99"
 
@@ -123,13 +122,13 @@ const defaultMapsetId = computed<string|null>(() => {
  * Get a mapset by id
  */
 const getMapsetById = function getMapsetById(id: string) {
-  if (! hasAvailableMapsets.value) return null
+  if (!hasAvailableMapsets.value) return null
 
   return availableMapsetsById.value[id] || null
 }
 
 const getMapsetBySlug = function getMapsetBySlug(slug: string) {
-  const id = mapsetIdsBySlug.value[slug] 
+  const id = mapsetIdsBySlug.value[slug]
   return getMapsetById(id)
 }
 
@@ -152,7 +151,7 @@ const getMapsetIdByIdentifier = function getMapsetByIdentifier(identifier: strin
  * Whether a specific mapset is available
  */
 const isMapsetAvailable = function isMapsetAvailable(mapsetId: string) {
-  return !! getMapsetByIdentifier(mapsetId)
+  return !!getMapsetByIdentifier(mapsetId)
 }
 
 /**
@@ -165,14 +164,14 @@ const isPublicMapset = function isPublicMapset(mapsetId: string) {
 /**
  * The active Map Group based on the active id
  */
-const activeMapset = computed<IMapsetFE|null>(() => {
+const activeMapset = computed<IMapsetFE | null>(() => {
   if (activeMapsetId.value === null) return null
   return getMapsetByIdentifier(activeMapsetId.value as string)
 })
 
 /**
  * Automatically unset the activeMapSetId if the active mapset is no longer available
- */ 
+ */
 watch(() => activeMapset.value, (value) => {
   if (value === null && activeMapsetId.value !== null) {
     activeMapsetId.value = null
@@ -197,7 +196,7 @@ function useMapsets() {
   const selectMapsetById = function selectMapsetById(id: string) {
 
     // Nothing changes
-    if (activeMapset.value?.id === id) return 
+    if (activeMapset.value?.id === id) return
 
     // First check whether the group actually is available to the user and loaded
     const Mapset = getMapsetByIdentifier(id)
@@ -212,7 +211,7 @@ function useMapsets() {
   async function loadAvailableMapsets() {
 
     // This endpoint only works for authenticated users
-    if (! isAuthenticated.value) return
+    if (!isAuthenticated.value) return
 
     isLoadingMapsets.value = true
 
@@ -230,7 +229,7 @@ function useMapsets() {
       // TODO: Error handling 
       removePrivateMapsets()
     }
-    
+
 
 
     isLoadingMapsets.value = false
@@ -240,11 +239,11 @@ function useMapsets() {
    * 
    */
   async function loadAvailableMapsetsById(mapsetId: string) {
-    
-    
+
+
     // TODO: Show different error from failure to load mapsets as logged in user.
     // TODO: Differentiate error between logged in users and guests - at component level.
-    
+
     isLoadingMapsets.value = true
 
     try {
@@ -258,10 +257,10 @@ function useMapsets() {
         })
       }
 
-    } catch(err) {
+    } catch (err) {
       // We don't remove any already available mapsets if the request for a specific mapset by id failed. 
-    }      
-    
+    }
+
     isLoadingMapsets.value = false
   }
 
@@ -272,12 +271,12 @@ function useMapsets() {
   function removePrivateMapsets() {
 
     // No cleanup needed
-    if (! hasAvailableMapsets.value) return
+    if (!hasAvailableMapsets.value) return
 
     // Only public mapsets may remain
     Object.values(availableMapsetsById.value)
       .forEach((mapset: IMapsetFE) => {
-        if (! mapset.public) {
+        if (!mapset.public) {
           delete availableMapsetsById.value[mapset.id]
         }
       })
@@ -289,7 +288,7 @@ function useMapsets() {
   function removeAllMapsets() {
 
     // No cleanup needed
-    if (! hasAvailableMapsets.value) return
+    if (!hasAvailableMapsets.value) return
 
     // availableMapsets.value = []
     availableMapsetsById.value = {}

@@ -1,4 +1,3 @@
-
 import { get, put } from "../apiClient"
 
 /**
@@ -9,7 +8,7 @@ export const getMetadata = async function getMetadata() {
     const response = await get({ endpoint: '/metadata' })
     // The actual metadata object is a stringified json object within the json response
     return JSON.parse(response?.metadata)
-  } catch(err) {
+  } catch (err) {
     return new Promise((_, reject) => reject())
   }
 }

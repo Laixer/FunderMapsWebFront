@@ -1,5 +1,3 @@
-
-
 const baseUrl = import.meta.env.VITE_PDOK_LOCATIONSERVICE
 
 const callPDOK = async function callPDOK(endpoint: string) {
@@ -8,7 +6,7 @@ const callPDOK = async function callPDOK(endpoint: string) {
   if (response.ok) {
     try {
       return response.json()
-    } catch(e) {
+    } catch (e) {
       console.log("Failed to process PDOK response.")
     }
   }
@@ -17,15 +15,15 @@ const callPDOK = async function callPDOK(endpoint: string) {
 }
 
 
-export const getSuggestions = async function getSuggestions(query: string, count: number|undefined|null) {
+export const getSuggestions = async function getSuggestions(query: string, count: number | undefined | null) {
   return await callPDOK(`suggest?q=${query}&rows=${count || 5}&fq=type:(woonplaats OR postcode OR adres)`)
 }
 
-export const getSuggestionsNearCoordinates = async function getSuggestionsByCoordinates(query: string, lat: string|number, lon: string|number, count: number|undefined|null) {
+export const getSuggestionsNearCoordinates = async function getSuggestionsByCoordinates(query: string, lat: string | number, lon: string | number, count: number | undefined | null) {
   return await callPDOK(`suggest?q=${query}&lat=${lat.toString()}&lon=${lon.toString()}&rows=${count || 5}&fq=type:(woonplaats OR postcode OR adres)`)
 }
 
-export const getReverse = async function getReverse(lat: string|number, lon: string|number, count: number|undefined|null) {
+export const getReverse = async function getReverse(lat: string | number, lon: string | number, count: number | undefined | null) {
   return await callPDOK(`reverse?lat=${lat.toString()}&lon=${lon.toString()}&rows=${count || 5}&fq=type:(adres)`)
 }
 
