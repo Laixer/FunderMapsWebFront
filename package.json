@@ -21,7 +21,7 @@
     "jwt-decode": "^4.0.0",
     "lodash-es": "^4.17.21",
     "mapbox-gl": "^3.3.0",
-    "pinia": "^2.1.7",
+    "pinia": "^3.0.2",
     "uuid": "^9.0.1",
     "vue": "^3.4.21",
     "vue-markdown-render": "^2.2.1",
