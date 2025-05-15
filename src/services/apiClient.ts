@@ -57,7 +57,7 @@ const passAuthCheckOrExit = function passAuthOrThrowException(requireAuth: boole
   }
 }
 
-export const makeCall = async function makeCall({
+const makeCall = async ({
   endpoint, method = 'GET', body, requireAuth = true, autoredirect = true
 }: {
   endpoint: string,
@@ -65,7 +65,7 @@ export const makeCall = async function makeCall({
   body?: unknown,
   requireAuth?: boolean,
   autoredirect?: boolean
-}) {
+}) => {
   let fetchOptions = {}
   let authHeader = {}
   let responseBody = null
@@ -202,25 +202,22 @@ export class APICallError extends APIClientError {
 /******************************************************************************
  * Shortcuts
  */
-export const get = async function get(
-  { endpoint, body, requireAuth, autoredirect }:
-    { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
-) {
-  return await makeCall({ endpoint, method: 'GET', body, requireAuth, autoredirect })
+export const get = ({ endpoint, body, requireAuth, autoredirect }:
+  { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
+) => {
+  return makeCall({ endpoint, method: 'GET', body, requireAuth, autoredirect })
 }
 
-export const post = async function post(
-  { endpoint, body, requireAuth, autoredirect }:
-    { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
-) {
-  return await makeCall({ endpoint, method: 'POST', body, requireAuth, autoredirect })
+export const post = ({ endpoint, body, requireAuth, autoredirect }:
+  { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
+) => {
+  return makeCall({ endpoint, method: 'POST', body, requireAuth, autoredirect })
 }
 
-export const put = async function put(
-  { endpoint, body, requireAuth, autoredirect }:
-    { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
-) {
-  return await makeCall({ endpoint, method: 'PUT', body, requireAuth, autoredirect })
+export const put = ({ endpoint, body, requireAuth, autoredirect }:
+  { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
+) => {
+  return makeCall({ endpoint, method: 'PUT', body, requireAuth, autoredirect })
 }
 
 /******************************************************************************

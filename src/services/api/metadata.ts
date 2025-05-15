@@ -10,8 +10,8 @@ export const getMetadata = async () => {
   }
 }
 
-export const setMetadata = async function setMetadata(body: object) {
-  return await put({ endpoint: '/metadata', body: { metadata: body } })
+export const setMetadata = (body: object) => {
+  return put({ endpoint: '/metadata', body: { metadata: body } })
 }
 
 export default {

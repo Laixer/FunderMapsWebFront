@@ -36,10 +36,6 @@ const mapMapset = (rawmapset: IMapset): IMapsetFE => {
   }
 }
 
-
-/******************************************************************************
- * Map Groups endpoints
- */
 export const getAvailableMapsets = async (): Promise<IMapsetFE[] | null> => {
   const response = await get({ endpoint: '/mapset' })
   if (response) {
