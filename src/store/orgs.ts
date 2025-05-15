@@ -1,108 +1,122 @@
-import { Ref, computed, ref } from 'vue';
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue'; // Added ref and computed
 import { IOrg } from '@/datastructures/interfaces';
 import api from '@/services/api';
 
-
-/******************************************************************************
- * Store data
- */
-const isLoadingOrgs: Ref<boolean> = ref(false)
-
-const availableOrgs: Ref<IOrg[]> = ref([])
-
-const selectedOrgId: Ref<string | null> = ref(null)
-
-/******************************************************************************
- * Getters
- */
-const hasAvailableOrgs: Ref<boolean> = computed(() => {
-  return availableOrgs.value.length !== 0
-})
-
-const hasSelectedOrg: Ref<boolean> = computed(() => {
-  return selectedOrgId.value !== null
-})
-
-const getOrgById = function getOrgById(id: string): IOrg | null {
-  if (!hasAvailableOrgs.value) return null
-
-  return availableOrgs.value.find((org: IOrg) => {
-    return org.id === id
-  }) || null
-}
-
-const isOrgAvailable = function (id: string): boolean {
-  return getOrgById(id) !== null
-}
-
-const selectedOrg: Ref<IOrg | null> = computed(() => {
-  if (!hasSelectedOrg.value) return null
-  return getOrgById(selectedOrgId.value as string)
-})
-
-/******************************************************************************
- * Mutating the store data
- */
-
-const selectOrgById = function (id: string) {
-  if (getOrgById(id) !== null) {
-    selectedOrgId.value = id
-  }
-}
-
 /**
- * This only happens when the user logs in / session is restored
+ * Pinia store for managing organizations.
+ * This store handles fetching, selecting, and managing organization data.
  */
-const loadAvailableOrgs = async function () {
-  isLoadingOrgs.value = true
+export const useOrgsStore = defineStore('orgs', () => {
+  const isLoadingOrgs = ref(false);
+  const availableOrgs = ref<IOrg[]>([]);
+  const selectedOrgId = ref<string | null>(null);
 
-  try {
-    const orgs = await api.org.getOrgs()
+  /**
+   * Checks if there are any available organizations.
+   *
+   * @returns {boolean} True if organizations are available, false otherwise.
+   */
+  const hasAvailableOrgs = computed((): boolean => {
+    return availableOrgs.value.length > 0;
+  });
 
-    availableOrgs.value = orgs
-    if (hasAvailableOrgs.value) {
-      selectOrgById(availableOrgs.value[0].id)
+  /**
+   * Checks if an organization has been selected.
+   *
+   * @returns {boolean} True if an organization is selected, false otherwise.
+   */
+  const hasSelectedOrg = computed((): boolean => {
+    return selectedOrgId.value !== null;
+  });
+
+  /**
+   * Retrieves an organization by its ID.
+   *
+   * @param {string} id - The ID of the organization to retrieve.
+   * @returns {IOrg | null} The IOrg object or null if not found or if no organizations are available.
+   */
+  const getOrgById = (id: string): IOrg | null => {
+    if (!availableOrgs.value || availableOrgs.value.length === 0) {
+      return null;
     }
+    return availableOrgs.value.find((org: IOrg) => org.id === id) || null;
+  };
 
-  } catch (e) {
-    console.log(e)
+  /**
+   * Checks if a specific organization ID is available in the list of organizations.
+   *
+   * @param {string} id - The ID of the organization to check.
+   * @returns {boolean} True if the organization is available, false otherwise.
+   */
+  const isOrgAvailable = (id: string): boolean => {
+    return getOrgById(id) !== null;
+  };
 
-    throw e
+  /**
+   * The currently selected organization object.
+   *
+   * @returns {IOrg | null} The selected IOrg object, or null if no organization is selected or found.
+   */
+  const selectedOrg = computed((): IOrg | null => {
+    if (!hasSelectedOrg.value || selectedOrgId.value === null) {
+      return null;
+    }
+    return getOrgById(selectedOrgId.value);
+  });
+
+  /**
+   * Selects an organization by its ID if it exists.
+   *
+   * @param {string} id - The ID of the organization to select.
+   */
+  function selectOrgById(id: string): void {
+    if (getOrgById(id) !== null) {
+      selectedOrgId.value = id;
+    }
   }
 
-  isLoadingOrgs.value = false
-}
+  /**
+   * Loads the list of available organizations from the API.
+   * If organizations are loaded and available, selects the first one by default.
+   * @async
+   */
+  async function loadAvailableOrgs(): Promise<void> {
+    isLoadingOrgs.value = true;
+    try {
+      const orgsData: IOrg[] = await api.org.getOrgs();
+      availableOrgs.value = orgsData;
+      if (hasAvailableOrgs.value && availableOrgs.value.length > 0) {
+        selectOrgById(availableOrgs.value[0].id);
+      }
+    } catch (error) {
+      console.error('Failed to load available organizations:', error);
+      throw error; // Re-throw the error for upstream handling
+    } finally {
+      isLoadingOrgs.value = false;
+    }
+  }
 
-/**
- * Clean up - used on logout
- */
-const removeOrgs = function () {
-  availableOrgs.value = []
-  selectedOrgId.value = null
-}
+  /**
+   * Clears the list of available organizations and the selected organization ID.
+   * Typically used on user logout.
+   */
+  function removeOrgs(): void {
+    availableOrgs.value = [];
+    selectedOrgId.value = null;
+  }
 
-function useOrgs() {
   return {
-
-    // Get info
+    isLoadingOrgs,
     availableOrgs,
-    hasAvailableOrgs,
     selectedOrgId,
-    selectedOrg,
+    hasAvailableOrgs,
     hasSelectedOrg,
     getOrgById,
     isOrgAvailable,
-
-    // Mutations
+    selectedOrg,
     selectOrgById,
     loadAvailableOrgs,
-    removeOrgs
-  }
-}
-
-
-export const useOrgsStore = defineStore(
-  'orgs',
-  useOrgs
-)
+    removeOrgs,
+  };
+});

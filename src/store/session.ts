@@ -9,6 +9,9 @@ import { useMapsetStore } from '@/store/mapsets';
 import { useOrgsStore } from '@/store/orgs';
 import { useMetadataStore } from './metadata';
 
+// TODO: This store should keep the access token in memory, and use something like pinia-plugin-persistedstate
+// to persist the access token in localStorage.
+
 /**
  * Pinia store definition for session management.
  * Encapsulates state and actions for user authentication and session data.

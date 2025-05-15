@@ -1,22 +1,15 @@
-
-
 import { type Ref, ref } from "vue";
 import { defineStore } from "pinia";
 
 /**
- * Ownership filter
+ * Manages filter states for the application.
+ *
+ * @state applyOwnershipFilter - Toggles the ownership filter.
  */
-const applyOwnershipFilter: Ref<boolean> = ref(false)
+export const useFiltersStore = defineStore('filters', () => {
+  const applyOwnershipFilter: Ref<boolean> = ref(false);
 
-
-
-function useFilters() {
   return {
-    applyOwnershipFilter
-  }
-}
-
-export const useFiltersStore = defineStore(
-  'Filters',
-  useFilters
-)
+    applyOwnershipFilter,
+  };
+});

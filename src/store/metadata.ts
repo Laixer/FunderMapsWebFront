@@ -4,6 +4,8 @@ import api from "@/services/api";
 import { useSessionStore } from '@/store/session';
 import { useDebounceFn } from "@vueuse/core";
 
+// TODO; This store could benefit from pinia-plugin-persistedstate
+
 /**
  * Defines the type for individual metadata values.
  * Can be any serializable JSON value.
