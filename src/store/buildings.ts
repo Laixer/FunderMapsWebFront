@@ -1,63 +1,65 @@
-
-import { type Ref, ref, computed, watch } from 'vue';
-import { defineStore } from 'pinia'
-
+import { type Ref, ref, computed, watch, type ComputedRef } from 'vue';
+import { defineStore } from 'pinia';
 import { useSessionStore } from './session';
 
-const buildingId: Ref<string|null> = ref(null)
-
 /**
- * Whether a building is selected
+ * Pinia store for managing the currently selected building's state.
+ *
+ * @state {Ref<string | null>} buildingId - The ID of the selected building.
+ * @getter {ComputedRef<boolean>} hasSelectedBuilding - True if a building is selected.
+ * @action {(id: string) => void} setBuildingId - Sets the selected building ID.
+ * @action {() => void} clearBuildingId - Clears the selected building ID.
  */
-const hasSelectedBuilding = computed<boolean>(() => {
-  return buildingId.value !== null
-})
-
-/**
- * Select a building to be shown in the right sidebar
- */
-const setBuildingId = function setBuildingId(id: string) {
-
-  // A quick debug override
-  const debugBuildingId = localStorage.getItem('debugBuildingId')
-  buildingId.value = debugBuildingId || id
-}
-
-/**
- * Deselect the building
- */
-const clearBuildingId = function clearBuildingId() {
-  buildingId.value = null
-}
-
-
-function useBuildings() {
+export const useBuildingStore = defineStore('buildings', () => {
   /**
-   * Clean up selected building on logout
+   * The ID of the currently selected building.
+   * Null if no building is selected.
    */
-  const { isAuthenticated } = useSessionStore()
+  const buildingId: Ref<string | null> = ref(null);
 
+  /**
+   * Indicates whether a building is currently selected.
+   * True if a building ID is set, false otherwise.
+   */
+  const hasSelectedBuilding: ComputedRef<boolean> = computed(() => buildingId.value !== null);
+
+  /**
+   * Selects a building by its ID.
+   * Updates the `buildingId` state. Optionally uses a debug ID from localStorage.
+   * @param {string} id - The ID of the building to select.
+   */
+  const setBuildingId = (id: string): void => {
+    const debugBuildingId: string | null = localStorage.getItem('debugBuildingId');
+    buildingId.value = debugBuildingId || id;
+  };
+
+  /**
+   * Clears the currently selected building.
+   * Sets `buildingId` to null.
+   */
+  const clearBuildingId = (): void => {
+    buildingId.value = null;
+  };
+
+  // Get the session store instance to access its reactive properties
+  const sessionStore = useSessionStore();
+
+  // Automatically clear the selected building when the user logs out.
   watch(
-    () => isAuthenticated,
-    (value) => {
-      if (value !== true) {
-        clearBuildingId()
+    // Watch isAuthenticated from the session store
+    () => sessionStore.isAuthenticated,
+    (isUserAuthenticated: boolean) => {
+      if (!isUserAuthenticated) {
+        clearBuildingId();
       }
     }
-  )
+  );
 
   return {
     buildingId,
     hasSelectedBuilding,
-
     setBuildingId,
-    clearBuildingId
-  }
-}
-
-
-export const useBuildingStore = defineStore(
-  'buildings',
-  useBuildings
-)
+    clearBuildingId,
+  };
+});
 
