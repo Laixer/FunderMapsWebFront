@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, watch } from 'vue';
-import { refreshAccessToken } from '@/services/jwt.ts'
+import { refreshAccessToken } from '@/services/jwt'
 import { useSessionStore } from '@/store/session';
 import { useMetadataStore } from '@/store/metadata'
 import { storeToRefs } from 'pinia';
