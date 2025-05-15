@@ -191,7 +191,6 @@ export const useLayersStore = defineStore('layers', () => {
   };
 
   return {
-    // State
     visibleLayersByMapsetId,
     showAdministrativeBoundaries,
     showBuildingCluster,
