@@ -1,12 +1,3 @@
-
-/**
- * Original from https://github.com/andrejsharapov/vue3-line-clamp/blob/main/index.js
- * 
- * Modified to emit "clamped" event.
- *  Detection based on https://stackoverflow.com/a/67455839
- */
-
-
 import { Plugin, type App } from "vue";
 
 const currentValueProp = "vLineClampValue";
@@ -26,7 +17,6 @@ const isTextClamped = (elm: HTMLElement) => elm.scrollHeight > elm.clientHeight
 
 const VueLineClamp: Plugin = {
   install(app: App, options: any) {
-
     options = Object.assign(
       {
         useImportant: false,
