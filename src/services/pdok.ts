@@ -1,6 +1,6 @@
 const baseUrl = import.meta.env.VITE_PDOK_LOCATIONSERVICE
 
-const callPDOK = async function callPDOK(endpoint: string) {
+const callPDOK = async (endpoint: string) => {
   const response = await fetch(`${baseUrl}/${endpoint}`)
 
   if (response.ok) {
@@ -13,7 +13,6 @@ const callPDOK = async function callPDOK(endpoint: string) {
 
   return null
 }
-
 
 export const getSuggestions = async function getSuggestions(query: string, count: number | undefined | null) {
   return await callPDOK(`suggest?q=${query}&rows=${count || 5}&fq=type:(woonplaats OR postcode OR adres)`)

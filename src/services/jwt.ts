@@ -1,6 +1,3 @@
-// Use previous verion as example: https://github.com/Laixer/FunderMapsClientApp/blob/master/src/services/auth.ts#L3
-// From line 130
-
 import { type JwtPayload, jwtDecode } from "jwt-decode";
 import api from "./api";
 import { useRouter } from 'vue-router'

@@ -1,10 +1,7 @@
 import { type IUserProfile } from "@/datastructures/interfaces"
 import { get, put } from "../apiClient"
 
-/******************************************************************************
- * User Profile Endpoints
- */
-export const getUserProfile = async function getUserProfile() {
+export const getUserProfile = async () => {
   return await get({ endpoint: '/user' })
 }
 

@@ -70,8 +70,6 @@ export const makeCall = async function makeCall({
   let authHeader = {}
   let responseBody = null
 
-  console.log(endpoint, body, requireAuth)
-
   try {
     passAuthCheckOrExit(requireAuth, autoredirect)
 

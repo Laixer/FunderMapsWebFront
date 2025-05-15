@@ -1,13 +1,5 @@
-/** 
- * Shamelessly copied from https://dev.to/kouts/a-simple-vue-form-validation-composable-with-zod-38m8
- * And modified on 13-04-2024
- */
-
-
-// Import necessary libraries
 import { type ZodTypeAny, z } from 'zod'
-// We use `get` and `groupBy` from `lodash` for brevity
-import { get, groupBy } from 'lodash-es' 
+import { get, groupBy } from 'lodash-es'
 import { ref, watch, computed, toValue, type MaybeRefOrGetter } from 'vue'
 
 export default function <T extends ZodTypeAny>(schema: T, data: MaybeRefOrGetter<Record<string, unknown>>, options?: { mode: 'eager' | 'lazy' }) {
@@ -49,7 +41,7 @@ export default function <T extends ZodTypeAny>(schema: T, data: MaybeRefOrGetter
       unwatch.value = null
     }
   }
-  
+
   // Reactive variable to track whether the validation is actively watching
   const isActive = computed<boolean>(() => {
     return unwatch.value !== null
