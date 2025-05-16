@@ -1,4 +1,4 @@
-export interface IAPIModel {}
+export interface IAPIModel { }
 
 export interface IEnumMethods extends IAPIModel {
 
@@ -10,8 +10,7 @@ export interface IEnumMethods extends IAPIModel {
   isEnum(propertyName: string): boolean;
 
   // Method to get the label of an enum property or null
-  getEnumLabel(property: string): string|number|null
+  getEnumLabel(property: string): string | number | null
 
   getClassName(): string
 }
-

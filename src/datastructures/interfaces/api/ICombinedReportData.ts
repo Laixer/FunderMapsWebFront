@@ -4,7 +4,6 @@ import { IInquirySample } from "./IInquirySample";
 import { IRecoveryReport } from "./IRecoveryReport";
 import { IRecoverySample } from "./IRecoverySample";
 
-
 export interface ICombinedReportData {
   incidents: IIncidentReport[],
   inquiries: IInquiryReport[],

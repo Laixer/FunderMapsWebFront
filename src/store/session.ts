@@ -121,8 +121,6 @@ export const useSessionStore = defineStore('session', () => {
     currentUser.value = null;
 
     try {
-      // clear meta data
-      // after clearing user, to prevent api call
       metadataStore.clear();
     } catch (error) {
       console.error('Logout: Error clearing metadata:', error);

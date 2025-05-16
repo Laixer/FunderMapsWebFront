@@ -1,6 +1,4 @@
-
-
-import { 
+import {
   EAuditStatus,
   EFoundationType,
   EFoundationDamageCause,
@@ -10,29 +8,28 @@ import {
 } from '../../enums/index'
 import { IEnumMethods } from './util'
 
-
 export interface IIncidentReport extends IEnumMethods {
   id: string,
   clientId?: string,
   clientName: string,
-  foundationType?: EFoundationType, 
+  foundationType?: EFoundationType,
   chainedBuilding: boolean,
   owner: boolean,
   foundationRecovery: boolean,
   neighborRecovery: boolean,
-  foundationDamageCause: EFoundationDamageCause, 
+  foundationDamageCause: EFoundationDamageCause,
   documentFile?: string[],
   note?: string,
   internalNote?: string,
-  foundationDamageCharacteristics: EFoundationDamageCharacteristics[], 
-  environmentDamageCharacteristics: EEnvironmentDamageCharacteristics[], 
+  foundationDamageCharacteristics: EFoundationDamageCharacteristics[],
+  environmentDamageCharacteristics: EEnvironmentDamageCharacteristics[],
   email: string,
   name?: string,
   phoneNumber?: string,
   address?: string,
   building: string,
-  auditStatus: EAuditStatus, 
-  incidentQuestionType: EIncidentQuestionType, 
+  auditStatus: EAuditStatus,
+  incidentQuestionType: EIncidentQuestionType,
   meta: object
 
   // Getters for enums

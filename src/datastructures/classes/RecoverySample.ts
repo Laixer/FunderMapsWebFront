@@ -19,7 +19,7 @@ export class RecoverySample extends EnumMethods implements IRecoverySample {
 
   className = 'RecoverySample'
 
-  enumProperties = ['status', 'type', 'pileType', 'facade']; 
+  enumProperties = ['status', 'type', 'pileType', 'facade'];
 
   constructor(data: IRecoverySample) {
     super()
@@ -55,8 +55,8 @@ export class RecoverySample extends EnumMethods implements IRecoverySample {
   get facadeLabel(): string {
     return Array.isArray(this.facade)
       ? this.facade
-          .map(value => EFacadeLabels.get(value) || '')
-          .join(', ') 
+        .map(value => EFacadeLabels.get(value) || '')
+        .join(', ')
       : '';
   }
 }

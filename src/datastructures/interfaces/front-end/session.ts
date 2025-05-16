@@ -1,4 +1,3 @@
-
 export interface IUser {
   name: string
 }
@@ -15,4 +14,3 @@ export interface IUserProfile {
   jobTitle: string,
   phoneNumber: string
 }
-

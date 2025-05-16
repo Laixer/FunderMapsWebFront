@@ -1,12 +1,12 @@
-import { 
-  EEnforcementTerm, 
-  EFoundationDamageCause, 
-  EFoundationQuality, 
-  EFoundationRisk, 
-  EFoundationType, 
-  EInquiryType, 
-  ERecoveryType, 
-  EReliability 
+import {
+  EEnforcementTerm,
+  EFoundationDamageCause,
+  EFoundationQuality,
+  EFoundationRisk,
+  EFoundationType,
+  EInquiryType,
+  ERecoveryType,
+  EReliability
 } from "@/datastructures/enums";
 import { IEnumMethods } from "./util";
 import { ESoil } from "@/datastructures/enums/ESoil";
@@ -32,11 +32,11 @@ export interface IAnalysis extends IEnumMethods {
   overallQuality?: EFoundationQuality,
   inquiryType?: EInquiryType,
   foundationType?: EFoundationType,
-  foundationTypeReliability?: EReliability, 
+  foundationTypeReliability?: EReliability,
   drystand?: number,
   drystandReliability: EReliability,
   drystandRisk?: EFoundationRisk,
-  dewateringDepth?: number, 
+  dewateringDepth?: number,
   dewateringDepthReliability: EReliability,
   dewateringDepthRisk?: EFoundationRisk,
   bioInfectionReliability: EReliability,

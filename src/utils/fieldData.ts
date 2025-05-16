@@ -8,26 +8,23 @@ import { formattersByField } from '@/datastructures/fieldFormatters'
 /**
  * Apply context information to a group of FieldDataConfigs
  */
-export const applyContextToFieldDataConfigs = function(
+export const applyContextToFieldDataConfigs = function (
   data: {
     configs: IFieldDataConfig[],
-    source?: MaybeRefOrGetter<IEnumMethods|null|undefined>, // | ComputedRef<IEnumMethods|null|undefined>,
+    source?: MaybeRefOrGetter<IEnumMethods | null | undefined>, // | ComputedRef<IEnumMethods|null|undefined>,
     labels?: Record<string, string>
   }
 ) {
 
-  console.log('Apply context')
-  console.log(data.source)
-
   return (data.configs || []).map(
     (config: IFieldDataConfig) => {
       // If no specific source was set on the config, apply the source from the context
-      if (! config.source && data.source) {
+      if (!config.source && data.source) {
         config.source = data.source
       }
 
       // If no specific label was set in the config, check the context for a relevant label by field name
-      if (! config.label) {
+      if (!config.label) {
         // If the context provides a set of labels
         if (data.labels && data.labels[config.name]) {
           config.label = data.labels[config.name]
@@ -48,7 +45,7 @@ export interface IFieldDataConfig {
   label?: string
 
   // Source of the data. (e.g. Analysis)
-  source?: MaybeRefOrGetter<IEnumMethods|null|undefined> // | ComputedRef<IEnumMethods|null|undefined>
+  source?: MaybeRefOrGetter<IEnumMethods | null | undefined> // | ComputedRef<IEnumMethods|null|undefined>
 
   // Whether or not to apply the formatter (includes centrally configured formatter)
   format?: Boolean
@@ -67,7 +64,7 @@ export class FieldDataConfig implements IFieldDataConfig {
   // interface properties
   name: string
   label?: string
-  source?: MaybeRefOrGetter<IEnumMethods|null|undefined> // | ComputedRef<IEnumMethods|null|undefined>
+  source?: MaybeRefOrGetter<IEnumMethods | null | undefined> // | ComputedRef<IEnumMethods|null|undefined>
   format?: Boolean = true
   formatter?: Function
   group?: string
@@ -80,7 +77,7 @@ export class FieldDataConfig implements IFieldDataConfig {
     if (data.source) {
       this.source = data.source
     }
-    
+
     if (data.label) {
       this.label = data.label
     }
@@ -101,12 +98,10 @@ export class FieldDataConfig implements IFieldDataConfig {
       this.group = data.group
     }
 
-    if (! data.name) {
+    if (!data.name) {
       console.error("FieldDataConfig requires a name", data)
       throw new Error("FieldDataConfig is missing something")
     }
-
-
   }
 }
 
@@ -114,9 +109,9 @@ export class CompletedFieldData {
   name: string
   group?: string
   label: string = 'Onbekende eigenschap'
-  fieldValue: null|undefined|number|boolean|string = undefined
-  fieldValueLabel: null|undefined|number|boolean|string = 'Geen data'
-  formattedFieldValueLabel: null|undefined|boolean|number|string = 'Geen data'
+  fieldValue: null | undefined | number | boolean | string = undefined
+  fieldValueLabel: null | undefined | number | boolean | string = 'Geen data'
+  formattedFieldValueLabel: null | undefined | boolean | number | string = 'Geen data'
 
   constructor(name: string, group?: string) {
     this.name = name
@@ -127,8 +122,7 @@ export class CompletedFieldData {
   }
 
   getValue(format = 'formatted') {
-
-    switch(format) {
+    switch (format) {
       case 'formatted':
         return this.formattedFieldValueLabel
 
@@ -143,21 +137,18 @@ export class CompletedFieldData {
     }
   }
 
-  get value(): null|undefined|number|boolean|string {
+  get value(): null | undefined | number | boolean | string {
     return this.getValue()
   }
 }
 
 export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(config: IFieldDataConfig) {
-
   const dataObj = new CompletedFieldData(config.name, config.group)
-
-  console.log("format field", dataObj, config)
 
   /**
    * A data source is required, unless intentionally set to `null`
    */
-  if (! config.source && config.source !== null) {
+  if (!config.source && config.source !== null) {
     throw new Error(`Missing source for ${config.name}`)
   }
 
@@ -171,7 +162,7 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
    * 
    * Use the provided field label if available. 
    * Otherwise look for the known field labels by field name
-   */ 
+   */
   if (config.label) {
     dataObj.label = config.label
   } else if (source) {
@@ -187,8 +178,8 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
    * Verify the source
    * 
    * If the source is missing, or has no value for the property, we're done
-   */ 
-  if (! source || ! source?.hasOwnProperty(config.name)) {
+   */
+  if (!source || !source?.hasOwnProperty(config.name)) {
 
     // If there is a default label, use it
     if (config.default) {
@@ -222,9 +213,7 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
    * If the field is an enum, we translate the raw field value into an enum label
    */
   if (source?.isEnum(config.name)) {
-    console.log(`${config.name} is an enum`)
     dataObj.fieldValueLabel = source?.getEnumLabel(config.name)
-    console.log(`${config.name} enum value`, dataObj.fieldValueLabel)
   } else {
     // Otherwise use the value we found as field value label
     dataObj.fieldValueLabel = dataObj.fieldValue
@@ -236,11 +225,11 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
    * If the formatter is disabled, or the field value is empty, or "no data" => skip formatting
    */
   if (
-    config.format === false || 
+    config.format === false ||
     dataObj.fieldValue === undefined ||
     dataObj.fieldValue === null ||
     dataObj.fieldValue === '' ||
-    dataObj.fieldValueLabel === '' || 
+    dataObj.fieldValueLabel === '' ||
     dataObj.fieldValueLabel === 'Geen data'
   ) {
     dataObj.formattedFieldValueLabel = dataObj.fieldValueLabel
@@ -259,9 +248,6 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
       }
     }
   }
-
-  // Report the end result
-  console.log(config.name, dataObj)
 
   return dataObj
 }

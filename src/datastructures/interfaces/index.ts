@@ -8,7 +8,7 @@ export type {
   IMapset
 } from './api/Mapset'
 
-export type { 
+export type {
   IGeoLocationModel,
   IBuilding,
   IAddress,
