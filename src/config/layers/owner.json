@@ -23,7 +23,8 @@
           "Woonbron",
           "Gemeente Rotterdam/Woonbron",
           "Particulier/Woonbron",
-          "Havensteder"
+          "Havensteder",
+          "Stadgenoot"
       ],
       true,
       false
@@ -44,7 +45,8 @@
               "Woonborg",
               "Woonstad/Havensteder",
               "HW Wonen",
-              "Bastion"
+              "Bastion",
+              "Stadgenoot"
           ],
           "#bfc5c3",
           ["Trivire"],
