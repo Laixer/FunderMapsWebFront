@@ -15,7 +15,7 @@
   "dependencies": {
     "@vueuse/components": "^13.3.0",
     "@vueuse/core": "^13.3.0",
-    "chart.js": "^4.4.9",
+    "chart.js": "^4.5.0",
     "chartjs-plugin-trendline": "^2.1.9",
     "file-saver": "^2.0.5",
     "jwt-decode": "^4.0.0",
