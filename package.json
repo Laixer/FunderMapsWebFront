@@ -13,7 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vueuse/components": "^13.4.0",
+    "@vueuse/components": "^13.5.0",
     "@vueuse/core": "^13.4.0",
     "chart.js": "^4.5.0",
     "chartjs-plugin-trendline": "^2.1.9",
