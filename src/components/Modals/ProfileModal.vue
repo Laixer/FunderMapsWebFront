@@ -9,7 +9,6 @@ import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
 import OverlayModal from '@/components//Common/OverlayModal.vue';
-import LoadingIndicator from '@/components/Branding/LoadingIndicator.vue';
 
 import ValidationSuccessIcon from '@assets/svg/icons/validation-success.svg'
 
@@ -254,106 +253,99 @@ const handleClose = function handleClose() {
     class="ProfileModal"
     @close="handleClose">
 
-    <Transition mode="out-in">
-      <div class="-mx-6 space-y-4 px-6" v-if="isProfileDataAvailable">
-        <form 
-          action="#" 
-          @submit.prevent="handleSubmit"
-          class="space-y-6">
+    <div class="-mx-6 space-y-4 px-6">
+      <form
+        action="#"
+        @submit.prevent="handleSubmit"
+        class="space-y-6">
 
-          <h6>Algemeen</h6>
-          <Input 
-            id="givenName" 
-            label="Voornaam" 
-            type="text"
-            v-model="profileData.givenName" 
-            placeholder="Voer je voornaam in"
-            autocomplete="given-name"
-            :disabled="busySaving"
-            :validationStatus="getStatus('givenName')"
-            :validationMessage="getError('givenName')"
-            :tabindex="1"
-            required />
+        <h6>Algemeen</h6>
+        <Input
+          id="givenName"
+          label="Voornaam"
+          type="text"
+          v-model="profileData.givenName"
+          placeholder="Voer je voornaam in"
+          autocomplete="given-name"
+          :disabled="busySaving || !isProfileDataAvailable"
+          :validationStatus="getStatus('givenName')"
+          :validationMessage="getError('givenName')"
+          :tabindex="1"
+          required />
 
-          <Input 
-            id="lastName" 
-            label="Achternaam" 
-            type="text"
-            v-model="profileData.lastName" 
-            placeholder="Voer je achternaam in"
-            autocomplete="family-name"
-            :disabled="busySaving"
-            :validationStatus="getStatus('lastName')"
-            :validationMessage="getError('lastName')"
-            :tabindex="2"
-            required />
+        <Input
+          id="lastName"
+          label="Achternaam"
+          type="text"
+          v-model="profileData.lastName"
+          placeholder="Voer je achternaam in"
+          autocomplete="family-name"
+          :disabled="busySaving || !isProfileDataAvailable"
+          :validationStatus="getStatus('lastName')"
+          :validationMessage="getError('lastName')"
+          :tabindex="2"
+          required />
 
-          <Input 
-            id="email" 
-            label="E-mail" 
-            type="email"
-            v-model="profileData.email" 
-            placeholder="Voer je e-mail in"
-            autocomplete="username"
-            instruction="Dit e-mail adres kan niet gewijzigd worden"
-            :validationStatus="getStatus('email')"
-            :validationMessage="getError('email')"
-            :disabled="true" />
+        <Input
+          id="email"
+          label="E-mail"
+          type="email"
+          v-model="profileData.email"
+          placeholder="Voer je e-mail in"
+          autocomplete="username"
+          instruction="Dit e-mail adres kan niet gewijzigd worden"
+          :validationStatus="getStatus('email')"
+          :validationMessage="getError('email')"
+          :disabled="true" />
 
-          <h6>Aanvullend</h6>
-          <Input 
-            id="jobTitle" 
-            label="Functie" 
-            type="text"
-            v-model="profileData.jobTitle" 
-            placeholder="Voer je functie in"
-            autocomplete="organization-title"
-            :disabled="busySaving"
-            :validationStatus="getStatus('jobTitle')"
-            :validationMessage="getError('jobTitle')"
-            :tabindex="3"
-          />
+        <h6>Aanvullend</h6>
+        <Input
+          id="jobTitle"
+          label="Functie"
+          type="text"
+          v-model="profileData.jobTitle"
+          placeholder="Voer je functie in"
+          autocomplete="organization-title"
+          :disabled="busySaving || !isProfileDataAvailable"
+          :validationStatus="getStatus('jobTitle')"
+          :validationMessage="getError('jobTitle')"
+          :tabindex="3"
+        />
 
-          <Input 
-            id="phoneNumber" 
-            label="Telefoon" 
-            type="text"
-            v-model="profileData.phoneNumber" 
-            placeholder="Voer je telefoonnummer in"
-            autocomplete="tel"
-            :disabled="busySaving"
-            :validationStatus="getStatus('phoneNumber')"
-            :validationMessage="getError('phoneNumber')"
-            :tabindex="4"
-          />
+        <Input
+          id="phoneNumber"
+          label="Telefoon"
+          type="text"
+          v-model="profileData.phoneNumber"
+          placeholder="Voer je telefoonnummer in"
+          autocomplete="tel"
+          :disabled="busySaving || !isProfileDataAvailable"
+          :validationStatus="getStatus('phoneNumber')"
+          :validationMessage="getError('phoneNumber')"
+          :tabindex="4"
+        />
 
-          <Transition>
-            <div 
-              v-if="recentSuccess"
-              class="bg-green-200 border border-green-500 text-green-500 px-2 py-2 rounded relative flex items-center" role="alert">
-              <span class="px-4 py-3">
-                <ValidationSuccessIcon class="w-4" />
-              </span>
-              <span class="block sm:inline">Uw instellingen zijn opgeslagen</span>
-            </div>
-          </Transition>
+        <Transition>
+          <div
+            v-if="recentSuccess"
+            class="bg-green-200 border border-green-500 text-green-500 px-2 py-2 rounded relative flex items-center" role="alert">
+            <span class="px-4 py-3">
+              <ValidationSuccessIcon class="w-4" />
+            </span>
+            <span class="block sm:inline">Uw instellingen zijn opgeslagen</span>
+          </div>
+        </Transition>
 
-          <Button 
-            type="submit" 
-            label="Bewaar instellingen"
-            :disabled="busySaving">
-            <template v-slot:after>
-              <AnimatedArrowIcon class="h-4" />
-            </template>
-          </Button>
-        </form>
-      </div>
-      <div 
-        v-else
-        class="flex flex-col items-center space-y-6">
-        <LoadingIndicator label="Uw profiel informatie wordt opgehaald..." />
-      </div>
-    </Transition>
+        <Button
+          type="submit"
+          label="Bewaar instellingen"
+          :disabled="busySaving || !isProfileDataAvailable">
+          <template v-slot:after>
+            <AnimatedArrowIcon class="h-4" />
+          </template>
+        </Button>
+      </form>
+    </div>
   </OverlayModal>
 
 </template>
