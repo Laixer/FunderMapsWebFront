@@ -1,5 +1,5 @@
 import { type Ref, ref, watch } from 'vue';
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 
 import { type IIncidentReport } from "@/datastructures/interfaces"
 import api from '@/services/api';
@@ -114,9 +114,9 @@ function useIncidentReports() {
   /**
    * Clean up incidentReport data on logout
    */
-  const { isAuthenticated } = useSessionStore()
+  const { isAuthenticated } = storeToRefs(useSessionStore())
   watch(
-    () => isAuthenticated,
+    isAuthenticated,
     (value) => {
       if (value !== true) {
         clearIncidentReportData()

@@ -49,11 +49,6 @@ const availableMapsetsByLoadingOrder = computed(() => {
     })
 })
 
-/**
- * The ids and slugs of the available mapsets
- */
-const availableMapsetIds = computed(() => Object.keys(availableMapsetsById.value))
-const availableMapsetSlugs = computed(() => Object.values(availableMapsetsById.value).map(mapset => mapset.slug))
 
 /**
  * Used to indicate whether map groups are loaded
@@ -84,10 +79,6 @@ const noMapsetsFound = computed(() => {
   return isLoadingMapsets.value === false && hasAvailableMapsets.value === false
 })
 
-/**
- * Used to indicate a specifically requested mapset could not be retrieved
- */
-const requestedMapsetNotFound = ref(false)
 
 /**
  * The currently selected map group
@@ -298,8 +289,6 @@ function useMapsets() {
     loadAvailableMapsetsById,
     selectMapsetById,
     availableMapsetsByLoadingOrder,
-    availableMapsetIds,
-    availableMapsetSlugs,
     activeMapsetId,
     firstMapsetId,
     defaultMapsetId,
@@ -313,7 +302,6 @@ function useMapsets() {
     isMapsetAvailable,
     isPublicMapset,
     noMapsetsFound,
-    requestedMapsetNotFound,
     removePrivateMapsets,
     removeAllMapsets
   }

@@ -1,5 +1,5 @@
 import { type Ref, ref, watch, toValue } from 'vue';
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 
 import { type ICombinedInquiryData, type IInquirySample, type IInquiryReport } from "@/datastructures/interfaces"
 import api from '@/services/api';
@@ -219,9 +219,9 @@ function useInquiries() {
   /**
    * Clean up inquiry data on logout
    */
-  const { isAuthenticated } = useSessionStore()
+  const { isAuthenticated } = storeToRefs(useSessionStore())
   watch(
-    () => isAuthenticated,
+    isAuthenticated,
     (value) => {
       if (value !== true) {
         clearInquiryData()

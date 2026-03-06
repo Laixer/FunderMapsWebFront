@@ -1,5 +1,5 @@
 import { type Ref, ref, watch } from 'vue';
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 
 import { type IGeoLocationData } from "@/datastructures/interfaces"
 import api from '@/services/api';
@@ -126,9 +126,9 @@ function useGeoLocations() {
   /**
    * Clean up geo location data on logout
    */
-  const { isAuthenticated } = useSessionStore()
+  const { isAuthenticated } = storeToRefs(useSessionStore())
   watch(
-    () => isAuthenticated,
+    isAuthenticated,
     (value) => {
       if (value !== true) {
         clearGeoLocationInformation()
