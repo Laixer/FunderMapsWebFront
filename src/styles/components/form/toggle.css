@@ -1,20 +1,16 @@
 .input--toggle {
   [type="checkbox"] {
     + label {
-      @apply relative inline-grid items-start gap-2.5 text-base leading-tight text-grey-700;
-
-      grid-template-columns: 2.5rem auto;
+      @apply relative inline-flex cursor-pointer items-center gap-3 text-sm leading-tight text-grey-700 select-none;
 
       &::before {
         content: "";
-
-        @apply z-10 col-start-1 row-start-1 h-5 w-10 rounded-full bg-grey-200 transition-all;
+        @apply block h-5 w-9 flex-shrink-0 rounded-full bg-grey-400 transition-colors duration-200;
       }
 
       &::after {
         content: "";
-
-        @apply z-20 col-start-1 row-start-1 aspect-square h-4 -translate-x-2.5 place-self-center rounded-full bg-grey-700 transition-all;
+        @apply absolute left-0.5 top-1/2 block h-4 w-4 -translate-y-1/2 rounded-full bg-white shadow-sm transition-transform duration-200;
       }
     }
 
@@ -39,15 +35,7 @@
         }
 
         &::after {
-          @apply translate-x-2.5 bg-white;
-        }
-      }
-
-      &:disabled {
-        + label {
-          &::after {
-            @apply opacity-100;
-          }
+          @apply translate-x-4;
         }
       }
     }
