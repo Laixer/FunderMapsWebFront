@@ -25,7 +25,7 @@ export const useMapLayers = function useMapLayers(
 
   const mapInstance = ref(Map)
 
-  let currentMapset: IMapsetFE
+  let currentMapset: IMapsetFE | null = null
   let currentLayerIds: string[] = []
 
   const {
@@ -61,12 +61,7 @@ export const useMapLayers = function useMapLayers(
    * Add layers
    */
   const addLayers = async function addLayers(mapset: IMapsetFE) {
-
-
-    // Too eager
-    if (!mapInstance.value) {
-      return
-    }
+    if (!mapInstance.value) return
 
     // Update the current list of layer ids & mapset
     // Reverse the order of the layers, so that the top legend matches the top layer
@@ -107,11 +102,7 @@ export const useMapLayers = function useMapLayers(
    * Remove layers of a particular mapset
    */
   const removeLayers = function removeLayers(mapset: IMapsetFE) {
-
-    // Too late ?
-    if (!mapInstance.value) {
-      return
-    }
+    if (!mapInstance.value) return
 
     for (const layerId of mapset.layerSet.map(layer => layer.id)) {
       if (mapInstance.value.getLayer(layerId)) {
@@ -149,35 +140,23 @@ export const useMapLayers = function useMapLayers(
   )
 
   /**
-   * 
+   * Update the filters on all current layers (e.g. when ownership filter changes)
    */
   const updateLayerFilters = async function updateLayerFilters() {
-
-    // Too eager
-    if (!mapInstance.value) {
-      return
-    }
+    if (!mapInstance.value || !currentMapset) return
 
     for (const layerId of currentLayerIds) {
+      if (!mapInstance.value.getLayer(layerId)) continue
 
-      // Only continue if the layer is available
-      if (mapInstance.value.getLayer(layerId)) {
-        try {
-          // Get the base layer specification
-          // TODO: Move to API
-          const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
+      try {
+        const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
 
-          // Add geo fencing to specification
-          applyGeographyFilterToLayerSpecification(layerSpecification, currentMapset)
+        applyGeographyFilterToLayerSpecification(layerSpecification, currentMapset)
+        applyOwnershipFilterToLayerSpecification(layerSpecification)
 
-          // Add ownership fencing
-          applyOwnershipFilterToLayerSpecification(layerSpecification)
-
-          mapInstance.value.setFilter(layerId, layerSpecification.filter)
-
-        } catch (e) {
-          console.error(e)
-        }
+        mapInstance.value.setFilter(layerId, layerSpecification.filter)
+      } catch (e) {
+        console.error(e)
       }
     }
   }

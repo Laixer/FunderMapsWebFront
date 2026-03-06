@@ -1,7 +1,7 @@
 import { apiBasePath } from "@/config"
 import { trimLeadingChar, trimTrailingChar } from "@/utils/string"
 import { getAuthHeader, hasAccessToken, hasAccessTokenExpired } from '@/services/jwt'
-import { useRouter, useRoute } from 'vue-router'
+import router from '@/router'
 
 
 /******************************************************************************
@@ -13,44 +13,33 @@ export const hasAPIKey = function hasAPIKey() {
   return apiKey !== null && apiKey.length !== 0
 }
 
-const getAPIKey = function getAPIKey() {
-  return apiKey
-}
 const getAPIKeyAuthHeader = function getAPIKeyAuthHeader() {
   return {
-    'Authorization': 'authkey ' + getAPIKey()
+    'Authorization': 'authkey ' + apiKey
   }
 }
 
 
 /******************************************************************************
- * The function thats is calling the shots
+ * Verify auth credentials before making a call
  */
+const verifyAuth = function verifyAuth(requireAuth: boolean, autoredirect: boolean) {
+  if (!requireAuth || hasAPIKey()) return
 
-const passAuthCheckOrExit = function passAuthOrThrowException(requireAuth: boolean, autoredirect: boolean) {
-  // Check for auth
-  try {
-    if (requireAuth && !hasAPIKey()) {
-      if (!hasAccessToken()) {
-        throw new APITokenError("Missing access token")
-      }
-
-      if (hasAccessTokenExpired()) {
-        throw new APITokenError("Access token has expired")
-      }
-    }
-  } catch (e) {
-    // When auth is required & missing / expired => redirect to login
-    if (autoredirect) {
-      const route = useRoute()
-      if (route.name !== 'login') {
-        const router = useRouter()
-        router.push({ name: 'login' })
-      }
+  if (!hasAccessToken()) {
+    if (autoredirect && router.currentRoute.value.name !== 'login') {
+      router.push({ name: 'login' })
       return
-    } else {
-      throw e
     }
+    throw new APITokenError("Missing access token")
+  }
+
+  if (hasAccessTokenExpired()) {
+    if (autoredirect && router.currentRoute.value.name !== 'login') {
+      router.push({ name: 'login' })
+      return
+    }
+    throw new APITokenError("Access token has expired")
   }
 }
 
@@ -63,32 +52,26 @@ const makeCall = async ({
   requireAuth?: boolean,
   autoredirect?: boolean
 }) => {
-  let fetchOptions = {}
-  let authHeader = {}
+  let fetchOptions: RequestInit = {}
   let responseBody = null
 
   try {
-    passAuthCheckOrExit(requireAuth, autoredirect)
+    verifyAuth(requireAuth, autoredirect)
 
-    // Auth
+    // Auth header
+    let authHeader = {}
     if (requireAuth) {
-      if (hasAPIKey()) {
-        authHeader = getAPIKeyAuthHeader()
-      } else {
-        authHeader = getAuthHeader()
-      }
+      authHeader = hasAPIKey() ? getAPIKeyAuthHeader() : getAuthHeader()
     }
 
     // Options
     fetchOptions = {
       method,
-      headers: Object.assign(
-        authHeader,
-        {
-          "Content-Type": "application/json",
-        }
-      ),
-      body: JSON.stringify(body)
+      headers: {
+        ...authHeader,
+        "Content-Type": "application/json",
+      },
+      ...(body !== undefined && { body: JSON.stringify(body) })
     }
 
     const response = await fetch(
@@ -96,7 +79,7 @@ const makeCall = async ({
       fetchOptions
     )
 
-    // Get the response body, preferrably processed as json
+    // Get the response body, preferably processed as json
     // Note: A failed call can often still have a valid json body, containing info about the error
     try {
       if (response.status !== 204) {
@@ -114,8 +97,6 @@ const makeCall = async ({
         responseBody
       )
     }
-
-    passAuthCheckOrExit(requireAuth, autoredirect)
 
     return responseBody
   } catch (err: unknown) {

@@ -7,17 +7,14 @@ import { useLayersStore } from "@/store/layers";
 import { type IMapsetFE } from "@/datastructures/interfaces";
 import { type MaybeRef, toRaw, watch, ref } from "vue";
 
-/**
- * TODO: Refactor MapSet change
- */
 export const useLayerVisibility = function useLayerVisibility(
   Map: MaybeRef<Map | null | undefined>
 ) {
 
-
   const { activeMapset } = storeToRefs(useMapsetStore())
-  const { getVisibleLayersByMapsetId, changeLayerVisibility } = useLayersStore()
-  const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
+  const layersStore = useLayersStore()
+  const { getVisibleLayersByMapsetId, changeLayerVisibility } = layersStore
+  const { visibleLayersByMapsetId } = storeToRefs(layersStore)
 
   const mapInstance = ref(Map)
 
@@ -38,8 +35,6 @@ export const useLayerVisibility = function useLayerVisibility(
    * Reveal the specified layers (and hide all others we know about)
    */
   const applyVisibilityOfLayers = function applyVisibilityOfLayers(idsOfVisibleLayers: string[], allKnownLayerIds: string[]) {
-
-
     idsOfVisibleLayers.forEach(function (layerId) {
       if (mapInstance.value && mapInstance.value.getLayer(layerId)) {
         mapInstance.value.setLayoutProperty(layerId, 'visibility', 'visible')
@@ -62,7 +57,6 @@ export const useLayerVisibility = function useLayerVisibility(
    * Reveal the first of the known layers
    */
   const revealFirstLayer = function revealFirstLayer(allKnownLayerIds: string[], id: string) {
-
     if (allKnownLayerIds.length === 0) return
 
     // This changes the visibility in the store. The map will react
@@ -80,7 +74,7 @@ export const useLayerVisibility = function useLayerVisibility(
    * Whether the mapset contains any of the preferred default layers
    */
   const mapsetHasPreferredDefaultLayer = function mapsetHasPreferredDefaultLayer(allKnownLayerIds: string[]) {
-    return preferredDefaultLayerIds.split(',').filter((id: string) => allKnownLayerIds.includes(id)).length !== 0
+    return preferredDefaultLayerIds.split(',').some((id: string) => allKnownLayerIds.includes(id))
   }
 
   /**
@@ -89,8 +83,6 @@ export const useLayerVisibility = function useLayerVisibility(
    *  If so, the first known layer will be revealed.
    */
   const revealDefaultLayers = function revealDefaultLayers(allKnownLayerIds: string[], id: string) {
-
-
     try {
       const preferredLayerIds = preferredDefaultLayerIds
         .split(',')
@@ -116,42 +108,25 @@ export const useLayerVisibility = function useLayerVisibility(
   const setLayerVisibilityForMapset = function setLayerVisibilityForMapset(
     mapset?: IMapsetFE | undefined
   ) {
-
     mapset = mapset || activeMapset.value || undefined
 
-    if (!mapset) {
-      return
-    }
+    if (!mapset) return
 
     // Reset the local trackers when the map style changes
     currentlyVisibleLayers = []
     currentlyHiddenLayers = []
 
-    // Get all known layer ids for the active mapset
     const allKnownLayerIds = mapset.layerSet.map(layer => layer.id)
-
-    // See if the store has information about layer visibility for this mapset
     const visibleLayers = getVisibleLayersByMapsetId(mapset.id)
 
-
-    // If so, reveal those layers
     if (visibleLayers.length !== 0) {
-
-
       applyVisibilityOfLayers(visibleLayers, allKnownLayerIds)
-    }
-
-    // Otherwise go for the defaults
-    else {
-
-
+    } else {
       // Start by making sure all are hidden
       applyVisibilityOfLayers([], allKnownLayerIds)
 
-      // If the mapset is the preferred default mapset
-      if (isDefaultMapset(mapset.id)) {
-        revealDefaultLayers(allKnownLayerIds, mapset.id)
-      } else if (mapsetHasPreferredDefaultLayer(allKnownLayerIds)) {
+      // Use preferred defaults if available, otherwise reveal the first layer
+      if (isDefaultMapset(mapset.id) || mapsetHasPreferredDefaultLayer(allKnownLayerIds)) {
         revealDefaultLayers(allKnownLayerIds, mapset.id)
       } else {
         revealFirstLayer(allKnownLayerIds, mapset.id)
@@ -165,44 +140,31 @@ export const useLayerVisibility = function useLayerVisibility(
   watch(
     () => visibleLayersByMapsetId.value,
     () => {
+      if (!activeMapset.value) return
 
-
-      if (!activeMapset.value) {
-        return
-      }
-
-      // Get the visible layers
       const visibleLayers = toRaw(
         getVisibleLayersByMapsetId(activeMapset.value.id)
       )
 
-
-      // has anything changed? 
       const newlyHidden = currentlyVisibleLayers.filter(layerId => !visibleLayers.includes(layerId))
       const newlyVisible = visibleLayers.filter(layerId => !currentlyVisibleLayers.includes(layerId))
 
-      // Only bother mapbox with the actual changes
-      if (newlyVisible.length !== 0) {
-        newlyVisible.forEach(layerId => {
-          if (mapInstance.value && mapInstance.value.getLayer(layerId)) {
-            mapInstance.value.setLayoutProperty(layerId, 'visibility', 'visible');
-          }
-        })
-      }
+      newlyVisible.forEach(layerId => {
+        if (mapInstance.value?.getLayer(layerId)) {
+          mapInstance.value.setLayoutProperty(layerId, 'visibility', 'visible')
+        }
+      })
 
-      // Only bother mapbox with the actual changes
-      if (newlyHidden.length !== 0) {
-        newlyHidden.forEach(layerId => {
-          if (mapInstance.value && mapInstance.value.getLayer(layerId)) {
-            mapInstance.value.setLayoutProperty(layerId, 'visibility', 'none');
-          }
-        })
-      }
+      newlyHidden.forEach(layerId => {
+        if (mapInstance.value?.getLayer(layerId)) {
+          mapInstance.value.setLayoutProperty(layerId, 'visibility', 'none')
+        }
+      })
 
-      // Update the local lists
+      // Update the local trackers
       currentlyVisibleLayers = visibleLayers
       currentlyHiddenLayers = currentlyHiddenLayers
-        .filter(layerId => !currentlyVisibleLayers.includes(layerId))
+        .filter(layerId => !visibleLayers.includes(layerId))
         .concat(newlyHidden)
     },
     { deep: true, immediate: true }

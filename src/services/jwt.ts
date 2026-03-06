@@ -1,6 +1,6 @@
 import { type JwtPayload, jwtDecode } from "jwt-decode";
 import api from "./api";
-import { useRouter } from 'vue-router'
+import router from '@/router'
 
 
 // ****************************************************************************
@@ -128,7 +128,6 @@ export function refreshAccessToken(): void {
       .then(response => storeAccessToken(response.token))
       .catch((error) => {
         console.error('Failed to refresh access token:', error)
-        const router = useRouter()
         router.push({ name: 'login' })
       })
   }
