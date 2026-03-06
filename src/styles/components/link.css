@@ -7,7 +7,7 @@
 }
 
 .link--outline {
-  @apply rounded border border-grey-200 px-2.5 py-1 hover:border-transparent hover:bg-white hover:shadow-lg;
+  @apply rounded border border-grey-200 px-4 py-3 hover:border-transparent hover:bg-white hover:shadow-lg;
 }
 
 .link--outline.disabled {
