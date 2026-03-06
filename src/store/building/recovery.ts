@@ -144,7 +144,7 @@ const setRecoveryDataByBuildingId = function setRecoveryDataByBuildingId(buildin
   })
 
   // Connect the recoveryIds to the buildingId
-  recoveryReportIdsByBuildingId.value[buildingId] = reports.map((inquery: IRecoveryReport) => inquery.id)
+  recoveryReportIdsByBuildingId.value[buildingId] = reports.map((report: IRecoveryReport) => report.id)
 
   samples.forEach((sample: IRecoverySample) => {
     sample = new RecoverySample(sample)

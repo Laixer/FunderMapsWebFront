@@ -50,7 +50,7 @@ export const useLayerEvents = function useLayerEvents(
     // Be flexible about the prop containing the building id
     const building_id = props?.building_id || props?.external_id || props?.id || null
     if (! building_id) {
-      console.log("No known building id available on clicked feature")
+      console.warn("No known building id available on clicked feature")
       return
     }
 

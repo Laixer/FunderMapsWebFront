@@ -142,7 +142,7 @@ const setInquiryDataByBuildingId = function setInquiryDataByBuildingId(buildingI
   })
 
   // Connect the inquiryIds to the buildingId
-  inquiryIdsByBuildingId.value[buildingId] = reports.map((inquery: IInquiryReport) => inquery.id)
+  inquiryIdsByBuildingId.value[buildingId] = reports.map((report: IInquiryReport) => report.id)
 
   samples.forEach((sample: IInquirySample) => {
     sample = new InquirySample(sample)

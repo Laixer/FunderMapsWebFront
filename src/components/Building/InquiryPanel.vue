@@ -19,7 +19,7 @@ import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataCon
 import { useBuildingStore } from '@/store/buildings';
 import { useInquiriesStore } from '@/store/building/inquiries';
 import { useMainStore } from '@/store/main';
-import { useOrgsStore } from '@/store/orgs.ts';
+import { useOrgsStore } from '@/store/orgs';
 
 import DocumentDownload from '@/components/DocumentDownload.vue';
 

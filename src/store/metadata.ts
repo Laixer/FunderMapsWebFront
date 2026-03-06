@@ -134,15 +134,12 @@ export const useMetadataStore = defineStore('metadata', () => {
 
   /**
    * Clears all metadata.
-   * This action clears all items from `localStorage` (regardless of authentication status).
-   * Note: `localStorage.clear()` affects the entire domain, not just items set by this store.
-   * It also resets the in-memory `metadataState` to an empty object.
+   * Resets the in-memory `metadataState` to an empty object.
    * If the user is authenticated, it triggers a debounced call to `storeToApi` to persist
    * the cleared state to the backend.
    * @returns {void}
    */
   const clear = (): void => {
-    localStorage.clear();
     metadataState.value = {};
     storeToApi();
   };

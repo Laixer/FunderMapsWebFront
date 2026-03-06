@@ -1,6 +1,6 @@
 import { apiBasePath } from "@/config"
 import { trimLeadingChar, trimTrailingChar } from "@/utils/string"
-import { getAuthHeader, hasAccessToken, hasAccessTokenExpired } from '@/services/jwt.ts'
+import { getAuthHeader, hasAccessToken, hasAccessTokenExpired } from '@/services/jwt'
 import { useRouter, useRoute } from 'vue-router'
 
 

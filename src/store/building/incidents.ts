@@ -91,8 +91,6 @@ const loadIncidentReportDataByBuildingId = async function loadIncidentReportData
 
   // Success or fail, we're no longer retrieving the data for this building
   isLoadingBuildingDataById.value[buildingId] = false
-
-  return
 }
 
 

@@ -3,7 +3,7 @@ import { computed, ComputedRef, ref, watch } from 'vue';
 import { useClipboard } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 
-import { useBuildingStore } from '@/store/buildings.ts';
+import { useBuildingStore } from '@/store/buildings';
 import Icon from '@/components/Common/Icons/Icon.vue';
 
 const { buildingId } = storeToRefs(useBuildingStore())

@@ -2,12 +2,12 @@
 import { ComputedRef, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { ICombinedInquiryData } from '@/datastructures/interfaces/index.ts';
+import { ICombinedInquiryData } from '@/datastructures/interfaces';
 import InformationModal from '@/components/Common/InformationModal.vue';
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs, CompletedFieldData } from '@/utils/fieldData'
 
-import { useInquiriesStore } from '@/store/building/inquiries.ts';
+import { useInquiriesStore } from '@/store/building/inquiries';
 import { useBuildingStore } from '@/store/buildings';
 
 

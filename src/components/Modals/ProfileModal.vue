@@ -199,10 +199,7 @@ const getStatus = function(path: string): 'none'|'success'|'error' {
  * Handle saving the profile information
  */
 const handleSubmit = async function handleSubmit() {
-  
-  // console.log(busySaving.value, ! isProfileDataAvailable.value, busySaving.value || ! isProfileDataAvailable.value)
-
-  // Ignore submit attempts before we have profile data, 
+  // Ignore submit attempts before we have profile data,
   // or are already busy saving the data
   if (busySaving.value || ! isProfileDataAvailable.value) return 
 
@@ -212,7 +209,6 @@ const handleSubmit = async function handleSubmit() {
   await validate()
 
   if (! isValid.value) {
-    // console.log(errors)
     scrolltoError('.validation__message', { offset: 60 });
     busySaving.value = false
 
