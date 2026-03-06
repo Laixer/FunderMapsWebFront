@@ -58,10 +58,7 @@ const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
 })
 
 /**
- * Selected index from list
- *  Note: we start counting at 0
- * 
- * // TODO: Reset to 0 if buildingId changes
+ * Selected index from list (reset when building changes via watcher below)
  */
 const selectedListIndex: Ref<number> = ref(0)
 const maxListIndex: ComputedRef<number> = computed(() => {
@@ -97,7 +94,6 @@ const fieldsWithData = computed(() => {
     source: selectedCaseItem,
     configs: [
       new FieldDataConfig({ name: 'id' }),
-      // new FieldDataConfig({ name: 'address' }),
       new FieldDataConfig({ name: 'building' }),
       new FieldDataConfig({ name: 'clientName' }),
       new FieldDataConfig({ name: 'createDate' }),
@@ -114,7 +110,6 @@ const fieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'foundationDamageCharacteristics' }),
       new FieldDataConfig({ name: 'environmentDamageCharacteristics' }),
       new FieldDataConfig({ name: 'auditStatus' }),
-      // new FieldDataConfig({ name: 'documentFile' }),
       new FieldDataConfig({ name: 'internalNote' }),
       new FieldDataConfig({ name: 'questionType' })
     ]

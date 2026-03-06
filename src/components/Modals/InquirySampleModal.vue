@@ -67,10 +67,7 @@ const sampleFieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = 
     source: selectedCaseItem.value?.sample,
     configs: [
 
-      // new FieldDataConfig({ name: 'address' }),
-      // new FieldDataConfig({ name: 'building' }),
-
-      // Pand 
+      // Pand
       new FieldDataConfig({ group: 'building', name: 'note' }),
       new FieldDataConfig({ group: 'building', name: 'builtYear' }),
       new FieldDataConfig({ group: 'building', name: 'substructure' }),
@@ -152,7 +149,6 @@ const sampleFieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = 
       new FieldDataConfig({ group: 'right', name: 'crackFacadeRightType' }),
       new FieldDataConfig({ group: 'right', name: 'crackFacadeRightSize' }),
 
-      // new FieldDataConfig({ group: 'report', name: 'note', source: selectedCaseItem.value?.report }),
     ]
   })
 
@@ -222,10 +218,4 @@ watch(
 
   </InformationModal>
 </template>
-
-<style scoped>
-/* .InquirySampleModal .panel__content hr:last-child {
-  display: none;
-} */
-</style>
 

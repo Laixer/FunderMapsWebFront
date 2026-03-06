@@ -42,9 +42,6 @@ const hasSampleData = computed(() => {
   return !! (selectedCaseItem.value?.sample)
 })
 
-// const fieldGroupHeaders: Record<string, string> = {
-// }
-
 /**
  * Fields config
  */
@@ -66,25 +63,10 @@ const sampleFieldsWithData: ComputedRef<CompletedFieldData[]> = computed(() => {
       new FieldDataConfig({ name: 'permitDate' }),
       new FieldDataConfig({ name: 'recoveryDate' }),
       new FieldDataConfig({ name: 'id' }),
-      
-      // new FieldDataConfig({ name: 'note', source: selectedCaseItem.value?.report }),
     ]
   })
 
-  return sampleFieldsConfig
-    .map(retrieveAndFormatFieldData)
-    // .reduce(
-    //   (acc: Record<string, CompletedFieldData[]>, fieldData: CompletedFieldData) => {
-
-    //     const group = fieldData?.group || ''
-    //     if (group) {
-    //       acc[group] = acc[group] || []
-    //       acc[group].push(fieldData)
-    //     }
-
-    //     return acc
-    //   }, {} as Record<string, CompletedFieldData[]>
-    // )
+  return sampleFieldsConfig.map(retrieveAndFormatFieldData)
 })
 
 
@@ -118,7 +100,6 @@ watch(
 
     <section 
       class="space-y-4">
-      <!-- <h6></h6> -->
       <dl role="list" class="list--definition">
         <div 
           v-for="field in sampleFieldsWithData" 

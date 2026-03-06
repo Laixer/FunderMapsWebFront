@@ -35,11 +35,8 @@ const analysisData = computed(() => {
 const fieldGroupHeaders: Record<string, string> = {
   drystand: 'Droogstand',
   dewatering: 'Ontwateringsdiepte',
-  bioinfection: 'Bacterieelaantasting',
-  negativecling: 'Negatievekleef',
-  differentialsettlement: 'Verschilzakking',
+  bioinfection: 'Bacteriële aantasting',
   unclassified: 'Op basis van onderzoek',
-  facadescan: 'GevelScan Risico',
 }
 
 /**
@@ -63,12 +60,7 @@ const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithI
       new FieldDataConfig({ group: 'dewatering', name: 'dewateringDepthReliability' }),
       new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionRisk' }),
       new FieldDataConfig({ group: 'bioinfection', name: 'bioInfectionReliability' }),
-      // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingRisk' }),
-      // new FieldDataConfig({ group: 'negativecling', name: 'negativeclingReliability' }),
-      // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementRisk' }),
-      // new FieldDataConfig({ group: 'differentialsettlement', name: 'differentialsettlementReliability' }),
       new FieldDataConfig({ group: 'unclassified', name: 'unclassifiedRisk' }),
-      // new FieldDataConfig({ group: 'facadescan', name: 'facadescanRisk' }),
     ]
   })
   
