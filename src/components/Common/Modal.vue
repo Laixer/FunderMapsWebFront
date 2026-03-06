@@ -27,14 +27,13 @@ const handleClose = function handleClose() {
   >
     <div
       class="panel pointer-events-auto"
-      aria-role="dialog"
+      role="dialog"
       aria-describedby="dialog-label"
       aria-modal="true"
       :data-variant="variant"
     >
       <header class="panel__header">
-        
-        <slot name="footer">
+        <slot name="header">
           <h4 v-if="title" id="dialog-label" class="heading-4">{{ title }}</h4>
         </slot>
         

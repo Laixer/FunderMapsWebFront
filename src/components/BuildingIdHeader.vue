@@ -39,13 +39,9 @@ watch(
   <div 
     v-if="buildingIdTitle"
     class="sidebar__heading flex items-center justify-between gap-3">
-    <h4 class="heading-4">
-      <!-- <sup>{{ buildingIdTitle.top }}</sup>
-      <br v-if="buildingIdTitle.top"/>  -->
-      {{ buildingIdTitle.bottom }} 
-    </h4>
+    <h4 class="heading-4">{{ buildingIdTitle.bottom }}</h4>
 
-    <button v-if="isSupported" @click="copy(copySource)">
+    <button v-if="isSupported" aria-label="Kopieer pand ID" @click="copy(copySource)">
       <Transition mode="out-in">
         <Icon v-if="! copied" name="clipboard-regular" />
         <Icon v-else name="check" />
@@ -57,19 +53,7 @@ watch(
 
 <style scoped>
 .sidebar .sidebar__heading h4 {
-  position: relative;
   font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
-}
-.sidebar .sidebar__heading h4 sub,
-.sidebar .sidebar__heading h4 sup {
-  position: absolute;
-  color: var(--color-grey-700);
-  font-size: clamp(0.4rem, 0.4rem + 0.5229vw, 0.8rem);
-  font-weight: 400;
-  letter-spacing: 0;
-}
-.sidebar .sidebar__heading h4 sup {
-  top: 1.1rem;
 }
 .sidebar .sidebar__heading button {
   padding: 4px;

@@ -103,9 +103,5 @@ watch(
 </script>
 
 <template>
-  <!-- <StatisticsModal
-    :title="title"
-    @close="emit('close')"> -->
-    <canvas ref="canvas" class="chart"></canvas>
-  <!-- </StatisticsModal> -->
+  <canvas ref="canvas" class="chart"></canvas>
 </template>

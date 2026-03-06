@@ -94,13 +94,16 @@ const handleLoginRedirect = function handleLoginRedirect() {
       </template>
     </LinkButton> 
 
-    <button 
-      v-else 
+    <button
+      v-else
       class="button group p-0 pr-2.5"
+      :aria-label="`Menu voor ${userName}`"
+      aria-haspopup="true"
+      :aria-expanded="isOpen"
       @click="handleToggleMenu">
       <Avatar :name="userName" />
 
-      <ChevronDownIcon 
+      <ChevronDownIcon
         class="h-2.5 w-2.5 transition-transform"
         :class="{'rotate-180': isOpen}"
         aria-hidden="true" />
@@ -111,36 +114,33 @@ const handleLoginRedirect = function handleLoginRedirect() {
       class="dropdown arrow arrow--top-right | absolute right-0 top-full z-20 min-w-48 origin-top-right outline-none">
       <div class="dropdown__main | divide-y divide-grey-200 rounded-lg bg-white py-1 shadow-float">
 
-        <a
-          href="#"
-          @click.prevent="handleOpenProfileModal"
+        <button
+          @click="handleOpenProfileModal"
           class="group flex w-full cursor-pointer items-center justify-between gap-2 px-8 py-4 transition-colors hover:text-green-500"
           :class="{'text-green-500': isProfileModalOpen}"
         >
           <span class="whitespace-nowrap">Profiel</span>
           <AnimatedArrowIcon />
-        </a>
+        </button>
 
-        <a
-          href="#"
-          @click.prevent="handleOpenPasswordModal"
+        <button
+          @click="handleOpenPasswordModal"
           class="group flex w-full cursor-pointer items-center justify-between gap-2 px-8 py-4 transition-colors hover:text-green-500"
           :class="{'text-green-500': isPasswordModalOpen}"
         >
           <span class="whitespace-nowrap">Wijzig wachtwoord</span>
           <AnimatedArrowIcon />
-        </a>
+        </button>
 
-        <a
-          href="#"
-          @click.prevent="handleLogout"
+        <button
+          @click="handleLogout"
           class="flex w-full items-center gap-2 px-8 py-4 transition-colors hover:text-red-500"
         >
-          <ExitIcon 
-            class="aspect-square h-3.5" 
+          <ExitIcon
+            class="aspect-square h-3.5"
             aria-hidden="true" />
           <span>Uitloggen</span>
-        </a>
+        </button>
       </div>
     </div>
   </div>
