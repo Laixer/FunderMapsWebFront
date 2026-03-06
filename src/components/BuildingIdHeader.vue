@@ -55,7 +55,7 @@ watch(
 </template>
 
 
-<style>
+<style scoped>
 .sidebar .sidebar__heading h4 {
   position: relative;
   font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);

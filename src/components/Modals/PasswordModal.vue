@@ -8,7 +8,6 @@ import { useRouter } from 'vue-router'
 import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
-// import Modal from '@/components/Common/Modal.vue'
 import OverlayModal from '@/components//Common/OverlayModal.vue';
 import LockedIcon from '@assets/svg/icons/locked.svg'
 import UnlockedIcon from '@assets/svg/icons/unlocked.svg'
@@ -252,7 +251,7 @@ const handleClose = function handleClose() {
 
 </template>
 
-<style>
+<style scoped>
 .ProfileModal .panel__content {
   overflow: hidden;
 }

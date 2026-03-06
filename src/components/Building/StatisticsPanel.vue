@@ -42,7 +42,6 @@ const noTotalReportCount = computed(() => {
  * Open the statistics modal
  */
 const handleOpenChart = function handleOpenChart(name: string) {
-  console.log("Open chart", name)
   statisticsGraph.value = name
   showStatisticsModal.value = true
 }

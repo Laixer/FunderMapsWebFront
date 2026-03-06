@@ -8,7 +8,6 @@ import { DutchMobilePhoneRegex } from '@/utils/validation'
 import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
-// import Modal from '@/components/Common/Modal.vue'
 import OverlayModal from '@/components//Common/OverlayModal.vue';
 import LoadingIndicator from '@/components/Branding/LoadingIndicator.vue';
 
@@ -233,7 +232,7 @@ const handleSubmit = async function handleSubmit() {
     } catch(e) {
       // TODO: Error handling & all that fun stuff
 
-      console.log("API Error while saving profile", e)
+      console.error("Failed to save profile", e)
     }
     
     busySaving.value = false
@@ -359,7 +358,7 @@ const handleClose = function handleClose() {
 
 </template>
 
-<style>
+<style scoped>
 .ProfileModal .panel__content {
   overflow: hidden;
 }

@@ -6,7 +6,11 @@ import tailwindcss from '@tailwindcss/vite'
 import { execSync } from "child_process";
 
 export default defineConfig(() => {
-  process.env.VITE_GIT_COMMIT_HASH = execSync('git rev-parse --short HEAD').toString().trimEnd()
+  try {
+    process.env.VITE_GIT_COMMIT_HASH = execSync('git rev-parse --short HEAD').toString().trimEnd()
+  } catch {
+    process.env.VITE_GIT_COMMIT_HASH = 'unknown'
+  }
 
   return {
     plugins: [tailwindcss(), vue(), svgLoader()],

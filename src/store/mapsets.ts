@@ -206,7 +206,6 @@ function useMapsets() {
   }
 
 
-  // TODO: Error handling ... 
   async function loadAvailableMapsets() {
 
     // This endpoint only works for authenticated users
@@ -214,22 +213,22 @@ function useMapsets() {
 
     isLoadingMapsets.value = true
 
-    const response = await api.mapset.getAvailableMapsets()
-    if (response) {
-
-      // Merge new (private) mapsets with public mapsets already present
-      removePrivateMapsets()
-      response.forEach((mapset: IMapsetFE) => {
-        mapset = enforceGeoFencingOnPublicMapsets(mapset)
-        availableMapsetsById.value[mapset.id] = mapset
-      })
-
-    } else {
-      // TODO: Error handling 
+    try {
+      const response = await api.mapset.getAvailableMapsets()
+      if (response) {
+        // Merge new (private) mapsets with public mapsets already present
+        removePrivateMapsets()
+        response.forEach((mapset: IMapsetFE) => {
+          mapset = enforceGeoFencingOnPublicMapsets(mapset)
+          availableMapsetsById.value[mapset.id] = mapset
+        })
+      } else {
+        removePrivateMapsets()
+      }
+    } catch (e) {
+      console.error('Failed to load available mapsets', e)
       removePrivateMapsets()
     }
-
-
 
     isLoadingMapsets.value = false
   }
@@ -289,7 +288,6 @@ function useMapsets() {
     // No cleanup needed
     if (!hasAvailableMapsets.value) return
 
-    // availableMapsets.value = []
     availableMapsetsById.value = {}
   }
 

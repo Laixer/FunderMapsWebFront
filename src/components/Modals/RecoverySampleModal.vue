@@ -133,7 +133,7 @@ watch(
   </InformationModal>
 </template>
 
-<style>
+<style scoped>
 .RecoverySampleModal .panel__content hr:last-child {
   display: none;
 }

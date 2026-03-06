@@ -39,7 +39,6 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     if (zoom > 18) zoom = 18
     if (zoom < 16) zoom = 16
 
-    console.log("Map Center - flying to", center, zoom)
 
     mapInstance.flyTo({
       center,

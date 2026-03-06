@@ -8,13 +8,13 @@ const mapMapset = (rawmapset: IMapset): IMapsetFE => {
   try {
     layerSet = rawmapset.layerSet ? JSON.parse(rawmapset.layerSet) : []
   } catch (e) {
-    console.log(`Failed to process layerSet information. ${rawmapset?.name || rawmapset.id} will have no interactive layers.`)
+    console.warn(`Failed to process layerSet for mapset "${rawmapset?.name || rawmapset.id}"`)
   }
 
   try {
     options = rawmapset?.options ? JSON.parse(rawmapset.options) : {}
   } catch (e) {
-    console.log("Failed to process mapset options. Loading without options.")
+    console.warn('Failed to process mapset options')
   }
 
   return {
@@ -46,8 +46,7 @@ export const getAvailableMapsets = async (): Promise<IMapsetFE[] | null> => {
 }
 
 export const getPublicAndAvailableMapsetsById = async (id: string): Promise<IMapsetFE[] | null> => {
-  console.log(id)
-  const response = await get({ endpoint: `/mapset/${id}`, requireAuth: false }) // TODO: Change endpoint
+  const response = await get({ endpoint: `/mapset/${id}`, requireAuth: false })
   if (response) {
     return response.map(mapMapset)
   }

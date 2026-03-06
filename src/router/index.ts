@@ -1,15 +1,6 @@
-
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/views/Main.vue'
-
-// Auth
-import Login from '@/views/auth/Login.vue'
-import PasswordForgotten from '@/views/auth/PasswordForgotten.vue'
-import ResetPassword from '@/views/auth/ResetPassword.vue'
-
-// 404
-import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,17 +12,17 @@ const router = createRouter({
     {
       name: 'login',
       path: '/login',
-      component: Login
+      component: () => import('@/views/auth/Login.vue')
     },
     {
       name: 'forgotten',
       path: '/forgotten',
-      component: PasswordForgotten
+      component: () => import('@/views/auth/PasswordForgotten.vue')
     },
     {
       name: 'reset',
       path: '/reset/:resetKey?',
-      component: ResetPassword
+      component: () => import('@/views/auth/ResetPassword.vue')
     },
 
     /**************************************************************************
@@ -42,15 +33,12 @@ const router = createRouter({
       path: '/',
       component: Home,
     },
-    // openbaar/:mapsetId
-    // :org/map/:mapsetId
-    // :org/map/:mapsetId/gebouw/:buildingId
     {
       name: 'mapset',
       path: '/map/:mapsetId',
       component: Home,
     },
-    { // Depreciated path to mapset route
+    { // Legacy path redirect
       path: '/kaart/:mapsetId',
       redirect: to => {
         return { name: 'mapset', params: { mapsetId: to.params.mapsetId } }
@@ -61,13 +49,13 @@ const router = createRouter({
       path: '/map/:mapsetId/building/:buildingId',
       component: Home,
     },
-    { // Depreciated path to building route
+    { // Legacy path redirect
       path: '/map/:mapsetId/gebouw/:buildingId',
       redirect: to => {
         return { name: 'building', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId } }
       }
     },
-    { // Depreciated path to building route
+    { // Legacy path redirect
       path: '/kaart/:mapsetId/gebouw/:buildingId',
       redirect: to => {
         return { name: 'building', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId } }
@@ -78,13 +66,13 @@ const router = createRouter({
       path: '/map/:mapsetId/building/:buildingId/:panel',
       component: Home
     },
-    { // Depreciated path to building-panel route
+    { // Legacy path redirect
       path: '/map/:mapsetId/gebouw/:buildingId/:panel',
       redirect: to => {
         return { name: 'building-panel', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId, panel: to.params.panel } }
       }
     },
-    { // Depreciated path to building-panel route
+    { // Legacy path redirect
       path: '/kaart/:mapsetId/gebouw/:buildingId/:panel',
       redirect: to => {
         return { name: 'building-panel', params: { mapsetId: to.params.mapsetId, buildingId: to.params.buildingId, panel: to.params.panel } }
@@ -93,7 +81,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: NotFound
+      component: () => import('@/views/NotFound.vue')
     },
   ],
 })

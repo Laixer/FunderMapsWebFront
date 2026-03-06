@@ -31,7 +31,7 @@ const createChart = function createChart(
   title: string, labels: string[], data: string[]|number[], backgroundColors: string[], borderColors: string[], horizontal: boolean
 ) {
   if (! canvas.value || ! canvas.value.getContext("2d")) {
-    console.log("No canvas available...", title)
+    console.warn("No canvas available", title)
     return
   } 
 
@@ -84,7 +84,6 @@ onMounted(() => {
 watch(
   () => props,
   (props) => {
-    console.log("CHANGE DAMN IT")
     if (! chart) return 
 
     chart.destroy()

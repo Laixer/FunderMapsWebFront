@@ -40,9 +40,6 @@ const passAuthCheckOrExit = function passAuthOrThrowException(requireAuth: boole
       }
     }
   } catch (e) {
-    console.log("failed to pass auth check")
-    console.log(e)
-
     // When auth is required & missing / expired => redirect to login
     if (autoredirect) {
       const route = useRoute()
@@ -106,8 +103,6 @@ const makeCall = async ({
         responseBody = await response.json()
       }
     } catch (e) {
-      console.log(e)
-
       if (response.ok && response.status !== 204) {
         throw new Error("Failed to process response body")
       }
@@ -124,8 +119,6 @@ const makeCall = async ({
 
     return responseBody
   } catch (err: unknown) {
-    console.log(err)
-
     if (err instanceof APIClientError) {
       throw err
     }
@@ -143,18 +136,20 @@ const makeCall = async ({
  * Error classes
  *  Note: this is a rather basic implementation
  */
-export class APIClientError { }
+export class APIClientError extends Error {
+  constructor(message = 'API client error') {
+    super(message)
+    this.name = 'APIClientError'
+  }
+}
+
 export class APIErrorResponse extends APIClientError {
-
-  // The status code of the error response 
   status: number
-
-  // The response (JSON parsed) body
   body: unknown
 
   constructor(status: number, body: unknown) {
-    super()
-
+    super(`API error: ${status}`)
+    this.name = 'APIErrorResponse'
     this.status = status
     this.body = body
   }
@@ -162,24 +157,17 @@ export class APIErrorResponse extends APIClientError {
 
 export class APITokenError extends APIClientError {
   status = 403
-  message: string
 
   constructor(message: string) {
-    super()
-
-    this.message = message
+    super(message)
+    this.name = 'APITokenError'
   }
 }
 
 export class APICallError extends APIClientError {
-
   status = 500
   body = 'The API call failed'
-
-  // The thrown error
   err: unknown
-
-  // Some api call context information
   endpoint: string
   options: object
   responseBody: unknown
@@ -190,8 +178,8 @@ export class APICallError extends APIClientError {
     options: object,
     responseBody: unknown
   ) {
-    super()
-
+    super(`API call failed: ${endpoint}`)
+    this.name = 'APICallError'
     this.err = err
     this.endpoint = endpoint
     this.options = options

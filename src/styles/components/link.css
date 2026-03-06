@@ -9,3 +9,17 @@
 .link--outline {
   @apply rounded border border-grey-200 px-2.5 py-1 hover:border-transparent hover:bg-white hover:shadow-lg;
 }
+
+.link--outline.disabled {
+  cursor: not-allowed;
+  background: rgb(232 234 241);
+}
+
+.link--outline.disabled:hover {
+  border-color: rgb(232 234 241);
+  box-shadow: none;
+}
+
+.link--outline.loading {
+  cursor: wait;
+}

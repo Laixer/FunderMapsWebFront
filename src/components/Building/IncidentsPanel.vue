@@ -2,7 +2,6 @@
 import { ComputedRef, Ref, computed, onBeforeUnmount, ref, watch } from 'vue'; 
 import { storeToRefs } from 'pinia';
 
-// import TextClamp from 'vue3-text-clamp';
 
 import { IIncidentReport } from '@/datastructures/interfaces';
 

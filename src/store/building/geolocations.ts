@@ -20,20 +20,20 @@ const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
 /**
  * List of buildingIds that failed to load, along with info about the reason
  */
-const failedToLoadByBuildingId: Ref<Record<string, Record<string, any>>> = ref({})
+const failedToLoadByBuildingId: Ref<Record<string, { reason: number }>> = ref({})
 
 /**
  * Whether the location data for a building have been retrieved previously
  */
 const buildingLocationDataHasBeenRetrieved = function buildingLocationDataHasBeenRetrieved(buildingId: string): boolean {
-  return locationDataByBuildingId.value.hasOwnProperty(buildingId)
+  return buildingId in locationDataByBuildingId.value
 }
 
 /**
  * Whether the location data failed to load (for whatever reason)
  */
 const buildingLocationDataFailedToLoad = function buildingLocationDataFailedToLoad(buildingId: string): boolean {
-  return failedToLoadByBuildingId.value.hasOwnProperty(buildingId)
+  return buildingId in failedToLoadByBuildingId.value
 }
 
 /**
@@ -77,10 +77,6 @@ const getAddressByBuildingId = function getAddressByBuildingId(buildingId: strin
 const loadLocationDataByBuildingId = async function loadLocationDataByBuildingId(buildingId: string, cache: boolean = true) {
   try {
 
-    // TODO: HARDCODED FOR DEBUG
-    // buildingId = 'NL.IMBAG.PAND.0599100000610651'
-    // buildingId = 'NL.IMBAG.PAND.0606100000000733' => 404 on geolocation
-
     // Data for this building is currently already being retrieved
     if (isLoadingBuildingDataById.value[buildingId] === true) { 
       return 
@@ -105,13 +101,8 @@ const loadLocationDataByBuildingId = async function loadLocationDataByBuildingId
       : null
 
   } catch(e) {
-    console.log("Error loading location data by building id", e)
-
-    // TODO: Catch-em all... and maybe do something more with them?
-    // TODO: Create structure for failures
-    failedToLoadByBuildingId.value[buildingId] = {
-      'reason': 404
-    }
+    console.error("Failed to load location data", buildingId, e)
+    failedToLoadByBuildingId.value[buildingId] = { reason: 404 }
   }
 
   // Success or fail, we're no longer retrieving the data for this building

@@ -130,7 +130,7 @@ const fieldsWithData = computed(() => {
   </Panel>
 </template>
 
-<style>
+<style scoped>
 .rounded-b-lg {
   border-bottom-left-radius: .5rem;
   border-bottom-right-radius: .5rem;

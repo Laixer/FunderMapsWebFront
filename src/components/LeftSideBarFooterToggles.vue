@@ -18,7 +18,7 @@ const { applyOwnershipFilter } = storeToRefs(useFiltersStore())
   </div>
 </template>
 
-<style>
+<style scoped>
 
 .LayerToggleWrapper {
   gap: .25rem;

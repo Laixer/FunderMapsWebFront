@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia';
 
 import Button from '@/components/Common/Buttons/Button.vue';
-// import Modal from '@/components/Common/Modal.vue';
 import OverlayModal from '@/components//Common/OverlayModal.vue';
 import ExitIcon from '@assets/svg/icons/exit.svg'
 

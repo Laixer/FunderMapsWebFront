@@ -101,21 +101,15 @@ const getCombinedInquiryDataByBuildingId = function getCombinedInquiryDataByBuil
   // Match reports & samples for every entry
   const combinedData: ICombinedInquiryData[] = []
 
-  console.log("Get Combined inquiry data", getInquiryByBuildingId(buildingId))
-
   // Go over all inquires related to the building
   getInquiryByBuildingId(buildingId)
     .forEach((report: IInquiryReport) => {
-
-      console.log("report", report.id)
 
       // Get all samples related to the inquiry & building combination
       const samples = getInquirySamplesByInquiryId(report.id)
         .filter(sample => {
           return sampleIdsForBuilding.includes(sample.id)
         })
-
-      console.log("samples", samples)
       
       // If there are none, add the report without sample
       if (samples.length === 0) {
@@ -135,8 +129,6 @@ const getCombinedInquiryDataByBuildingId = function getCombinedInquiryDataByBuil
       }
     })
 
-  console.log(combinedData)
-    
   return combinedData
 }
 
@@ -144,8 +136,6 @@ const getCombinedInquiryDataByBuildingId = function getCombinedInquiryDataByBuil
  * Set the retrieved report data
  */
 const setInquiryDataByBuildingId = function setInquiryDataByBuildingId(buildingId: string, reports: IInquiryReport[], samples: IInquirySample[]) {
-
-  console.log('setInquiryDataByBuildingId', buildingId, reports, samples)
 
   reports.forEach((inquiry: IInquiryReport) => {
     inquiriesById.value[inquiry.id] = new Inquiry(inquiry)
@@ -195,16 +185,14 @@ const loadInquiryDataByBuildingId = async function loadInquiryDataByBuildingId(b
     
     // Get all samples
     let samples: IInquirySample[] = []
-    for(const report in reports) {
-      const sampleResponse = await api.building.getInquirySamplesByInquiryId(reports[report].id)
+    for (const report of reports) {
+      const sampleResponse = await api.building.getInquirySamplesByInquiryId(report.id)
       samples = samples.concat(sampleResponse)
     }
 
     setInquiryDataByBuildingId(buildingId, reports, samples)
   } catch(e) {
-    console.log("Error loading inquiry data by building id", e)
-
-    // TODO: Catch-em all... and maybe do something with them?
+    console.error("Failed to load inquiry data", buildingId, e)
   }
 
   // Success or fail, we're no longer retrieving the data for this building

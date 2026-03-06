@@ -223,7 +223,7 @@ watch(
   </InformationModal>
 </template>
 
-<style>
+<style scoped>
 /* .InquirySampleModal .panel__content hr:last-child {
   display: none;
 } */

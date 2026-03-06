@@ -41,7 +41,7 @@ const handleDownload = async function handleDownload() {
     a.download = props.filename
     a.click()
   } else {
-    console.log("Failed to retrieve download link")
+    console.error("Failed to retrieve download link")
   }
 }
 

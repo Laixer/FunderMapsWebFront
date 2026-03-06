@@ -6,7 +6,7 @@ export const getMetadata = async () => {
     // The actual metadata object is a stringified json object within the json response
     return JSON.parse(response?.metadata)
   } catch (err) {
-    return new Promise((_, reject) => reject())
+    return Promise.reject(err)
   }
 }
 

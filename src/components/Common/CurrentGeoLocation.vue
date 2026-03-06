@@ -31,7 +31,7 @@ const handleSuccess = function handleSuccess(position: GeolocationPosition) {
 }
 
 const handleError = function handleError(err: GeolocationPositionError) {
-  console.log(err)
+  console.error(err)
   emit(
     'error',
     err.code

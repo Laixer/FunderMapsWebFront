@@ -4,11 +4,9 @@ import { storeToRefs } from 'pinia';
 import GrayLogo from '@/components/Branding/GrayLogo.vue'
 import UserMenu from '@/components/UserMenu.vue'
 import SearchBar from '@/components/SearchBar.vue';
-// import MapsetMenu from '@/components/MapsetMenu.vue';
 
 import { useMapsetStore } from '@/store/mapsets'
 import OrgsMenu from '../OrgsMenu.vue';
-// import { useOrgsStore } from '@/store/orgs';
 
 
 const { hasAvailableMapsets } = storeToRefs( 

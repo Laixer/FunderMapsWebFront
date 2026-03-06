@@ -16,17 +16,14 @@ export class EnumMethods implements IEnumMethods {
   getEnumLabel(property: string): string|number|null {
     // Check if the property is an enum
     if (this.isEnum(property)) {
-      console.log('Check - it is an enum')
 
       const labelProperty = `${property}Label`
 
-      console.log("Property", labelProperty)
 
       // using `in` to include prototype chain
       if (labelProperty in this) {
 
         // @ts-ignore
-        console.log("Found property", this[labelProperty])
 
         // @ts-ignore - We know that all enum labels are either a string or number.
         return this[labelProperty] as string|number

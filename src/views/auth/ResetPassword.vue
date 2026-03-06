@@ -81,7 +81,7 @@ const handleSubmit = async function handleSubmit() {
 
       resetSucceeded.value = true
     }
-  } catch (e) {
+  } catch {
     resetFailed.value = true
   }
 }

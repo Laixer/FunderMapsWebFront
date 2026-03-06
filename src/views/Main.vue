@@ -84,14 +84,9 @@ useBuildingRouting().start()
  * If all the mapsets are unloaded, redirect to the login page
  */
 watch(() => hasAvailableMapsets.value, (value, oldValue) => {
-  console.log("Main - Redirect to login page?", value)
 
   if (value === false && oldValue === true) {
-    console.log("Main - Yes")
-
     router.push({ name: 'login' })
-  } else {
-    console.log("Main - No")
   }
 })
 

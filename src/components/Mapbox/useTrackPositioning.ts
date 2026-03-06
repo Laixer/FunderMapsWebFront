@@ -74,7 +74,7 @@ export const useTrackPositioning = function useTrackPositioning(
         // center = localStorage.getItem('lastCenterPosition') ? JSON.parse(localStorage.getItem('lastCenterPosition') as string) : undefined
         center = metadataStore.getItem('lastCenterPosition')
       } catch(e) {
-        console.log("Failed to retrieve center position from localstorage. Starting from default location.")
+        console.warn("Failed to read center position from localStorage, using default")
       }
     
       return {

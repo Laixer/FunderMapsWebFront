@@ -32,7 +32,7 @@ export const useMapboxControlNudge = function useMapboxControlNudge(
         // console.log("nudge - No controls available at top position")
       }
     } catch(e) {
-      console.log("nudge - Error... we failed to nudge the mapbox controls position")
+      console.warn("Failed to nudge mapbox controls position")
     }
   }
 

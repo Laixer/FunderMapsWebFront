@@ -64,7 +64,6 @@ const options: ComputedRef<object> = computed(() => {
   }
 })
 
-console.log("MAPBOX OPTIONS", options.value)
 
 const onLoad = function onLoad({ map }: { map: Map }) {
   

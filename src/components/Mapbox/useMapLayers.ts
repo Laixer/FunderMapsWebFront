@@ -62,7 +62,6 @@ export const useMapLayers = function useMapLayers(
    */
   const addLayers = async function addLayers(mapset: IMapsetFE) {
 
-    console.log("map layers - add layers", mapset.layerSet, mapset.layerSet.map(layer => layer.id))
 
     // Too eager
     if (!mapInstance.value) {

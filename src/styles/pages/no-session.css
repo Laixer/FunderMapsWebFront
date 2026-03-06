@@ -1,13 +1,3 @@
 .page-no-session {
   @apply bg-cover bg-center;
-
-  background-image: url("/resources/images/background.jpg");
-}
-
-.temp {
-  width: calc(100vw - 3rem);
-
-  @media (width >= 40rem) {
-    width: 30rem;
-  }
 }

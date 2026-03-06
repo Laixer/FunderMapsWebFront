@@ -2,7 +2,6 @@
 
 import { onMounted, watch, ref } from 'vue';
 
-// import StatisticsModal from '@/components/Modals/StatisticsModal.vue'
 import { CHART_TRANSPARENT_COLORS } from '@/config';
 import Chart from 'chart.js/auto';
 
@@ -28,7 +27,7 @@ const createChart = function createChart(
   title: string, labels: string[], data: string[]|number[], backgroundColors: string[]
 ) {
   if (! canvas.value || ! canvas.value.getContext("2d")) {
-    console.log("No canvas available...", title)
+    console.warn("No canvas available", title)
     return
   } 
 

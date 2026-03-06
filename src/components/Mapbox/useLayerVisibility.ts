@@ -39,7 +39,6 @@ export const useLayerVisibility = function useLayerVisibility(
    */
   const applyVisibilityOfLayers = function applyVisibilityOfLayers(idsOfVisibleLayers: string[], allKnownLayerIds: string[]) {
 
-    console.log('Layer visibility - applyVisibilityOfLayers', idsOfVisibleLayers, allKnownLayerIds)
 
     idsOfVisibleLayers.forEach(function (layerId) {
       if (mapInstance.value && mapInstance.value.getLayer(layerId)) {
@@ -63,7 +62,6 @@ export const useLayerVisibility = function useLayerVisibility(
    * Reveal the first of the known layers
    */
   const revealFirstLayer = function revealFirstLayer(allKnownLayerIds: string[], id: string) {
-    console.log("Layer visibility - reveal first layer", allKnownLayerIds, id)
 
     if (allKnownLayerIds.length === 0) return
 
@@ -75,7 +73,6 @@ export const useLayerVisibility = function useLayerVisibility(
    * Whether the provided mapset id is the id of the preferred default mapset
    */
   const isDefaultMapset = function isDefaultMapset(id: string) {
-    console.log(id, preferredDefaultMapsetId)
     return id === preferredDefaultMapsetId
   }
 
@@ -93,7 +90,6 @@ export const useLayerVisibility = function useLayerVisibility(
    */
   const revealDefaultLayers = function revealDefaultLayers(allKnownLayerIds: string[], id: string) {
 
-    console.log("Layer visibility - reveal default layers", allKnownLayerIds, id)
 
     try {
       const preferredLayerIds = preferredDefaultLayerIds
@@ -120,12 +116,10 @@ export const useLayerVisibility = function useLayerVisibility(
   const setLayerVisibilityForMapset = function setLayerVisibilityForMapset(
     mapset?: IMapsetFE | undefined
   ) {
-    console.log("Layer visibility - setLayerVisibilityForMapset")
 
     mapset = mapset || activeMapset.value || undefined
 
     if (!mapset) {
-      console.log("Layer visibility - requires mapset")
       return
     }
 
@@ -139,12 +133,10 @@ export const useLayerVisibility = function useLayerVisibility(
     // See if the store has information about layer visibility for this mapset
     const visibleLayers = getVisibleLayersByMapsetId(mapset.id)
 
-    console.log("Layer visibility - visible layers", visibleLayers)
 
     // If so, reveal those layers
     if (visibleLayers.length !== 0) {
 
-      console.log("Layer visibility - Not going for defaults", visibleLayers)
 
       applyVisibilityOfLayers(visibleLayers, allKnownLayerIds)
     }
@@ -152,7 +144,6 @@ export const useLayerVisibility = function useLayerVisibility(
     // Otherwise go for the defaults
     else {
 
-      console.log("Layer visibility - Going for defaults")
 
       // Start by making sure all are hidden
       applyVisibilityOfLayers([], allKnownLayerIds)
@@ -175,10 +166,8 @@ export const useLayerVisibility = function useLayerVisibility(
     () => visibleLayersByMapsetId.value,
     () => {
 
-      console.log("Layer visibility - change in visibility")
 
       if (!activeMapset.value) {
-        console.log("Layer visibility - no active mapset")
         return
       }
 
@@ -187,7 +176,6 @@ export const useLayerVisibility = function useLayerVisibility(
         getVisibleLayersByMapsetId(activeMapset.value.id)
       )
 
-      console.log("Layer visibility - visible layers", visibleLayers)
 
       // has anything changed? 
       const newlyHidden = currentlyVisibleLayers.filter(layerId => !visibleLayers.includes(layerId))

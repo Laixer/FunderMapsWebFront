@@ -99,10 +99,8 @@ onUnmounted(() => {
 </template>
 
 <style>
-.MapBox {
-  width: 100% !important;
-  height: 100% !important;  
-}
+/* Unscoped: overrides mapbox-gl.css which sets inline dimensions */
+.MapBox,
 .mapboxgl-map {
   width: 100% !important;
   height: 100% !important;

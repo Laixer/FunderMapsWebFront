@@ -49,10 +49,6 @@ body {
     @apply text-green-500 hover:text-green-700 hover:underline;
   }
 
-  ol {
-    @apply ml-6 list-decimal;
-  }
-
   h6 + * {
     --flow-margin-top: 0.5rem;
   }

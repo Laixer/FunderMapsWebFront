@@ -156,7 +156,7 @@ const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithI
   </Panel>
 </template>
 
-<style>
+<style scoped>
 .FoundationRiskPanel .content hr:last-child {
   display: none;
 }

@@ -102,21 +102,15 @@ const getCombinedRecoveryDataByBuildingId = function getCombinedRecoveryDataByBu
   // Match reports & samples for every entry
   const combinedData: ICombinedRecoveryData[] = []
 
-  console.log("Get Combined recovery data")
-
-  // Go over all inquires related to the building
+  // Go over all recovery reports related to the building
   getRecoveryReportByBuildingId(buildingId)
     .forEach((report: IRecoveryReport) => {
-
-      console.log("report", report.id)
 
       // Get all samples related to the recovery & building combination
       const samples = getRecoverySamplesByRecoveryReportId(report.id)
         .filter(sample => {
           return sampleIdsForBuilding.includes(sample.id)
         })
-
-      console.log("samples", samples)
 
       // If there are none, add the report without sample
       if (samples.length === 0) {
@@ -136,8 +130,6 @@ const getCombinedRecoveryDataByBuildingId = function getCombinedRecoveryDataByBu
       }
     })
 
-  console.log(combinedData)
-
   return combinedData
 }
 
@@ -146,8 +138,6 @@ const getCombinedRecoveryDataByBuildingId = function getCombinedRecoveryDataByBu
  * Set the retrieved report data
  */
 const setRecoveryDataByBuildingId = function setRecoveryDataByBuildingId(buildingId: string, reports: IRecoveryReport[], samples: IRecoverySample[]) {
-
-  console.log(buildingId, reports, samples)
 
   reports.forEach((report: IRecoveryReport) => {
     recoveryReportsById.value[report.id] = new RecoveryReport(report)
@@ -203,8 +193,8 @@ const loadRecoveryReportDataByBuildingId = async function loadRecoveryReportData
     /**
      * Get connected samples by report id
      */
-    for (const report in response) {
-      const recoveryReportId = response[report].id
+    for (const report of response) {
+      const recoveryReportId = report.id
       const sampleResponse = await api.building.getRecoverySamplesByRecoveryId(recoveryReportId)
 
       recoverySamplesByRecoveryReportId.value[recoveryReportId] = []
@@ -214,9 +204,7 @@ const loadRecoveryReportDataByBuildingId = async function loadRecoveryReportData
     }
 
   } catch (e) {
-    console.log("Error loading recoveryReport data by building id", e)
-
-    // TODO: Catch-em all... and maybe do something with them?
+    console.error("Failed to load recovery data", buildingId, e)
   }
 
   // Success or fail, we're no longer retrieving the data for this building

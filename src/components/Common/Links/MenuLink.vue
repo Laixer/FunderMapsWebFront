@@ -41,24 +41,3 @@ const classList = computed<string[]>(() => {
   </a>
 </template>
 
-<style>
-
-.link--outline.disabled {
-  cursor: not-allowed;
-  background: rgb(232 234 241);
-}
-.link--outline.disabled:hover {
-  border-color: rgb(232 234 241);
-  box-shadow: none;
-}
-.grow {
-  flex-grow: 1;
-}
-.items-end {
-  align-items: flex-end;
-}
-.link--outline.loading {
-  cursor: wait;
-}
-
-</style>

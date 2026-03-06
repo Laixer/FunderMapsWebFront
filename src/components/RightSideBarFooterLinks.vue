@@ -50,7 +50,7 @@ const handleDownload = async function handleDownload() {
 </script>
 
 <template>
-  <div class="flex flex-col w-100 gap-2" style="width: 100%">
+  <div class="flex flex-col w-full gap-2">
     <Transition>
       <div
         v-if="isDownloading"
@@ -64,7 +64,7 @@ const handleDownload = async function handleDownload() {
         <strong>PDF wordt aangemaakt<span class="dots">...</span></strong>
       </div>
     </Transition>
-    <div
+    <button
       v-if="buildingId && ! isDownloading"
       @click="handleDownload"
       class="link link--outline | group flex-1 justify-center px-2 py-0.5"
@@ -75,11 +75,10 @@ const handleDownload = async function handleDownload() {
         aria-hidden="true"
       />
       <strong>PDF downloaden</strong>
-    </div>
+    </button>
     <div 
-      class="flex gap-2" 
-      :class="{ 'flex-col': ! buildingId }" 
-      style="width: 100%">
+      class="flex w-full gap-2"
+      :class="{ 'flex-col': ! buildingId }">
       <a
         :href="incidentLink"
         class="link link--outline | group flex-1 justify-center px-2 py-0.5"
@@ -106,7 +105,7 @@ const handleDownload = async function handleDownload() {
   </div>
 </template>
 
-<style>
+<style scoped>
 
 @keyframes dots {
     0% { background-position: 0px; }

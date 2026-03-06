@@ -33,7 +33,7 @@ const handleClose = function handleClose() {
         :small="false"
         @close="handleClose" />
     </div>
-    <div class="panel__content" :style="$slots.footer ? 'padding-bottom: 1rem;' : ''">
+    <div class="panel__content" :class="{ 'pb-4': $slots.footer }">
       <div v-if="subtitle || $slots.subtitle" class="panel__subtitle flex items-center gap-3">
         <slot name="subtitle">
           <h4 class="heading-4">{{ subtitle }}</h4>
@@ -49,9 +49,9 @@ const handleClose = function handleClose() {
   </div>
 </template>
 
-<style>
+<style scoped>
 
-.panel .panel__subtitle h4 {
+.panel__subtitle h4 {
   font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
 }
 

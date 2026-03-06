@@ -205,7 +205,6 @@ const handleGetSuggestions = async function handleGetSuggestions(query: string){
     suggestions.value = results.response.docs as IPDOKSuggestion[]
 
   } catch(e) {
-    console.log(e)
     error.value = true
   }
 }
@@ -219,7 +218,7 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     const results = await getLookup(id)
 
     if (! Array.isArray(results?.response?.docs) || results.response.docs.length === 0) {
-      console.log("Lookup call failed", id, weergavenaam)
+      console.warn("Lookup call failed", id, weergavenaam)
       throw new Error("Lookup call failed to produce results")
     }
 
@@ -244,7 +243,6 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     }
 
   } catch(e) {
-    console.log(e)
     error.value = true
   }
 }
@@ -338,7 +336,7 @@ const handleClose = function handleClose() {
   </div>
 </template>
 
-<style>
+<style scoped>
 
 /** TODO: move to css files after fixing dynamic css generation */
 

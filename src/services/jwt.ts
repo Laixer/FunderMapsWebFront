@@ -62,7 +62,7 @@ export function hasAccessTokenExpired(token?: string | null): boolean {
   token = token ?? getAccessToken();
 
   if (token === null) {
-    console.log("No token available")
+    console.warn("No token available")
     return false;
   }
 
