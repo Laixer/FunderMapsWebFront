@@ -1,5 +1,5 @@
-@import url('../public/resources/styles/app.css') layer(base);
 @import "tailwindcss";
+@import url('../public/resources/styles/app.css');
 
 @theme {
   --color-*: initial;
