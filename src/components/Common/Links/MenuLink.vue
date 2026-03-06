@@ -14,7 +14,7 @@ const classList = computed<string[]>(() => {
 
   if (props.disabled) {
     list.push('disabled')
-    list.push('text-gray-700')
+    list.push('text-grey-700')
   }
   if (props.loading) {
     list.push('loading')

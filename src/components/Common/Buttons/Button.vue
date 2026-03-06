@@ -21,7 +21,7 @@ const btnClass = computed<string[]>(() => {
 
   // Link & outline & muted are mutually exclusive
   if (link) {
-    return [ "button-link" ]
+    return [ "button--link" ]
   }
 
   // Link & outline & muted are mutually exclusive

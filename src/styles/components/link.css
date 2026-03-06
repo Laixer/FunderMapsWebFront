@@ -7,17 +7,15 @@
 }
 
 .link--outline {
-  @apply rounded border border-grey-200 px-4 py-3 hover:border-transparent hover:bg-white hover:shadow-lg;
+  @apply rounded border border-grey-200 px-4 py-3 hover:border-transparent hover:bg-white hover:shadow-hover;
 }
 
 .link--outline.disabled {
-  cursor: not-allowed;
-  background: rgb(232 234 241);
+  @apply cursor-not-allowed bg-grey-200;
 }
 
 .link--outline.disabled:hover {
-  border-color: rgb(232 234 241);
-  box-shadow: none;
+  @apply border-grey-200 shadow-none;
 }
 
 .link--outline.loading {

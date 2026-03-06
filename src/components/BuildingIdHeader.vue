@@ -60,30 +60,24 @@ watch(
   position: relative;
   font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
 }
-/** Not used for now, but kept to allow for quick restoration */
-.sidebar .sidebar__heading h4 sub {
+.sidebar .sidebar__heading h4 sub,
+.sidebar .sidebar__heading h4 sup {
   position: absolute;
-  color: rgb(127 143 164);
+  color: var(--color-grey-700);
   font-size: clamp(0.4rem, 0.4rem + 0.5229vw, 0.8rem);
   font-weight: 400;
   letter-spacing: 0;
 }
 .sidebar .sidebar__heading h4 sup {
-  position: absolute;
-  color: rgb(127 143 164);
-  font-size: clamp(0.4rem, 0.4rem + 0.5229vw, 0.8rem);
-  font-weight: 400;
-  letter-spacing: 0;
   top: 1.1rem;
 }
-
 .sidebar .sidebar__heading button {
-  padding: 4px
+  padding: 4px;
 }
 .sidebar .sidebar__heading svg {
   width: 16px;
 }
 .sidebar .sidebar__heading button:hover svg {
-  fill: rgb(40,204,139)
+  fill: var(--color-green-500);
 }
 </style>

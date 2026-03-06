@@ -317,7 +317,7 @@ const handleClose = function handleClose() {
                   @click.prevent="handleSelectBuilding(suggestion.id, suggestion.weergavenaam)"
                 >
                   <div class="flex gap-2">
-                    <span class="text-green-500 inline-block w4"> 
+                    <span class="text-green-500 inline-block w-4">
                       <FundermapsIcon
                         name="pin"
                         class="aspect-square w-4"
