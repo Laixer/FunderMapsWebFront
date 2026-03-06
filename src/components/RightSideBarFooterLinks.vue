@@ -114,7 +114,7 @@ const handleDownload = async function handleDownload() {
 }
 
 .dots {
-    background: linear-gradient(to right, rgb(232 234 241 / var(--tw-border-opacity)) 50%, black 50%);
+    background: linear-gradient(to right, rgb(232 234 241) 50%, black 50%);
     color: transparent;
     -webkit-background-clip: text;
     -webkit-animation: dots 1.2s infinite steps(4);

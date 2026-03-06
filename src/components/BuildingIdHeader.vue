@@ -63,14 +63,14 @@ watch(
 /** Not used for now, but kept to allow for quick restoration */
 .sidebar .sidebar__heading h4 sub {
   position: absolute;
-  color: rgb(127 143 164 / var(--tw-text-opacity, 1));
+  color: rgb(127 143 164);
   font-size: clamp(0.4rem, 0.4rem + 0.5229vw, 0.8rem);
   font-weight: 400;
   letter-spacing: 0;
 }
 .sidebar .sidebar__heading h4 sup {
   position: absolute;
-  color: rgb(127 143 164 / var(--tw-text-opacity, 1));
+  color: rgb(127 143 164);
   font-size: clamp(0.4rem, 0.4rem + 0.5229vw, 0.8rem);
   font-weight: 400;
   letter-spacing: 0;

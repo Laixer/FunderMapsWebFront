@@ -45,10 +45,10 @@ const classList = computed<string[]>(() => {
 
 .link--outline.disabled {
   cursor: not-allowed;
-  background: rgb(232 234 241 / var(--tw-border-opacity));
+  background: rgb(232 234 241);
 }
 .link--outline.disabled:hover {
-  border-color: rgb(232 234 241 / var(--tw-border-opacity));
+  border-color: rgb(232 234 241);
   box-shadow: none;
 }
 .grow {
