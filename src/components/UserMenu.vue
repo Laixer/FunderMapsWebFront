@@ -117,7 +117,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
           class="group flex w-full cursor-pointer items-center justify-between gap-2 px-8 py-4 transition-colors hover:text-green-500"
           :class="{'text-green-500': isProfileModalOpen}"
         >
-          <span class="whitespace-nowrap">Ga naar profiel</span>
+          <span class="whitespace-nowrap">Profiel</span>
           <AnimatedArrowIcon />
         </a>
 
