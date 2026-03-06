@@ -26,15 +26,13 @@ export const stateFieldLabels = <Record<string, string>> {
   name: 'Provincie'
 }
 
-export const locationFieldLabels = <Record<string, string>> {
-  
-}
+export const locationFieldLabels = <Record<string, string>> {}
 
 export const analysisFieldLabels = <Record<string, string>> {
   constructionYear: "Bouwjaar",
   constructionYearReliability: "Betrouwbaarheid bouwjaar",
   surfaceArea: "Vloeroppervlak",
-  volume: "Inhoud", // TODO: missing fieldName E15
+  volume: "Inhoud",
   height: "Pandhoogte",
   groundWaterLevel: "Grondwaterstand volgens landelijk watermodel",
   groundLevel: "Maaiveldniveau voor pand",
@@ -49,14 +47,9 @@ export const analysisFieldLabels = <Record<string, string>> {
   dewateringDepthRisk: "Ontwateringsdiepte risico",
   dewateringDepth: "Ontwateringsdiepte",
   dewateringDepthReliability: "Betrouwbaarheid ontwateringsdiepte",
-  bioInfectionRisk: "Bacterieelaantatsing risico",
+  bioInfectionRisk: "Bacteriële aantasting risico",
   bioInfectionReliability: "Betrouwbaarheid bacteriële aantasting",
-  negativeclingRisk: "Negatieve kleef risico",
-  negativeclingReliability: "Betrouwbaarheid Negatieve kleef",
-  differentialsettlementRisk: "Verschilzakking risico",
-  differentialsettlementReliability: "Betrouwbaarheid Verschilzakking",
   unclassifiedRisk: "Vastgesteld",
-  facadescanRisk: "Risico GevelScan",
   recoveryType: "Herstelmethode"
 }
 
@@ -84,7 +77,6 @@ export const StateControlFieldLabels = <Record<string, string>> {
 }
 
 export const recoverySampleFieldLabels = <Record<string, string>> {
-  // recovery: "Type herstel",
   recovery: 'Onderzoeksnummer',
   type: "Methode herstel",
   pileType: "Paaltype",
@@ -150,7 +142,7 @@ export const inquirySampleFieldLabels = <Record<string, string>> {
   constructionType: "Materiaal funderingsbalk",
   woodCapacityHorizontalQuality: "Horizontale draagkracht paal",
   constructionQuality: "Funderingsbalk",
-  foundationDepth: "Fundeirngsnsniveau",
+  foundationDepth: "Funderingsniveau",
   constructionLevel: "Niveau onderkant funderingsbalk",
   woodLevel: "Niveau bovenkant langshout",
   masonLevel: "Niveau onderkant metselwerk",
@@ -183,17 +175,7 @@ export const inquirySampleFieldLabels = <Record<string, string>> {
   crackFacadeRightSize: "Scheur"
 }
 
-export const statisticsFieldLabels = <Record<string, string>> {
-  // TODO: missing field names E134 - E138
-  // TODO: Typo in F135: fundeirngstypes => funderingstypes
-  /**
-   Verhouding aantal soorten fundeirngstypes in de buurt
-Verhouding aantal bouwjaar verloop in de buurt
-Verhouding aantal soorten risico's in de buurt
-Aantal incidenten in buurt naar jaar
-Aantal onderzoeken in buurt naar jaar
-   */
-}
+export const statisticsFieldLabels = <Record<string, string>> {}
 
 export const riskFieldLabels = <Record<string, string>> {
   drystandRisk: "Droogstandrisico",
@@ -202,13 +184,12 @@ export const riskFieldLabels = <Record<string, string>> {
   dewateringDepthRisk: "Ontwateringsdiepte risico",
   dewateringDepth: "Ontwateringsdiepte",
   dewateringDepthReliability: "Betrouwbaarheid ontwateringsdiepte",
-  bioInfectionRisk: "Bacterieelaantatsing risico",
-  bioInfectionReliability: "Betrouwbaarheid Bacterieel aantasting", // TODO: Typo in F150
-  // TODO: Missing field names: E152 - 156
+  bioInfectionRisk: "Bacteriële aantasting risico",
+  bioInfectionReliability: "Betrouwbaarheid bacteriële aantasting",
   unclassifiedRisk: "Vastgesteld"
 }
 
-export const indicentFieldLabels = <Record<string, string>> {
+export const incidentFieldLabels = <Record<string, string>> {
   id: "Nummer",
   address: "Adres",
   building: "BAG Pand ID",
@@ -234,30 +215,6 @@ export const indicentFieldLabels = <Record<string, string>> {
 }
 
 /**
- * All field labels put together. 
- *  NOTE: There is overlap! 
- */
-export const fieldLabels = Object.assign(
-  analysisFieldLabels,
-  addressFieldLabels,
-  buildingFieldLabels,
-  neighborhoodFieldLabels,
-  districtFieldLabels,
-  municipalityFieldLabels,
-  stateFieldLabels,
-  locationFieldLabels,
-  AttributionControlFieldLabels,
-  StateControlFieldLabels,
-  recoveryFieldLabels,
-  recoverySampleFieldLabels,
-  inquiryFieldLabels,
-  inquirySampleFieldLabels,
-  statisticsFieldLabels,
-  riskFieldLabels,
-  indicentFieldLabels
-)
-
-/**
  * Field labels grouped by source class name 
  */
 export const fieldLabelsBySource = <Record<string, Record<string, string>>> {
@@ -278,8 +235,8 @@ export const fieldLabelsBySource = <Record<string, Record<string, string>>> {
 
   'Inquiry': inquiryFieldLabels,
   'InquirySample': inquirySampleFieldLabels,
-  'stat': statisticsFieldLabels, // TODO: 
-  'risk': riskFieldLabels, // TODO: 
-  'IncidentReport': indicentFieldLabels
+  'stat': statisticsFieldLabels,
+  'risk': riskFieldLabels,
+  'IncidentReport': incidentFieldLabels
 }
 

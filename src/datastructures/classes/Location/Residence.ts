@@ -7,15 +7,16 @@ export class Residence extends EnumMethods implements IResidence {
   buildingId: string
   latitude: number
   longitude: number
-  
+
+  className = 'Residence'
+
   constructor(data: IResidence) {
     super();
-    
+
     this.id = data.id;
     this.addressId = data.addressId
     this.buildingId = data.buildingId
     this.latitude = data.latitude
     this.longitude = data.longitude
-    
   }
 }
