@@ -1,35 +1,23 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { incidentLink, feedbackLink } from '@/config'
-
+import OutlineButton from '@/components/Common/Buttons/OutlineButton.vue';
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 
-
-import AlertIcon from '@assets/svg/icons/alert.svg'
-import ChatIcon from '@assets/svg/icons/chat.svg'
-
 import { useBuildingStore } from '@/store/buildings';
-
 import { getPdf } from '@/services/api/pdf'
 
 const { buildingId } = storeToRefs(useBuildingStore())
-
-const feedbackLinkWithId = computed<string>(() => {
-  return buildingId.value 
-    ? `${feedbackLink}${buildingId.value}`
-    : `${feedbackLink}`
-})
 
 const isDownloading = ref(false)
 
 const handleDownload = async function handleDownload() {
   if (buildingId.value && ! isDownloading.value) {
-    isDownloading.value = true 
+    isDownloading.value = true
 
-    // Ensure the appropiate filename is used even if the user navigates away while the download is still being processed
-    const filename = buildingId.value + '' 
+    // Ensure the appropriate filename is used even if the user navigates away while the download is still being processed
+    const filename = buildingId.value + ''
 
     const response = await getPdf(filename)
 
@@ -42,83 +30,28 @@ const handleDownload = async function handleDownload() {
     a.click()
     URL.revokeObjectURL(url)
 
-    isDownloading.value = false 
+    isDownloading.value = false
   }
 }
-
 
 </script>
 
 <template>
-  <div class="flex flex-col w-full gap-2">
-    <Transition>
-      <div
-        v-if="isDownloading"
-        class="link link--outline disabled | group flex-1 justify-center px-2 py-0.5"
-      >
+  <div class="flex w-full flex-col gap-2">
+    <OutlineButton
+      v-if="buildingId"
+      :label="isDownloading ? 'PDF wordt aangemaakt...' : 'PDF downloaden'"
+      :disabled="isDownloading"
+      class="w-full"
+      @click="handleDownload"
+    >
+      <template v-slot:before>
         <FundermapsIcon
           name="file-pdf"
-          class="aspect-square w-3"
+          class="aspect-square w-4"
           aria-hidden="true"
         />
-        <strong>PDF wordt aangemaakt<span class="dots">...</span></strong>
-      </div>
-    </Transition>
-    <button
-      v-if="buildingId && ! isDownloading"
-      @click="handleDownload"
-      class="link link--outline | group flex-1 justify-center px-2 py-0.5"
-    >
-      <FundermapsIcon
-        name="file-pdf"
-        class="aspect-square w-3 group-hover:text-green-500"
-        aria-hidden="true"
-      />
-      <strong>PDF downloaden</strong>
-    </button>
-    <div 
-      class="flex w-full gap-2"
-      :class="{ 'flex-col': ! buildingId }">
-      <a
-        :href="incidentLink"
-        class="link link--outline | group flex-1 justify-center px-2 py-0.5"
-        target="_blank"
-      >
-        <AlertIcon
-          class="aspect-square w-3 group-hover:text-green-500"
-          aria-hidden="true"
-        />
-        <strong>Incident</strong>
-      </a>
-      <a
-        :href="feedbackLinkWithId"
-        class="link link--outline | group flex-grow justify-center px-2 py-0.5"
-        target="_blank"
-      >
-        <ChatIcon
-          class="aspect-square w-3 group-hover:text-green-500"
-          aria-hidden="true"
-        />
-        <strong>Feedback</strong>
-      </a>
-    </div>
+      </template>
+    </OutlineButton>
   </div>
 </template>
-
-<style scoped>
-
-@keyframes dots {
-    0% { background-position: 0px; }
-    100% { background-position: 15px; }
-}
-
-.dots {
-    background: linear-gradient(to right, rgb(232 234 241) 50%, black 50%);
-    color: transparent;
-    -webkit-background-clip: text;
-    -webkit-animation: dots 1.2s infinite steps(4);
-    padding-right: 40px;
-    margin-right: -40px;
-}
-
-</style>

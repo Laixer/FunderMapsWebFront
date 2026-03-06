@@ -6,7 +6,7 @@
   }
 
   .panel {
-    @apply z-10 h-full w-full flex-shrink-0 space-y-2 bg-white/80 pt-4 backdrop-blur-md;
+    @apply z-10 h-full w-full flex-shrink-0 space-y-2 bg-white pt-4;
 
     > * {
       @apply px-7;
