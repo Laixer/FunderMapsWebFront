@@ -1,0 +1,11 @@
+.list--definition {
+  /* @apply space-y-2; */
+
+  .item {
+    @apply flex items-baseline justify-between gap-3;
+  }
+
+  dd {
+    @apply text-end leading-loose text-grey-700;
+  }
+}
