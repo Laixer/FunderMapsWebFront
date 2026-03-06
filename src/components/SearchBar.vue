@@ -292,7 +292,7 @@ const handleClose = function handleClose() {
     <Transition>
       <div
         v-if="suggestions.length"
-        class="search-dropdown dropdown arrow arrow--top-left | absolute -left-7 top-full origin-top-left outline-none"
+        class="search-dropdown dropdown arrow arrow--top-left | absolute -left-7 top-full min-w-[calc(100%+3.5rem)] origin-top-left outline-none"
       >
         <div
           class="dropdown__main | relative grid rounded-lg bg-white py-4 shadow-float"
