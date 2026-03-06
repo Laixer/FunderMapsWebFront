@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue'; // Added ref and computed
+import { ref, computed } from 'vue';
 import { IOrg } from '@/datastructures/interfaces';
 import api from '@/services/api';
 
@@ -86,7 +86,7 @@ export const useOrgsStore = defineStore('orgs', () => {
     try {
       const orgsData: IOrg[] = await api.org.getOrgs();
       availableOrgs.value = orgsData;
-      if (hasAvailableOrgs.value && availableOrgs.value.length > 0) {
+      if (hasAvailableOrgs.value) {
         selectOrgById(availableOrgs.value[0].id);
       }
     } catch (error) {

@@ -19,13 +19,3 @@ export const addControls = function addControls(map: Map) {
   )
 }
 
-// TODO: UI has location search in header
-// Note: requires install of mapbox-gl-geocoder
-// this.map.addControl(
-//   new MapboxGeocoder({
-//       accessToken: mapboxgl.accessToken,
-//       mapboxgl: mapboxgl,
-//   }), "top-left"
-// );
-
-

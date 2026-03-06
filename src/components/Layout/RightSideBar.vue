@@ -235,7 +235,7 @@ watch(
     isOpen.value = true
 
     // TODO: Quick fix to support cache. Move to some store ?
-    const getAllReportDataUnlessCached = async function getAlReportDataUnlessCached(buildingId: string) {
+    const getAllReportDataUnlessCached = async function getAllReportDataUnlessCached(buildingId: string) {
       if (
         ! buildingRecoveryReportDataHasBeenRetrieved(buildingId) ||
         ! buildingIncidentReportDataHasBeenRetrieved(buildingId) ||
@@ -256,7 +256,6 @@ watch(
           })
       }
 
-      return Promise.resolve()
     }
 
     // TODO: Handle errors here ?

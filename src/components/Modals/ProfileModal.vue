@@ -8,7 +8,7 @@ import { DutchMobilePhoneRegex } from '@/utils/validation'
 import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
-import OverlayModal from '@/components//Common/OverlayModal.vue';
+import OverlayModal from '@/components/Common/OverlayModal.vue';
 
 import ValidationSuccessIcon from '@assets/svg/icons/validation-success.svg'
 

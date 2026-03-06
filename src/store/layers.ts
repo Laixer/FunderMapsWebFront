@@ -48,7 +48,7 @@ export const useLayersStore = defineStore('layers', () => {
         // Assume it's an identifier if not a UUID
         const { getMapsetIdByIdentifier } = useMapsetStore();
         const idFromIdentifier = getMapsetIdByIdentifier(mapsetIdInput);
-        resolvedMapsetId = idFromIdentifier === undefined ? null : idFromIdentifier;
+        resolvedMapsetId = idFromIdentifier ?? null;
       }
     }
 

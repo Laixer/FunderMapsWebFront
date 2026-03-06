@@ -74,7 +74,8 @@ const handleSubmit = async function () {
       // TODO: Get previous route before 'Login' & redirect back to that route
       router.push({ name: 'home' })
     }
-  } catch {
+  } catch (e) {
+    console.error('Login failed:', e)
     loginFailed.value = true
   }
 }

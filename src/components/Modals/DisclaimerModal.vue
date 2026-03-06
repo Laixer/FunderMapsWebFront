@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue';
 
 import VueMarkdown from 'vue-markdown-render'
 import Button from '@/components/Common/Buttons/Button.vue';
-import OverlayModal from '@/components//Common/OverlayModal.vue';
+import OverlayModal from '@/components/Common/OverlayModal.vue';
 
 import { useMapsetStore } from '@/store/mapsets'
 import { storeToRefs } from 'pinia';

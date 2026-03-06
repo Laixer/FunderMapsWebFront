@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
-import OverlayModal from '@/components//Common/OverlayModal.vue';
+import OverlayModal from '@/components/Common/OverlayModal.vue';
 import LockedIcon from '@assets/svg/icons/locked.svg'
 import UnlockedIcon from '@assets/svg/icons/unlocked.svg'
 
@@ -25,7 +25,7 @@ const router = useRouter()
 
 // Not logged in => redirect to login page
 onBeforeMount(() => {
-  if (! isAuthenticated) {
+  if (! isAuthenticated.value) {
     router.push({ name: 'login' })
   }
 })
@@ -100,7 +100,8 @@ const handleSubmit = async function handleSubmit() {
     } 
 
     busySaving.value = false
-  } catch {
+  } catch (e) {
+    console.error('Failed to change password:', e)
     changeFailed.value = true
     busySaving.value = false
   }

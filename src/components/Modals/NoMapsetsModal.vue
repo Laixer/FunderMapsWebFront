@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia';
 
 import Button from '@/components/Common/Buttons/Button.vue';
-import OverlayModal from '@/components//Common/OverlayModal.vue';
+import OverlayModal from '@/components/Common/OverlayModal.vue';
 import ExitIcon from '@assets/svg/icons/exit.svg'
 
 import { useMapsetStore } from '@/store/mapsets'

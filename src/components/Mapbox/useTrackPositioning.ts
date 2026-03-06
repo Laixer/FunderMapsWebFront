@@ -67,12 +67,10 @@ export const useTrackPositioning = function useTrackPositioning(
   return {
     // TODO: Move to a store ? 
     getLastKnownPositioning: function getLastKnownPositioning() {
-      let center = undefined
-    
       const metadataStore = useMetadataStore()
-    
+      let center
+
       try {
-        // center = localStorage.getItem('lastCenterPosition') ? JSON.parse(localStorage.getItem('lastCenterPosition') as string) : undefined
         center = metadataStore.getItem('lastCenterPosition')
       } catch {
         console.warn("Failed to read center position from localStorage, using default")

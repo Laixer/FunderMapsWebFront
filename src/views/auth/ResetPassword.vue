@@ -81,7 +81,8 @@ const handleSubmit = async function handleSubmit() {
 
       resetSucceeded.value = true
     }
-  } catch {
+  } catch (e) {
+    console.error('Password reset failed:', e)
     resetFailed.value = true
   }
 }
