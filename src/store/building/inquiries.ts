@@ -1,4 +1,4 @@
-import { type Ref, ref, watch, toValue } from 'vue';
+import { type Ref, ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { type ICombinedInquiryData, type IInquirySample, type IInquiryReport } from "@/datastructures/interfaces"
@@ -114,7 +114,7 @@ const getCombinedInquiryDataByBuildingId = function getCombinedInquiryDataByBuil
       // If there are none, add the report without sample
       if (samples.length === 0) {
         combinedData.push({
-          report: toValue(report),
+          report,
           sample: undefined
         })
       
@@ -122,8 +122,8 @@ const getCombinedInquiryDataByBuildingId = function getCombinedInquiryDataByBuil
       } else {
         samples.forEach(sample => {
           combinedData.push({
-            report: toValue(report),
-            sample: toValue(sample)
+            report,
+            sample
           })
         })
       }
@@ -150,7 +150,7 @@ const setInquiryDataByBuildingId = function setInquiryDataByBuildingId(buildingI
     inquirySamplesByInquiryId.value[reportId] = inquirySamplesByInquiryId.value[reportId] || []
 
     // Only add unknown samples
-    if (! inquirySamplesByInquiryId.value[reportId].map(sample => sample.id).includes(sample.id)) {
+    if (! inquirySamplesByInquiryId.value[reportId].some(s => s.id === sample.id)) {
       inquirySamplesByInquiryId.value[reportId].push(sample)
     }
 

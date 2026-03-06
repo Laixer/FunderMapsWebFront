@@ -126,8 +126,8 @@ export function refreshAccessToken(): void {
     api.auth
       .refresh()
       .then(response => storeAccessToken(response.token))
-      .catch(() => {
-        // console.error(error)
+      .catch((error) => {
+        console.error('Failed to refresh access token:', error)
         const router = useRouter()
         router.push({ name: 'login' })
       })

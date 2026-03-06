@@ -1,4 +1,4 @@
-import { type Ref, ref, watch, toValue } from 'vue';
+import { type Ref, ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { IRecoverySample, type IRecoveryReport } from "@/datastructures/interfaces"
@@ -115,7 +115,7 @@ const getCombinedRecoveryDataByBuildingId = function getCombinedRecoveryDataByBu
       // If there are none, add the report without sample
       if (samples.length === 0) {
         combinedData.push({
-          report: toValue(report),
+          report,
           sample: undefined
         })
 
@@ -123,8 +123,8 @@ const getCombinedRecoveryDataByBuildingId = function getCombinedRecoveryDataByBu
       } else {
         samples.forEach(sample => {
           combinedData.push({
-            report: toValue(report),
-            sample: toValue(sample)
+            report,
+            sample
           })
         })
       }
@@ -152,7 +152,7 @@ const setRecoveryDataByBuildingId = function setRecoveryDataByBuildingId(buildin
     recoverySamplesByRecoveryReportId.value[reportId] = recoverySamplesByRecoveryReportId.value[reportId] || []
 
     // Only add unknown samples
-    if (!recoverySamplesByRecoveryReportId.value[reportId].map(sample => sample.id).includes(sample.id)) {
+    if (!recoverySamplesByRecoveryReportId.value[reportId].some(s => s.id === sample.id)) {
       recoverySamplesByRecoveryReportId.value[reportId].push(sample)
     }
 

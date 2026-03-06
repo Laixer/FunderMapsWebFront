@@ -132,7 +132,7 @@ const getMapsetByIdentifier = function getMapsetByIdentifier(identifier: string)
 /**
  * 
  */
-const getMapsetIdByIdentifier = function getMapsetByIdentifier(identifier: string) {
+const getMapsetIdByIdentifier = function getMapsetIdByIdentifier(identifier: string) {
   const mapset = getMapsetById(identifier) || getMapsetBySlug(identifier)
   return mapset?.id || undefined
 }
@@ -189,9 +189,9 @@ function useMapsets() {
     if (activeMapset.value?.id === id) return
 
     // First check whether the group actually is available to the user and loaded
-    const Mapset = getMapsetByIdentifier(id)
+    const mapset = getMapsetByIdentifier(id)
 
-    if (Mapset) {
+    if (mapset) {
       activeMapsetId.value = id
     }
   }
@@ -246,8 +246,8 @@ function useMapsets() {
         })
       }
 
-    } catch {
-      // We don't remove any already available mapsets if the request for a specific mapset by id failed. 
+    } catch (e) {
+      console.error('Failed to load mapset by id:', mapsetId, e)
     }
 
     isLoadingMapsets.value = false

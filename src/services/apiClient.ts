@@ -43,7 +43,7 @@ const passAuthCheckOrExit = function passAuthOrThrowException(requireAuth: boole
     // When auth is required & missing / expired => redirect to login
     if (autoredirect) {
       const route = useRoute()
-      if (route.name !== 'Login') {
+      if (route.name !== 'login') {
         const router = useRouter()
         router.push({ name: 'login' })
       }
