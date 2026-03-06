@@ -23,9 +23,7 @@ export class EnumMethods implements IEnumMethods {
       // using `in` to include prototype chain
       if (labelProperty in this) {
 
-        // @ts-ignore
-
-        // @ts-ignore - We know that all enum labels are either a string or number.
+        // @ts-expect-error - We know that all enum labels are either a string or number.
         return this[labelProperty] as string|number
       }
     }

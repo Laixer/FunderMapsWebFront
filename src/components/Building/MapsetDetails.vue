@@ -112,7 +112,7 @@ const fields: ComputedRef<CompletedFieldData[]> = computed(() => {
       })
       .map(retrieveAndFormatFieldData)
 
-    case 'c81d4c1b-cc11-4f80-b324-9ab7e6cefd99': // Fundering
+    case 'c81d4c1b-cc11-4f80-b324-9ab7e6cefd99': { // Fundering
       if (analysisData.value === null) return []
 
       const configs = [
@@ -131,7 +131,7 @@ const fields: ComputedRef<CompletedFieldData[]> = computed(() => {
         configs
       })
       .map(retrieveAndFormatFieldData)
-
+    }
     case '8de9bc42-829c-4df2-b75f-c8c392e18e76':  // pand / gebouw
       if (analysisData.value === null || locationData.value === null) return []
 

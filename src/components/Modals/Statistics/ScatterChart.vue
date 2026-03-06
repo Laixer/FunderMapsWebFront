@@ -29,8 +29,7 @@ const props = withDefaults(defineProps<{
   backgroundColors: () => Object.values(CHART_COLORS)
 })
 
-// @ts-ignore: No time to deep dive into all the TS particulars of Chart.js
-let chart: any|null = null
+let chart: Chart | null = null
 
 // Reference to Chart canvas element
 const canvas = ref<HTMLCanvasElement>();
@@ -55,7 +54,7 @@ const createChart = function createChart(
             backgroundColor: backgroundColors,
             borderColor: borderColors,
             borderWidth: 1,
-            // @ts-ignore
+            // @ts-expect-error - trendlineLinear is from chartjs-plugin-trendline, not in Chart.js types
             trendlineLinear: {
               colorMin: "#17a4ea",
 		          colorMax: "#17a4ea",
@@ -84,8 +83,8 @@ const createChart = function createChart(
             // beginAtZero: true,
             ticks: {
               color: '#808c99',
-              //@ts-ignore - TS wants a number, we want to show a date string, which does work just fine
-              callback: function(value: number, index, ticks) {
+              //@ts-expect-error - TS wants a number, we want to show a date string, which does work just fine
+              callback: function(value: number) {
                 return (new Date(value)).toLocaleDateString('nl-NL', { 
                   year: 'numeric',
                   month: 'short',
@@ -104,9 +103,9 @@ const createChart = function createChart(
           },
           tooltip: {
             callbacks: {
-              // any to avoid TS issue without having to create an interface for the whole thing
-              label: function(context: any) {
-                return `${(new Date(context.raw.x)).toLocaleDateString('nl-NL')}: ${(context.raw.y)} mm`
+              label: function(context: { raw: unknown }) {
+                const raw = context.raw as { x: number; y: number }
+                return `${(new Date(raw.x)).toLocaleDateString('nl-NL')}: ${(raw.y)} mm`
               }
             }
           }
@@ -116,7 +115,7 @@ const createChart = function createChart(
   );
 
   // Disable animation in the popup, it is too much
-  chart.options.animation = false; 
+  chart!.options.animation = false;
 }
 
 onMounted(() => {

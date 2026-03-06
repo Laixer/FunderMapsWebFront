@@ -103,7 +103,7 @@ export const useLayerVisibility = function useLayerVisibility(
         changeLayerVisibility(layerId, true, id)
       })
 
-    } catch (e) {
+    } catch {
       // If it fails, go with the first known layer
       revealFirstLayer(allKnownLayerIds, id)
     }

@@ -17,7 +17,7 @@ let accessTokenRefreshInterval: ReturnType<typeof setTimeout> | null = null
 try {
   authenticateFromAccessToken()
   refreshAccessToken()
-} catch (e) {
+} catch {
   // no luck, no harm
 }
 

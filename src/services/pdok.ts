@@ -6,7 +6,7 @@ const callPDOK = async (endpoint: string) => {
   if (response.ok) {
     try {
       return response.json()
-    } catch (e) {
+    } catch {
       console.warn("Failed to process PDOK response")
     }
   }

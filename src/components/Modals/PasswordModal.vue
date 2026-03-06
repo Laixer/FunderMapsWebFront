@@ -100,7 +100,7 @@ const handleSubmit = async function handleSubmit() {
     } 
 
     busySaving.value = false
-  } catch(e) {
+  } catch {
     changeFailed.value = true
     busySaving.value = false
   }

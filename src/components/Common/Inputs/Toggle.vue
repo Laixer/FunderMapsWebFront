@@ -7,7 +7,7 @@ const props = withDefaults(defineProps<{
   label?: string
   disabled?: boolean,
   checked?: boolean,
-  fieldValue?: any
+  fieldValue?: string | number | boolean
 }>(), {
   checked: false,
   fieldValue: true // The field value if checked

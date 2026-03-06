@@ -38,7 +38,7 @@ export const useBuildingMarker = function useBuildingMarker(
     
     if (mapInstance.value) {
       // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
-      // @ts-ignore 
+      // @ts-expect-error - Type instantiation is excessively deep and possibly infinite
       Marker.setLngLat(LngLat).addTo(mapInstance.value)
     }
   }

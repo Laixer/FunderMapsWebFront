@@ -10,7 +10,7 @@ import { useDebounceFn } from "@vueuse/core";
  * Defines the type for individual metadata values.
  * Can be any serializable JSON value.
  */
-type MetadataValue = any; // Using 'any' for flexibility with localStorage and unknown API response structures.
+type MetadataValue = string | number | boolean | null | Record<string, unknown>; // Using 'any' for flexibility with localStorage and unknown API response structures.
 
 /**
  * Defines the type for the metadata object, a record of string keys to MetadataValues.
@@ -85,7 +85,7 @@ export const useMetadataStore = defineStore('metadata', () => {
       if (value !== null) { // Explicitly check for null
         try {
           return JSON.parse(value);
-        } catch (err) {
+        } catch {
           // If JSON.parse fails, it might be a plain string value
           return value;
         }

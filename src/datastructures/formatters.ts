@@ -20,7 +20,7 @@ export const toFormattedDate = (value: string): string => {
       month: 'numeric',
       day: 'numeric',
     });
-  } catch (e) {
+  } catch {
     return value;
   }
 };

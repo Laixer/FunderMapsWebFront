@@ -6,7 +6,7 @@ import BarChart from './BarChart.vue'
 withDefaults(defineProps<{
   title?: string,
   labels?: string[],
-  data?: string[]|number[],
+  data?: number[],
   borderColors?: string[],
   backgroundColors?: string[]
 }>(), {

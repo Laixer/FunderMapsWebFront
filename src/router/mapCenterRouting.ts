@@ -62,7 +62,7 @@ export const useMapCenterRouting = function useMapCenterRouting() {
           parseFloat(`${route.query.lat}`)
         )
       }
-    } catch(e) {
+    } catch {
       return null
     }
   }

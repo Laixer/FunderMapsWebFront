@@ -102,7 +102,7 @@ const makeCall = async ({
       if (response.status !== 204) {
         responseBody = await response.json()
       }
-    } catch (e) {
+    } catch {
       if (response.ok && response.status !== 204) {
         throw new Error("Failed to process response body")
       }

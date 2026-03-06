@@ -18,7 +18,8 @@ export const useTrackPositioning = function useTrackPositioning(
     if (! mapInstance.value) return
 
     const metadataStore = useMetadataStore()
-    metadataStore.setItem('lastCenterPosition', mapInstance.value.getCenter());
+    const center = mapInstance.value.getCenter();
+    metadataStore.setItem('lastCenterPosition', JSON.parse(JSON.stringify(center)));
   }
 
   const storeLastZoomLevel = function storeLastZoomLevel() {
@@ -73,7 +74,7 @@ export const useTrackPositioning = function useTrackPositioning(
       try {
         // center = localStorage.getItem('lastCenterPosition') ? JSON.parse(localStorage.getItem('lastCenterPosition') as string) : undefined
         center = metadataStore.getItem('lastCenterPosition')
-      } catch(e) {
+      } catch {
         console.warn("Failed to read center position from localStorage, using default")
       }
     

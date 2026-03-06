@@ -124,8 +124,8 @@ const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithI
     <section
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
     >
-      <template v-for="group in Object.keys(fieldGroupHeaders)">
-        <div 
+      <template v-for="group in Object.keys(fieldGroupHeaders)" :key="group">
+        <div
           v-if="fieldsWithDataAndIcons[group]"
           class="space-y-3">
           <h6 class="font-bold leading-none">{{ fieldGroupHeaders[group] }}</h6>

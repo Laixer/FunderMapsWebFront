@@ -3,7 +3,7 @@
  * Map Event handling
  **********************************************************************************/
 
-import { type Map } from "mapbox-gl";
+import { type Map, type MapMouseEvent, type MapboxGeoJSONFeature } from "mapbox-gl";
 import { type MaybeRef, ref } from "vue";
 import { storeToRefs } from "pinia";
 
@@ -26,20 +26,24 @@ export const useLayerEvents = function useLayerEvents(
    */
 
   const mouseEnter = function mouseEnter() {
-    isAuthenticated.value && mapInstance.value && (mapInstance.value.getCanvas().style.cursor = "pointer")
+    if (isAuthenticated.value && mapInstance.value) {
+      mapInstance.value.getCanvas().style.cursor = "pointer"
+    }
   }
   const mouseLeave = function mouseLeave() {
-    mapInstance.value && (mapInstance.value.getCanvas().style.cursor = "")
+    if (mapInstance.value) {
+      mapInstance.value.getCanvas().style.cursor = ""
+    }
   }
 
   /**
    * Navigate to building on click
    */
-  const handleBuildingClick = async function handleBuildingClick(e: any) {
-    if (e.features.length === 0) return
-    
+  const handleBuildingClick = async function handleBuildingClick(e: MapMouseEvent & { features?: MapboxGeoJSONFeature[] }) {
+    if (!e.features || e.features.length === 0) return
+
     // Map interaction is only for authenticated users
-    if (! isAuthenticated.value) return 
+    if (! isAuthenticated.value) return
 
     const props = e.features[0].properties || {}
 

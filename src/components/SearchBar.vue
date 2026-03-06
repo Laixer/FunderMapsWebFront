@@ -162,7 +162,7 @@ const verifyBuildingId = async function verifyBuildingId(id: string) {
 
     await getLocationInformationByBuildingId(id)
     return true
-  } catch(e) {
+  } catch {
     return false
   }
 }
@@ -204,7 +204,7 @@ const handleGetSuggestions = async function handleGetSuggestions(query: string){
     noResults.value = false
     suggestions.value = results.response.docs as IPDOKSuggestion[]
 
-  } catch(e) {
+  } catch {
     error.value = true
   }
 }
@@ -242,7 +242,7 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
       mapMarkerLatLon.value = new mapboxgl.LngLat(Lng, Lat)
     }
 
-  } catch(e) {
+  } catch {
     error.value = true
   }
 }

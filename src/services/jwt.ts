@@ -83,7 +83,7 @@ export function hasNonExpiredToken(token?: string | null): boolean {
 /**
  * return authorization header with jwt token, or an empty object
  */
-export function getAuthHeader(): AuthorizationHeader | {} {
+export function getAuthHeader(): AuthorizationHeader | Record<string, never> {
   const token = getAccessToken()
   return (hasNonExpiredToken(token))
     ? { 'Authorization': 'Bearer ' + token }

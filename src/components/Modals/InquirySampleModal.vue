@@ -201,8 +201,8 @@ watch(
     class="InquirySampleModal"
     @close="handleClose">
 
-    <template v-for="group in Object.keys(fieldGroupHeaders)">
-      <section 
+    <template v-for="group in Object.keys(fieldGroupHeaders)" :key="group">
+      <section
         v-if="sampleFieldsWithData[group]"
         class="space-y-4">
         <h6>{{ fieldGroupHeaders[group] }}</h6>

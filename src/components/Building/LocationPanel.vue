@@ -8,7 +8,7 @@ import BackLink from '../Common/Links/BackLink.vue';
 
 import MapIcon from '@assets/svg/icons/fundermaps/map.svg'
 
-import { retrieveAndFormatFieldData, FieldDataConfig } from '@/utils/fieldData'
+import { retrieveAndFormatFieldData, FieldDataConfig, type IFieldDataConfig } from '@/utils/fieldData'
 
 import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { useBuildingStore } from '@/store/buildings';
@@ -48,7 +48,7 @@ const pdokLink = computed(() => {
     } 
 
     return null
-  } catch(e) {
+  } catch {
     return null
   }
 })
@@ -56,11 +56,11 @@ const pdokLink = computed(() => {
 /**
  * Append the external id to the value
  */
-const appendExternalId = (value: string, config: FieldDataConfig) => {
-  if (! value || value.length === 0) return value
+const appendExternalId = (value: unknown, config?: IFieldDataConfig) => {
+  if (! value || typeof value !== 'string' || value.length === 0) return String(value ?? '')
 
-  // @ts-ignore - 
-  return `${value} (${config.source?.externalId})`
+  // @ts-expect-error - source has externalId at runtime
+  return `${value} (${config?.source?.externalId})`
 }
 
 /**

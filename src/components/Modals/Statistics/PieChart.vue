@@ -8,7 +8,7 @@ import Chart from 'chart.js/auto';
 const props = withDefaults(defineProps<{
   title?: string,
   labels?: string[],
-  data?: string[]|number[],
+  data?: number[],
   backgroundColors?: string[]
 }>(), {
   title: 'Statistiek',
@@ -17,14 +17,13 @@ const props = withDefaults(defineProps<{
   backgroundColors: () => Object.values(CHART_TRANSPARENT_COLORS)
 })
 
-// @ts-ignore: No time to deep dive into all the TS particulars of Chart.js
-let chart: any|null = null
+let chart: Chart | null = null
 
 // Reference to Chart canvas element
 const canvas = ref<HTMLCanvasElement>();
 
 const createChart = function createChart(
-  title: string, labels: string[], data: string[]|number[], backgroundColors: string[]
+  title: string, labels: string[], data: number[], backgroundColors: string[]
 ) {
   if (! canvas.value || ! canvas.value.getContext("2d")) {
     console.warn("No canvas available", title)
@@ -51,7 +50,7 @@ const createChart = function createChart(
   );
 
   // Disable animation in the popup, it is too much
-  chart.options.animation = false; 
+  chart!.options.animation = false;
 }
 
 onMounted(() => {

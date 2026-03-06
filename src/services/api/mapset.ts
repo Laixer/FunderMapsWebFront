@@ -7,13 +7,13 @@ const mapMapset = (rawmapset: IMapset): IMapsetFE => {
 
   try {
     layerSet = rawmapset.layerSet ? JSON.parse(rawmapset.layerSet) : []
-  } catch (e) {
+  } catch {
     console.warn(`Failed to process layerSet for mapset "${rawmapset?.name || rawmapset.id}"`)
   }
 
   try {
     options = rawmapset?.options ? JSON.parse(rawmapset.options) : {}
-  } catch (e) {
+  } catch {
     console.warn('Failed to process mapset options')
   }
 

@@ -17,16 +17,17 @@ const props = defineProps({
 /**
  * Get the callback associated with the source type
  */
-const callback = computed<Function>(() => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const callback = computed<(id: any) => Promise<IDownloadLink>>(() => {
   switch(props.sourceType) {
     case 'incident':
       return getRecoveryReportDownloadLink
     case 'inquiry':
       return getInquiryReportDownloadLink
     case 'recovery':
-      // TODO: No endpoint yet... 
+      // TODO: No endpoint yet...
       // TODO: Multiple files ?
-      return () => {}
+      return () => Promise.resolve({ accessLink: '' } as IDownloadLink)
   }
   
   throw new Error("Unknown download source type")

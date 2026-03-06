@@ -371,14 +371,13 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
       class="panels transition-transform duration-300"
       :class="{'-translate-x-full': rightPanelSlide}"
     >
-      <Panel 
-        v-if="failedToLoad"@close="handleCloseSideBar" 
-        title="Pand Informatie">
-        <Transition>
-          <p>
-            Helaas, de informatie over dit pand kon niet geladen worden.
-          </p>
-        </Transition>
+      <Panel
+        v-if="failedToLoad"
+        title="Pand Informatie"
+        @close="handleCloseSideBar">
+        <p>
+          Helaas, de informatie over dit pand kon niet geladen worden.
+        </p>
       </Panel>
       <Panel 
         v-else

@@ -255,7 +255,7 @@ function useMapsets() {
         })
       }
 
-    } catch (err) {
+    } catch {
       // We don't remove any already available mapsets if the request for a specific mapset by id failed. 
     }
 

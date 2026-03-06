@@ -51,7 +51,7 @@ export interface IFieldDataConfig {
   format?: boolean
 
   // Optional formatter function
-  formatter?: Function
+  formatter?: (value: unknown, config?: IFieldDataConfig) => string
 
   // A default value if the property cannot be found on the data source
   default?: string
@@ -66,7 +66,7 @@ export class FieldDataConfig implements IFieldDataConfig {
   label?: string
   source?: MaybeRefOrGetter<IEnumMethods | null | undefined> // | ComputedRef<IEnumMethods|null|undefined>
   format?: boolean = true
-  formatter?: Function
+  formatter?: (value: unknown, config?: IFieldDataConfig) => string
   group?: string
 
   default: string = 'Geen data'
@@ -179,7 +179,7 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
    * 
    * If the source is missing, or has no value for the property, we're done
    */
-  if (!source || !source?.hasOwnProperty(config.name)) {
+  if (!source || !(config.name in source)) {
 
     // If there is a default label, use it
     if (config.default) {
@@ -194,7 +194,7 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
    * 
    * If the value is empty, we're done.
    * 
-   */ // @ts-ignore just keep quiet if you can't process something 
+   */ // @ts-expect-error just keep quiet if you can't process something 
   const sourcedFieldValue = source[config.name]
   if (sourcedFieldValue || sourcedFieldValue === false || sourcedFieldValue === 0) {
     dataObj.fieldValue = sourcedFieldValue
