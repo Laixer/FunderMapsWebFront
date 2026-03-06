@@ -23,16 +23,16 @@ const { hasAvailableMapsets } = storeToRefs(
       <div v-if="hasAvailableMapsets" class="divider | w-[1px] flex-shrink-0 flex-grow-0 self-stretch bg-grey-400"></div>
     </Transition>
 
-    <div class="flex flex-row-reverse w-full items-center justify-between gap-8">
-      <UserMenu />
-
-      <Transition>
-        <SearchBar v-if="hasAvailableMapsets" />
-      </Transition>
-      
+    <div class="flex w-full items-center gap-8">
       <Transition mode="out-in">
         <OrgsMenu v-if="hasAvailableMapsets" />
       </Transition>
+
+      <Transition>
+        <SearchBar v-if="hasAvailableMapsets" class="flex-1" />
+      </Transition>
+
+      <UserMenu />
     </div>
 
   </header>
