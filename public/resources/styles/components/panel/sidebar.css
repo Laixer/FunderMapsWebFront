@@ -12,11 +12,11 @@
       @apply px-7;
     }
 
-    &__content {
+    .panel__content {
       @apply flex flex-col;
     }
 
-    &__footer {
+    .panel__footer {
       @apply mt-2 pb-4;
     }
   }

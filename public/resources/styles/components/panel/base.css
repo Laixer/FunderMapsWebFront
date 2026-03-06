@@ -3,19 +3,19 @@
 
   grid-template-rows: [panel-header] auto [panel-content] 1fr [panel-footer] auto;
 
-  &__header {
+  .panel__header {
     @apply flex items-baseline justify-between;
 
     grid-row: panel-header;
   }
 
-  &__content {
+  .panel__content {
     @apply space-y-8 overflow-x-visible overflow-y-scroll;
 
     grid-row: panel-content;
   }
 
-  &__footer {
+  .panel__footer {
     grid-row: panel-footer;
   }
 }

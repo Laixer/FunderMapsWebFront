@@ -29,7 +29,7 @@ export const useMapCenterRouting = function useMapCenterRouting() {
 
       if (LatLng && LatLng.lat && LatLng.lng && !! route.name) {
 
-        let query = route.query || {}
+        const query = route.query || {}
 
         query.lat = `${LatLng.lat.toFixed(5)}`
         query.lng = `${LatLng.lng.toFixed(5)}` 

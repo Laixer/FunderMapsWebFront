@@ -35,7 +35,7 @@ export const useToggleableLayers = function useToggleableLayers(
 
     const visible = !! toggleValue.value
 
-    for(let layerId of layers) {
+    for(const layerId of layers) {
       if (mapInstance.value.getLayer(layerId)) {
         mapInstance.value.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none')
       }
@@ -52,7 +52,7 @@ export const useToggleableLayers = function useToggleableLayers(
       return
     }
     
-    for(let layerId of layers) {
+    for(const layerId of layers) {
       if (! mapInstance.value.getLayer(layerId)) {
         try {
           const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)

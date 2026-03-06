@@ -11,7 +11,7 @@
       /* max-w-xs */
     }
 
-    &__footer {
+    .panel__footer {
       @apply pb-6;
     }
   }

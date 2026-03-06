@@ -74,7 +74,7 @@ export const useMapLayers = function useMapLayers(
     currentLayerIds = mapset.layerSet.map(layer => layer.id).reverse()
     currentMapset = currentMapset
 
-    for (let layerId of currentLayerIds) {
+    for (const layerId of currentLayerIds) {
       if (!mapInstance.value.getLayer(layerId)) {
         try {
           // Get the base layer specification
@@ -114,7 +114,7 @@ export const useMapLayers = function useMapLayers(
       return
     }
 
-    for (let layerId of mapset.layerSet.map(layer => layer.id)) {
+    for (const layerId of mapset.layerSet.map(layer => layer.id)) {
       if (mapInstance.value.getLayer(layerId)) {
         removeEventHandlers(layerId)
         mapInstance.value.removeLayer(layerId)
@@ -159,7 +159,7 @@ export const useMapLayers = function useMapLayers(
       return
     }
 
-    for (let layerId of currentLayerIds) {
+    for (const layerId of currentLayerIds) {
 
       // Only continue if the layer is available
       if (mapInstance.value.getLayer(layerId)) {

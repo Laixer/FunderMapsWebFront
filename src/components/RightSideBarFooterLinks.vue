@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { saveAs } from 'file-saver'
 
 import { incidentLink, feedbackLink } from '@/config'
 
@@ -34,19 +33,14 @@ const handleDownload = async function handleDownload() {
 
     const response = await getPdf(filename)
 
-    // Chrome, FF, Edge
-    // @ts-ignore
-    if (window.browser && window.browser.downloads) {
-      // @ts-ignore
-      window.browser.downloads.download({
-        url: response,
-        filename: `${filename}.pdf`
-      })
-    } else { // Safari, etc.
-      const res = await fetch(response)
-      const blob = await res.blob()
-      saveAs(blob, `${filename}.pdf`)
-    }
+    const res = await fetch(response)
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${filename}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
 
     isDownloading.value = false 
   }

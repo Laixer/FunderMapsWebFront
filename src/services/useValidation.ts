@@ -1,5 +1,4 @@
 import { type ZodTypeAny, z } from 'zod'
-import { get, groupBy } from 'lodash-es'
 import { ref, watch, computed, toValue, type MaybeRefOrGetter } from 'vue'
 
 export default function <T extends ZodTypeAny>(schema: T, data: MaybeRefOrGetter<Record<string, unknown>>, options?: { mode: 'eager' | 'lazy' }) {
@@ -8,7 +7,7 @@ export default function <T extends ZodTypeAny>(schema: T, data: MaybeRefOrGetter
 
   // Reactive variables to track form validity and errors
   const isValid = ref(true)
-  const errors = ref<Record<string, z.ZodIssue[]> | null>(null)
+  const errors = ref<Partial<Record<string, z.ZodIssue[]>> | null>(null)
   const hasRun = ref(false)
 
   // Function to clear errors
@@ -17,7 +16,7 @@ export default function <T extends ZodTypeAny>(schema: T, data: MaybeRefOrGetter
   }
 
   // Function to initiate validation watch
-  let unwatch = ref<null | (() => void)>(null)
+  const unwatch = ref<null | (() => void)>(null)
   const validationWatch = () => {
     if (unwatch.value !== null) {
       return
@@ -59,7 +58,7 @@ export default function <T extends ZodTypeAny>(schema: T, data: MaybeRefOrGetter
     hasRun.value = true
 
     if (!result.success) {
-      errors.value = groupBy(result.error.issues, 'path')
+      errors.value = Object.groupBy(result.error.issues, (issue) => String(issue.path))
       validationWatch()
     }
 
@@ -81,12 +80,12 @@ export default function <T extends ZodTypeAny>(schema: T, data: MaybeRefOrGetter
   }
 
   // Function to get the error message for a specific form field, can be used to get errors for nested objects using dot notation path.
-  const getError = (path: string) => get(errors.value, `${path.replaceAll('.', ',')}.0.message`)
+  const getError = (path: string) => errors.value?.[path.replaceAll('.', ',')]?.[0]?.message
 
   // Function to check whether a specific field has cleared or failed validation
   const getStatus = (path: string) => {
     if (hasRun.value === false) return 'none'
-    return get(errors.value, `${path.replaceAll('.', ',')}.0.message`) ? 'error' : 'success'
+    return errors.value?.[path.replaceAll('.', ',')]?.[0]?.message ? 'error' : 'success'
   }
 
   // Function to deactivate and reset validation

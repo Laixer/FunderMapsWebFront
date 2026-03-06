@@ -32,7 +32,7 @@ export const useGeographyFilter = function useGeographyFilter() {
       return geoFilterByMapsetId[mapset.id]
     }
 
-    let geoFilter = []
+    const geoFilter = []
 
     if (
       mapset &&

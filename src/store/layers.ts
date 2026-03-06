@@ -1,6 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { Ref, ref } from 'vue';
-import { validate as uuidValidate } from 'uuid';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { getItemsStartingWith } from '@/utils/sessionStorage';
@@ -43,7 +42,7 @@ export const useLayersStore = defineStore('layers', () => {
     let resolvedMapsetId: string | null = null;
 
     if (mapsetIdInput) {
-      if (uuidValidate(mapsetIdInput)) {
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mapsetIdInput)) {
         resolvedMapsetId = mapsetIdInput;
       } else {
         // Assume it's an identifier if not a UUID

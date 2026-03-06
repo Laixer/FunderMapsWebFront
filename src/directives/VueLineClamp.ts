@@ -2,7 +2,7 @@ import { Plugin, type App } from "vue";
 
 const currentValueProp = "vLineClampValue";
 const truncateText = function (el: any, bindings: any) {
-  let limit = parseInt(bindings.value);
+  const limit = parseInt(bindings.value);
 
   if (isNaN(limit)) {
     console.error("Parameter for vue-line-clamp must be a number");

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { saveAs } from 'file-saver';
 
 import { IDownloadLink } from '@/datastructures/interfaces';
 import { getInquiryReportDownloadLink, getRecoveryReportDownloadLink } from '@/services/api/building';
@@ -37,8 +36,10 @@ const handleDownload = async function handleDownload() {
   const link: IDownloadLink = await callback.value(props.id) 
   
   if (link && link.accessLink) {
-    saveAs(link.accessLink, props.filename)
-    // console.log(link.accessLink, filename)
+    const a = document.createElement('a')
+    a.href = link.accessLink
+    a.download = props.filename
+    a.click()
   } else {
     console.log("Failed to retrieve download link")
   }
