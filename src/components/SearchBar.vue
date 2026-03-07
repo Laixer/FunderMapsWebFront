@@ -334,7 +334,7 @@ const handleClear = function handleClear() {
                 @mouseover="onHover(index)">
                 <a
                   href="#"
-                  class="flex gap-3 px-8 py-2"
+                  class="flex cursor-pointer gap-3 px-8 py-2 transition-colors duration-100"
                   :class="index === focusedSuggestion ? 'bg-grey-100 text-green-500' : ''"
                   @click.prevent="handleSelectBuilding(suggestion.id, suggestion.weergavenaam)"
                 >

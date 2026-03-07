@@ -105,13 +105,14 @@ const handleLoginRedirect = function handleLoginRedirect() {
       <Avatar :name="userName" />
 
       <ChevronDownIcon
-        class="h-2.5 w-2.5 transition-transform"
+        class="h-2.5 w-2.5 transition-transform duration-200"
         :class="{'rotate-180': isOpen}"
         aria-hidden="true" />
     </button>
 
-    <div 
-      v-show="isOpen && isAuthenticated"
+    <Transition name="slide-down">
+    <div
+      v-if="isOpen && isAuthenticated"
       class="dropdown arrow arrow--top-right | absolute right-0 top-full z-20 min-w-48 origin-top-right outline-none">
       <div class="dropdown__main | divide-y divide-grey-200 rounded-lg bg-white py-1 shadow-float">
 
@@ -148,6 +149,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
         </button>
       </div>
     </div>
+    </Transition>
   </div>
 
 </template>

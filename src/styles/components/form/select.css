@@ -40,7 +40,11 @@
   select {
     @apply box-border w-full appearance-none rounded border border-solid
       border-grey-400 bg-white py-2.5 pl-4 pr-10 text-base
-      leading-none text-blue-900 placeholder:text-grey-400;
+      leading-none text-blue-900 transition-colors duration-150 placeholder:text-grey-400;
+
+    &:focus-visible {
+      @apply outline-none ring-2 ring-green-500 ring-offset-1;
+    }
 
     background-image: url("@assets/svg/icons/select-marker.svg"),
       linear-gradient(var(--color-white), var(--color-grey-100));

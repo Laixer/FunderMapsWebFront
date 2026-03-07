@@ -79,7 +79,7 @@ onBeforeMount(async () => {
         <div class="flex flex-col items-start">
           <h2 class="heading-5">{{ selectedOrg.name }}</h2>
           <div
-            class="flex gap-2 text-sm font-bold text-green-500 group-hover:text-blue-500"
+            class="flex gap-2 text-sm font-bold text-green-500 transition-colors duration-150 group-hover:text-blue-500"
           >
             <SwitchIcon 
               class="aspect-square w-4"
@@ -97,7 +97,7 @@ onBeforeMount(async () => {
         </div>
       </div>
 
-      <Transition>
+      <Transition name="slide-down">
         <div
           v-if="isOpen && availableOrgs.length !== 1"
           class="dropdown arrow arrow--top-left | absolute -left-7 top-full origin-top-left outline-none"
@@ -118,7 +118,7 @@ onBeforeMount(async () => {
                 <li v-for="Mapset in availableOrgs" :key="Mapset.id">
                   <a
                     href="#"
-                    class="flex gap-3 px-8 py-2 hover:bg-grey-100"
+                    class="flex cursor-pointer gap-3 px-8 py-2 transition-colors duration-100 hover:bg-grey-100"
                     :class="{'bg-grey-100': Mapset.id === selectedOrgId}"
                     @click.prevent="handleSelectOrg(Mapset.id)"
                   >

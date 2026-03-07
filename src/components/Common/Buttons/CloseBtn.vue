@@ -21,7 +21,7 @@ defineEmits(['close'])
   >
     <span class="sr-only">Sluit</span>
     <CloseIcon
-      class="aspect-square text-red-500"
+      class="aspect-square text-red-500 transition-transform duration-150 group-hover:scale-110"
       :class="small ? 'h-3' : 'h-3.5'"
       aria-hidden="true"
     />

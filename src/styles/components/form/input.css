@@ -2,7 +2,7 @@
   @apply space-y-1;
 
   .input-field {
-    @apply flex items-stretch rounded border border-grey-400 bg-white;
+    @apply flex items-stretch rounded border border-grey-400 bg-white transition-[border-color,box-shadow] duration-150;
 
     &:has(input:focus-visible, textarea:focus-visible) {
       @apply ring-2 ring-green-500 ring-offset-1;

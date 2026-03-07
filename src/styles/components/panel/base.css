@@ -12,6 +12,7 @@
   .panel__content {
     @apply space-y-8 overflow-y-auto;
 
+    scroll-behavior: smooth;
     scrollbar-width: thin;
 
     grid-row: panel-content;

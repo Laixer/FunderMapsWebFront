@@ -1,9 +1,13 @@
 .accordion {
   summary {
-    @apply cursor-pointer;
+    @apply cursor-pointer transition-colors duration-150;
 
     &:hover {
       @apply text-green-500;
+    }
+
+    &:focus-visible {
+      @apply rounded outline-none ring-2 ring-green-500 ring-offset-1;
     }
   }
 
