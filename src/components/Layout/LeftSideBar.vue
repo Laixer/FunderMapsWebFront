@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ComputedRef, computed } from 'vue';
+import { ComputedRef, computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import VueMarkdown from 'vue-markdown-render'
 
 import AccordionGroup from '@/components/Common/Accordion/AccordionGroup.vue';
 import AccordionItem from '@/components/Common/Accordion/AccordionItem.vue';
@@ -23,7 +24,8 @@ const {
   selectMapsetById
 } = mapsetStore
 
-const { isLeftSidebarOpen, isInfoPopoverOpen, isShowingMapsetSelection } = storeToRefs( useMainStore() )
+const { isLeftSidebarOpen, isShowingMapsetSelection } = storeToRefs( useMainStore() )
+const showInfoTooltip = ref(false)
 const { availableMapsetsByLoadingOrder, activeMapset, activeMapsetId } = storeToRefs( mapsetStore )
 const { changeLayerVisibility } = useLayersStore() 
 const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
@@ -58,13 +60,6 @@ const handleOpenMapsetLegend = function handleOpenMapsetLegend(id: string) {
  */ 
 const handleCloseMapsetLegend = function handleCloseMapsetLegend() {
   isShowingMapsetSelection.value = true
-}
-
-/**
- * 
- */
-const handleShowInfoPopover = function handleShowInfoPopover() {
-  isInfoPopoverOpen.value = true
 }
 
 /**
@@ -123,19 +118,38 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
             class="accent-color-blue aspect-square w-6"
             aria-hidden="true" 
           />
-          <h4 class="heading-4">
+          <h4 class="heading-4 flex items-center gap-1">
             {{ activeMapset?.name }}
-            <button
+            <span
               v-if="activeMapset?.note"
-              class="-ml-1 p-2 text-green-500 hover:text-green-700"
-              type="button"
-              @click.prevent="handleShowInfoPopover"
+              class="relative"
+              @mouseenter="showInfoTooltip = true"
+              @mouseleave="showInfoTooltip = false"
             >
-              <InfoIcon
-                class="aspect-square w-4"
-                aria-hidden="true"
-              />
-            </button>
+              <button
+                class="p-1 text-green-500 hover:text-green-700"
+                type="button"
+                @click.prevent="showInfoTooltip = !showInfoTooltip"
+              >
+                <InfoIcon
+                  class="aspect-square w-4"
+                  aria-hidden="true"
+                />
+              </button>
+              <Transition name="short">
+                <div
+                  v-if="showInfoTooltip"
+                  class="absolute left-0 top-full z-50 mt-2 w-64 rounded-lg bg-white p-4 shadow-float"
+                >
+                  <h6 class="heading-6 mb-2">{{ activeMapset?.name }}</h6>
+                  <VueMarkdown
+                    :source="activeMapset?.note ?? ''"
+                    :options="{ breaks: true, linkify: true }"
+                    class="text-sm leading-relaxed text-grey-700"
+                  />
+                </div>
+              </Transition>
+            </span>
           </h4>
         </template>
 

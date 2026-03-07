@@ -16,7 +16,6 @@ import NoGroupsModal from '@/components/Modals/NoMapsetsModal.vue';
 import InquirySampleModal from '@/components/Modals/InquirySampleModal.vue';
 import RecoverySampleModal from '@/components/Modals/RecoverySampleModal.vue';
 // Popover modals
-import InfoPopoverModal from '@/components/Modals/InfoPopoverModal.vue';
 import RemarkPopoverModal from '@/components/Modals/RemarkPopoverModal.vue';
 
 // Other
@@ -154,10 +153,6 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
     <!-- Modals - keep in mind the order of these -->
     <Transition>
       <NoGroupsModal />
-    </Transition>
-
-    <Transition>
-      <InfoPopoverModal />
     </Transition>
 
     <Transition>

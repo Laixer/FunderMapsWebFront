@@ -6,7 +6,6 @@ export const useMainStore = defineStore('main', () => {
   const isProfileModalOpen: Ref<boolean> = ref(false);
   const isPasswordModalOpen: Ref<boolean> = ref(false);
   const isLeftSidebarOpen: Ref<boolean> = ref(false);
-  const isInfoPopoverOpen: Ref<boolean> = ref(false);
   const isRemarkPopoverOpen: Ref<boolean> = ref(false);
   const remarkPopoverTitle: Ref<string> = ref('');
   const remarkPopoverText: Ref<string> = ref('');
@@ -19,7 +18,6 @@ export const useMainStore = defineStore('main', () => {
     isPasswordModalOpen,
     isLeftSidebarOpen,
     isShowingMapsetSelection,
-    isInfoPopoverOpen,
     isRemarkPopoverOpen,
     remarkPopoverTitle,
     remarkPopoverText,
