@@ -140,7 +140,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
         <button
           @click="handleLogout"
-          class="flex w-full items-center gap-2 px-8 py-4 transition-colors hover:text-red-500"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-red-500"
         >
           <ExitIcon
             class="aspect-square h-3.5"
