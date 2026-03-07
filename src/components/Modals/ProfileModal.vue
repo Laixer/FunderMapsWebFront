@@ -5,12 +5,9 @@ import { storeToRefs } from 'pinia';
 import { z } from 'zod'
 import { DutchMobilePhoneRegex } from '@/utils/validation'
 
-import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
 import OverlayModal from '@/components/Common/OverlayModal.vue';
-
-import ValidationSuccessIcon from '@assets/svg/icons/validation-success.svg'
 
 import { useSessionStore } from '@/store/session'
 import { useMainStore } from '@/store/main'
@@ -322,24 +319,15 @@ const handleClose = function handleClose() {
         />
 
         <Transition>
-          <div
-            v-if="recentSuccess"
-            class="bg-green-200 border border-green-500 text-green-500 px-2 py-2 rounded relative flex items-center" role="alert">
-            <span class="px-4 py-3">
-              <ValidationSuccessIcon class="w-4" />
-            </span>
-            <span class="block sm:inline">Uw instellingen zijn opgeslagen</span>
-          </div>
+          <p v-if="recentSuccess" class="rounded-lg border-l-4 border-green-500 bg-green-100 px-4 py-3 text-sm text-green-700" role="status">
+            Uw instellingen zijn opgeslagen
+          </p>
         </Transition>
 
         <Button
           type="submit"
           label="Bewaar instellingen"
-          :disabled="busySaving || !isProfileDataAvailable">
-          <template v-slot:after>
-            <AnimatedArrowIcon class="h-4" />
-          </template>
-        </Button>
+          :disabled="busySaving || !isProfileDataAvailable" />
       </form>
     </div>
   </OverlayModal>

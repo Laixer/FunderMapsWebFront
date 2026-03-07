@@ -5,7 +5,6 @@ import { storeToRefs } from 'pinia';
 import { z } from 'zod'
 import { useRouter } from 'vue-router'
 
-import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
 import OverlayModal from '@/components/Common/OverlayModal.vue';
@@ -124,20 +123,12 @@ const handleClose = function handleClose() {
     @close="handleClose">
 
     <div class="-mx-6 space-y-4 px-6">
-      <div 
-        v-if="changeFailed"
-        class="flex justify-between">
-        <p class="text-red-500">
-          Het wijzigen van het wachtwoord is niet gelukt.
-        </p>
-      </div>
-      <div 
-        v-if="changeSucceeded"
-        class="flex justify-between">
-        <p class="text-green-500">
-          Het wijzigen van het wachtwoord is gelukt.
-        </p>
-      </div>
+      <p v-if="changeFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
+        Het wijzigen van het wachtwoord is niet gelukt.
+      </p>
+      <p v-if="changeSucceeded" class="rounded-lg border-l-4 border-green-500 bg-green-100 px-4 py-3 text-sm text-green-700" role="status">
+        Het wijzigen van het wachtwoord is gelukt.
+      </p>
 
       <form 
         v-if="! changeSucceeded"
@@ -238,14 +229,10 @@ const handleClose = function handleClose() {
 
         </Input>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           label="Stel een nieuw wachtwoord in"
-          :disabled="busySaving">
-          <template v-slot:after>
-            <AnimatedArrowIcon />
-          </template>
-        </Button>
+          :disabled="busySaving" />
       </form>
     </div>
   </OverlayModal>

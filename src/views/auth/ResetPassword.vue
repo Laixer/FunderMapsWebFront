@@ -94,13 +94,11 @@ const handleSubmit = async function handleSubmit() {
   <AuthWrapper title="Wachtwoord wijzigen pagina voor de Fundermaps Applicatie">
     <Card v-if="!resetSucceeded" title="Voer nieuw wachtwoord in" shadow rounded wide>
 
-      <div v-if="resetFailed" class="flex justify-between">
-        <p class="text-red-500">
-          Het wijzigen van het wachtwoord is niet gelukt.
-          Mogelijk is de eenmalige reset sleutel reeds verlopen.
-          In dat geval moet je <router-link :to="{ name: 'forgotten' }">een nieuw verzoek indienen om het wachtwoord te
-            wijzigen</router-link>.
-        </p>
+      <div v-if="resetFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
+        Het wijzigen van het wachtwoord is niet gelukt.
+        Mogelijk is de eenmalige reset sleutel reeds verlopen.
+        In dat geval moet je <router-link :to="{ name: 'forgotten' }">een nieuw verzoek indienen om het wachtwoord te
+          wijzigen</router-link>.
       </div>
 
       <form class="space-y-6" @submit.prevent="handleSubmit">

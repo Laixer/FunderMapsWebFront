@@ -85,11 +85,9 @@ const handleSubmit = async function () {
   <AuthWrapper title="Inlogpagina voor de Fundermaps Applicatie">
     <Card title="Inloggen" shadow rounded wide>
 
-      <div v-if="loginFailed" class="flex justify-between">
-        <p class="text-red-500">
-          De e-mail en wachtwoord combinatie is onjuist.
-        </p>
-      </div>
+      <p v-if="loginFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
+        De e-mail en wachtwoord combinatie is onjuist.
+      </p>
 
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <Input id="email" label="E-mail" type="email" v-model="formData.email" placeholder="Voer je e-mail in"
