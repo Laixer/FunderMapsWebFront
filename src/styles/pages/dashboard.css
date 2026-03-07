@@ -1,5 +1,5 @@
 .page-dashboard {
-  @apply grid max-h-screen overflow-hidden;
+  @apply grid max-h-screen;
 
   grid-template-columns: [panel-left full-start] 21rem [main] auto [panel-right] 21rem [full-end];
   grid-template-rows: [header] 5rem [main] auto;

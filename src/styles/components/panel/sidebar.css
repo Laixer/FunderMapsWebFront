@@ -1,8 +1,8 @@
 .sidebar {
-  @apply w-[21rem] overflow-hidden;
+  @apply relative overflow-hidden;
 
   .panels {
-    @apply flex h-full;
+    @apply absolute inset-0 flex;
   }
 
   .panel {
