@@ -21,9 +21,3 @@ defineProps<{
     <slot />
   </div>
 </template>
-
-<style>
-.page-no-session {
-  background-image: url("@assets/images/background.jpg")
-}
-</style>

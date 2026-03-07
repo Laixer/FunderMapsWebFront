@@ -3,7 +3,7 @@
 
   .input-field {
     &[data-validation="success"],
-    &:has(:user-invalid) {
+    &:has(:user-valid) {
       select {
         @apply border-green-500 pr-20;
 
@@ -18,9 +18,7 @@
           left;
       }
     }
-  }
 
-  .input-field {
     &[data-validation="error"],
     &:has(:user-invalid) {
       select {
@@ -40,11 +38,9 @@
   }
 
   select {
-    all: unset;
-
-    @apply box-border w-full rounded border border-solid
-      border-grey-400 bg-white bg-gradient-to-b from-white to-grey-100 py-2.5
-      pl-4 pr-10 text-base leading-none text-blue-900 placeholder:text-grey-400;
+    @apply box-border w-full appearance-none rounded border border-solid
+      border-grey-400 bg-white py-2.5 pl-4 pr-10 text-base
+      leading-none text-blue-900 placeholder:text-grey-400;
 
     background-image: url("@assets/svg/icons/select-marker.svg"),
       linear-gradient(var(--color-white), var(--color-grey-100));

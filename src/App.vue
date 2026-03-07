@@ -53,29 +53,3 @@ watch(
 <template>
   <router-view />
 </template>
-
-
-<style>
-.page-dashboard {
-  max-height: 100vh;
-}
-
-/* This applies to all generic Transition elements */
-.v-enter-active,
-.v-leave-active {
-  transition: opacity .5s ease;
-}
-
-/* This is for the Transitions named "short" */
-.short-enter-active,
-.short-leave-active {
-  transition: opacity .25s ease;
-}
-
-.v-enter-from,
-.v-leave-to,
-.short-enter-from,
-.short-leave-to {
-  opacity: 0;
-}
-</style>
