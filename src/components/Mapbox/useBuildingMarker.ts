@@ -35,11 +35,17 @@ export const useBuildingMarker = function useBuildingMarker(
   }
 
   function show(LngLat: LngLat) {
-    
+
     if (mapInstance.value) {
       // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
       // @ts-expect-error - Type instantiation is excessively deep and possibly infinite
       Marker.setLngLat(LngLat).addTo(mapInstance.value)
+
+      const el = Marker.getElement()
+      el.classList.remove('marker-drop')
+      // Force reflow to restart the animation
+      void el.offsetWidth
+      el.classList.add('marker-drop')
     }
   }
 

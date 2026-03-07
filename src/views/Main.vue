@@ -50,6 +50,7 @@ const {
   isLoadingMapsetsDebounced,
   hasAvailableMapsets,
   noMapsetsFound,
+  activeMapset,
 } = storeToRefs(useMapsetStore())
 const { isLeftSidebarOpen } = storeToRefs(useMainStore())
 const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
@@ -78,6 +79,15 @@ useMapsetRouting()
  */
 useBuildingRouting().start()
 
+
+/**
+ * Update page title when active mapset changes
+ */
+watch(() => activeMapset.value, (mapset) => {
+  if (mapset) {
+    document.title = `${mapset.name} — FunderMaps`
+  }
+})
 
 /**
  * If all the mapsets are unloaded, redirect to the login page

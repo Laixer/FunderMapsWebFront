@@ -10,6 +10,7 @@ import Input from '@/components/Common/Inputs/Input.vue'
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue';
 import IconButton from '@/components/Common/Buttons/IconButton.vue';
 import SearchIcon from '@assets/svg/icons/search.svg'
+import CloseIcon from '@assets/svg/icons/close.svg'
 import FundermapsIcon from './Common/Icons/FundermapsIcon.vue';
 
 import { getSuggestions, getLookup, getSuggestionsNearCoordinates } from '@/services/pdok'
@@ -259,6 +260,12 @@ const handleClose = function handleClose() {
   noResults.value = false
   error.value = false
 }
+
+const handleClear = function handleClear() {
+  queryString.value = ''
+  lastQuery.value = ''
+  handleClose()
+}
 </script>
 
 <template>
@@ -280,8 +287,22 @@ const handleClose = function handleClose() {
         @keydown="handleKeyDown"
         >
         <template v-slot:after>
-          <IconButton class="text-blue-900 hover:text-green-700" transparent label="Zoeken">
-            <SearchIcon 
+          <IconButton
+            v-if="queryString"
+            class="text-grey-400 hover:text-red-500"
+            transparent
+            label="Wissen"
+            @click.prevent="handleClear">
+            <CloseIcon
+              class="aspect-square w-3"
+              aria-hidden="true" />
+          </IconButton>
+          <IconButton
+            v-else
+            class="text-blue-900 hover:text-green-700"
+            transparent
+            label="Zoeken">
+            <SearchIcon
               class="aspect-square w-4"
               aria-hidden="true" />
           </IconButton>
@@ -290,7 +311,7 @@ const handleClose = function handleClose() {
 
     </form>
 
-    <Transition>
+    <Transition name="slide-down">
       <div
         v-if="suggestions.length"
         class="search-dropdown dropdown arrow arrow--top-left | absolute -left-7 top-full w-[28rem] origin-top-left outline-none"

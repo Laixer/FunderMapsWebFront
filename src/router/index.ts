@@ -86,4 +86,29 @@ const router = createRouter({
   ],
 })
 
+const BASE_TITLE = 'FunderMaps'
+
+router.afterEach((to) => {
+  switch (to.name) {
+    case 'login':
+      document.title = `Inloggen — ${BASE_TITLE}`
+      break
+    case 'forgotten':
+      document.title = `Wachtwoord vergeten — ${BASE_TITLE}`
+      break
+    case 'reset':
+      document.title = `Wachtwoord herstellen — ${BASE_TITLE}`
+      break
+    case 'building':
+    case 'building-panel':
+      document.title = `Pand ${to.params.buildingId} — ${BASE_TITLE}`
+      break
+    case 'mapset':
+      document.title = BASE_TITLE
+      break
+    default:
+      document.title = BASE_TITLE
+  }
+})
+
 export default router
