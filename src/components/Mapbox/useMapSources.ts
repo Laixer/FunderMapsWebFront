@@ -47,6 +47,12 @@ export const useMapSources = function useMapSources(
       return
     }
 
+    // Source may already exist on the map from another composable instance
+    if (mapInstance.value.getSource(sourceName)) {
+      currentSources.push(sourceName)
+      return
+    }
+
     const sourcePath = (import.meta.env.VITE_FUNDERMAPS_TILES_URL + '' || '')
       .replace('{SOURCE}', sourceName || '')
 
@@ -56,7 +62,6 @@ export const useMapSources = function useMapSources(
     const minzoom = sourceZoomLevels?.[sourceName]?.min || defaultMinMaxZoomLevels.min
     const maxzoom = sourceZoomLevels?.[sourceName]?.max || defaultMinMaxZoomLevels.max
 
-    // TODO: Is the zoom always the same? 
     mapInstance.value.addSource(
       sourceName,
       {
