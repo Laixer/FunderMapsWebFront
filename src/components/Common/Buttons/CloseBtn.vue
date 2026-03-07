@@ -19,7 +19,7 @@ defineEmits(['close'])
     :disabled="disabled"
     @click="() => disabled ? undefined : $emit('close')"
   >
-    <div class="button__label">Sluit</div>
+    <span class="sr-only">Sluit</span>
     <CloseIcon
       class="aspect-square text-red-500"
       :class="small ? 'h-3' : 'h-3.5'"
