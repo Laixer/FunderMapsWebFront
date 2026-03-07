@@ -136,19 +136,21 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                   aria-hidden="true"
                 />
               </button>
-              <Transition name="short">
-                <div
-                  v-if="showInfoTooltip"
-                  class="absolute left-0 top-full z-50 mt-2 w-64 rounded-lg bg-white p-4 shadow-float"
-                >
-                  <h6 class="heading-6 mb-2">{{ activeMapset?.name }}</h6>
-                  <VueMarkdown
-                    :source="activeMapset?.note ?? ''"
-                    :options="{ breaks: true, linkify: true }"
-                    class="text-sm leading-relaxed text-grey-700"
-                  />
-                </div>
-              </Transition>
+              <Teleport to="body">
+                <Transition name="short">
+                  <div
+                    v-if="showInfoTooltip"
+                    class="fixed left-[21rem] top-[5rem] z-50 ml-2 mt-2 w-72 rounded-lg bg-white p-5 shadow-float"
+                  >
+                    <h6 class="heading-6 mb-2">{{ activeMapset?.name }}</h6>
+                    <VueMarkdown
+                      :source="activeMapset?.note ?? ''"
+                      :options="{ breaks: true, linkify: true }"
+                      class="text-sm leading-relaxed text-grey-700"
+                    />
+                  </div>
+                </Transition>
+              </Teleport>
             </span>
           </h4>
         </template>
