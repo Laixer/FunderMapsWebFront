@@ -1,0 +1,17 @@
+{
+  "name": "FunderMaps",
+  "short_name": "FunderMaps",
+  "description": "Inzicht in funderingen, risico's en bodemdata van Nederlandse gebouwen.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#28CC8B",
+  "icons": [
+    {
+      "src": "/fundermaps-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

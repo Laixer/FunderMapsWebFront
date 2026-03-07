@@ -1,14 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/fundermaps-mark.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="version" content="%VITE_GIT_COMMIT_HASH%" />
+
     <title>FunderMaps</title>
+    <meta name="description" content="FunderMaps — Inzicht in funderingen, risico's en bodemdata van Nederlandse gebouwen." />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="FunderMaps" />
+    <meta property="og:description" content="Inzicht in funderingen, risico's en bodemdata van Nederlandse gebouwen." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/fundermaps-mark.svg" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/fundermaps-mark.svg" />
+    <link rel="apple-touch-icon" href="/fundermaps-mark.svg" />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#28CC8B" />
+
+    <!-- Preconnect to external services -->
+    <link rel="preconnect" href="https://api.mapbox.com" />
+    <link rel="preconnect" href="https://events.mapbox.com" />
+
+    <!-- Build version -->
+    <meta name="version" content="%VITE_GIT_COMMIT_HASH%" />
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
   </head>
   <body>
-    <div id="app" class="grid" style="height: 100%; width: 100%"></div>
+    <div id="app"></div>
+    <noscript>
+      <p style="padding: 2rem; font-family: sans-serif;">
+        FunderMaps vereist JavaScript. Schakel JavaScript in om de applicatie te gebruiken.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

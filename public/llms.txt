@@ -1,0 +1,31 @@
+# FunderMaps
+
+> Inzicht in funderingen, risico's en bodemdata van Nederlandse gebouwen.
+
+FunderMaps is een webapplicatie voor het analyseren van gebouwfunderingen, bodemrisico's en verzakkingsdata in Nederland. De applicatie biedt interactieve kaartvisualisaties op basis van Mapbox GL met diverse kaartlagen voor funderingstypes, risicoclassificaties, onderzoeksrapporten en incidenten.
+
+## Functionaliteit
+
+- Interactieve kaartweergave met meerdere kaartlagen (funderingstype, risico, rapportage, incidenten, gevelscan)
+- Gebouwinformatie: funderingsgegevens, locatiedata, statistieken en risicoanalyses
+- Onderzoeks-, herstel- en incidentrapportages per gebouw
+- Zoeken op adres of postcode via PDOK
+- Geografische afbakening (geo-fencing) per gemeente, wijk of buurt
+- PDF-rapportgeneratie
+- Gebruikersbeheer met JWT-authenticatie
+
+## Technologie
+
+- Frontend: Vue 3, TypeScript, Vite
+- Kaarten: Mapbox GL
+- State management: Pinia
+- Styling: Tailwind CSS v4
+- Grafieken: Chart.js
+- API: FunderMaps REST API met PostgreSQL/PostGIS backend
+- Tegels: Vector tiles via Tippecanoe en S3
+
+## Links
+
+- Applicatie: https://app.fundermaps.com
+- Feedback: https://feedback.fundermaps.com
+- Incidenten melden: https://incident.fundermaps.com
