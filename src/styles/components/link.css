@@ -1,23 +1,19 @@
 .link {
   @apply inline-flex cursor-pointer items-center gap-2.5 disabled:pointer-events-none disabled:cursor-default;
-}
 
-.link:not(.link--outline) {
-  @apply text-green-500 hover:text-green-700;
+  &:not(.link--outline) {
+    @apply text-green-500 hover:text-green-700;
+  }
 }
 
 .link--outline {
   @apply rounded border border-grey-200 px-4 py-3 hover:border-transparent hover:bg-white hover:shadow-hover;
-}
 
-.link--outline.disabled {
-  @apply cursor-not-allowed bg-grey-200;
-}
+  &.disabled {
+    @apply cursor-not-allowed bg-grey-200 hover:border-grey-200 hover:shadow-none;
+  }
 
-.link--outline.disabled:hover {
-  @apply border-grey-200 shadow-none;
-}
-
-.link--outline.loading {
-  cursor: wait;
+  &.loading {
+    cursor: wait;
+  }
 }

@@ -11,22 +11,9 @@ const { applyOwnershipFilter } = storeToRefs(useFiltersStore())
 </script>
 
 <template>
-  <div class="LayerToggleWrapper">
+  <div class="flex flex-col gap-1 px-5">
     <Toggle v-model="applyOwnershipFilter" label="Filter op eigendom" />
     <Toggle v-model="showAdministrativeBoundaries" label="Administratieve grenzen" />
     <Toggle v-model="showBuildingCluster" label="Bouwkundige eenheid" />
   </div>
 </template>
-
-<style scoped>
-
-.LayerToggleWrapper {
-  gap: .25rem;
-  padding: 0 1.25rem;
-  display: flex;
-  flex-direction: column
-}
-.LayerToggleWrapper .input__label {
-  user-select: none;
-}
-</style>

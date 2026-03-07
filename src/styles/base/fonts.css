@@ -1,15 +1,10 @@
-/*
-  Common: Fonts
-  @author: lemone.com
-*/
-
 @font-face {
   font-display: swap;
   font-family: "Greycliff CF";
   font-style: normal;
   font-weight: normal;
   src:
-    url("@assets/fonts/greycliffcf-regular.woff") format("woff2"),
+    url("@assets/fonts/greycliffcf-regular.woff2") format("woff2"),
     url("@assets/fonts/greycliffcf-regular.woff") format("woff");
 }
 

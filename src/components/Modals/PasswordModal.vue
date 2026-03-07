@@ -120,7 +120,7 @@ const handleClose = function handleClose() {
     v-show="isPasswordModalOpen"
     variant="narrow" 
     title="Wachtwoord wijzigen"
-    class="ProfileModal"
+    class="PasswordModal"
     @close="handleClose">
 
     <div class="-mx-6 space-y-4 px-6">
@@ -253,7 +253,7 @@ const handleClose = function handleClose() {
 </template>
 
 <style scoped>
-.ProfileModal .panel__content {
+.PasswordModal .panel__content {
   overflow: hidden;
 }
 </style>

@@ -337,9 +337,6 @@ const handleClose = function handleClose() {
 </template>
 
 <style scoped>
-
-/** TODO: move to css files after fixing dynamic css generation */
-
 .search-bar .input--text {
   flex-grow: 1;
 }
