@@ -117,6 +117,7 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
 
 <template>
   <div class="page-dashboard">
+    <div class="app-accent-bar h-0.5 bg-green-500"></div>
     <Header />
 
     <!-- Map view -->

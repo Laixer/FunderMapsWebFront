@@ -6,7 +6,7 @@
   }
 
   .panel {
-    @apply z-10 h-full w-full flex-shrink-0 space-y-2 bg-white pt-4;
+    @apply z-10 h-full w-full flex-shrink-0 space-y-2 bg-grey-100 pt-4;
 
     > * {
       @apply px-7;
@@ -17,7 +17,15 @@
     }
 
     .panel__footer {
-      @apply mt-2 pb-4;
+      @apply mt-2 border-t border-grey-200 bg-white pb-4 pt-4;
     }
   }
+}
+
+.app-sidebar--left {
+  @apply border-r border-grey-200;
+}
+
+.app-sidebar--right {
+  @apply border-l border-grey-200;
 }

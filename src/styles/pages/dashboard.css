@@ -2,7 +2,12 @@
   @apply grid max-h-screen;
 
   grid-template-columns: [panel-left full-start] 21rem [main] auto [panel-right] 21rem [full-end];
-  grid-template-rows: [header] 5rem [main] auto;
+  grid-template-rows: [accent] auto [header] 5rem [main] auto;
+
+  .app-accent-bar {
+    grid-column: full;
+    grid-row: accent;
+  }
 
   .app-header {
     grid-column: full;
