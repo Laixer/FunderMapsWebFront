@@ -6,7 +6,6 @@ import { vOnClickOutside } from '@vueuse/components'
 
 import Avatar from '@/components/Common/Avatar.vue'
 import LinkButton from '@/components/Common/Buttons/LinkButton.vue';
-import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 
 import ExitIcon from '@assets/svg/icons/exit.svg'
 import ArrowRightIcon from '@assets/svg/icons/arrow-right.svg'
@@ -120,7 +119,6 @@ const handleLoginRedirect = function handleLoginRedirect() {
           :class="{'text-green-500': isProfileModalOpen}"
         >
           <span class="whitespace-nowrap">Profiel</span>
-          <AnimatedArrowIcon />
         </button>
 
         <button
@@ -129,7 +127,6 @@ const handleLoginRedirect = function handleLoginRedirect() {
           :class="{'text-green-500': isPasswordModalOpen}"
         >
           <span class="whitespace-nowrap">Wijzig wachtwoord</span>
-          <AnimatedArrowIcon />
         </button>
 
         <button

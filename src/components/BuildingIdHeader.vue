@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { computed, ComputedRef, ref, watch } from 'vue';
-import { useClipboard } from '@vueuse/core';
+import { computed, ComputedRef } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useBuildingStore } from '@/store/buildings';
-import Icon from '@/components/Common/Icons/Icon.vue';
 
 const { buildingId } = storeToRefs(useBuildingStore())
-
-const copySource = ref('')
-const { copy, isSupported, copied } = useClipboard({ source: copySource })
 
 const buildingIdTitle: ComputedRef<{top: string, bottom: string}|null> = computed(
   () => {
@@ -22,31 +17,14 @@ const buildingIdTitle: ComputedRef<{top: string, bottom: string}|null> = compute
   }
 )
 
-watch(
-  () => buildingId.value,
-  async (buildingId) => {
-    if (buildingId === null) return
-
-    copySource.value = buildingId
-  },
-  { immediate: true }
-)
-
 </script>
 
 
 <template>
-  <div 
+  <div
     v-if="buildingIdTitle"
     class="sidebar__heading flex items-center justify-between gap-3">
     <h4 class="heading-4">{{ buildingIdTitle.bottom }}</h4>
-
-    <button v-if="isSupported" aria-label="Kopieer pand ID" @click="copy(copySource)">
-      <Transition mode="out-in">
-        <Icon v-if="! copied" name="clipboard-regular" />
-        <Icon v-else name="check" />
-      </Transition>
-    </button>
   </div>
 </template>
 
@@ -54,14 +32,5 @@ watch(
 <style scoped>
 .sidebar .sidebar__heading h4 {
   font-size: clamp(1rem, 1rem + 1.0458vw, 1.5rem);
-}
-.sidebar .sidebar__heading button {
-  padding: 4px;
-}
-.sidebar .sidebar__heading svg {
-  width: 16px;
-}
-.sidebar .sidebar__heading button:hover svg {
-  fill: var(--color-green-500);
 }
 </style>

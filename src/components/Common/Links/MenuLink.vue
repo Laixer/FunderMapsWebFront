@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import LoadingIndicator from '@/components/Branding/LoadingIndicator.vue';
-import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -31,8 +30,6 @@ const classList = computed<string[]>(() => {
     :class="classList">
     <slot />
     <span>{{ label }}</span>
-    <AnimatedArrowIcon v-if="! loading && ! disabled" />
-  
     <LoadingIndicator 
       v-if="loading"
       class="grow flex items-end"

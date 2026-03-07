@@ -8,7 +8,6 @@ import { storeToRefs } from 'pinia';
 import Panel from '@/components/Common/Panel.vue';
 import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import MenuLink from '@/components/Common/Links/MenuLink.vue';
-import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 import OutlineButton from '@/components/Common/Buttons/OutlineButton.vue';
 
@@ -418,11 +417,8 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
             :disabled="MenuItem.disabled || MenuItem.loading"
             class="w-full"
             @click.prevent="handleOpenPanel(MenuItem.panel, MenuItem.slug)"
-          >
-            <template v-slot:after>
-              <AnimatedArrowIcon />
-            </template>
-          </OutlineButton>
+          />
+
         </section>
       
         <template v-slot:footer>  
