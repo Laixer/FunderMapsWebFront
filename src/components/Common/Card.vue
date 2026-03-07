@@ -21,8 +21,7 @@ const cardClasses = computed<string[]>(() => {
     classes.push('rounded-lg')
   }
   if (wide) {
-    // TODO: Yep. They used "temp" as class name
-    classes.push('temp')
+    classes.push('w-[calc(100vw-3rem)]', 'sm:w-[30rem]')
   }
 
   // Basic primary button 
