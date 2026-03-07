@@ -1,5 +1,5 @@
 .sidebar {
-  @apply min-w-0 overflow-hidden;
+  @apply w-[21rem] overflow-hidden;
 
   .panels {
     @apply flex h-full;
