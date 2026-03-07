@@ -27,7 +27,7 @@ export const useMapsetRouting = function useMapsetRouting() {
   const {
     hasAvailableMapsets,
     hasAvailablePrivateMapsets,
-    defaultMapsetId,
+    preferredMapsetId,
     activeMapsetId,
     firstMapsetId
   } = storeToRefs( mapsetStore )
@@ -95,8 +95,8 @@ export const useMapsetRouting = function useMapsetRouting() {
       }
 
       // Redirect to default or first available mapset
-      if (mapsetId !== defaultMapsetId.value) {
-        navigateToMapset(defaultMapsetId.value)
+      if (mapsetId !== preferredMapsetId.value) {
+        navigateToMapset(preferredMapsetId.value)
       } else if (mapsetId !== firstMapsetId.value) {
         navigateToMapset(firstMapsetId.value)
       }

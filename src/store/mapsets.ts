@@ -5,6 +5,7 @@ import { refDebounced } from '@vueuse/core'
 import { type IMapsetFE } from '@/datastructures/interfaces';
 
 import api from '@/services/api'
+import { defaultMapsetId } from '@/config'
 
 import { useSessionStore } from '@/store/session'
 
@@ -99,11 +100,9 @@ function useMapsets() {
   /**
    * If available we use the preferred default, otherwise go for the first mapset
    */
-  const defaultMapsetId = computed<string | null>(() => {
-    const preferredMapsetId = import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99"
-
-    if (getMapsetByIdentifier(preferredMapsetId)) {
-      return preferredMapsetId
+  const preferredMapsetId = computed<string | null>(() => {
+    if (getMapsetByIdentifier(defaultMapsetId)) {
+      return defaultMapsetId
     }
 
     return firstMapsetId.value
@@ -189,15 +188,11 @@ function useMapsets() {
 
     try {
       const response = await api.mapset.getAvailableMapsets()
-      if (response) {
-        removePrivateMapsets()
-        response.forEach((mapset: IMapsetFE) => {
-          mapset = enforceGeoFencingOnPublicMapsets(mapset)
-          availableMapsetsById.value[mapset.id] = mapset
-        })
-      } else {
-        removePrivateMapsets()
-      }
+      removePrivateMapsets()
+      response.forEach((mapset: IMapsetFE) => {
+        mapset = enforceGeoFencingOnPublicMapsets(mapset)
+        availableMapsetsById.value[mapset.id] = mapset
+      })
     } catch (e) {
       console.error('Failed to load available mapsets', e)
       removePrivateMapsets()
@@ -211,14 +206,10 @@ function useMapsets() {
 
     try {
       const response = await api.mapset.getPublicAndAvailableMapsetsById(mapsetId)
-
-      if (response) {
-        response.forEach((mapset: IMapsetFE) => {
-          mapset = enforceGeoFencingOnPublicMapsets(mapset)
-          availableMapsetsById.value[mapset.id] = mapset
-        })
-      }
-
+      response.forEach((mapset: IMapsetFE) => {
+        mapset = enforceGeoFencingOnPublicMapsets(mapset)
+        availableMapsetsById.value[mapset.id] = mapset
+      })
     } catch (e) {
       console.error('Failed to load mapset by id:', mapsetId, e)
     }
@@ -257,7 +248,7 @@ function useMapsets() {
     availableMapsetsByLoadingOrder,
     activeMapsetId,
     firstMapsetId,
-    defaultMapsetId,
+    preferredMapsetId,
     getMapsetById,
     getMapsetBySlug,
     getMapsetByIdentifier,

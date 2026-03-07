@@ -36,22 +36,20 @@ const mapMapset = (rawmapset: IMapset): IMapsetFE => {
   }
 }
 
-export const getAvailableMapsets = async (): Promise<IMapsetFE[] | null> => {
+export const getAvailableMapsets = async (): Promise<IMapsetFE[]> => {
   const response = await get({ endpoint: '/mapset' })
-  if (response) {
-    return response.map(mapMapset)
+  if (!response) {
+    throw new Error('Failed to retrieve available mapsets')
   }
-  // TODO: Error...
-  return null
+  return response.map(mapMapset)
 }
 
-export const getPublicAndAvailableMapsetsById = async (id: string): Promise<IMapsetFE[] | null> => {
+export const getPublicAndAvailableMapsetsById = async (id: string): Promise<IMapsetFE[]> => {
   const response = await get({ endpoint: `/mapset/${id}`, requireAuth: false })
-  if (response) {
-    return response.map(mapMapset)
+  if (!response) {
+    throw new Error(`Failed to retrieve mapset: ${id}`)
   }
-  // TODO: Error...
-  return null
+  return response.map(mapMapset)
 }
 
 export default {

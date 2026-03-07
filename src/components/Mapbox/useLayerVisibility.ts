@@ -5,6 +5,7 @@ import { useMapsetStore } from '@/store/mapsets';
 import { useLayersStore } from "@/store/layers";
 
 import { type IMapsetFE } from "@/datastructures/interfaces";
+import { defaultMapsetId, defaultLayerIds } from '@/config';
 import { type MaybeRef, toRaw, watch, ref } from "vue";
 
 export const useLayerVisibility = function useLayerVisibility(
@@ -28,8 +29,8 @@ export const useLayerVisibility = function useLayerVisibility(
   /**
    * Defaults for first initial load
    */
-  const preferredDefaultMapsetId = (import.meta.env.VITE_DEFAULT_MAPSET_ID || "c81d4c1b-cc11-4f80-b324-9ab7e6cefd99")
-  const preferredDefaultLayerIds = (import.meta.env.VITE_DEFAULT_LAYERS || 'foundation-type-cluster,foundation-type-established,foundation-type-indicative')
+  const preferredDefaultMapsetId = defaultMapsetId
+  const preferredDefaultLayerIds = defaultLayerIds
 
   /**
    * Reveal the specified layers (and hide all others we know about)

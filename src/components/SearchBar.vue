@@ -267,12 +267,13 @@ const handleClose = function handleClose() {
     class="relative grow">
 
     <form 
-      class="search-bar | flex gap-2"
+      class="flex gap-2"
       @submit.prevent="handleSubmit">
 
-      <Input 
+      <Input
         v-model="queryString"
-        id="search" 
+        id="search"
+        class="grow [&_.input-field]:w-auto"
         placeholder="Zoek hier op adres of postcode"
         autocomplete="off"
         @focus="handleFocus"
@@ -335,13 +336,3 @@ const handleClose = function handleClose() {
     </Transition>
   </div>
 </template>
-
-<style scoped>
-.search-bar .input--text {
-  flex-grow: 1;
-}
-
-.search-bar .input-field {
-  width: auto;
-}
-</style>
