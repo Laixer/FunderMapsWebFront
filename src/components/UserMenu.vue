@@ -7,6 +7,8 @@ import { vOnClickOutside } from '@vueuse/components'
 import Avatar from '@/components/Common/Avatar.vue'
 import LinkButton from '@/components/Common/Buttons/LinkButton.vue';
 
+import UserIcon from '@assets/svg/icons/user.svg'
+import LockedIcon from '@assets/svg/icons/locked.svg'
 import ExitIcon from '@assets/svg/icons/exit.svg'
 import ArrowRightIcon from '@assets/svg/icons/arrow-right.svg'
 import ChevronDownIcon from '@assets/svg/icons/chevron-down.svg'
@@ -115,17 +117,23 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
         <button
           @click="handleOpenProfileModal"
-          class="group flex w-full cursor-pointer items-center justify-between gap-2 px-8 py-4 transition-colors hover:text-green-500"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-green-500"
           :class="{'text-green-500': isProfileModalOpen}"
         >
+          <UserIcon
+            class="aspect-square h-3.5"
+            aria-hidden="true" />
           <span class="whitespace-nowrap">Profiel</span>
         </button>
 
         <button
           @click="handleOpenPasswordModal"
-          class="group flex w-full cursor-pointer items-center justify-between gap-2 px-8 py-4 transition-colors hover:text-green-500"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-green-500"
           :class="{'text-green-500': isPasswordModalOpen}"
         >
+          <LockedIcon
+            class="aspect-square h-3.5"
+            aria-hidden="true" />
           <span class="whitespace-nowrap">Wijzig wachtwoord</span>
         </button>
 
