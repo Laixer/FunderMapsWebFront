@@ -5,8 +5,8 @@
     @apply flex items-stretch rounded border border-grey-400 bg-white;
 
     &:has(input:focus-visible, textarea:focus-visible) {
-      outline: 5px auto Highlight;
-      outline: 5px auto -webkit-focus-ring-color;
+      @apply ring-2 ring-green-500 ring-offset-1;
+      outline: none;
     }
 
     > :first-child {

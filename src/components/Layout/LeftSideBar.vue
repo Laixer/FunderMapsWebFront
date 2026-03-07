@@ -77,12 +77,6 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
     class="sidebar app-sidebar--left"
     role="dialog"
     aria-modal="true"
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="-translate-x-full"
-    x-transition:enter-end="translate-x-0"
-    x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="translate-x-0"
-    x-transition:leave-end="-translate-x-full"
   >
     <div
       class="panels transition-transform duration-300"
@@ -92,10 +86,11 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
         subtitle="Selecteer een kaart"
         @close="isLeftSidebarOpen = false">
         <section class="grid space-y-2">
-          <MenuLink 
-            v-for="mapset in availableMapsetsByLoadingOrder" 
+          <MenuLink
+            v-for="mapset in availableMapsetsByLoadingOrder"
             :key="mapset.id"
             :label="mapset.name"
+            :active="mapset.id === activeMapsetId"
             @click.prevent="handleOpenMapsetLegend(mapset.id)">
             <FundermapsIcon
               :name="mapset?.icon || 'home-info'"

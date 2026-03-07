@@ -21,6 +21,7 @@ import RecoveryPanel from '@/components/Building/RecoveryPanel.vue';
 import StatisticsPanel from '@/components/Building/StatisticsPanel.vue';
 
 import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
+import AlertIcon from '@assets/svg/icons/alert.svg';
 
 import { useSessionStore } from '@/store/session';
 import { useBuildingStore } from "@/store/buildings";
@@ -358,12 +359,6 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
     class="sidebar app-sidebar--right"
     role="dialog"
     aria-modal="true"
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="translate-x-full"
-    x-transition:enter-end="translate-x-0"
-    x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="translate-x-0"
-    x-transition:leave-end="translate-x-full"
   >
     <div
       class="panels transition-transform duration-300"
@@ -373,9 +368,15 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
         v-if="failedToLoad"
         title="Pand Informatie"
         @close="handleCloseSideBar">
-        <p>
-          Helaas, de informatie over dit pand kon niet geladen worden.
-        </p>
+        <div class="flex flex-col items-center gap-4 py-8 text-center">
+          <AlertIcon class="w-12 text-grey-400" aria-hidden="true" />
+          <div class="space-y-1">
+            <h5 class="heading-5 text-grey-700">Geen data beschikbaar</h5>
+            <p class="text-sm text-grey-400">
+              De informatie over dit pand kon niet geladen worden. Selecteer een ander pand op de kaart.
+            </p>
+          </div>
+        </div>
       </Panel>
       <Panel 
         v-else
@@ -426,7 +427,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
         </template>
       </Panel>
 
-      <component 
+      <component
         :is="availablePanels[selectedPanel]"
         @close="handleCloseSideBar"
         @back="handleBackToMainMenu" />

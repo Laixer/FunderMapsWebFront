@@ -6,6 +6,7 @@ const props = defineProps({
   label: { type: String, required: true },
   loading: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  active: { type: Boolean, default: false },
 })
 
 const classList = computed<string[]>(() => {
@@ -17,6 +18,9 @@ const classList = computed<string[]>(() => {
   }
   if (props.loading) {
     list.push('loading')
+  }
+  if (props.active) {
+    list.push('active')
   }
   return list
 })

@@ -142,11 +142,11 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
 
 
     <!-- Sidebars -->
-    <Transition>
-      <LeftSidebar v-show="isLeftSidebarOpen" />
+    <Transition name="slide-left">
+      <LeftSidebar v-if="isLeftSidebarOpen" />
     </Transition>
 
-    <Transition>
+    <Transition name="slide-right">
       <RightSidebar v-show="hasSelectedBuilding" />
     </Transition>
 
