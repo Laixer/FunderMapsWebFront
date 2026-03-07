@@ -4,6 +4,6 @@ import ArrowLeftIcon from '@assets/svg/icons/arrow-left.svg'
 
 <template>
   <ArrowLeftIcon
-    class="aspect-square w-3 rotate-45 transition-transform group-hover:rotate-0"
+    class="aspect-square w-3"
   />
 </template>
