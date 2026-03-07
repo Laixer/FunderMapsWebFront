@@ -10,6 +10,7 @@ import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import MenuLink from '@/components/Common/Links/MenuLink.vue';
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 import OutlineButton from '@/components/Common/Buttons/OutlineButton.vue';
+import SkeletonLoader from '@/components/Common/SkeletonLoader.vue';
 
 import BuildingPanel from '@/components/Building/BuildingPanel.vue';
 import FoundationPanel from '@/components/Building/FoundationPanel.vue';
@@ -47,14 +48,16 @@ const { clearBuildingId } = useBuildingStore()
 /**
  * Menu items
  */
-const { 
+const {
   loadLocationDataByBuildingId,
-  buildingLocationDataFailedToLoad
+  buildingLocationDataFailedToLoad,
+  buildingLocationDataHasBeenRetrieved
 } = useGeoLocationsStore()
 
-const { 
+const {
   loadAnalysisDataByBuildingId,
-  buildingAnalysisDataFailedToLoad
+  buildingAnalysisDataFailedToLoad,
+  buildingAnalysisDataHasBeenRetrieved
 } = useAnalysisStore()
 
 const { 
@@ -118,6 +121,17 @@ const failedToLoad: ComputedRef<boolean> = computed(
         || buildingAnalysisDataFailedToLoad(buildingId.value)
     }
     return false
+  }
+)
+
+/**
+ * Core data is still being loaded
+ */
+const isLoadingCoreData: ComputedRef<boolean> = computed(
+  () => {
+    if (! buildingId.value) return false
+    return ! buildingLocationDataHasBeenRetrieved(buildingId.value)
+      || ! buildingAnalysisDataHasBeenRetrieved(buildingId.value)
   }
 )
 
@@ -378,10 +392,14 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
           </div>
         </div>
       </Panel>
-      <Panel 
+      <Panel
         v-else
-        @close="handleCloseSideBar" 
+        @close="handleCloseSideBar"
         title="Pand Informatie">
+
+        <SkeletonLoader v-if="isLoadingCoreData" />
+
+        <template v-else>
         <Transition>
           <BuildingIdHeader />
         </Transition>
@@ -421,8 +439,9 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
           />
 
         </section>
-      
-        <template v-slot:footer>  
+        </template>
+
+        <template v-slot:footer>
           <RightSideBarFooterLinks />
         </template>
       </Panel>

@@ -28,10 +28,12 @@ const classList = computed<string[]>(() => {
 </script>
 
 <template>
-  <a 
-    href="#" 
-    class="flex link link--outline | group px-4 py-3 "
-    :class="classList">
+  <a
+    href="#"
+    class="flex link link--outline | group px-4 py-3"
+    :class="classList"
+    :tabindex="disabled ? -1 : undefined"
+    :aria-disabled="disabled || undefined">
     <slot />
     <span>{{ label }}</span>
     <LoadingIndicator 
