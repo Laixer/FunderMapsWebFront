@@ -18,7 +18,7 @@
     }
 
     &[data-validation="success"],
-    &:has(:user-valid:not(:placeholder-shown)) {
+    &:has(:user-valid:not(:placeholder-shown):required) {
       @apply border-green-500;
 
       input:not([type="checkbox"]):not([type="radio"]) {
@@ -66,7 +66,7 @@
       background-position: center right 1rem;
     }
 
-    &:user-valid {
+    &:user-valid:required {
       background: url("@assets/svg/icons/validation-success.svg") no-repeat;
       background-size: 0.75rem;
       background-position: center right 1rem;
