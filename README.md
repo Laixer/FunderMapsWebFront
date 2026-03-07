@@ -1,18 +1,68 @@
-# Vue 3 + TypeScript + Vite
+# FunderMaps
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Web frontend for the FunderMaps platform — a building foundation and subsidence analysis tool with interactive map visualization.
 
-## Recommended Setup
+Built with Vue 3, TypeScript, Vite, and Mapbox GL.
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+## Prerequisites
 
-- Use [vue-tsc](https://github.com/vuejs/language-tools/tree/master/packages/tsc) for performing the same type checking from the command line, or for generating d.ts files for SFCs.
+- Node.js ^22.0.0
+- pnpm
 
+## Setup
 
-## Design Links
+```sh
+pnpm install
+```
 
-- https://fundermaps.lemone.design/
-- https://maps-fundermaps-0815e42252619b01eb5ad6094e9d956ecc31cd7dac1e1f0.lemone.cloud/index.html
-- https://www.figma.com/proto/pj0EJjVD4KXzZGE7o8f2Rs/%F0%9F%8E%A8-FunderMaps---UI?page-id=253%3A1907&type=design&node-id=357-264&viewport=844%2C-3214%2C0.19&t=evEj68y3QY7VhTJT-1&scaling=min-zoom&starting-point-node-id=361%3A1118
+Create a `.env` file with the following variables:
 
+```
+VITE_MAPBOX_TOKEN=<Mapbox API token>
+VITE_MAPBOX_STYLE=<Mapbox style URL>
+VITE_FUNDERMAPS_URL=<API base URL>
+VITE_FUNDERMAPS_TILES_URL=<Tile server URL>
+VITE_DEFAULT_MAPSET_ID=<Default mapset UUID>
+VITE_DEFAULT_LAYERS=<Comma-separated default visible layer names>
+```
 
+## Development
+
+```sh
+pnpm dev
+```
+
+## Build
+
+```sh
+pnpm build
+```
+
+This runs type checking (`vue-tsc`) followed by the Vite production build.
+
+## Lint and Format
+
+```sh
+pnpm lint
+pnpm format
+```
+
+## Architecture
+
+The application uses `<script setup>` single-file components, Pinia for state management, and Tailwind CSS v4 for styling. Authentication is JWT-based. Map layers and data sources are configured per mapset with geographic fencing.
+
+### Source Layout
+
+- `src/router/` - Vue Router configuration
+- `src/store/` - Pinia stores (session, mapsets, layers, buildings, filters, metadata)
+- `src/services/` - API client with JWT auth and endpoint modules
+- `src/components/Mapbox/` - Map component and composables for layers, sources, events, clustering
+- `src/config/layers/` - Mapbox GL layer style definitions
+- `src/datastructures/` - TypeScript interfaces, enums, and data classes
+- `src/views/` - Page components (auth, map, home)
+- `src/styles/` - Custom CSS using native nesting
+
+### Path Aliases
+
+- `@` maps to `./src`
+- `@assets` maps to `./src/assets`
