@@ -6,7 +6,6 @@ const { closeable } = defineProps({
   title: { type: String, default: '' },
   variant: { type: String, default: 'full', validation: (param: string) => ['narrow', 'full'].includes(param) },
   closeable: { type: Boolean, default: true },
-  transparent: { type: Boolean, default: false },
   placing: { type: String, default: 'center', validation: (param: string) => ['start', 'end', 'center'].includes(param)},
   wrapper: { type: String, default: 'full', validation: (param: string) => ['full', 'main'].includes(param)}
 })
@@ -21,18 +20,18 @@ const handleClose = function handleClose() {
 </script>
 
 <template>
-  <Modal 
-    :title="title" 
-    :variant="variant" 
-    :closeable="closeable" 
+  <Modal
+    :title="title"
+    :variant="variant"
+    :closeable="closeable"
     :placing="placing"
     :wrapper="wrapper"
-    :class="transparent ? 'pointer-events-none bg-transparent' : 'bg-blue-900/90'"
+    class="bg-blue-900/90"
     @click.self="handleClose"
     @close="emit('close')">
     <slot />
-    
-    <template 
+
+    <template
       v-if="$slots.footer" >
       <slot name="footer" />
     </template>
