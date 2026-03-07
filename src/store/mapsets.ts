@@ -81,7 +81,9 @@ function useMapsets() {
    * Used to indicate whether retrieving the mapset provided no results
    */
   const noMapsetsFound = computed(() => {
-    return isLoadingMapsets.value === false && hasAvailableMapsets.value === false
+    return isLoadingMapsets.value === false
+      && hasAvailableMapsets.value === false
+      && isAuthenticated.value
   })
 
   /**
