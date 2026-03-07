@@ -1,7 +1,10 @@
 html,
-body,
-#app {
+body {
   @apply h-full w-full;
+}
+
+#app {
+  @apply grid h-full w-full;
 }
 
 :where(.content) {
