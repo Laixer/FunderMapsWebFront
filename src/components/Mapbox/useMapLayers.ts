@@ -78,6 +78,9 @@ export const useMapLayers = function useMapLayers(
             addSource(layerSpecification.source)
           }
 
+          // Re-check after async import — another composable may have added it
+          if (mapInstance.value.getLayer(layerId)) continue
+
           // Add geo fencing to specification
           applyGeographyFilterToLayerSpecification(layerSpecification, currentMapset)
 

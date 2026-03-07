@@ -61,7 +61,10 @@ export const useToggleableLayers = function useToggleableLayers(
             addSource(layerSpecification.source)
           }
 
-          mapInstance.value.addLayer(layerSpecification)
+          // Re-check after async import — another composable may have added it
+          if (! mapInstance.value.getLayer(layerId)) {
+            mapInstance.value.addLayer(layerSpecification)
+          }
         } catch(e) {
           console.error(e)
         }
