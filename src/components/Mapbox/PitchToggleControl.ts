@@ -32,12 +32,14 @@ export class PitchToggleControl implements IControl {
     this.updateLabel()
 
     this.button.addEventListener('click', this.handleClick)
+    this.map.on('styledata', this.handleStyleData)
 
     this.container.appendChild(this.button)
     return this.container
   }
 
   onRemove(): void {
+    this.map?.off('styledata', this.handleStyleData)
     this.container?.remove()
     this.map = null
     this.container = null
@@ -69,6 +71,15 @@ export class PitchToggleControl implements IControl {
       if (layer.type === 'fill-extrusion') {
         this.map.setPaintProperty(layer.id, 'fill-extrusion-height', height)
       }
+    }
+  }
+
+  /**
+   * When new layers are added (e.g. mapset switch), flatten them if in 2D mode.
+   */
+  private handleStyleData = (): void => {
+    if (!this.is3D) {
+      this.setExtrusionHeights(0)
     }
   }
 
