@@ -164,10 +164,10 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
               :open="legendState[layer.id]"
               @toggle="(visibility: boolean) => activeMapset && handleToggleLayerById(layer.id, visibility)">
               <ol class="list--legenda">
-                <li 
+                <li
                   v-for="field in layer.fields"
-                  :key="`field_${field.name}`" 
-                  :style="`--marker-color: #${field.color}`">{{ field.name }}</li>
+                  :key="`field_${field.name}`"
+                  :style="`--marker-color: #${field.color}`">{{ field.name.length === 1 ? `Label ${field.name}` : field.name }}</li>
               </ol>
             </AccordionItem>
           </AccordionGroup>

@@ -131,7 +131,7 @@ const labels = computed(() => {
       if (! buildingStatistics.value?.foundationRiskDistribution) return []
 
       return Object.keys(buildingStatistics.value?.foundationRiskDistribution)
-        .map(key => key.replace('percentage', ''))
+        .map(key => `Label ${key.replace('percentage', '')}`)
 
     // TODO: API does not yet provide graph data
     case 'totalBuildingRestoredCount':
@@ -289,11 +289,11 @@ const backgroundColors = computed(() => {
 
     case 'foundationRiskDistribution': {
       const riskColorMap = {
-        'A': '#28CC8B',
-        'B': '#A7DDB7',
-        'C': '#FFCC69',
-        'D': '#FF7D1F',
-        'E': '#ED1C24'
+        'Label A': '#28CC8B',
+        'Label B': '#A7DDB7',
+        'Label C': '#FFCC69',
+        'Label D': '#FF7D1F',
+        'Label E': '#ED1C24'
       }
 
       return (labels.value as string[])
