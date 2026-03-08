@@ -208,34 +208,35 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
     <section
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
     >
-      <!-- Paginator -->
-      <nav
-        v-if="maxListIndex > 1"
-        class="flex items-center justify-between text-sm text-grey-700">
-        <button
-          class="button button--link p-1"
-          :disabled="selectedListIndex === 0"
-          @click.prevent="handlePrev">
-          <LeftArrowIcon
-            class="aspect-square h-2.5"
-            aria-hidden="true"
-          />
-          <span class="sr-only">Vorige</span>
-        </button>
-        <span>{{ selectedListIndex + 1 }} van {{ maxListIndex + 1 }}</span>
-        <button
-          class="button button--link p-1"
-          :disabled="selectedListIndex === maxListIndex"
-          @click.prevent="handleNext">
-          <RightArrowIcon
-            class="aspect-square h-2.5"
-            aria-hidden="true"
-          />
-          <span class="sr-only">Volgende</span>
-        </button>
-      </nav>
-
-      <h5 class="truncate" :title="selectedCaseItemTitle+''">{{ selectedCaseItemTitle }}</h5>
+      <div>
+        <!-- Paginator -->
+        <nav
+          v-if="maxListIndex > 1"
+          class="mb-2 flex items-center justify-between text-sm text-grey-700">
+          <button
+            class="button button--link p-1"
+            :disabled="selectedListIndex === 0"
+            @click.prevent="handlePrev">
+            <LeftArrowIcon
+              class="aspect-square h-2.5"
+              aria-hidden="true"
+            />
+            <span class="sr-only">Vorige</span>
+          </button>
+          <span>{{ selectedListIndex + 1 }} van {{ maxListIndex + 1 }}</span>
+          <button
+            class="button button--link p-1"
+            :disabled="selectedListIndex === maxListIndex"
+            @click.prevent="handleNext">
+            <RightArrowIcon
+              class="aspect-square h-2.5"
+              aria-hidden="true"
+            />
+            <span class="sr-only">Volgende</span>
+          </button>
+        </nav>
+        <h5 class="truncate" :title="selectedCaseItemTitle+''">{{ selectedCaseItemTitle }}</h5>
+      </div>
 
       <div class="space-y-3">
         <h6 class="font-bold leading-none">Incident informatie</h6>
