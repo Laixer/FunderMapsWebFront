@@ -1,13 +1,19 @@
 
 
 import mapboxgl, { type Map } from "mapbox-gl"
+import { PitchToggleControl } from "./PitchToggleControl"
 
 export const addControls = function addControls(map: Map) {
   map.addControl(
-    new mapboxgl.NavigationControl(), 
+    new mapboxgl.NavigationControl(),
     "bottom-right"
   )
-  
+
+  map.addControl(
+    new PitchToggleControl(30),
+    "bottom-right"
+  )
+
   map.addControl(
     new mapboxgl.GeolocateControl({
       positionOptions: {
