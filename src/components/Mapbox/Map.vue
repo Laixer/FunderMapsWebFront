@@ -59,6 +59,7 @@ const options: ComputedRef<object> = computed(() => {
     zoom: lastKnownPositioning.zoom || 15,
     pitch: lastKnownPositioning.pitch || 30,
     bearing: lastKnownPositioning.bearing || 0,
+    antialias: true,
     fadeDuration: 0,
     attributionControl: false,
   }
