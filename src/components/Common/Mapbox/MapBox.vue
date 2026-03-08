@@ -58,7 +58,6 @@ const loadMapbox = function() {
   map = new mapboxSDK.Map(
     Object.assign({}, options, {
       container: mapcontainer.value,
-      preserveDrawingBuffer: true // Enables export to png
     },
     // Do not override style from options with an empty string
     mapStyle && mapStyle !== '' ? { style: mapStyle } : {})

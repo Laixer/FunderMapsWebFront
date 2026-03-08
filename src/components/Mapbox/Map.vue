@@ -57,9 +57,9 @@ const options: ComputedRef<object> = computed(() => {
     style: (import.meta.env.VITE_FUNDERMAPS_BASE_STYLE || 'mapbox://styles/laixer/clcz2iorf003414p22imzzhnk'),
     center: getLatLngFromQueryString() || lastKnownPositioning.center || [4.897070, 52.377956], // [5.2913, 52.1326],
     zoom: lastKnownPositioning.zoom || 15,
-    pitch: lastKnownPositioning.pitch || 45,
+    pitch: lastKnownPositioning.pitch || 30,
     bearing: lastKnownPositioning.bearing || 0,
-    antialias: true,
+    fadeDuration: 0,
     attributionControl: false,
   }
 })

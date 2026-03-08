@@ -68,7 +68,8 @@ export const useMapSources = function useMapSources(
         type: 'vector',
         tiles: [sourcePath],
         minzoom,
-        maxzoom
+        maxzoom,
+        buffer: 64
       }
     )
 
