@@ -275,37 +275,34 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
     <section
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
     >
-      <div class="flex gap-4 w-full justify-between">
-        <h5 class="truncate" :title="selectedCaseItemTitle+''">{{ selectedCaseItemTitle }}</h5>
+      <!-- Paginator -->
+      <nav
+        v-if="maxListIndex > 0"
+        class="flex items-center justify-between text-sm text-grey-700">
+        <button
+          class="button button--link p-1"
+          :disabled="shownReportIndex === 0"
+          @click.prevent="handlePrev">
+          <LeftArrowIcon
+            class="aspect-square h-2.5"
+            aria-hidden="true"
+          />
+          <span class="sr-only">Vorige</span>
+        </button>
+        <span>{{ shownReportIndex + 1 }} van {{ maxListIndex + 1 }}</span>
+        <button
+          class="button button--link p-1"
+          :disabled="shownReportIndex === maxListIndex"
+          @click.prevent="handleNext">
+          <RightArrowIcon
+            class="aspect-square h-2.5"
+            aria-hidden="true"
+          />
+          <span class="sr-only">Volgende</span>
+        </button>
+      </nav>
 
-        <!-- START Prev / next nav component -->
-        <div 
-          v-if="maxListIndex > 0" 
-          class="flex gap-0.5 whitespace-nowrap">
-          <button 
-            class="button button--link p-1" 
-            :disabled="shownReportIndex === 0"
-            @click.prevent="handlePrev">
-            <LeftArrowIcon
-              class="aspect-square h-2.5"
-              aria-hidden="true"
-            />
-            <span class="sr-only">Vorige</span>
-          </button>
-          <span>{{ shownReportIndex + 1 }}/{{ maxListIndex + 1 }}</span>
-          <button 
-            class="button button--link p-1" 
-            :disabled="shownReportIndex === maxListIndex"
-            @click.prevent="handleNext">
-            <RightArrowIcon
-              class="aspect-square h-2.5"
-              aria-hidden="true"
-            />
-            <span class="sr-only">Volgende</span>
-          </button>
-        </div>
-        <!-- END Prev / next nav component -->
-      </div>
+      <h5 class="truncate" :title="selectedCaseItemTitle+''">{{ selectedCaseItemTitle }}</h5>
 
       <div class="space-y-3">
         <h6 class="font-bold leading-none">Onderzoeks informatie</h6>
