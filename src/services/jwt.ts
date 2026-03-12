@@ -16,34 +16,24 @@ interface FundermapsJwtPayload extends JwtPayload {
   "cfor": string
 }
 
-interface AuthorizationHeader {
-  Authorization: string
-}
-
 // ****************************************************************************
 //  Private
 // ****************************************************************************
 
-// localStorage keys
 const access_token_key = 'access_token';
 
-/**
- * Gets the stored access token.
- */
 function getAccessToken(): string | null {
   return localStorage.getItem(access_token_key);
 }
 
-/**
- * Get the access token from storage and decode it.
- */
-function getAccessTokenDecoded(token?: string | null): FundermapsJwtPayload {
-  token = token ?? getAccessToken();
-  if (!token) {
-    throw new Error('Could not get access token when requesting user');
-  }
-
+function decodeAccessToken(token: string): FundermapsJwtPayload {
   return jwtDecode<FundermapsJwtPayload>(token);
+}
+
+function isTokenExpired(token: string): boolean {
+  const parsed = decodeAccessToken(token);
+  const now = Math.round(Date.now() / 1000);
+  return (parsed?.exp || 0) < now;
 }
 
 
@@ -52,83 +42,60 @@ function getAccessTokenDecoded(token?: string | null): FundermapsJwtPayload {
 // ****************************************************************************
 
 /**
- * Whether an access token is available, expired or not
+ * Whether a valid (present and non-expired) access token exists.
  */
-export function hasAccessToken(): boolean {
-  return getAccessToken() !== null
-}
-
-export function hasAccessTokenExpired(token?: string | null): boolean {
-  token = token ?? getAccessToken();
-
-  if (token === null) {
-    console.warn("No token available")
-    return false;
-  }
-
-  const parsed = getAccessTokenDecoded(token);
-  const time = Math.round((new Date()).getTime() / 1000);
-
-  return (parsed?.exp || 0) < time;
+export function hasValidToken(): boolean {
+  const token = getAccessToken();
+  return token !== null && !isTokenExpired(token);
 }
 
 /**
- * Check whether the user has credentials stored
- * Note: the credentials may be invalid. It's up to the server to verify the token.
+ * Return the Authorization header if a valid token exists, or null.
  */
-export function hasNonExpiredToken(token?: string | null): boolean {
-  return !hasAccessTokenExpired(token)
+export function getAuthHeader(): { Authorization: string } | null {
+  const token = getAccessToken();
+  if (token === null || isTokenExpired(token)) return null;
+  return { 'Authorization': 'Bearer ' + token };
 }
 
 /**
- * return authorization header with jwt token, or an empty object
- */
-export function getAuthHeader(): AuthorizationHeader | Record<string, never> {
-  const token = getAccessToken()
-  return (hasNonExpiredToken(token))
-    ? { 'Authorization': 'Bearer ' + token }
-    : {}
-}
-
-/**
- * Get information from the token
- *  : string|number|string[]|null 
+ * Get a claim value from the stored access token.
+ * Returns null if no valid token exists or the claim is missing.
  */
 export function getClaimFromAccessToken(claim: string) {
-  if (hasNonExpiredToken()) {
-    const parsed = getAccessTokenDecoded();
-    return parsed?.[claim as keyof FundermapsJwtPayload] || null
-  }
+  const token = getAccessToken();
+  if (token === null || isTokenExpired(token)) return null;
 
-  return null
+  const parsed = decodeAccessToken(token);
+  return parsed?.[claim as keyof FundermapsJwtPayload] || null;
 }
 
 /**
- * Store the access token in local storage
+ * Store the access token in local storage.
  */
 export function storeAccessToken(token: string): void {
   localStorage.setItem(access_token_key, token)
 }
 
 /**
- * Remove the token, ending the user session
+ * Remove the token, ending the user session.
  */
 export function removeAccessToken(): void {
   localStorage.removeItem(access_token_key)
 }
 
 /**
- * Renew the authentication credentials
- *  This refresh is called in an interval in App.vue
+ * Renew the authentication credentials.
+ * Called on an interval from App.vue.
  */
 export function refreshAccessToken(): void {
-  if (hasNonExpiredToken()) {
-    api.auth
-      .refresh()
-      .then(response => storeAccessToken(response.token))
-      .catch((error) => {
-        console.error('Failed to refresh access token:', error)
-        router.push({ name: 'login' })
-      })
-  }
+  if (!hasValidToken()) return
+
+  api.auth
+    .refresh()
+    .then(response => storeAccessToken(response.token))
+    .catch((error) => {
+      console.error('Failed to refresh access token:', error)
+      router.push({ name: 'login' })
+    })
 }

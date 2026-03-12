@@ -1,6 +1,6 @@
 import { apiBasePath } from "@/config"
 import { trimLeadingChar, trimTrailingChar } from "@/utils/string"
-import { getAuthHeader, hasAccessToken, hasAccessTokenExpired } from '@/services/jwt'
+import { getAuthHeader, hasValidToken } from '@/services/jwt'
 import router from '@/router'
 
 
@@ -26,20 +26,12 @@ const getAPIKeyAuthHeader = function getAPIKeyAuthHeader() {
 const verifyAuth = function verifyAuth(requireAuth: boolean, autoredirect: boolean) {
   if (!requireAuth || hasAPIKey()) return
 
-  if (!hasAccessToken()) {
+  if (!hasValidToken()) {
     if (autoredirect && router.currentRoute.value.name !== 'login') {
       router.push({ name: 'login' })
       return
     }
-    throw new APITokenError("Missing access token")
-  }
-
-  if (hasAccessTokenExpired()) {
-    if (autoredirect && router.currentRoute.value.name !== 'login') {
-      router.push({ name: 'login' })
-      return
-    }
-    throw new APITokenError("Access token has expired")
+    throw new APITokenError("Missing or expired access token")
   }
 }
 
@@ -61,7 +53,7 @@ const makeCall = async ({
     // Auth header
     let authHeader = {}
     if (requireAuth) {
-      authHeader = hasAPIKey() ? getAPIKeyAuthHeader() : getAuthHeader()
+      authHeader = hasAPIKey() ? getAPIKeyAuthHeader() : (getAuthHeader() ?? {})
     }
 
     // Options

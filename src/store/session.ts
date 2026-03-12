@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 
 import type { IUser } from '@/datastructures/interfaces';
 import api from '@/services/api';
-import { hasNonExpiredToken, getClaimFromAccessToken, removeAccessToken, storeAccessToken } from '@/services/jwt';
+import { hasValidToken, getClaimFromAccessToken, removeAccessToken, storeAccessToken } from '@/services/jwt';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { useOrgsStore } from '@/store/orgs';
@@ -55,7 +55,7 @@ export const useSessionStore = defineStore('session', () => {
    * Note: This function is intended for synchronous execution, e.g., during app initialization.
    */
   const authenticateFromAccessToken = (): void => {
-    if (hasNonExpiredToken()) {
+    if (hasValidToken()) {
       setUserNameFromToken();
     } else {
       // Clean up
