@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed } from 'vue';
+import { computed, useAttrs } from 'vue';
 import { type ZodIssue } from 'zod';
 
 const props = withDefaults(defineProps<{
@@ -22,12 +22,16 @@ const props = withDefaults(defineProps<{
   validationStatus: 'none'
 })
 
+defineOptions({ inheritAttrs: false })
+
 const model = defineModel()
 const emit = defineEmits(['focus'])
 
-/** 
+const attrs = useAttrs()
+
+/**
  * Specifying an identifier is recommended, but if no identifier is provided, we can generate one.
- */ 
+ */
 const identifier = computed<string>(() => {
   return props.id ?? `input-${(window?.crypto?.randomUUID())}`
 })
@@ -38,19 +42,36 @@ const isDisabled = computed<boolean>(() => !! props.disabled)
 const hasValidationError = computed(() => props.validationStatus === 'error' && props.validationMessage)
 const validationMessageId = computed(() => `${identifier.value}-error`)
 
+/**
+ * Split fallthrough attrs: class/style stay on root wrapper, everything else
+ * (ARIA attributes, role, event listeners) passes through to <input>.
+ */
+const rootAttrs = computed(() => {
+  const result: Record<string, unknown> = {}
+  if ('class' in attrs) result.class = attrs.class
+  if ('style' in attrs) result.style = attrs.style
+  return result
+})
+
+const inputAttrs = computed(() => {
+  const { class: _cls, style: _style, ...rest } = attrs
+  void _cls; void _style
+  return rest
+})
+
 </script>
 
 <template>
-  <div class="input--text">
-    <label 
-      v-if="label" 
-      :for="identifier" 
+  <div class="input--text" v-bind="rootAttrs">
+    <label
+      v-if="label"
+      :for="identifier"
       class="input__label">{{ label }}</label>
-    <div 
+    <div
       v-if="instruction"
       class="input__message">{{ instruction }}</div>
-    <div 
-      class="input-field" 
+    <div
+      class="input-field"
       :data-validation="validationStatus">
 
       <div v-if="$slots.before" class="input-field__before">
@@ -58,6 +79,7 @@ const validationMessageId = computed(() => `${identifier.value}-error`)
       </div>
 
       <input
+        v-bind="inputAttrs"
         :type="type"
         :id="identifier"
         :name="identifier"

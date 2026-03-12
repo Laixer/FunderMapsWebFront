@@ -163,8 +163,8 @@ const handleClose = function handleClose() {
           </template>
         </Input>
 
-        <Input 
-          id="password"
+        <Input
+          id="new-password"
           label="Nieuw wachtwoord"
           :type="showPassword ? 'text' : 'password'"
           v-model="formData.newPassword"

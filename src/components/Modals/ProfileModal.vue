@@ -248,7 +248,6 @@ const handleClose = function handleClose() {
 
     <div class="-mx-6 space-y-4 px-6">
       <form
-        action="#"
         @submit.prevent="handleSubmit"
         class="space-y-6">
 
@@ -285,7 +284,7 @@ const handleClose = function handleClose() {
           type="email"
           v-model="profileData.email"
           placeholder="Voer je e-mail in"
-          autocomplete="username"
+          autocomplete="email"
           instruction="Dit e-mail adres kan niet gewijzigd worden"
           :validationStatus="getStatus('email')"
           :validationMessage="getError('email')"
@@ -308,7 +307,7 @@ const handleClose = function handleClose() {
         <Input
           id="phoneNumber"
           label="Telefoon"
-          type="text"
+          type="tel"
           v-model="profileData.phoneNumber"
           placeholder="Voer je telefoonnummer in"
           autocomplete="tel"

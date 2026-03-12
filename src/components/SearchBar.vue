@@ -283,6 +283,10 @@ const handleClear = function handleClear() {
         class="grow [&_.input-field]:w-auto"
         placeholder="Zoek hier op adres of postcode"
         autocomplete="off"
+        role="combobox"
+        :aria-expanded="suggestions.length > 0"
+        aria-controls="search-suggestions"
+        :aria-activedescendant="focusedSuggestion !== null ? `suggestion-${focusedSuggestion}` : undefined"
         @focus="handleFocus"
         @keydown="handleKeyDown"
         >
@@ -328,12 +332,16 @@ const handleClear = function handleClear() {
               @close="handleClose" />
           </div>
           <div class="dropdown__content">
-            <ol>
-              <li 
+            <ol id="search-suggestions" role="listbox" aria-label="Adres suggesties">
+              <li
                 v-for="(suggestion, index) in suggestions" :key="suggestion.id"
+                :id="`suggestion-${index}`"
+                role="option"
+                :aria-selected="index === focusedSuggestion"
                 @mouseover="onHover(index)">
                 <a
                   href="#"
+                  tabindex="-1"
                   class="flex cursor-pointer gap-3 px-8 py-2 transition-colors duration-100"
                   :class="index === focusedSuggestion ? 'bg-grey-100 text-green-500' : ''"
                   @click.prevent="handleSelectBuilding(suggestion.id, suggestion.weergavenaam)"
