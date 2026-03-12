@@ -27,6 +27,7 @@ const metadataStore = useMetadataStore()
  * Form information
  */
 const loginFailed: Ref<boolean> = ref(false)
+const busyLoggingIn: Ref<boolean> = ref(false)
 const showPassword: Ref<boolean> = ref(false)
 const formData = ref({
   email: '',
@@ -56,6 +57,7 @@ const {
 const handleSubmit = async function () {
   try {
     loginFailed.value = false
+    busyLoggingIn.value = true
 
     await validate()
 
@@ -77,6 +79,8 @@ const handleSubmit = async function () {
   } catch (e) {
     console.error('Login failed:', e)
     loginFailed.value = true
+  } finally {
+    busyLoggingIn.value = false
   }
 }
 </script>
@@ -99,18 +103,15 @@ const handleSubmit = async function () {
           :validationMessage="getError('password')" :tabindex="2" required>
 
         <template #before>
-          <button type="button">
-            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
-              @click="() => showPassword = true" />
-            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
-              @click="() => showPassword = false" />
-            <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
+          <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
+            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
           </button>
         </template>
 
         </Input>
 
-        <Button type="submit" label="Log in">
+        <Button type="submit" label="Log in" :disabled="busyLoggingIn">
           <template v-slot:after>
             <AnimatedArrowIcon />
           </template>

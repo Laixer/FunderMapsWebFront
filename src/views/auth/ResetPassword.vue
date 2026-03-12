@@ -31,7 +31,7 @@ onBeforeMount(() => {
  */
 const resetFailed: Ref<boolean> = ref(false)
 const resetSucceeded: Ref<boolean> = ref(false)
-const showPassword: Ref<boolean> = ref(true)
+const showPassword: Ref<boolean> = ref(false)
 const formData = ref({
   email: '',
   password: '',
@@ -107,16 +107,13 @@ const handleSubmit = async function handleSubmit() {
           :tabindex="1" required />
 
         <Input id="password" label="Nieuw wachtwoord" :type="showPassword ? 'text' : 'password'"
-          v-model="formData.password" placeholder="Voer je nieuwe nieuwe wachtwoord in" autocomplete="new-password"
+          v-model="formData.password" placeholder="Voer je nieuwe wachtwoord in" autocomplete="new-password"
           :validationStatus="getStatus('password')" :validationMessage="getError('password')" :tabindex="2" required>
 
         <template #before>
-          <button type="button">
-            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
-              @click="() => showPassword = true" />
-            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
-              @click="() => showPassword = false" />
-            <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
+          <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
+            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
           </button>
         </template>
 
@@ -127,12 +124,9 @@ const handleSubmit = async function handleSubmit() {
           :validationStatus="getStatus('passwordConfirm')" :validationMessage="getError('passwordConfirm')" required>
 
         <template #before>
-          <button type="button">
-            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
-              @click="() => showPassword = true" />
-            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true"
-              @click="() => showPassword = false" />
-            <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
+          <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+            <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
+            <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
           </button>
         </template>
 

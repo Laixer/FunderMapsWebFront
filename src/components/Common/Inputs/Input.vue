@@ -35,6 +35,9 @@ const identifier = computed<string>(() => {
 // Make the disabled prop reactive
 const isDisabled = computed<boolean>(() => !! props.disabled)
 
+const hasValidationError = computed(() => props.validationStatus === 'error' && props.validationMessage)
+const validationMessageId = computed(() => `${identifier.value}-error`)
+
 </script>
 
 <template>
@@ -54,15 +57,17 @@ const isDisabled = computed<boolean>(() => !! props.disabled)
         <slot name="before" />
       </div>
 
-      <input 
-        :type="type" 
-        :id="identifier" 
-        :name="identifier" 
+      <input
+        :type="type"
+        :id="identifier"
+        :name="identifier"
         :placeholder="placeholder"
         :autocomplete="autocomplete"
         :required="required"
         :disabled="isDisabled"
         :tabindex="tabindex"
+        :aria-invalid="hasValidationError ? true : undefined"
+        :aria-describedby="hasValidationError ? validationMessageId : undefined"
         v-model="model"
         @focus="emit('focus')" />
 
@@ -70,10 +75,12 @@ const isDisabled = computed<boolean>(() => !! props.disabled)
         <slot name="after" />
       </div>
     </div>
-    <div 
+    <div
       v-if="validationMessage && validationStatus !== 'none'"
-      class="input__message | validation__message" 
-      :data-variant="validationStatus">
+      :id="validationMessageId"
+      class="input__message | validation__message"
+      :data-variant="validationStatus"
+      role="alert">
       {{ validationMessage }}
     </div>
   </div>

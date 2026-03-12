@@ -130,39 +130,35 @@ const handleClose = function handleClose() {
         Het wijzigen van het wachtwoord is gelukt.
       </p>
 
-      <form 
+      <form
         v-if="! changeSucceeded"
-        action="#" 
         @submit.prevent="handleSubmit"
         class="space-y-6">
 
-        <Input 
-          id="oldPassword" 
-          label="Huidige wachtwoord" 
-          type="password"
-          v-model="formData.oldPassword" 
+        <Input
+          id="current-password"
+          label="Huidige wachtwoord"
+          :type="showPassword ? 'text' : 'password'"
+          v-model="formData.oldPassword"
           placeholder="Voer je huidige wachtwoord in"
-          autocomplete="password"
+          autocomplete="current-password"
           :validationStatus="getStatus('oldPassword')"
           :validationMessage="getError('oldPassword')"
           :tabindex="1"
           required>
 
           <template #before>
-            <button type="button">
+            <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
                 aria-hidden="true"
-                @click="() => showPassword = true"
               />
               <UnlockedIcon
                 v-show="showPassword"
                 class="aspect-square w-4 text-grey-700"
                 aria-hidden="true"
-                @click="() => showPassword = false"
               />
-              <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
             </button>
           </template>
         </Input>
@@ -172,7 +168,7 @@ const handleClose = function handleClose() {
           label="Nieuw wachtwoord"
           :type="showPassword ? 'text' : 'password'"
           v-model="formData.newPassword"
-          placeholder="Voer je nieuwe nieuwe wachtwoord in"
+          placeholder="Voer je nieuwe wachtwoord in"
           autocomplete="new-password"
           :validationStatus="getStatus('newPassword')"
           :validationMessage="getError('newPassword')" 
@@ -180,20 +176,17 @@ const handleClose = function handleClose() {
           required>
 
           <template #before>
-            <button type="button">
+            <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
                 aria-hidden="true"
-                @click="() => showPassword = true"
               />
               <UnlockedIcon
                 v-show="showPassword"
                 class="aspect-square w-4 text-grey-700"
                 aria-hidden="true"
-                @click="() => showPassword = false"
               />
-              <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
             </button>
           </template>
         </Input>
@@ -210,20 +203,17 @@ const handleClose = function handleClose() {
           required>
 
           <template #before>
-            <button type="button">
+            <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
                 aria-hidden="true"
-                @click="() => showPassword = true"
               />
               <UnlockedIcon
                 v-show="showPassword"
                 class="aspect-square w-4 text-grey-700"
                 aria-hidden="true"
-                @click="() => showPassword = false"
               />
-              <span class="sr-only"> Toggle wachtwoord zichtbaarheid </span>
             </button>
           </template>
 
