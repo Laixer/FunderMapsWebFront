@@ -21,39 +21,35 @@ const getAPIKeyAuthHeader = function getAPIKeyAuthHeader() {
 
 
 /******************************************************************************
- * Verify auth credentials before making a call
+ * Verify auth credentials before making a call.
+ * Always throws on failure — never silently redirects.
  */
-const verifyAuth = function verifyAuth(requireAuth: boolean, autoredirect: boolean) {
+function verifyAuth(requireAuth: boolean): void {
   if (!requireAuth || hasAPIKey()) return
 
   if (!hasValidToken()) {
-    if (autoredirect && router.currentRoute.value.name !== 'login') {
-      router.push({ name: 'login' })
-      return
-    }
     throw new APITokenError("Missing or expired access token")
   }
 }
 
 const makeCall = async ({
-  endpoint, method = 'GET', body, requireAuth = true, autoredirect = true
+  endpoint, method = 'GET', body, requireAuth = true
 }: {
   endpoint: string,
   method?: 'GET' | 'POST' | 'PUT',
   body?: unknown,
   requireAuth?: boolean,
-  autoredirect?: boolean
 }) => {
   let fetchOptions: RequestInit = {}
   let responseBody = null
 
   try {
-    verifyAuth(requireAuth, autoredirect)
+    verifyAuth(requireAuth)
 
     // Auth header
     let authHeader = {}
     if (requireAuth) {
-      authHeader = hasAPIKey() ? getAPIKeyAuthHeader() : (getAuthHeader() ?? {})
+      authHeader = hasAPIKey() ? getAPIKeyAuthHeader() : getAuthHeader()!
     }
 
     // Options
@@ -92,6 +88,14 @@ const makeCall = async ({
 
     return responseBody
   } catch (err: unknown) {
+    // Redirect to login on auth failure
+    if (err instanceof APITokenError) {
+      if (router.currentRoute.value.name !== 'login') {
+        router.push({ name: 'login' })
+      }
+      throw err
+    }
+
     if (err instanceof APIClientError) {
       throw err
     }
@@ -107,7 +111,6 @@ const makeCall = async ({
 
 /******************************************************************************
  * Error classes
- *  Note: this is a rather basic implementation
  */
 export class APIClientError extends Error {
   constructor(message = 'API client error') {
@@ -163,22 +166,22 @@ export class APICallError extends APIClientError {
 /******************************************************************************
  * Shortcuts
  */
-export const get = ({ endpoint, body, requireAuth, autoredirect }:
-  { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
+export const get = ({ endpoint, body, requireAuth }:
+  { endpoint: string, body?: unknown, requireAuth?: boolean }
 ) => {
-  return makeCall({ endpoint, method: 'GET', body, requireAuth, autoredirect })
+  return makeCall({ endpoint, method: 'GET', body, requireAuth })
 }
 
-export const post = ({ endpoint, body, requireAuth, autoredirect }:
-  { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
+export const post = ({ endpoint, body, requireAuth }:
+  { endpoint: string, body?: unknown, requireAuth?: boolean }
 ) => {
-  return makeCall({ endpoint, method: 'POST', body, requireAuth, autoredirect })
+  return makeCall({ endpoint, method: 'POST', body, requireAuth })
 }
 
-export const put = ({ endpoint, body, requireAuth, autoredirect }:
-  { endpoint: string, body?: unknown, requireAuth?: boolean, autoredirect?: boolean }
+export const put = ({ endpoint, body, requireAuth }:
+  { endpoint: string, body?: unknown, requireAuth?: boolean }
 ) => {
-  return makeCall({ endpoint, method: 'PUT', body, requireAuth, autoredirect })
+  return makeCall({ endpoint, method: 'PUT', body, requireAuth })
 }
 
 /******************************************************************************

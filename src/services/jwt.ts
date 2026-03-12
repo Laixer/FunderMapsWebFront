@@ -1,6 +1,4 @@
 import { type JwtPayload, jwtDecode } from "jwt-decode";
-import api from "./api";
-import router from '@/router'
 
 
 // ****************************************************************************
@@ -82,20 +80,4 @@ export function storeAccessToken(token: string): void {
  */
 export function removeAccessToken(): void {
   localStorage.removeItem(access_token_key)
-}
-
-/**
- * Renew the authentication credentials.
- * Called on an interval from App.vue.
- */
-export function refreshAccessToken(): void {
-  if (!hasValidToken()) return
-
-  api.auth
-    .refresh()
-    .then(response => storeAccessToken(response.token))
-    .catch((error) => {
-      console.error('Failed to refresh access token:', error)
-      router.push({ name: 'login' })
-    })
 }

@@ -4,74 +4,39 @@ import { defineStore } from 'pinia';
 import type { IUser } from '@/datastructures/interfaces';
 import api from '@/services/api';
 import { hasValidToken, getClaimFromAccessToken, removeAccessToken, storeAccessToken } from '@/services/jwt';
+import router from '@/router';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { useOrgsStore } from '@/store/orgs';
 import { useMetadataStore } from './metadata';
 
-// TODO: This store should keep the access token in memory, and use something like pinia-plugin-persistedstate
-// to persist the access token in localStorage.
-
-/**
- * Pinia store definition for session management.
- * Encapsulates state and actions for user authentication and session data.
- *
- * @returns {object} An object containing reactive state and functions for session management.
- * @property {ShallowRef<IUser | null>} currentUser - The current logged-in user or null.
- * @property {ComputedRef<boolean>} isAuthenticated - Whether a user is authenticated.
- * @property {Function} authenticateFromAccessToken - Attempts to authenticate using a stored access token.
- * @property {Function} login - Logs in a user with email and password.
- * @property {Function} logout - Logs out the current user and clears session data.
- */
 export const useSessionStore = defineStore('session', () => {
-  /**
-   * Reactive reference to the current user's basic information.
-   * This does not include detailed profile information.
-   */
+
   const currentUser: ShallowRef<IUser | null> = shallowRef(null);
 
-  /**
-   * Computed property indicating whether a user is currently authenticated.
-   * Authentication is determined by the presence of `currentUser` data.
-   */
   const isAuthenticated = computed<boolean>(() => currentUser.value !== null);
 
   /**
-   * Sets the `currentUser`'s name based on the 'name' claim from the JWT access token.
-   * If the claim is not present, a default name 'Anoniem' is used.
+   * Sets currentUser from the JWT name claim.
    */
   const setUserNameFromToken = (): void => {
     const username = getClaimFromAccessToken('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name');
-    if (username) {
-      currentUser.value = { name: username.toString() };
-    } else {
-      currentUser.value = { name: 'Anoniem' };
-    }
+    currentUser.value = { name: username ? username.toString() : 'Anoniem' };
   };
 
   /**
-   * Attempts to authenticate the user by checking for a non-expired access token in localStorage.
-   * If a valid token exists, the user's name is set from the token. Otherwise, performs a logout.
-   * Note: This function is intended for synchronous execution, e.g., during app initialization.
+   * Try to restore the session from a stored access token.
    */
   const authenticateFromAccessToken = (): void => {
     if (hasValidToken()) {
       setUserNameFromToken();
     } else {
-      // Clean up
       logout();
     }
   };
 
   /**
-   * Asynchronously logs in a user with the provided email and password.
-   * On successful login, stores the access token and sets the user's name.
-   * On failure, logs the error, attempts to clean up by logging out, and re-throws the error.
-   *
-   * @param {string} email - The user's email address.
-   * @param {string} password - The user's password.
-   * @returns {Promise<void>} A promise that resolves on successful login or rejects on failure.
-   * @throws Will re-throw any error encountered during the API call or subsequent cleanup.
+   * Log in with email and password.
    */
   const login = async (email: string, password: string): Promise<void> => {
     try {
@@ -79,53 +44,60 @@ export const useSessionStore = defineStore('session', () => {
       storeAccessToken(response.token);
       setUserNameFromToken();
     } catch (e) {
-      console.error('Login failed:', e); // It's good practice to log the error
-
-      // Clean up a partial success if need be
-      // The logout function will now handle its own internal errors by logging them.
+      console.error('Login failed:', e);
       logout();
-
-      throw e; // pass on the unhappy news
+      throw e;
     }
   };
 
   /**
-   * Logs out the current user.
-   * This involves removing the access token, clearing user-specific data from related stores
-   * (mapsets, organizations, metadata), and resetting `currentUser` to null.
-   * Each cleanup step will attempt to execute, and any errors will be logged.
+   * Log out: clear token, user state, and dependent stores.
    */
   const logout = (): void => {
-    const mapsetStore = useMapsetStore();
-    const orgsStore = useOrgsStore();
-    const metadataStore = useMetadataStore();
-
-    try {
-      removeAccessToken();
-    } catch (error) {
-      console.error('Logout: Error removing access token:', error);
-    }
-
-    try {
-      mapsetStore.removePrivateMapsets();
-    } catch (error) {
-      console.error('Logout: Error removing private mapsets:', error);
-    }
-
-    try {
-      orgsStore.removeOrgs();
-    } catch (error) {
-      console.error('Logout: Error removing orgs:', error);
-    }
-
+    stopTokenRefreshInterval();
+    removeAccessToken();
     currentUser.value = null;
 
-    try {
-      metadataStore.clear();
-    } catch (error) {
-      console.error('Logout: Error clearing metadata:', error);
+    useMapsetStore().removePrivateMapsets();
+    useOrgsStore().removeOrgs();
+    useMetadataStore().clear();
+  };
+
+
+  // **************************************************************************
+  //  Token refresh interval
+  // **************************************************************************
+
+  let refreshInterval: ReturnType<typeof setInterval> | null = null;
+
+  const startTokenRefreshInterval = (): void => {
+    stopTokenRefreshInterval();
+    refreshInterval = setInterval(refreshAccessToken, 10 * 60 * 1000);
+  };
+
+  const stopTokenRefreshInterval = (): void => {
+    if (refreshInterval !== null) {
+      clearInterval(refreshInterval);
+      refreshInterval = null;
     }
   };
+
+  /**
+   * Refresh the access token. On failure, log out and redirect to login.
+   */
+  const refreshAccessToken = async (): Promise<void> => {
+    if (!hasValidToken()) return;
+
+    try {
+      const response = await api.auth.refresh();
+      storeAccessToken(response.token);
+    } catch (error) {
+      console.error('Failed to refresh access token:', error);
+      logout();
+      router.push({ name: 'login' });
+    }
+  };
+
 
   return {
     currentUser,
@@ -133,5 +105,8 @@ export const useSessionStore = defineStore('session', () => {
     authenticateFromAccessToken,
     login,
     logout,
+    refreshAccessToken,
+    startTokenRefreshInterval,
+    stopTokenRefreshInterval,
   };
 });
