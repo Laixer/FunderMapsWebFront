@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from 'pinia'
 
 import { type IAnalysis } from "@/datastructures/interfaces"
 import api from '@/services/api';
+import { APIErrorResponse } from '@/services/apiClient';
 import { useSessionStore } from '../session';
 
 
@@ -75,7 +76,7 @@ function useAnalysis() {
 
     } catch(e) {
       console.error("Failed to load analysis data", buildingId, e)
-      failedToLoadByBuildingId.value[buildingId] = { reason: 404 }
+      failedToLoadByBuildingId.value[buildingId] = { reason: e instanceof APIErrorResponse ? e.status : 500 }
     }
 
     // Success or fail, we're no longer retrieving the data for this building

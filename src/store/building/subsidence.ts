@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from 'pinia'
 
 import { type ISubsidence } from "@/datastructures/interfaces"
 import api from '@/services/api';
+import { APIErrorResponse } from '@/services/apiClient';
 import { useSessionStore } from '../session';
 
 
@@ -51,7 +52,7 @@ function useSubsidence() {
 
     } catch(e) {
       console.error("Failed to load subsidence data", buildingId, e)
-      failedToLoadByBuildingId.value[buildingId] = { reason: 404 }
+      failedToLoadByBuildingId.value[buildingId] = { reason: e instanceof APIErrorResponse ? e.status : 500 }
     }
 
     isLoadingBuildingDataById.value[buildingId] = false

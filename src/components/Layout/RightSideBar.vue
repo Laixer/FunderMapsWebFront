@@ -239,7 +239,31 @@ const ReportMenuList = computed(
 )
 
 /**
- * When the selected building changes, we put the stores to work
+ * Load all report data (recovery, inquiries, incidents) unless already cached
+ */
+const getAllReportDataUnlessCached = async function getAllReportDataUnlessCached(buildingId: string) {
+  if (
+    ! buildingRecoveryReportDataHasBeenRetrieved(buildingId) ||
+    ! buildingIncidentReportDataHasBeenRetrieved(buildingId) ||
+    ! buildingInquiryDataHasBeenRetrieved(buildingId)
+  ) {
+    const response = await api.building.getAllReportDataByBuildingId(buildingId)
+
+    if (! buildingRecoveryReportDataHasBeenRetrieved(buildingId)) {
+      setRecoveryDataByBuildingId(buildingId, response.recoveries, response.recoverySamples)
+    }
+    if (! buildingInquiryDataHasBeenRetrieved(buildingId)) {
+      setInquiryDataByBuildingId(buildingId, response.inquiries, response.inquirySamples)
+    }
+    if (! buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
+      setIncidentDataByBuildingId(buildingId, response.incidents)
+    }
+  }
+}
+
+/**
+ * When the selected building changes, we put the stores to work.
+ * Uses Promise.allSettled so one failed API call doesn't block the others.
  */
 watch(
   () => buildingId.value,
@@ -248,39 +272,11 @@ watch(
 
     isOpen.value = true
 
-    // TODO: Quick fix to support cache. Move to some store ?
-    const getAllReportDataUnlessCached = async function getAllReportDataUnlessCached(buildingId: string) {
-      if (
-        ! buildingRecoveryReportDataHasBeenRetrieved(buildingId) ||
-        ! buildingIncidentReportDataHasBeenRetrieved(buildingId) ||
-        ! buildingInquiryDataHasBeenRetrieved(buildingId)
-      ) {
-        return await api.building.getAllReportDataByBuildingId(buildingId)
-          .then(response => {
-
-            if (! buildingRecoveryReportDataHasBeenRetrieved(buildingId)) {
-              setRecoveryDataByBuildingId(buildingId, response.recoveries, response.recoverySamples)
-            }
-            if (! buildingInquiryDataHasBeenRetrieved(buildingId)) {
-              setInquiryDataByBuildingId(buildingId, response.inquiries, response.inquirySamples)
-            }
-            if (! buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
-              setIncidentDataByBuildingId(buildingId, response.incidents)
-            }
-          })
-      }
-
-    }
-
-    // TODO: Handle errors here ?
-    // TODO: Retry logic. Local or global?
-    await Promise.all([
+    await Promise.allSettled([
       loadLocationDataByBuildingId(buildingId),
       loadAnalysisDataByBuildingId(buildingId),
       loadStatisticsDataByBuildingId(buildingId),
       loadSubsidenceDataByBuildingId(buildingId),
-
-      // TODO: This implementation is a quick fix to support "cache"
       getAllReportDataUnlessCached(buildingId)
     ])
   },
