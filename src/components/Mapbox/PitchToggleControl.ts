@@ -1,4 +1,4 @@
-import type { IControl, Map } from 'mapbox-gl'
+import type { ExpressionSpecification, IControl, Map } from 'mapbox-gl'
 
 /**
  * A custom Mapbox control that toggles between 2D (flat polygons) and 3D (extruded buildings).
@@ -60,8 +60,7 @@ export class PitchToggleControl implements IControl {
     this.updateLabel()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private setExtrusionHeights(height: any): void {
+  private setExtrusionHeights(height: number | ExpressionSpecification): void {
     if (!this.map) return
 
     const style = this.map.getStyle()

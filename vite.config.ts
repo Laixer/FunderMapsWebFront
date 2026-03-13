@@ -20,5 +20,16 @@ export default defineConfig(() => {
         { find: '@assets', replacement: fileURLToPath(new URL('./src/assets', import.meta.url)) },
       ],
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'mapbox-gl': ['mapbox-gl'],
+            'chart': ['chart.js/auto', 'chartjs-plugin-trendline'],
+            'markdown': ['vue-markdown-render'],
+          }
+        }
+      }
+    },
   }
 })
