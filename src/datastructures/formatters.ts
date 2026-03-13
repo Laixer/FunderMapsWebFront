@@ -9,17 +9,18 @@ export const toScale = (value: string | number): string => `1:${parseFloat(Strin
 
 // example input format: 2022-05-11T15:09:24.289848Z
 // desired output dd-mm-jjjj
-export const toFormattedDate = (value: string): string => {
+export const toFormattedDate = (value: string | number): string => {
   try {
-    if (value === '') return value;
+    const str = String(value)
+    if (str === '') return str;
 
-    return new Date(value).toLocaleDateString("nl-NL", {
+    return new Date(str).toLocaleDateString("nl-NL", {
       year: 'numeric',
       month: 'numeric',
       day: 'numeric',
     });
   } catch {
-    return value;
+    return String(value);
   }
 };
 

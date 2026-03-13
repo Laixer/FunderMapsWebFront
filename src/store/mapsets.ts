@@ -10,7 +10,9 @@ import { defaultMapsetId } from '@/config'
 import { useSessionStore } from '@/store/session'
 
 /**
- * Helper function to enforce geo fencing on public mapsets
+ * Client-side geo-fencing override for public mapsets whose API response
+ * does not include fenceMunicipality. Remove these overrides once the API
+ * returns the correct fencing values for these mapsets.
  */
 const enforceGeoFencingOnPublicMapsets = function enforceGeoFencingOnPublicMapsets(mapset: IMapsetFE) {
   if (mapset.slug === 'schiedam-publiek') {

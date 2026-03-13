@@ -38,7 +38,7 @@ const handleClose = function handleClose() {
 <style scoped>
 .RemarkPopover {
   position: absolute;
-  right: 21rem;
+  right: var(--sidebar-width);
   bottom: 0;
 }
 </style>

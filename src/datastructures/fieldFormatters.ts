@@ -1,8 +1,7 @@
 import { toEuro, toFormattedDate, toMM, toMMYear, toMeters, toNAP, toMaaiveld, toScale, toSquareM, toYear } from "./formatters";
 
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const formattersByField: Record<string, (value: any) => string> = {
+export const formattersByField: Record<string, (value: string | number) => string> = {
   restorationCosts: toEuro,
   velocity: toMMYear,
   surfaceArea: toSquareM,

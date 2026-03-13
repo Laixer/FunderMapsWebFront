@@ -1,7 +1,9 @@
 .page-dashboard {
+  --sidebar-width: 21rem;
+
   @apply grid max-h-screen overflow-x-hidden;
 
-  grid-template-columns: [panel-left full-start] 21rem [main] auto [panel-right] 21rem [full-end];
+  grid-template-columns: [panel-left full-start] var(--sidebar-width) [main] auto [panel-right] var(--sidebar-width) [full-end];
   grid-template-rows: [header] 5rem [main] auto;
 
   .app-header {

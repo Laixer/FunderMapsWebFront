@@ -17,8 +17,7 @@ const props = defineProps({
 /**
  * Get the callback associated with the source type
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const callback = computed<(id: any) => Promise<IDownloadLink>>(() => {
+const callback = computed<(id: string) => Promise<IDownloadLink>>(() => {
   switch(props.sourceType) {
     case 'incident':
       return getRecoveryReportDownloadLink
@@ -34,7 +33,7 @@ const callback = computed<(id: any) => Promise<IDownloadLink>>(() => {
 })
 
 const handleDownload = async function handleDownload() {
-  const link: IDownloadLink = await callback.value(props.id) 
+  const link: IDownloadLink = await callback.value(String(props.id))
   
   if (link && link.accessLink) {
     const a = document.createElement('a')

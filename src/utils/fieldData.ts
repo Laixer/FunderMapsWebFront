@@ -238,7 +238,7 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
     if (config.formatter) {
       dataObj.formattedFieldValueLabel = config.formatter(dataObj.fieldValueLabel, config)
     } else if (formattersByField[config.name]) {
-      dataObj.formattedFieldValueLabel = formattersByField[config.name](dataObj.fieldValueLabel)
+      dataObj.formattedFieldValueLabel = formattersByField[config.name](dataObj.fieldValueLabel as string | number)
     } else {
 
       if (dataObj.fieldValueLabel === true || dataObj.fieldValueLabel === false) {

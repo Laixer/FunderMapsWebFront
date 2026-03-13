@@ -135,7 +135,8 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                 <Transition name="short">
                   <div
                     v-if="showInfoTooltip"
-                    class="fixed left-[21rem] top-[5rem] z-50 ml-2 mt-2 w-72 rounded-lg bg-white p-5 shadow-float"
+                    class="fixed top-[5rem] z-50 ml-2 mt-2 w-72 rounded-lg bg-white p-5 shadow-float"
+                    style="left: var(--sidebar-width)"
                   >
                     <h6 class="heading-6 mb-2">{{ activeMapset?.name }}</h6>
                     <VueMarkdown
