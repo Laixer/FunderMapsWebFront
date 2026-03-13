@@ -1,9 +1,8 @@
 <script setup lang="ts">
 
-import { type Ref, ref, onBeforeMount } from 'vue';
+import { type Ref, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { z } from 'zod'
-import { useRouter } from 'vue-router'
 
 import Button from '@/components/Common/Buttons/Button.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
@@ -11,23 +10,12 @@ import OverlayModal from '@/components/Common/OverlayModal.vue';
 import LockedIcon from '@assets/svg/icons/locked.svg'
 import UnlockedIcon from '@assets/svg/icons/unlocked.svg'
 
-import { useSessionStore } from '@/store/session'
 import { useMainStore } from '@/store/main'
 
 import api from '@/services/api'
 
 import useValidation from '@/services/useValidation';
 const { isPasswordModalOpen } = storeToRefs( useMainStore() )
-const { isAuthenticated } = storeToRefs( useSessionStore() )
-
-const router = useRouter()
-
-// Not logged in => redirect to login page
-onBeforeMount(() => {
-  if (! isAuthenticated.value) {
-    router.push({ name: 'login' })
-  }
-})
 
 /**
  * Form information
