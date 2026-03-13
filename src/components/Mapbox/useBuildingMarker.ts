@@ -34,16 +34,20 @@ export const useBuildingMarker = function useBuildingMarker(
   }
 
   function show(LngLat: LngLat) {
-
     if (mapInstance.value) {
+      // Hide the element before adding to prevent a flash at (0,0)
+      // while the map projection calculates the screen position.
+      const el = Marker.getElement()
+      el.style.opacity = '0'
+
       // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
       // @ts-expect-error - Type instantiation is excessively deep and possibly infinite
       Marker.setLngLat(LngLat).addTo(mapInstance.value)
 
-      const el = Marker.getElement()
+      // Restart the drop animation (which transitions opacity 0 → 1)
       el.classList.remove('marker-drop')
-      // Force reflow to restart the animation
       void el.offsetWidth
+      el.style.opacity = ''
       el.classList.add('marker-drop')
     }
   }
