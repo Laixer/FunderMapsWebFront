@@ -1,8 +1,6 @@
 <script setup lang="ts">
 
-// TODO: Split component further into sub components - 2 menu's - and move data loading to composable or store
-
-import { ComputedRef, Ref, computed, onMounted, ref, watch, type Component } from 'vue';
+import { Ref, computed, onMounted, ref, watch, type Component } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
@@ -23,19 +21,12 @@ import StatisticsPanel from '@/components/Building/StatisticsPanel.vue';
 
 import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
 import AlertIcon from '@assets/svg/icons/alert.svg';
+import MapsetDetails from '../Building/MapsetDetails.vue';
 
 import { useSessionStore } from '@/store/session';
 import { useBuildingStore } from "@/store/buildings";
-import { useGeoLocationsStore } from '@/store/building/geolocations'
-import { useAnalysisStore } from '@/store/building/analysis'
-import { useRecoveryReportsStore } from '@/store/building/recovery'
-import { useInquiriesStore } from '@/store/building/inquiries'
-import { useIncidentReportsStore } from '@/store/building/incidents'
-import { useStatisticsStore } from '@/store/building/statistics'
-import { useSubsidenceStore } from '@/store/building/subsidence';
+import { useBuildingData } from './useBuildingData';
 
-import api from '@/services/api';
-import MapsetDetails from '../Building/MapsetDetails.vue';
 import { useRoute, useRouter } from 'vue-router';
 
 
@@ -44,36 +35,28 @@ const router = useRouter()
 
 const { isAuthenticated } = storeToRefs(useSessionStore())
 const { clearBuildingId } = useBuildingStore()
-
-const locationStore = useGeoLocationsStore()
-const analysisStore = useAnalysisStore()
-const statisticsStore = useStatisticsStore()
-const subsidenceStore = useSubsidenceStore()
-
-const {
-  buildingRecoveryReportDataHasBeenRetrieved,
-  buildingHasRecoveryReports,
-  setRecoveryDataByBuildingId
-} = useRecoveryReportsStore()
-
-const {
-  buildingInquiryDataHasBeenRetrieved,
-  buildingHasInquiries,
-  setInquiryDataByBuildingId
-} = useInquiriesStore()
-
-const {
-  buildingIncidentReportDataHasBeenRetrieved,
-  buildingHasIncidentReports,
-  setIncidentDataByBuildingId
-} = useIncidentReportsStore()
-
 const { hasSelectedBuilding, buildingId } = storeToRefs(useBuildingStore())
 
+const {
+  failedToLoad,
+  isLoadingCoreData,
+  statisticsStore,
+  buildingRecoveryReportDataHasBeenRetrieved,
+  buildingHasRecoveryReports,
+  buildingInquiryDataHasBeenRetrieved,
+  buildingHasInquiries,
+  buildingIncidentReportDataHasBeenRetrieved,
+  buildingHasIncidentReports,
+  startWatching,
+} = useBuildingData()
 
+
+/**
+ * UI state
+ */
 const isOpen = ref(false)
-
 const rightPanelSlide = ref(false)
+const selectedPanel: Ref<string> = ref('')
 
 interface IComponents {
     [key: string]: Component
@@ -88,32 +71,13 @@ const availablePanels: IComponents = {
   RecoveryPanel,
   StatisticsPanel
 }
-const selectedPanel: Ref<string> = ref('')
-
 
 /**
- * Without either location or analysis data there are too many gaps to present the building information
+ * Start loading building data when a building is selected
  */
-const failedToLoad: ComputedRef<boolean> = computed(
-  () => {
-    if (buildingId.value) {
-      return locationStore.failedToLoad(buildingId.value)
-        || analysisStore.failedToLoad(buildingId.value)
-    }
-    return false
-  }
-)
-
-/**
- * Core data is still being loaded
- */
-const isLoadingCoreData: ComputedRef<boolean> = computed(
-  () => {
-    if (! buildingId.value) return false
-    return ! locationStore.hasBeenRetrieved(buildingId.value)
-      || ! analysisStore.hasBeenRetrieved(buildingId.value)
-  }
-)
+startWatching(() => {
+  isOpen.value = true
+})
 
 /**
  * These menu items are always available
@@ -179,7 +143,7 @@ const ReportMenuList = computed(
         slug: 'onderzoek',
         panel: 'InquiryPanel',
         icon: null,
-        name: 'Bekijk onderzoeks informatie', 
+        name: 'Bekijk onderzoeks informatie',
         loading: !! (buildingId.value && ! buildingInquiryDataHasBeenRetrieved(
           buildingId.value
         )),
@@ -219,51 +183,6 @@ const ReportMenuList = computed(
 )
 
 /**
- * Load all report data (recovery, inquiries, incidents) unless already cached
- */
-const getAllReportDataUnlessCached = async function getAllReportDataUnlessCached(buildingId: string) {
-  if (
-    ! buildingRecoveryReportDataHasBeenRetrieved(buildingId) ||
-    ! buildingIncidentReportDataHasBeenRetrieved(buildingId) ||
-    ! buildingInquiryDataHasBeenRetrieved(buildingId)
-  ) {
-    const response = await api.building.getAllReportDataByBuildingId(buildingId)
-
-    if (! buildingRecoveryReportDataHasBeenRetrieved(buildingId)) {
-      setRecoveryDataByBuildingId(buildingId, response.recoveries, response.recoverySamples)
-    }
-    if (! buildingInquiryDataHasBeenRetrieved(buildingId)) {
-      setInquiryDataByBuildingId(buildingId, response.inquiries, response.inquirySamples)
-    }
-    if (! buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
-      setIncidentDataByBuildingId(buildingId, response.incidents)
-    }
-  }
-}
-
-/**
- * When the selected building changes, we put the stores to work.
- * Uses Promise.allSettled so one failed API call doesn't block the others.
- */
-watch(
-  () => buildingId.value,
-  async (buildingId) => {
-    if (buildingId === null) return
-
-    isOpen.value = true
-
-    await Promise.allSettled([
-      locationStore.loadData(buildingId),
-      analysisStore.loadData(buildingId),
-      statisticsStore.loadData(buildingId),
-      subsidenceStore.loadData(buildingId),
-      getAllReportDataUnlessCached(buildingId)
-    ])
-  },
-  { immediate: true }
-)
-
-/**
  * If the panel slug changed in the url, open the panel
  */
 watch(
@@ -284,10 +203,9 @@ onMounted(() => {
 
 /**
  * Clear the selected building
- *  TODO: also close & clear open details panel ?
  */
 const handleCloseSideBar = function handleCloseSideBar() {
-  isOpen.value = false 
+  isOpen.value = false
 
   // Delayed by leave animation duration
   setTimeout(() => {
@@ -387,12 +305,12 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
             <h5 class="heading-5">Over het pand</h5>
           </div>
           <div class="grid space-y-2">
-            <MenuLink 
+            <MenuLink
               v-for="MenuItem in BuildingMenuList"
               :key="MenuItem.name"
               :label="MenuItem.name"
               :disabled="MenuItem.disabled"
-              :loading="MenuItem.loading" 
+              :loading="MenuItem.loading"
               @click.prevent="handleOpenPanel(MenuItem.panel, MenuItem.slug)"
             >
               <FundermapsIcon
@@ -426,7 +344,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
         :is="availablePanels[selectedPanel]"
         @close="handleCloseSideBar"
         @back="handleBackToMainMenu" />
-      
+
     </div>
   </div>
 </template>
