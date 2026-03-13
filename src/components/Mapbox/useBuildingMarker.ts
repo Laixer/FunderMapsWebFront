@@ -35,20 +35,22 @@ export const useBuildingMarker = function useBuildingMarker(
 
   function show(LngLat: LngLat) {
     if (mapInstance.value) {
-      // Hide the element before adding to prevent a flash at (0,0)
-      // while the map projection calculates the screen position.
       const el = Marker.getElement()
-      el.style.opacity = '0'
+
+      // Hide until Mapbox has projected the coordinates to screen position
+      el.style.display = 'none'
 
       // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
       // @ts-expect-error - Type instantiation is excessively deep and possibly infinite
       Marker.setLngLat(LngLat).addTo(mapInstance.value)
 
-      // Restart the drop animation (which transitions opacity 0 → 1)
-      el.classList.remove('marker-drop')
-      void el.offsetWidth
-      el.style.opacity = ''
-      el.classList.add('marker-drop')
+      // Wait for Mapbox to update the transform, then animate in
+      requestAnimationFrame(() => {
+        el.classList.remove('marker-drop')
+        el.style.display = ''
+        void el.offsetWidth
+        el.classList.add('marker-drop')
+      })
     }
   }
 
