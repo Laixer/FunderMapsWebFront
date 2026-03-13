@@ -13,23 +13,20 @@ import { retrieveAndFormatFieldData, FieldDataConfig, type IFieldDataConfig } fr
 import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { useBuildingStore } from '@/store/buildings';
 
-const { getLocationDataByBuildingId } = useGeoLocationsStore()
+const locationStore = useGeoLocationsStore()
 const { buildingId } = storeToRefs(useBuildingStore())
 
 /**
  * Props & events
- */ 
+ */
 const emit = defineEmits(['close', 'back'])
 
 /**
  * Data source for panel
  */
 const locationData = computed(() => {
-  if (! buildingId.value) { 
-    return null
-  }
-
-  return getLocationDataByBuildingId(buildingId.value)
+  if (! buildingId.value) return null
+  return locationStore.getData(buildingId.value)
 })
 
 

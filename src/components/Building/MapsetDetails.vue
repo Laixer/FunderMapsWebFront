@@ -20,8 +20,8 @@ import { ICombinedRecoveryData, IIncidentReport } from '@/datastructures/interfa
 
 const { activeMapsetId } = storeToRefs(useMapsetStore())
 const { buildingId } = storeToRefs(useBuildingStore())
-const { getAnalysisDataByBuildingId } = useAnalysisStore()
-const { getLocationDataByBuildingId } = useGeoLocationsStore()
+const analysisStore = useAnalysisStore()
+const locationStore = useGeoLocationsStore()
 const { getCombinedInquiryDataByBuildingId } = useInquiriesStore()
 const { getCombinedRecoveryDataByBuildingId } = useRecoveryReportsStore()
 const { getIncidentReportsByBuildingId } = useIncidentReportsStore()
@@ -29,12 +29,12 @@ const { getIncidentReportsByBuildingId } = useIncidentReportsStore()
 
 const analysisData = computed(() => {
   if (! buildingId.value) return null
-  return getAnalysisDataByBuildingId(buildingId.value)
+  return analysisStore.getData(buildingId.value)
 })
 
 const locationData = computed(() => {
   if (! buildingId.value) return null
-  return getLocationDataByBuildingId(buildingId.value)
+  return locationStore.getData(buildingId.value)
 })
 
 const inquiryData = computed(() => {

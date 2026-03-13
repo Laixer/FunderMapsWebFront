@@ -13,12 +13,13 @@ import BlockLink from '@/components/Common/Links/BlockLink.vue'
 import { useStatisticsStore } from '@/store/building/statistics';
 
 import { useBuildingStore } from '@/store/buildings';
-const { getStatisticsDataByBuildingId } = useStatisticsStore()
-const { showStatisticsModal, statisticsGraph } = storeToRefs(useStatisticsStore())
+const statisticsStore = useStatisticsStore()
+const { showStatisticsModal, statisticsGraph } = storeToRefs(statisticsStore)
 const { buildingId } = storeToRefs(useBuildingStore())
+
 /**
  * Props & events
- */ 
+ */
 const emit = defineEmits(['close', 'back'])
 
 /**
@@ -26,7 +27,7 @@ const emit = defineEmits(['close', 'back'])
  */
 const buildingStatistics = computed(() => {
   if (! buildingId.value) return null
-  return getStatisticsDataByBuildingId(buildingId.value)
+  return statisticsStore.getData(buildingId.value)
 })
 const noTotalIncidentCount = computed(() => {
   if (! buildingStatistics.value) return false

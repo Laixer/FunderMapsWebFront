@@ -16,12 +16,12 @@ import { useAnalysisStore } from '@/store/building/analysis';
 import { useBuildingStore } from '@/store/buildings';
 
 
-const { getAnalysisDataByBuildingId } = useAnalysisStore()
+const analysisStore = useAnalysisStore()
 const { buildingId } = storeToRefs(useBuildingStore())
 
 /**
  * Props & events
- */ 
+ */
 const emit = defineEmits(['close', 'back'])
 
 /**
@@ -29,7 +29,7 @@ const emit = defineEmits(['close', 'back'])
  */
 const analysisData = computed(() => {
   if (! buildingId.value) return null
-  return getAnalysisDataByBuildingId(buildingId.value)
+  return analysisStore.getData(buildingId.value)
 })
 
 const fieldGroupHeaders: Record<string, string> = {

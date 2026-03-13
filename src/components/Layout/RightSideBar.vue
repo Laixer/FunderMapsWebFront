@@ -45,44 +45,24 @@ const router = useRouter()
 const { isAuthenticated } = storeToRefs(useSessionStore())
 const { clearBuildingId } = useBuildingStore()
 
-/**
- * Menu items
- */
-const {
-  loadLocationDataByBuildingId,
-  buildingLocationDataFailedToLoad,
-  buildingLocationDataHasBeenRetrieved
-} = useGeoLocationsStore()
+const locationStore = useGeoLocationsStore()
+const analysisStore = useAnalysisStore()
+const statisticsStore = useStatisticsStore()
+const subsidenceStore = useSubsidenceStore()
 
 const {
-  loadAnalysisDataByBuildingId,
-  buildingAnalysisDataFailedToLoad,
-  buildingAnalysisDataHasBeenRetrieved
-} = useAnalysisStore()
-
-const { 
-  loadStatisticsDataByBuildingId,
-  buildingStatisticsDataFailedToLoad
-} = useStatisticsStore()
-
-const { loadSubsidenceDataByBuildingId } = useSubsidenceStore()
-
-/**
- * Green buttons
- */
-const { 
   buildingRecoveryReportDataHasBeenRetrieved,
   buildingHasRecoveryReports,
   setRecoveryDataByBuildingId
 } = useRecoveryReportsStore()
 
-const { 
+const {
   buildingInquiryDataHasBeenRetrieved,
   buildingHasInquiries,
   setInquiryDataByBuildingId
 } = useInquiriesStore()
 
-const { 
+const {
   buildingIncidentReportDataHasBeenRetrieved,
   buildingHasIncidentReports,
   setIncidentDataByBuildingId
@@ -117,8 +97,8 @@ const selectedPanel: Ref<string> = ref('')
 const failedToLoad: ComputedRef<boolean> = computed(
   () => {
     if (buildingId.value) {
-      return buildingLocationDataFailedToLoad(buildingId.value) 
-        || buildingAnalysisDataFailedToLoad(buildingId.value)
+      return locationStore.failedToLoad(buildingId.value)
+        || analysisStore.failedToLoad(buildingId.value)
     }
     return false
   }
@@ -130,8 +110,8 @@ const failedToLoad: ComputedRef<boolean> = computed(
 const isLoadingCoreData: ComputedRef<boolean> = computed(
   () => {
     if (! buildingId.value) return false
-    return ! buildingLocationDataHasBeenRetrieved(buildingId.value)
-      || ! buildingAnalysisDataHasBeenRetrieved(buildingId.value)
+    return ! locationStore.hasBeenRetrieved(buildingId.value)
+      || ! analysisStore.hasBeenRetrieved(buildingId.value)
   }
 )
 
@@ -174,7 +154,7 @@ const BuildingMenuList = computed(
         icon: 'graph',
         name: 'Statistiek',
         loading: false,
-        disabled: !! (buildingId.value && buildingStatisticsDataFailedToLoad(buildingId.value)),
+        disabled: !! (buildingId.value && statisticsStore.failedToLoad(buildingId.value)),
         route: null
       },
       {
@@ -273,10 +253,10 @@ watch(
     isOpen.value = true
 
     await Promise.allSettled([
-      loadLocationDataByBuildingId(buildingId),
-      loadAnalysisDataByBuildingId(buildingId),
-      loadStatisticsDataByBuildingId(buildingId),
-      loadSubsidenceDataByBuildingId(buildingId),
+      locationStore.loadData(buildingId),
+      analysisStore.loadData(buildingId),
+      statisticsStore.loadData(buildingId),
+      subsidenceStore.loadData(buildingId),
       getAllReportDataUnlessCached(buildingId)
     ])
   },

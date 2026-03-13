@@ -16,9 +16,9 @@ import { IConstructionYearPair, IFoundationTypePair, IIncidentYearPair, IInquiry
 import { CHART_COLORS, CHART_TRANSPARENT_COLORS } from '@/config';
 
 const { buildingId } = storeToRefs(useBuildingStore())
-const { getStatisticsDataByBuildingId } = useStatisticsStore()
-const { showStatisticsModal, statisticsGraph } = storeToRefs(useStatisticsStore())
-const { getSubsidenceDataByBuildingId } = useSubsidenceStore()
+const statisticsStore = useStatisticsStore()
+const { showStatisticsModal, statisticsGraph } = storeToRefs(statisticsStore)
+const subsidenceStore = useSubsidenceStore()
 
 defineEmits(['close'])
 
@@ -35,14 +35,13 @@ const availableChartComponents: IComponents = {
 
 const buildingStatistics = computed(() => {
   if (! buildingId.value) return null
-  return getStatisticsDataByBuildingId(buildingId.value)
+  return statisticsStore.getData(buildingId.value)
 })
 
 
 const subsidenceData = computed(() => {
   if (! buildingId.value) return []
-
-  return getSubsidenceDataByBuildingId(buildingId.value)
+  return subsidenceStore.getData(buildingId.value)
 })
 
 

@@ -12,13 +12,13 @@ import { useAnalysisStore } from '@/store/building/analysis';
 import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { useBuildingStore } from '@/store/buildings';
 
-const { getAnalysisDataByBuildingId } = useAnalysisStore()
-const { getLocationDataByBuildingId } = useGeoLocationsStore()
+const analysisStore = useAnalysisStore()
+const locationStore = useGeoLocationsStore()
 const { buildingId } = storeToRefs(useBuildingStore())
 
 /**
  * Props & events
- */ 
+ */
 const emit = defineEmits(['close', 'back'])
 
 /**
@@ -26,11 +26,11 @@ const emit = defineEmits(['close', 'back'])
  */
 const analysisData = computed(() => {
   if (! buildingId.value) return null
-  return getAnalysisDataByBuildingId(buildingId.value)
+  return analysisStore.getData(buildingId.value)
 })
 const locationData = computed(() => {
   if (! buildingId.value) return null
-  return getLocationDataByBuildingId(buildingId.value)
+  return locationStore.getData(buildingId.value)
 })
 
 

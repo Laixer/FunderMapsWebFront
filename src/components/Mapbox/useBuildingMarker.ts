@@ -19,14 +19,13 @@ export const useBuildingMarker = function useBuildingMarker(
   const mapInstance = ref(Map)
 
   const { buildingId } = storeToRefs(useBuildingStore())
-  const { getLocationDataByBuildingId } = useGeoLocationsStore()  
-
+  const locationStore = useGeoLocationsStore()
 
   const { mapMarkerLatLon } = storeToRefs( useMainStore() )
 
   const locationData: ComputedRef<IGeoLocationData|null> = computed(() => {
     if (! buildingId.value) return null
-    return getLocationDataByBuildingId(buildingId.value)
+    return locationStore.getData(buildingId.value)
   })
 
   function hide() {

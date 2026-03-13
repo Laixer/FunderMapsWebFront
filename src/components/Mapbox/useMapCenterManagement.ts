@@ -16,7 +16,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
 
   const { mapCenterLatLon } = storeToRefs( useMainStore() )
   const { buildingId } = storeToRefs(useBuildingStore())
-  const { getLocationDataByBuildingId } = useGeoLocationsStore()  
+  const locationStore = useGeoLocationsStore()
   const { activeMapset } = storeToRefs( useMapsetStore() )
 
 
@@ -28,7 +28,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
 
   const locationData: ComputedRef<IGeoLocationData|null> = computed(() => {
     if (! buildingId.value) return null
-    return getLocationDataByBuildingId(buildingId.value)
+    return locationStore.getData(buildingId.value)
   })
 
   const flyToCenter = function flyToCenter(center: mapboxgl.LngLatLike) {

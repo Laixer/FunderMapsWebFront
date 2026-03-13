@@ -1,122 +1,13 @@
-import { type Ref, ref, watch } from 'vue';
-import { defineStore, storeToRefs } from 'pinia'
+import { defineStore } from 'pinia'
 
 import { type IAnalysis } from "@/datastructures/interfaces"
-import api from '@/services/api';
-import { APIErrorResponse } from '@/services/apiClient';
-import { useSessionStore } from '../session';
+import api from '@/services/api'
+import { createBuildingDataLoader } from './createBuildingDataLoader'
 
 
-function useAnalysis() {
-  /**
-   * Analysis data by Building Id
-   */
-  const analysisDataByBuildingId: Ref<Record<string, IAnalysis>> = ref({})
+export const useAnalysisStore = defineStore('analysis', () => {
+  const { hasBeenRetrieved, failedToLoad, hasData, getData, loadData } =
+    createBuildingDataLoader<IAnalysis>('analysis', api.building.getAnalysisByBuildingId)
 
-  /**
-   * Whether currently data for a building is being loaded
-   */
-  const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
-
-  /**
-   * List of buildingIds that failed to load, along with info about the reason
-   */
-  const failedToLoadByBuildingId: Ref<Record<string, { reason: number }>> = ref({})
-
-  /**
-   * Whether the analysis data for a building have been retrieved previously
-   */
-  const buildingAnalysisDataHasBeenRetrieved = function buildingAnalysisDataHasBeenRetrieved(buildingId: string): boolean {
-    return buildingId in analysisDataByBuildingId.value
-  }
-
-  /**
-   * Whether the data failed to load (for whatever reason)
-   */
-  const buildingAnalysisDataFailedToLoad = function buildingAnalysisDataFailedToLoad(buildingId: string): boolean {
-    return buildingId in failedToLoadByBuildingId.value
-  }
-
-  /**
-   * Whether there is currently any analysis data available for a building
-   *  Note: the data may still be loading
-   */
-  const buildingHasAnalysisData = function buildingHasAnalysisData(buildingId: string): boolean {
-    return buildingAnalysisDataHasBeenRetrieved(buildingId) && !! analysisDataByBuildingId.value[buildingId]
-  }
-
-  /**
-   * Get all analysis data by building id
-   *  Note: returns null if the data has not yet been retrieved
-   */
-  const getAnalysisDataByBuildingId = function getAnalysisDataByBuildingId(buildingId: string): IAnalysis|null {
-    if (! buildingHasAnalysisData(buildingId)) return null
-
-    return analysisDataByBuildingId.value[buildingId]
-  }
-
-  const loadAnalysisDataByBuildingId = async function loadAnalysisDataByBuildingId(buildingId: string, cache: boolean = true) {
-    try {
-      // Data for this building is currently already being retrieved
-      if (isLoadingBuildingDataById.value[buildingId] === true) return
-      isLoadingBuildingDataById.value[buildingId] = true
-
-      /**
-       * If we use 'cache', and the building data has already been loaded, we got nothing to do.
-       */
-      if (cache === true && buildingAnalysisDataHasBeenRetrieved(buildingId)) return
-
-      /**
-       * Otherwise we start by retrieving the analysis data associated with the building
-       */
-      const response: IAnalysis = await api.building.getAnalysisByBuildingId(buildingId)
-
-      // Store data
-      analysisDataByBuildingId.value[buildingId] = response || null
-
-    } catch(e) {
-      console.error("Failed to load analysis data", buildingId, e)
-      failedToLoadByBuildingId.value[buildingId] = { reason: e instanceof APIErrorResponse ? e.status : 500 }
-    }
-
-    // Success or fail, we're no longer retrieving the data for this building
-    isLoadingBuildingDataById.value[buildingId] = false
-  }
-
-  /**
-   * Reset store to empty state
-   */
-  const clearAnalysisData = function clearAnalysisData() {
-    analysisDataByBuildingId.value = {}
-    isLoadingBuildingDataById.value = {}
-    failedToLoadByBuildingId.value = {}
-  }
-
-  /**
-   * Clean up analysis data on logout
-   */
-  const { isAuthenticated } = storeToRefs(useSessionStore())
-  watch(
-    isAuthenticated,
-    (value) => {
-      if (value !== true) {
-        clearAnalysisData()
-      }
-    }
-  )
-
-  return {
-    buildingAnalysisDataHasBeenRetrieved,
-    buildingAnalysisDataFailedToLoad,
-    buildingHasAnalysisData,
-    getAnalysisDataByBuildingId,
-
-    loadAnalysisDataByBuildingId
-  }
-}
-
-
-export const useAnalysisStore = defineStore(
-  'analysis',
-  useAnalysis
-)
+  return { hasBeenRetrieved, failedToLoad, hasData, getData, loadData }
+})
