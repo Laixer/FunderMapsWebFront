@@ -20,6 +20,20 @@
     <!-- Theme -->
     <meta name="theme-color" content="#28CC8B" />
 
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' blob:;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: blob: https:;
+      font-src 'self';
+      connect-src 'self' https://*.mapbox.com https://api.pdok.nl https://*.fundermaps.com;
+      worker-src 'self' blob:;
+      child-src blob:;
+      base-uri 'self';
+      form-action 'self';
+    " />
+
     <!-- Preconnect to external services -->
     <link rel="preconnect" href="https://api.mapbox.com" />
     <link rel="preconnect" href="https://events.mapbox.com" />
