@@ -8,6 +8,7 @@ const { closeable = true, variant = 'full', placing = 'center', wrapper = 'full'
   closeable?: boolean
   placing?: string
   wrapper?: string
+  active?: boolean
 }>()
 
 const emit = defineEmits<{ close: [] }>()
@@ -26,6 +27,7 @@ const handleClose = function handleClose() {
     :closeable="closeable"
     :placing="placing"
     :wrapper="wrapper"
+    :active="active"
     class="bg-blue-900/90"
     @click.self="handleClose"
     @close="emit('close')">

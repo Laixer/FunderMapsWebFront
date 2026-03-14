@@ -73,9 +73,10 @@ const handleAccept = function handleAccept() {
 </script>
 
 <template>
-  <OverlayModal 
+  <OverlayModal
     v-show="isDisclaimerModalOpen"
-    variant="narrow" 
+    :active="isDisclaimerModalOpen"
+    variant="narrow"
     title="Disclaimer"
     :closeable="false">
 

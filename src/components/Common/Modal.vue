@@ -1,19 +1,29 @@
 <script setup lang="ts">
 
+import { ref, toRef } from 'vue'
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
+import { useFocusTrap } from '@/composables/useFocusTrap'
 
-const { closeable = true, placing = 'center', wrapper = 'full' } = defineProps<{
+const props = withDefaults(defineProps<{
   title?: string
   variant?: string
   closeable?: boolean
   placing?: string
   wrapper?: string
-}>()
+  active?: boolean
+}>(), {
+  closeable: true,
+  placing: 'center',
+  wrapper: 'full',
+})
 
 const emit = defineEmits<{ close: [] }>()
 
+const dialogRef = ref<HTMLElement | null>(null)
+useFocusTrap(dialogRef, props.active !== undefined ? toRef(props, 'active') : undefined)
+
 const handleClose = function handleClose() {
-  if (closeable) {
+  if (props.closeable) {
     emit('close')
   }
 }
@@ -26,6 +36,7 @@ const handleClose = function handleClose() {
     :data-variant="wrapper"
   >
     <div
+      ref="dialogRef"
       class="panel pointer-events-auto"
       role="dialog"
       aria-describedby="dialog-label"

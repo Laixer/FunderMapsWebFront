@@ -245,9 +245,10 @@ const handleClose = function handleClose() {
 </script>
 <template>
 
-  <OverlayModal 
+  <OverlayModal
     v-show="isProfileModalOpen"
-    variant="narrow" 
+    :active="isProfileModalOpen"
+    variant="narrow"
     title="Profiel instellingen"
     class="ProfileModal"
     @close="handleClose">

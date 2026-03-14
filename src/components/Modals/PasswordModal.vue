@@ -103,9 +103,10 @@ const handleClose = function handleClose() {
 </script>
 <template>
 
-  <OverlayModal 
+  <OverlayModal
     v-show="isPasswordModalOpen"
-    variant="narrow" 
+    :active="isPasswordModalOpen"
+    variant="narrow"
     title="Wachtwoord wijzigen"
     class="PasswordModal"
     @close="handleClose">
