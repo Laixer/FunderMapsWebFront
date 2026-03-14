@@ -7,7 +7,7 @@
  * This module is included in the source code of the application itself for simplicity and reliability
  */
 
-import { nextTick, onMounted, onUnmounted, provide, readonly, ref } from 'vue'
+import { onMounted, onUnmounted, provide, readonly, ref } from 'vue'
 import mapboxgl, { type Map } from 'mapbox-gl'
 
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -71,22 +71,10 @@ const loadMapbox = function() {
   })
 }
 
-/**
- * Not Before Mounted, because DOM element needs to be avaialble
- */ 
-onMounted(() => {
-  // Delay loading, so that Mapbox will calculate the height properly
-  setTimeout(loadMapbox, 200)
-})
+onMounted(loadMapbox)
 
-/** 
- * Mapbox cleans up after itself with this method call
- *  https://docs.mapbox.com/mapbox-gl-js/api/map/#map#remove
- */ 
 onUnmounted(() => {
-  nextTick(() => {
-    map.remove()
-  })
+  map.remove()
 })
 </script>
 
