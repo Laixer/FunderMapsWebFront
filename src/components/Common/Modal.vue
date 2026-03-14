@@ -2,15 +2,15 @@
 
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
 
-const { closeable } = defineProps({
-  title: { type: String, default: '' },
-  variant: { type: String, default: '', validation: (param: string) => ['narrow', 'full', 'popover'].includes(param) },
-  closeable: { type: Boolean, default: true },
-  placing: { type: String, default: 'center', validation: (param: string) => ['start', 'end', 'center'].includes(param)},
-  wrapper: { type: String, default: 'full', validation: (param: string) => ['full', 'main'].includes(param)}
-})
+const { closeable = true } = defineProps<{
+  title?: string
+  variant?: string
+  closeable?: boolean
+  placing?: string
+  wrapper?: string
+}>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ close: [] }>()
 
 const handleClose = function handleClose() {
   if (closeable) {

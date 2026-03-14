@@ -2,12 +2,12 @@
 import { computed } from 'vue';
 
 
-const { shadow, rounded, wide } = defineProps({
-  title: { type: String, default: null },
-  shadow: { type: Boolean, default: false },
-  rounded: { type: Boolean, default: false },
-  wide: { type: Boolean, default: false }
-})
+const { shadow, rounded, wide } = defineProps<{
+  title?: string | null
+  shadow?: boolean
+  rounded?: boolean
+  wide?: boolean
+}>()
 
 const cardClasses = computed<string[]>(() => {
 

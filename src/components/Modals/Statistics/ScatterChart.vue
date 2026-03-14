@@ -8,6 +8,18 @@ import Chart from 'chart.js/auto';
 import chartTrendline from 'chartjs-plugin-trendline';
 Chart.register(chartTrendline)
 
+declare module 'chart.js' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ChartDatasetProperties<TType, TData> {
+    trendlineLinear?: {
+      colorMin?: string
+      colorMax?: string
+      lineStyle?: string
+      width?: number
+    }
+  }
+}
+
 type point = {
   x: number
   y: number
@@ -54,7 +66,6 @@ const createChart = function createChart(
             backgroundColor: backgroundColors,
             borderColor: borderColors,
             borderWidth: 1,
-            // @ts-expect-error - trendlineLinear is from chartjs-plugin-trendline, not in Chart.js types
             trendlineLinear: {
               colorMin: "#17a4ea",
 		          colorMax: "#17a4ea",
@@ -83,8 +94,7 @@ const createChart = function createChart(
             // beginAtZero: true,
             ticks: {
               color: '#808c99',
-              //@ts-expect-error - TS wants a number, we want to show a date string, which does work just fine
-              callback: function(value: number) {
+              callback: function(value: string | number) {
                 return (new Date(value)).toLocaleDateString('nl-NL', { 
                   year: 'numeric',
                   month: 'short',

@@ -1,10 +1,10 @@
 
-import { Ref, watch } from 'vue';
+import { type Ref, watch } from 'vue';
 
 export const useMapboxControlNudge = function useMapboxControlNudge(
-  side: 'left'|'right' = 'right', 
+  side: 'left'|'right' = 'right',
   offset = 336,
-  isOpen: Ref
+  isOpen: Ref<boolean>
 ) {
 
   /**
@@ -13,14 +13,14 @@ export const useMapboxControlNudge = function useMapboxControlNudge(
   const maybeNudge = function nudge(){
     try {
       const newOffset = isOpen.value ? `${offset}px` : '0px'
-      if (document.getElementsByClassName(`mapboxgl-ctrl-bottom-${side}`)?.[0]) {
-        // @ts-expect-error - no, a DIV element _does_ have a style property
-        document.getElementsByClassName(`mapboxgl-ctrl-bottom-${side}`)[0].style.setProperty(side, newOffset)
+      const bottom = document.getElementsByClassName(`mapboxgl-ctrl-bottom-${side}`)[0] as HTMLElement | undefined
+      if (bottom) {
+        bottom.style.setProperty(side, newOffset)
       }
 
-      if (document.getElementsByClassName(`mapboxgl-ctrl-top-${side}`)?.[0]) {
-        // @ts-expect-error - no, a DIV element _does_ have a style property
-        document.getElementsByClassName(`mapboxgl-ctrl-top-${side}`)[0].style.setProperty(side, newOffset)
+      const top = document.getElementsByClassName(`mapboxgl-ctrl-top-${side}`)[0] as HTMLElement | undefined
+      if (top) {
+        top.style.setProperty(side, newOffset)
       }
     } catch {
       console.warn("Failed to nudge mapbox controls position")

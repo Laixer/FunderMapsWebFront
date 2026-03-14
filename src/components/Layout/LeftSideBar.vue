@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComputedRef, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import VueMarkdown from 'vue-markdown-render'
 
@@ -34,7 +34,7 @@ const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
 /**
  * 
  */
-const legendState: ComputedRef<Record<string, boolean>> = computed(() => {
+const legendState = computed(() => {
   return (activeMapset.value?.layerSet || []).reduce((acc: Record<string, boolean>, layer) => {
 
     // No known mapset id = not visible. Not that there are any layers to go over with reduce... but TS!

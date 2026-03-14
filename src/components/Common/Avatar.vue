@@ -2,10 +2,10 @@
 
 import { computed } from 'vue'
 
-const { name, color } = defineProps({
-  name: { type: String, default: 'A. Noniempje' },
-  color: { type: String, default: 'blue', validator: (value: string) => ['blue', 'green', 'yellow', 'random'].includes(value) }
-})
+const { name = 'A. Noniempje', color = 'blue' } = defineProps<{
+  name?: string
+  color?: string
+}>()
 
 const firstLetter = computed<string>(() => {
   return name.charAt(0)

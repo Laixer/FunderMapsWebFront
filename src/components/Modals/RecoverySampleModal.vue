@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ComputedRef, computed, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { ICombinedRecoveryData } from '@/datastructures/interfaces';
 import InformationModal from '@/components/Common/InformationModal.vue';
 
-import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs, CompletedFieldData } from '@/utils/fieldData'
+import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs } from '@/utils/fieldData'
 
 import { useRecoveryReportsStore } from '@/store/building/recovery';
 import { useBuildingStore } from '@/store/buildings';
@@ -19,7 +18,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Data source for panel
  */
-const caseItems: ComputedRef<ICombinedRecoveryData[]> = computed(() => {
+const caseItems = computed(() => {
   if (! buildingId.value) return []
   return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
 })
@@ -28,7 +27,7 @@ const caseItems: ComputedRef<ICombinedRecoveryData[]> = computed(() => {
 /**
  * The selected report item, or null
  */
-const selectedCaseItem: ComputedRef<ICombinedRecoveryData|null> = computed(() => {
+const selectedCaseItem = computed(() => {
   if (caseItems.value[shownReportIndex.value]) {
     return caseItems.value[shownReportIndex.value]
   }
@@ -45,7 +44,7 @@ const hasSampleData = computed(() => {
 /**
  * Fields config
  */
-const sampleFieldsWithData: ComputedRef<CompletedFieldData[]> = computed(() => {
+const sampleFieldsWithData = computed(() => {
   if (! hasSampleData.value) return []
 
   const sampleFieldsConfig = applyContextToFieldDataConfigs({

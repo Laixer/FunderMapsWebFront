@@ -194,10 +194,10 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
    * 
    * If the value is empty, we're done.
    * 
-   */ // @ts-expect-error just keep quiet if you can't process something 
-  const sourcedFieldValue = source[config.name]
+   */
+  const sourcedFieldValue = (source as unknown as Record<string, unknown>)[config.name]
   if (sourcedFieldValue || sourcedFieldValue === false || sourcedFieldValue === 0) {
-    dataObj.fieldValue = sourcedFieldValue
+    dataObj.fieldValue = sourcedFieldValue as typeof dataObj.fieldValue
   } else {
     // If there is a default label, use it
     if (config.default) {

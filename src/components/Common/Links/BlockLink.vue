@@ -1,10 +1,10 @@
 <script setup lang="ts">
-defineProps({
-  title: { type: String, required: true },
-  label: { type: String, required: true }
-})
+defineProps<{
+  title: string
+  label: string
+}>()
 
-const emit = defineEmits(['click'])
+const emit = defineEmits<{ click: [] }>()
 
 </script>
 

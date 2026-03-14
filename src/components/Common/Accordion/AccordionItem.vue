@@ -4,12 +4,12 @@ import { ref, toRef, watch } from 'vue';
 import PlusIcon from '@assets/svg/icons/plus.svg'
 import MinusIcon from '@assets/svg/icons/minus.svg'
 
-const props = defineProps({
-  open: { type: Boolean, default: false },
-  title: { type: String, required: true },
-  cache: { type: Boolean, required: false },
-  sessionKey: { type: String, required: false }
-})
+const props = defineProps<{
+  open?: boolean
+  title: string
+  cache?: boolean
+  sessionKey?: string
+}>()
 
 const { title, cache, open, sessionKey } = props
 

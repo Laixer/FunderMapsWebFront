@@ -2,7 +2,6 @@
 export interface IAPIModel { }
 
 export interface IEnumMethods extends IAPIModel {
-
   className: string
 
   enumProperties: string[]

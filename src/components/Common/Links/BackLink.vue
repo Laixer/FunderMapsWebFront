@@ -2,9 +2,9 @@
 
 import BackArrowIcon from '@/components/Common/Icons/BackArrowIcon.vue'
 
-defineProps({
-  label: { type: String, required: true }
-})
+defineProps<{
+  label: string
+}>()
 </script>
 
 <template>

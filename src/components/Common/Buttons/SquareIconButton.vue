@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import IconButton from './IconButton.vue';
 
-  const props = defineProps({
-    label: { type: String, default: 'Button' },
-    disabled: { type: Boolean, default: false }
-  })
+  const props = defineProps<{
+    label?: string
+    disabled?: boolean
+  }>()
 </script>
 
 <template>

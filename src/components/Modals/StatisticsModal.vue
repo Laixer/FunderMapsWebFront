@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ComputedRef, computed, type Component  } from 'vue';
+import { computed, type Component  } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import OverlayModal from '@/components/Common/OverlayModal.vue'
@@ -20,7 +20,7 @@ const statisticsStore = useStatisticsStore()
 const { showStatisticsModal, statisticsGraph } = storeToRefs(statisticsStore)
 const subsidenceStore = useSubsidenceStore()
 
-defineEmits(['close'])
+defineEmits<{ close: [] }>()
 
 interface IComponents {
     [key: string]: Component
@@ -48,7 +48,7 @@ const subsidenceData = computed(() => {
 /**
  * The chart title, based on the statistic name
  */
-const title: ComputedRef<string> = computed(() => {
+const title = computed(() => {
   switch(statisticsGraph.value) {
 
     case 'displacement':
@@ -85,7 +85,7 @@ const title: ComputedRef<string> = computed(() => {
 /**
  * The graph type, based on the statistic name
  */
-const chartComponentName: ComputedRef<string>  = computed(() => {
+const chartComponentName = computed(() => {
   switch(statisticsGraph.value) {
     case 'displacement':
       return 'ScatterChart'

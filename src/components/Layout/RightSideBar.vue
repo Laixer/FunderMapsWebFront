@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { Ref, computed, onMounted, ref, watch, type Component } from 'vue';
+import { computed, onMounted, ref, watch, type Component } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
@@ -56,7 +56,7 @@ const {
  */
 const isOpen = ref(false)
 const rightPanelSlide = ref(false)
-const selectedPanel: Ref<string> = ref('')
+const selectedPanel = ref('')
 
 interface IComponents {
     [key: string]: Component

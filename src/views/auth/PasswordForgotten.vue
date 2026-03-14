@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Ref, ref } from 'vue';
+import { ref } from 'vue';
 
 import AuthWrapper from '@/components/Layout/AuthWrapper.vue';
 import Card from '@/components/Common/Card.vue'
@@ -9,10 +9,10 @@ import BackArrowIcon from '@/components/Common/Icons/BackArrowIcon.vue'
 import Input from '@/components/Common/Inputs/Input.vue';
 import api from '@/services/api';
 
-const requestSubmitted: Ref<boolean> = ref(false)
+const requestSubmitted = ref(false)
 
 // No validation here. Everything is always ok.
-const email: Ref<string> = ref('')
+const email = ref('')
 
 const handleSubmit = async function handleSubmit() {
   if (email.value) {

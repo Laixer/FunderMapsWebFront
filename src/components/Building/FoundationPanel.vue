@@ -19,7 +19,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */
-const emit = defineEmits(['close', 'back'])
+const emit = defineEmits<{ close: []; back: [] }>()
 
 /**
  * Data source for panel

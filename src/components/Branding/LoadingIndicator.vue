@@ -1,9 +1,11 @@
 <script setup lang="ts">
 
-defineProps({
-  label: { type: String, default: 'Loading...' },
-  hideLabel: { type: Boolean, default: false },
-  small: { type: Boolean, default: false }
+withDefaults(defineProps<{
+  label?: string
+  hideLabel?: boolean
+  small?: boolean
+}>(), {
+  label: 'Loading...',
 })
 
 </script>

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ComputedRef, computed, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { ICombinedInquiryData } from '@/datastructures/interfaces';
 import InformationModal from '@/components/Common/InformationModal.vue';
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs, CompletedFieldData } from '@/utils/fieldData'
@@ -19,7 +18,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Data source for panel
  */
-const caseItems: ComputedRef<ICombinedInquiryData[]> = computed(() => {
+const caseItems = computed(() => {
   if (! buildingId.value) return []
   return getCombinedInquiryDataByBuildingId(buildingId.value) || []
 })
@@ -28,7 +27,7 @@ const caseItems: ComputedRef<ICombinedInquiryData[]> = computed(() => {
 /**
  * The selected inquiry case item, or null
  */
-const selectedCaseItem: ComputedRef<ICombinedInquiryData|null> = computed(() => {
+const selectedCaseItem = computed(() => {
   if (caseItems.value[shownReportIndex.value]) {
     return caseItems.value[shownReportIndex.value]
   }
@@ -60,7 +59,7 @@ const fieldGroupHeaders: Record<string, string> = {
 /**
  * Fields config
  */
-const sampleFieldsWithData: ComputedRef<Record<string, CompletedFieldData[]>> = computed(() => {
+const sampleFieldsWithData = computed(() => {
   if (! hasSampleData.value) return {}
 
   const sampleFieldsConfig = applyContextToFieldDataConfigs({

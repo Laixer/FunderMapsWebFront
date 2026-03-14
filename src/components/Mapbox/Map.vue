@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ComputedRef, type Ref, computed, onBeforeUnmount, ref } from 'vue'; 
+import { computed, onBeforeUnmount, shallowRef } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MapBox from '@/components/Common/Mapbox/MapBox.vue';
@@ -24,10 +24,10 @@ const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
 const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
 const { isAvailable: hasUserMetaData } = storeToRefs(useMetadataStore())
 
-const emit = defineEmits(['ready'])
+const emit = defineEmits<{ ready: [] }>()
 
 // The Mapbox Map instance
-let mapInstance: Ref<Map|null> = ref(null)
+const mapInstance = shallowRef<Map | null>(null)
 
 // Composables to handle map related functionality
 const MapCenterManagement = useMapCenterManagement()
@@ -51,7 +51,7 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
  *  Set as ref because options.style is updated once the mapset is available
  *  Reference the last known position from the last visit if available
  */
-const options: ComputedRef<object> = computed(() => {
+const options = computed(() => {
   const lastKnownPositioning = getLastKnownPositioning()
   return {
     style: (import.meta.env.VITE_FUNDERMAPS_BASE_STYLE || 'mapbox://styles/laixer/clcz2iorf003414p22imzzhnk'),

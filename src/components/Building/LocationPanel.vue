@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'; 
+import { computed, toValue } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
@@ -19,7 +19,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */
-const emit = defineEmits(['close', 'back'])
+const emit = defineEmits<{ close: []; back: [] }>()
 
 /**
  * Data source for panel
@@ -56,8 +56,8 @@ const pdokLink = computed(() => {
 const appendExternalId = (value: unknown, config?: IFieldDataConfig) => {
   if (! value || typeof value !== 'string' || value.length === 0) return String(value ?? '')
 
-  // @ts-expect-error - source has externalId at runtime
-  return `${value} (${config?.source?.externalId})`
+  const source = toValue(config?.source) as Record<string, unknown> | null | undefined
+  return `${value} (${source?.externalId ?? ''})`
 }
 
 /**

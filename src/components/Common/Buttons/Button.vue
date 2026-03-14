@@ -8,13 +8,13 @@ import { computed } from 'vue';
  *  It has various styling toggles, which should not be used together. 
  */
 
-const { link, outline, muted } = defineProps({
-  label: { type: String, default: 'Button' },
-  disabled: { type: Boolean, default: false },
-  link: { type: Boolean, default: false },
-  outline: { type: Boolean, default: false },
-  muted: { type: Boolean, default: false }
-})
+const { link, outline, muted } = defineProps<{
+  label?: string
+  disabled?: boolean
+  link?: boolean
+  outline?: boolean
+  muted?: boolean
+}>()
 
 
 const btnClass = computed<string[]>(() => {

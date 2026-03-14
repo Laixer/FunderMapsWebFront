@@ -1,6 +1,6 @@
 import mapboxgl, { type Map } from "mapbox-gl"
 import { storeToRefs } from "pinia"
-import { ComputedRef, computed, nextTick, watch } from "vue"
+import { computed, nextTick, watch } from "vue"
 
 import { useMainStore } from '@/store/main';
 import { useBuildingStore } from '@/store/buildings';
@@ -26,7 +26,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
   // A flag we use to track when the watcher should ignore center changes
   let ignoreCenterChange: boolean = false
 
-  const locationData: ComputedRef<IGeoLocationData|null> = computed(() => {
+  const locationData = computed(() => {
     if (! buildingId.value) return null
     return locationStore.getData(buildingId.value)
   })

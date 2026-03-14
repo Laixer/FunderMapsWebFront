@@ -61,6 +61,7 @@ export const useSessionStore = defineStore('session', () => {
     useMapsetStore().removePrivateMapsets();
     useOrgsStore().removeOrgs();
     useMetadataStore().clear();
+    sessionStorage.clear();
   };
 
 

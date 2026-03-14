@@ -1,4 +1,4 @@
-import { type Ref, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { type ICombinedInquiryData, type IInquirySample, type IInquiryReport } from "@/datastructures/interfaces"
@@ -9,12 +9,12 @@ import { Inquiry } from '@/datastructures/classes/Inquiry';
 
 
 function useInquiries() {
-  const inquiriesById: Ref<Record<number, IInquiryReport>> = ref({})
-  const inquirySamplesByInquiryId: Ref<Record<number, IInquirySample[]>> = ref({})
-  const inquirySamplesByBuildingId: Ref<Record<string, IInquirySample[]>> = ref({})
-  const inquirySampleIdsByBuildingId: Ref<Record<string, number[]>> = ref({})
-  const inquiryIdsByBuildingId: Ref<Record<string, number[]>> = ref({})
-  const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
+  const inquiriesById = ref<Record<number, IInquiryReport>>({})
+  const inquirySamplesByInquiryId = ref<Record<number, IInquirySample[]>>({})
+  const inquirySamplesByBuildingId = ref<Record<string, IInquirySample[]>>({})
+  const inquirySampleIdsByBuildingId = ref<Record<string, number[]>>({})
+  const inquiryIdsByBuildingId = ref<Record<string, number[]>>({})
+  const isLoadingBuildingDataById = ref<Record<string, boolean>>({})
 
   /**
    * Whether the inquiry sample panel is open
@@ -25,7 +25,7 @@ function useInquiries() {
    * The list index of the inquiry report currently being shown
    *  This needs to match between sidebar and modal
    */
-  const shownReportIndex: Ref<number> = ref(0)
+  const shownReportIndex = ref(0)
 
   const buildingInquiryDataHasBeenRetrieved = function buildingInquiryDataHasBeenRetrieved(buildingId: string): boolean {
     return Array.isArray(inquiryIdsByBuildingId.value[buildingId])

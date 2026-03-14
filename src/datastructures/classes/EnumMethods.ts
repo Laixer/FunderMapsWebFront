@@ -2,6 +2,7 @@ import { IEnumMethods } from "../interfaces/api/util";
 
 
 export class EnumMethods implements IEnumMethods {
+  [key: string]: unknown
 
   className = 'Onbekend'
 
@@ -22,8 +23,6 @@ export class EnumMethods implements IEnumMethods {
 
       // using `in` to include prototype chain
       if (labelProperty in this) {
-
-        // @ts-expect-error - We know that all enum labels are either a string or number.
         return this[labelProperty] as string|number
       }
     }

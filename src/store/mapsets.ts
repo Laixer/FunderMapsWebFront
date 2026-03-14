@@ -1,4 +1,4 @@
-import { type Ref, ref, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 import { refDebounced } from '@vueuse/core'
 
@@ -34,7 +34,7 @@ function useMapsets() {
   /**
    * The map groups available to the user
    */
-  const availableMapsetsById: Ref<Record<string, IMapsetFE>> = ref({})
+  const availableMapsetsById = ref<Record<string, IMapsetFE>>({})
 
   const mapsetIdsBySlug = computed(() => {
     return Object.values(availableMapsetsById.value)
@@ -91,7 +91,7 @@ function useMapsets() {
   /**
    * The currently selected map group
    */
-  const activeMapsetId: Ref<string | null> = ref(null)
+  const activeMapsetId = ref<string | null>(null)
 
   /**
    * The id of the first of the available mapsets
@@ -194,8 +194,8 @@ function useMapsets() {
       const response = await api.mapset.getAvailableMapsets()
       removePrivateMapsets()
       response.forEach((mapset: IMapsetFE) => {
-        mapset = enforceGeoFencingOnPublicMapsets(mapset)
-        availableMapsetsById.value[mapset.id] = mapset
+        const enforced = enforceGeoFencingOnPublicMapsets(mapset)
+        availableMapsetsById.value[enforced.id] = enforced
       })
     } catch (e) {
       console.error('Failed to load available mapsets', e)
@@ -211,8 +211,8 @@ function useMapsets() {
     try {
       const response = await api.mapset.getPublicAndAvailableMapsetsById(mapsetId)
       response.forEach((mapset: IMapsetFE) => {
-        mapset = enforceGeoFencingOnPublicMapsets(mapset)
-        availableMapsetsById.value[mapset.id] = mapset
+        const enforced = enforceGeoFencingOnPublicMapsets(mapset)
+        availableMapsetsById.value[enforced.id] = enforced
       })
     } catch (e) {
       console.error('Failed to load mapset by id:', mapsetId, e)

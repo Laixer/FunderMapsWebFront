@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { type Ref, ref, watch, computed } from 'vue';
+import { ref, watch, computed, onBeforeUnmount } from 'vue';
 import { storeToRefs } from 'pinia';
 import { z } from 'zod'
 import { DutchMobilePhoneRegex } from '@/utils/validation'
@@ -21,12 +21,12 @@ const { isAuthenticated } = storeToRefs( useSessionStore() )
 /**
  * Whether the profile data has been retrieved from the API
  */
-const isProfileDataAvailable: Ref<boolean> = ref(false)
+const isProfileDataAvailable = ref(false)
 
 /**
- * Saving indicator 
+ * Saving indicator
  */
-const busySaving: Ref<boolean> = ref(false)
+const busySaving = ref(false)
 
 /**
  * The profile data (filled with placeholder data to satisfy the validator)
@@ -230,6 +230,12 @@ const handleSubmit = async function handleSubmit() {
     busySaving.value = false
   }
 }
+
+onBeforeUnmount(() => {
+  if (recentSuccessTimer !== null) {
+    clearTimeout(recentSuccessTimer)
+  }
+})
 
 // TODO: Show a warning if anything was changed without saving ?
 const handleClose = function handleClose() {

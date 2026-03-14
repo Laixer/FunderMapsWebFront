@@ -1,7 +1,7 @@
 /**
  * Create a single marker on the specified coordinates
  */
-import { type ComputedRef, computed, watch, MaybeRef, ref } from "vue"; 
+import { computed, watch, type MaybeRef, ref } from "vue";
 import mapboxgl, { type Map, type LngLat } from "mapbox-gl";
 import { storeToRefs } from "pinia";
 
@@ -23,7 +23,7 @@ export const useBuildingMarker = function useBuildingMarker(
 
   const { mapMarkerLatLon } = storeToRefs( useMainStore() )
 
-  const locationData: ComputedRef<IGeoLocationData|null> = computed(() => {
+  const locationData = computed<IGeoLocationData|null>(() => {
     if (! buildingId.value) return null
     return locationStore.getData(buildingId.value)
   })
@@ -40,9 +40,7 @@ export const useBuildingMarker = function useBuildingMarker(
       // Hide until Mapbox has projected the coordinates to screen position
       el.style.display = 'none'
 
-      // TODO: mapInstance.value - Type instantiation is excessively deep and possibly infinite.
-      // @ts-expect-error - Type instantiation is excessively deep and possibly infinite
-      Marker.setLngLat(LngLat).addTo(mapInstance.value)
+      Marker.setLngLat(LngLat).addTo(mapInstance.value as Map)
 
       // Wait for Mapbox to update the transform, then animate in
       requestAnimationFrame(() => {

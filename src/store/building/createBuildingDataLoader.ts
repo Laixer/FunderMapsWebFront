@@ -1,4 +1,4 @@
-import { type Ref, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { APIErrorResponse } from '@/services/apiClient'
 import { useSessionStore } from '../session'
@@ -12,9 +12,9 @@ export function createBuildingDataLoader<T>(
   apiFn: (buildingId: string) => Promise<T>,
   transform?: (response: T) => T | null
 ) {
-  const dataByBuildingId = ref({}) as Ref<Record<string, T | null>>
-  const isLoadingById: Ref<Record<string, boolean>> = ref({})
-  const failedToLoadById: Ref<Record<string, { reason: number }>> = ref({})
+  const dataByBuildingId = ref<Record<string, T | null>>({})
+  const isLoadingById = ref<Record<string, boolean>>({})
+  const failedToLoadById = ref<Record<string, { reason: number }>>({})
 
   function hasBeenRetrieved(buildingId: string): boolean {
     return buildingId in dataByBuildingId.value

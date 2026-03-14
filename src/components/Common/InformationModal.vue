@@ -2,13 +2,13 @@
 
 import Modal from '@/components/Common/Modal.vue'
 
-const { closeable } = defineProps({
-  title: { type: String, default: '' },
-  variant: { type: String, default: '', validation: (param: string) => ['narrow', 'full'].includes(param) },
-  closeable: { type: Boolean, default: true }
-})
+const { closeable = true } = defineProps<{
+  title?: string
+  variant?: string
+  closeable?: boolean
+}>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ close: [] }>()
 
 const handleClose = function handleClose() {
   if (closeable) {

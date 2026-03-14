@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import CloseIcon from '@assets/svg/icons/close.svg'
 
-defineProps({
-  small: { type: Boolean, default: true },
-  disabled: { type: Boolean, default: false },
+withDefaults(defineProps<{
+  small?: boolean
+  disabled?: boolean
+}>(), {
+  small: true,
 })
 
-defineEmits(['close'])
+defineEmits<{ close: [] }>()
 
 // -translate-y-3 translate-x-3 p-0
 

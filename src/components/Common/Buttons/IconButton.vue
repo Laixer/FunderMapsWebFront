@@ -2,12 +2,12 @@
 
 import { computed } from 'vue'
 
-const { square, transparent } = defineProps({
-  label: { type: String, default: 'Button' },
-  square: { type: Boolean, default: false },
-  transparent: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false }
-})
+const { square, transparent } = defineProps<{
+  label?: string
+  square?: boolean
+  transparent?: boolean
+  disabled?: boolean
+}>()
 
 const btnClass = computed<string[]>(() => {
   if (transparent) {

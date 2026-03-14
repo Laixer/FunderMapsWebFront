@@ -3,13 +3,13 @@
 import VueMarkdown from 'vue-markdown-render'
 import Modal from '@/components/Common/Modal.vue'
 
-defineProps({
-  title: { type: String,  required: true },
-  text: { type: String, required: true },
-  placing: { type: String, default: 'start', validation: (param: string) => ['start', 'end', 'center'].includes(param)},
-})
+defineProps<{
+  title: string
+  text: string
+  placing?: string
+}>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ close: [] }>()
 </script>
 
 <template>

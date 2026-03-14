@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComputedRef, Ref, computed, onBeforeUnmount, ref, watch } from 'vue'; 
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 
@@ -31,7 +31,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */ 
-const emit = defineEmits(['close', 'back'])
+const emit = defineEmits<{ close: []; back: [] }>()
 
 /**
  * Whether the note is clamped
@@ -41,15 +41,15 @@ const isClamped = ref(false)
 /**
  * Data source for panel
  */
-const caseItems: ComputedRef<IIncidentReport[]> = computed(() => {
-  if (! buildingId.value) return []
+const caseItems = computed(() => {
+  if (! buildingId.value) return [] as IIncidentReport[]
   return getIncidentReportsByBuildingId(buildingId.value) || []
 })
 
 /**
  * Check whether there is relevant data available for this panel
  */
-const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
+const noCaseItemAvailableForBuilding = computed(() => {
   if (! buildingId.value) return false
   return (
     buildingIncidentReportDataHasBeenRetrieved(buildingId.value) 
@@ -60,8 +60,8 @@ const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
 /**
  * Selected index from list (reset when building changes via watcher below)
  */
-const selectedListIndex: Ref<number> = ref(0)
-const maxListIndex: ComputedRef<number> = computed(() => {
+const selectedListIndex = ref(0)
+const maxListIndex = computed(() => {
   return caseItems.value.length < 1 
     ? 0
     : (caseItems.value.length - 1)
@@ -70,14 +70,14 @@ const maxListIndex: ComputedRef<number> = computed(() => {
 /**
  * The selected case item, or null
  */
-const selectedCaseItem: ComputedRef<IIncidentReport|null> = computed(() => {
+const selectedCaseItem = computed(() => {
   if (caseItems.value[selectedListIndex.value]) {
     return caseItems.value[selectedListIndex.value]
   }
   return null
 })
 
-const selectedCaseItemTitle: ComputedRef<string> = computed(() => {
+const selectedCaseItemTitle = computed(() => {
   return selectedCaseItem.value?.id || ''
 })
 

@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
 defineOptions({ inheritAttrs: false })
 
 const model = defineModel()
-const emit = defineEmits(['focus'])
+const emit = defineEmits<{ focus: [] }>()
 
 const attrs = useAttrs()
 

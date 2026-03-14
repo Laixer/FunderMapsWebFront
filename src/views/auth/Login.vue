@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Ref, ref } from 'vue';
+import { ref } from 'vue';
 import { z } from 'zod'
 
 import AuthWrapper from '@/components/Layout/AuthWrapper.vue';
@@ -26,9 +26,9 @@ const metadataStore = useMetadataStore()
 /**
  * Form information
  */
-const loginFailed: Ref<boolean> = ref(false)
-const busyLoggingIn: Ref<boolean> = ref(false)
-const showPassword: Ref<boolean> = ref(false)
+const loginFailed = ref(false)
+const busyLoggingIn = ref(false)
+const showPassword = ref(false)
 const formData = ref({
   email: '',
   password: ''

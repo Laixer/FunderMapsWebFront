@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia';
-import { Ref, ref } from 'vue';
+import { ref } from 'vue';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { getItemsStartingWith } from '@/utils/sessionStorage';
@@ -13,21 +13,18 @@ const sessionStorageKeyPrefix = 'layer_visibility_';
 export const useLayersStore = defineStore('layers', () => {
   /**
    * Stores arrays of visible layer IDs, keyed by mapset ID.
-   * @type {Ref<{ [key: string]: string[] }>}
    */
-  const visibleLayersByMapsetId: Ref<{ [key: string]: string[] }> = ref({});
+  const visibleLayersByMapsetId = ref<Record<string, string[]>>({});
 
   /**
    * Indicates whether administrative boundaries are shown.
-   * @type {Ref<boolean>}
    */
-  const showAdministrativeBoundaries: Ref<boolean> = ref(false);
+  const showAdministrativeBoundaries = ref(false);
 
   /**
    * Indicates whether the building cluster (bouwkundige eenheid) layer is shown.
-   * @type {Ref<boolean>}
    */
-  const showBuildingCluster: Ref<boolean> = ref(false);
+  const showBuildingCluster = ref(false);
 
   /**
    * Resolves the mapset ID from various possible inputs.

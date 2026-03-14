@@ -1,4 +1,4 @@
-import { type Ref, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { IRecoverySample, type IRecoveryReport } from "@/datastructures/interfaces"
@@ -10,12 +10,12 @@ import { ICombinedRecoveryData } from '@/datastructures/interfaces/front-end/ICo
 
 
 function useRecoveryReports() {
-  const recoveryReportsById: Ref<Record<number, IRecoveryReport>> = ref({})
-  const recoverySamplesByRecoveryReportId: Ref<Record<number, IRecoverySample[]>> = ref({})
-  const recoverySamplesByBuildingId: Ref<Record<string, IRecoverySample[]>> = ref({})
-  const recoverySampleIdsByBuildingId: Ref<Record<string, number[]>> = ref({})
-  const recoveryReportIdsByBuildingId: Ref<Record<string, number[]>> = ref({})
-  const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
+  const recoveryReportsById = ref<Record<number, IRecoveryReport>>({})
+  const recoverySamplesByRecoveryReportId = ref<Record<number, IRecoverySample[]>>({})
+  const recoverySamplesByBuildingId = ref<Record<string, IRecoverySample[]>>({})
+  const recoverySampleIdsByBuildingId = ref<Record<string, number[]>>({})
+  const recoveryReportIdsByBuildingId = ref<Record<string, number[]>>({})
+  const isLoadingBuildingDataById = ref<Record<string, boolean>>({})
 
   /**
    * Whether the recovery sample panel is open
@@ -26,7 +26,7 @@ function useRecoveryReports() {
    * The list index of the recovery report currently being shown
    *  This needs to match between sidebar and modal
    */
-  const shownReportIndex: Ref<number> = ref(0)
+  const shownReportIndex = ref(0)
 
   const buildingRecoveryReportDataHasBeenRetrieved = function buildingRecoveryReportDataHasBeenRetrieved(buildingId: string): boolean {
     return Array.isArray(recoveryReportIdsByBuildingId.value[buildingId])

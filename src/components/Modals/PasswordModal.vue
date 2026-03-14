@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { type Ref, ref } from 'vue';
+import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { z } from 'zod'
 
@@ -20,9 +20,9 @@ const { isPasswordModalOpen } = storeToRefs( useMainStore() )
 /**
  * Form information
  */
-const changeFailed: Ref<boolean> = ref(false) 
-const changeSucceeded: Ref<boolean> = ref(false) 
-const showPassword: Ref<boolean> = ref(true)
+const changeFailed = ref(false)
+const changeSucceeded = ref(false)
+const showPassword = ref(true)
 const formData = ref({
   oldPassword: '',
   newPassword: '',
@@ -32,7 +32,7 @@ const formData = ref({
 /**
  * Saving indicator 
  */
-const busySaving: Ref<boolean> = ref(false)
+const busySaving = ref(false)
 
 /** 
  * Keeping it simple. Let the API decide what is valid

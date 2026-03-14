@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComputedRef, computed } from 'vue'; 
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
@@ -22,7 +22,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
 /**
  * Props & events
  */
-const emit = defineEmits(['close', 'back'])
+const emit = defineEmits<{ close: []; back: [] }>()
 
 /**
  * Data source for panel
@@ -46,7 +46,7 @@ interface CompletedFieldDataWithIcon extends CompletedFieldData {
   icon: string|null|undefined
 }
 
-const fieldsWithDataAndIcons: ComputedRef<Record<string, CompletedFieldDataWithIcon[]>> = computed(() => {
+const fieldsWithDataAndIcons = computed(() => {
   if (analysisData.value === null) return {}
 
   const fieldsConfig = applyContextToFieldDataConfigs({

@@ -2,14 +2,14 @@
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 
-const { closeable } = defineProps({
-  title: { type: String, default: null },
-  icon: { type: String, default: null },
-  subtitle: { type: String, default: null },
-  closeable: { type: Boolean, default: true }
-})
+const { closeable = true } = defineProps<{
+  title?: string | null
+  icon?: string | null
+  subtitle?: string | null
+  closeable?: boolean
+}>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ close: [] }>()
 
 const handleClose = function handleClose() {
   if(closeable) {

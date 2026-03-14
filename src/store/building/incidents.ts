@@ -1,4 +1,4 @@
-import { type Ref, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { type IIncidentReport } from "@/datastructures/interfaces"
@@ -8,9 +8,9 @@ import { IncidentReport } from '@/datastructures/classes/IncidentReport';
 
 
 function useIncidentReports() {
-  const incidentReportsById: Ref<Record<string, IIncidentReport>> = ref({})
-  const incidentReportIdsByBuildingId: Ref<Record<string, string[]>> = ref({})
-  const isLoadingBuildingDataById: Ref<Record<string, boolean>> = ref({})
+  const incidentReportsById = ref<Record<string, IIncidentReport>>({})
+  const incidentReportIdsByBuildingId = ref<Record<string, string[]>>({})
+  const isLoadingBuildingDataById = ref<Record<string, boolean>>({})
 
   const buildingIncidentReportDataHasBeenRetrieved = function buildingIncidentReportDataHasBeenRetrieved(buildingId: string): boolean {
     return Array.isArray(incidentReportIdsByBuildingId.value[buildingId])

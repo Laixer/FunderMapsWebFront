@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { computed, ComputedRef } from 'vue';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useBuildingStore } from '@/store/buildings';
 
 const { buildingId } = storeToRefs(useBuildingStore())
 
-const buildingIdTitle: ComputedRef<{top: string, bottom: string}|null> = computed(
-  () => {
-    if (buildingId.value === null) return null
-    const segments = buildingId.value.split('.')
-    const number = segments[segments.length - 1]
-    delete segments[segments.length - 1]
+const buildingIdTitle = computed(() => {
+  if (buildingId.value === null) return null
+  const segments = buildingId.value.split('.')
+  const number = segments[segments.length - 1]
 
-    return { top: segments.join('.') || '', bottom: number }
-  }
-)
+  return { top: segments.slice(0, -1).join('.') || '', bottom: number }
+})
 
 </script>
 

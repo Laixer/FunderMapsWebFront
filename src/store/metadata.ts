@@ -1,4 +1,4 @@
-import { type Ref, ref } from "vue";
+import { ref } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 import api from "@/services/api";
 import { useSessionStore } from '@/store/session';
@@ -25,8 +25,8 @@ type MetadataObject = Record<string, MetadataValue>;
  * with a backend API. For guest users, metadata is stored in `localStorage`.
  */
 export const useMetadataStore = defineStore('metadata', () => {
-  const metadataState: Ref<MetadataObject> = ref({});
-  const isAvailable: Ref<boolean> = ref(false);
+  const metadataState = ref<MetadataObject>({});
+  const isAvailable = ref(false);
 
   const sessionStore = useSessionStore();
   const { isAuthenticated } = storeToRefs(sessionStore);

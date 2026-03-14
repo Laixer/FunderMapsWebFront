@@ -1,13 +1,8 @@
 import { get, put } from "../apiClient"
 
 export const getMetadata = async () => {
-  try {
-    const response = await get({ endpoint: '/metadata' })
-    // The actual metadata object is a stringified json object within the json response
-    return JSON.parse(response?.metadata)
-  } catch (err) {
-    return Promise.reject(err)
-  }
+  const response = await get({ endpoint: '/metadata' })
+  return JSON.parse(response?.metadata)
 }
 
 export const setMetadata = (body: object) => {

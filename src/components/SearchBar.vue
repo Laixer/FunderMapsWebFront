@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Ref, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import mapboxgl from 'mapbox-gl';
 
@@ -32,9 +32,9 @@ const queryString = ref('')
 const debouncedQueryString = debouncedRef(queryString, 10, { maxWait: 150 } )
 
 // Results from the suggestion query
-const lastQuery: Ref<string> = ref('')
-const suggestions: Ref<IPDOKSuggestion[]> = ref([])
-const focusedSuggestion: Ref<number|null> = ref(null)
+const lastQuery = ref('')
+const suggestions = ref<IPDOKSuggestion[]>([])
+const focusedSuggestion = ref<number | null>(null)
 
 // TODO: Show a no results / error message ?
 const noResults = ref(false)

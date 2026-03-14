@@ -3,7 +3,7 @@
  * Based on the active mapset, building details are shown at the top of the right sidebar
  */
 
-import { type ComputedRef, computed } from 'vue';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useMapsetStore } from '@/store/mapsets'
@@ -14,8 +14,7 @@ import { useInquiriesStore } from '@/store/building/inquiries';
 import { useRecoveryReportsStore } from '@/store/building/recovery';
 import { useIncidentReportsStore } from '@/store/building/incidents';
 
-import { FieldDataConfig, applyContextToFieldDataConfigs, retrieveAndFormatFieldData, type CompletedFieldData } from '@/utils/fieldData';
-import { ICombinedRecoveryData, IIncidentReport } from '@/datastructures/interfaces';
+import { FieldDataConfig, applyContextToFieldDataConfigs, retrieveAndFormatFieldData } from '@/utils/fieldData';
 
 
 const { activeMapsetId } = storeToRefs(useMapsetStore())
@@ -42,13 +41,13 @@ const inquiryData = computed(() => {
   return getCombinedInquiryDataByBuildingId(buildingId.value) || []
 })
 
-const recoveryData: ComputedRef<ICombinedRecoveryData[]> = computed(() => {
+const recoveryData = computed(() => {
   if (! buildingId.value) return []
   return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
 })
 
 
-const incidentData: ComputedRef<IIncidentReport[]> = computed(() => {
+const incidentData = computed(() => {
   if (! buildingId.value) return []
   return getIncidentReportsByBuildingId(buildingId.value) || []
 })
@@ -76,7 +75,7 @@ const title = computed<string|null>(() => {
   return null
 })
 
-const fields: ComputedRef<CompletedFieldData[]> = computed(() => {
+const fields = computed(() => {
 
   // No building = no need for details
   if (! buildingId.value) return []

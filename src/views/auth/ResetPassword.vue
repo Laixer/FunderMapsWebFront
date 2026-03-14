@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Ref, ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { z } from 'zod'
 
 import AuthWrapper from '@/components/Layout/AuthWrapper.vue';
@@ -29,9 +29,9 @@ onBeforeMount(() => {
 /**
  * Form information
  */
-const resetFailed: Ref<boolean> = ref(false)
-const resetSucceeded: Ref<boolean> = ref(false)
-const showPassword: Ref<boolean> = ref(false)
+const resetFailed = ref(false)
+const resetSucceeded = ref(false)
+const showPassword = ref(false)
 const formData = ref({
   email: '',
   password: '',

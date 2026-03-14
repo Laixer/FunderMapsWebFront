@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ComputedRef, computed, onBeforeUnmount, ref, watch } from 'vue'; 
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 
-import { ICombinedRecoveryData } from '@/datastructures/interfaces';
 import Panel from '@/components/Common/Panel.vue';
 import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
@@ -29,7 +28,7 @@ const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRe
 /**
  * Props & events
  */ 
-const emit = defineEmits(['close', 'back'])
+const emit = defineEmits<{ close: []; back: [] }>()
 
 /**
  * Whether the note is clamped
@@ -39,7 +38,7 @@ const isClamped = ref(false)
 /******************************************************************************
  * Main Recovery report
  */
-const caseItems: ComputedRef<ICombinedRecoveryData[]> = computed(() => {
+const caseItems = computed(() => {
   if (! buildingId.value) return []
   return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
 })
@@ -47,7 +46,7 @@ const caseItems: ComputedRef<ICombinedRecoveryData[]> = computed(() => {
 /**
  * Check whether there is relevant data available for this panel
  */
-const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
+const noCaseItemAvailableForBuilding = computed(() => {
   if (! buildingId.value) return false
   return (
     buildingRecoveryReportDataHasBeenRetrieved(buildingId.value) 
@@ -60,7 +59,7 @@ const noCaseItemAvailableForBuilding: ComputedRef<boolean> = computed(() => {
  * Selected index from list
  *  Note: we start counting at 0
  */
-const maxListIndex: ComputedRef<number> = computed(() => {
+const maxListIndex = computed(() => {
   return caseItems.value.length < 1 
     ? 0
     : (caseItems.value.length - 1)
@@ -69,7 +68,7 @@ const maxListIndex: ComputedRef<number> = computed(() => {
 /**
  * The selected case item, or null
  */
- const selectedCaseItem: ComputedRef<ICombinedRecoveryData|null> = computed(() => {
+ const selectedCaseItem = computed(() => {
   if (caseItems.value[shownReportIndex.value]) {
     return caseItems.value[shownReportIndex.value]
   }
@@ -80,7 +79,7 @@ const maxListIndex: ComputedRef<number> = computed(() => {
 /**
  * The title of the selected report
  */
-const selectedCaseItemTitle: ComputedRef<string|number> = computed(() => {
+const selectedCaseItemTitle = computed(() => {
   return selectedCaseItem.value?.report?.documentName || ''
 })
 

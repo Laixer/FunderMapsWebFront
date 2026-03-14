@@ -2,12 +2,12 @@
 import LoadingIndicator from '@/components/Branding/LoadingIndicator.vue';
 import { computed } from 'vue';
 
-const props = defineProps({
-  label: { type: String, required: true },
-  loading: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  active: { type: Boolean, default: false },
-})
+const props = defineProps<{
+  label: string
+  loading?: boolean
+  disabled?: boolean
+  active?: boolean
+}>()
 
 const classList = computed<string[]>(() => {
   let list: string[] = []
