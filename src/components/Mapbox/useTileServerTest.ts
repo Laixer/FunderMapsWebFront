@@ -1,5 +1,5 @@
 
-import { type MaybeRef, watch, ref } from "vue";
+import { type MaybeRef, watch, shallowRef } from "vue";
 import { type LayerSpecification, type SourceSpecification, type Map } from "mapbox-gl";
 import { isTileserverTest } from "@/utils/tileserverTest";
 
@@ -11,7 +11,7 @@ export const useTileServerTest = function useTileServerTest(
   layerConfig: LayerSpecification
 ) {
 
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
   if (! isTileserverTest()) {
     return
   }

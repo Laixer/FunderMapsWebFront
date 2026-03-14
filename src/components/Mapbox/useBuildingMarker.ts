@@ -1,7 +1,7 @@
 /**
  * Create a single marker on the specified coordinates
  */
-import { computed, watch, type MaybeRef, ref } from "vue";
+import { computed, watch, type MaybeRef, shallowRef } from "vue";
 import mapboxgl, { type Map, type LngLat } from "mapbox-gl";
 import { storeToRefs } from "pinia";
 
@@ -16,7 +16,7 @@ export const useBuildingMarker = function useBuildingMarker(
   Map: MaybeRef<Map | null | undefined>
 ) {
   const Marker = new mapboxgl.Marker()
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
 
   const { buildingId } = storeToRefs(useBuildingStore())
   const locationStore = useGeoLocationsStore()

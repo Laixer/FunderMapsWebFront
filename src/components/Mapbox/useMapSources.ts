@@ -1,6 +1,6 @@
 
 import { type Map } from "mapbox-gl";
-import { type MaybeRef, ref } from "vue";
+import { type MaybeRef, shallowRef } from "vue";
 
 /**
  * TODO: Remove a source ?
@@ -9,7 +9,7 @@ export const useMapSources = function useMapSources(
   Map: MaybeRef<Map | null | undefined>
 ) {
 
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
 
   const currentSources: string[] = []
 

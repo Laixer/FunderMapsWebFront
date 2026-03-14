@@ -1,5 +1,5 @@
 import { type Map } from "mapbox-gl";
-import { type MaybeRef, watch, ref } from "vue";
+import { type MaybeRef, watch, shallowRef } from "vue";
 
 import { useMetadataStore } from '@/store/metadata';
 
@@ -8,7 +8,7 @@ export const useTrackPositioning = function useTrackPositioning(
   Map: MaybeRef<Map | null | undefined>
 ) {
 
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
 
   /***********************************************************************************
    * Internal functions

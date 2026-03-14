@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, shallowRef } from 'vue';
 import { defineStore } from 'pinia';
 import type { LngLat } from 'mapbox-gl';
 
@@ -10,8 +10,8 @@ export const useMainStore = defineStore('main', () => {
   const remarkPopoverTitle = ref('');
   const remarkPopoverText = ref('');
   const isShowingMapsetSelection = ref(false);
-  const mapCenterLatLon = ref<LngLat | null>(null);
-  const mapMarkerLatLon = ref<LngLat | null>(null);
+  const mapCenterLatLon = shallowRef<LngLat | null>(null);
+  const mapMarkerLatLon = shallowRef<LngLat | null>(null);
 
   return {
     isProfileModalOpen,

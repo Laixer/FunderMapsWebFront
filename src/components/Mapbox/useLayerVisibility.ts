@@ -6,7 +6,7 @@ import { useLayersStore } from "@/store/layers";
 
 import { type IMapsetFE } from "@/datastructures/interfaces";
 import { defaultMapsetId, defaultLayerIds } from '@/config';
-import { type MaybeRef, toRaw, watch, ref } from "vue";
+import { type MaybeRef, toRaw, watch, shallowRef } from "vue";
 
 export const useLayerVisibility = function useLayerVisibility(
   Map: MaybeRef<Map | null | undefined>
@@ -17,7 +17,7 @@ export const useLayerVisibility = function useLayerVisibility(
   const { getVisibleLayersByMapsetId, changeLayerVisibility } = layersStore
   const { visibleLayersByMapsetId } = storeToRefs(layersStore)
 
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
 
   /**
    * Layer id of currently shown layers

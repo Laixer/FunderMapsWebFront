@@ -4,7 +4,7 @@
  **********************************************************************************/
 
 import { type Map, type MapMouseEvent, type MapboxGeoJSONFeature } from "mapbox-gl";
-import { type MaybeRef, ref } from "vue";
+import { type MaybeRef, shallowRef } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useBuildingRouting } from '@/router/buildingRouting'
@@ -19,7 +19,7 @@ export const useLayerEvents = function useLayerEvents(
   const sessionStore = useSessionStore()
   const { isAuthenticated } = storeToRefs(sessionStore)
 
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
 
   /****************************************************************************
    * Event handlers

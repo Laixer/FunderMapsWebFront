@@ -1,5 +1,5 @@
 
-import { type MaybeRef, type Ref, ref, watch } from "vue";
+import { type MaybeRef, type Ref, shallowRef, watch } from "vue";
 import { LayerSpecification, type Map } from "mapbox-gl";
 
 import { useMapSources } from "./useMapSources";
@@ -11,7 +11,7 @@ export const useToggleableLayers = function useToggleableLayers(
   layers: string[]
 ) {
 
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
 
   const {
     addSource

@@ -5,7 +5,7 @@
  */
 
 import { LayerSpecification, type Map } from "mapbox-gl";
-import { type MaybeRef, watch, ref } from "vue";
+import { type MaybeRef, watch, shallowRef } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';
@@ -23,7 +23,7 @@ export const useMapLayers = function useMapLayers(
 
   const { activeMapset } = storeToRefs(useMapsetStore())
 
-  const mapInstance = ref(Map)
+  const mapInstance = shallowRef(Map)
 
   let currentMapset: IMapsetFE | null = null
   let currentLayerIds: string[] = []
