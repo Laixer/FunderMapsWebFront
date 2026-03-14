@@ -38,7 +38,7 @@ export const useMetadataStore = defineStore('metadata', () => {
         return;
       }
 
-      const response: MetadataObject | null | undefined = await api.metadata.getMetadata();
+      const response = await api.metadata.getMetadata() as MetadataObject | null | undefined;
       if (response) {
         metadataState.value = response;
       } else {

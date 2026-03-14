@@ -141,7 +141,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                     <h6 class="heading-6 mb-2">{{ activeMapset?.name }}</h6>
                     <VueMarkdown
                       :source="activeMapset?.note ?? ''"
-                      :options="{ breaks: true, linkify: true }"
+                      :options="{ breaks: true, linkify: true, html: false }"
                       class="text-sm leading-relaxed text-grey-700"
                     />
                   </div>

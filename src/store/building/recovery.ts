@@ -121,15 +121,16 @@ function useRecoveryReports() {
 
       recoveryReportIdsByBuildingId.value[buildingId] = response.map((report: IRecoveryReport) => report.id)
 
-      for (const report of response) {
-        const recoveryReportId = report.id
-        const sampleResponse = await api.building.getRecoverySamplesByRecoveryId(recoveryReportId)
-
-        recoverySamplesByRecoveryReportId.value[recoveryReportId] = []
-        sampleResponse.forEach((recoverySample: IRecoverySample) => {
-          recoverySamplesByRecoveryReportId.value[recoveryReportId].push(new RecoverySample(recoverySample))
-        })
-      }
+      const sampleResults = await Promise.allSettled(
+        response.map(report => api.building.getRecoverySamplesByRecoveryId(report.id))
+      )
+      sampleResults.forEach((result, index) => {
+        if (result.status !== 'fulfilled') return
+        const recoveryReportId = response[index].id
+        recoverySamplesByRecoveryReportId.value[recoveryReportId] = result.value.map(
+          (sample: IRecoverySample) => new RecoverySample(sample)
+        )
+      })
 
     } catch (e) {
       console.error("Failed to load recovery data", buildingId, e)

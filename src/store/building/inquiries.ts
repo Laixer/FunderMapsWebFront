@@ -114,11 +114,12 @@ function useInquiries() {
 
       const reports: IInquiryReport[] = await api.building.getInquiriesByBuildingId(buildingId)
 
-      let samples: IInquirySample[] = []
-      for (const report of reports) {
-        const sampleResponse = await api.building.getInquirySamplesByInquiryId(report.id)
-        samples = samples.concat(sampleResponse)
-      }
+      const sampleResults = await Promise.allSettled(
+        reports.map(report => api.building.getInquirySamplesByInquiryId(report.id))
+      )
+      const samples = sampleResults
+        .filter((r): r is PromiseFulfilledResult<IInquirySample[]> => r.status === 'fulfilled')
+        .flatMap(r => r.value)
 
       setInquiryDataByBuildingId(buildingId, reports, samples)
     } catch(e) {

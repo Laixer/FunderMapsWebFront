@@ -1,4 +1,4 @@
-export function trimChar(str: string, ch: string) {
+export function trimChar(str: string, ch: string): string {
   let start = 0,
     end = str.length;
 
@@ -11,7 +11,7 @@ export function trimChar(str: string, ch: string) {
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
 
-export function trimTrailingChar(str: string, ch: string) {
+export function trimTrailingChar(str: string, ch: string): string {
   let end = str.length;
 
   while (end > 0 && str[end - 1] === ch)
@@ -20,7 +20,7 @@ export function trimTrailingChar(str: string, ch: string) {
   return (end < str.length) ? str.substring(0, end) : str;
 }
 
-export function trimLeadingChar(str: string, ch: string) {
+export function trimLeadingChar(str: string, ch: string): string {
   let start = 0;
 
   while (start < str.length && str[start] === ch)

@@ -1,4 +1,4 @@
-export const getItemsStartingWith = (str: string) => {
+export const getItemsStartingWith = (str: string): Record<string, string> => {
   return Object.keys(sessionStorage)
     .filter(key => key.startsWith(str))
     .reduce((acc: { [key: string]: string }, key: string) => {

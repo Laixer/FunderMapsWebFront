@@ -79,7 +79,7 @@ const handleAccept = function handleAccept() {
     title="Disclaimer"
     :closeable="false">
 
-    <VueMarkdown :source="disclaimerText" :options="{ breaks: true }" class="markdown" />
+    <VueMarkdown :source="disclaimerText" :options="{ breaks: true, html: false }" class="markdown" />
 
     <Button 
       @click.prevent="handleAccept" 

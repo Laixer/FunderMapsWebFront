@@ -1,7 +1,13 @@
-import { IOrg } from "@/datastructures/interfaces"
+import { type IOrg } from "@/datastructures/interfaces"
 import { get } from "../apiClient"
 
-export const getOrgs = async () => {
+interface OrgListItem {
+  id: string
+  name: string
+  active: boolean
+}
+
+export const getOrgs = async (): Promise<OrgListItem[]> => {
   const response = await get({ endpoint: '/organization' })
 
   // Currently only 1 org is returned as object

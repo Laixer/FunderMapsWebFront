@@ -238,9 +238,9 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
        * Navigating to the lat lng while the API calls are being made
        *  The lat lng from the API may differ, but that should not be a big enough difference to matter here
        */ 
-      const [ Lng, Lat ] = centroide_ll.replace('POINT(', '').replace(')', '').split(' ')
-      mapCenterLatLon.value = new mapboxgl.LngLat(Lng, Lat)
-      mapMarkerLatLon.value = new mapboxgl.LngLat(Lng, Lat)
+      const [ Lng, Lat ] = (centroide_ll ?? '').replace('POINT(', '').replace(')', '').split(' ')
+      mapCenterLatLon.value = new mapboxgl.LngLat(parseFloat(Lng), parseFloat(Lat))
+      mapMarkerLatLon.value = new mapboxgl.LngLat(parseFloat(Lng), parseFloat(Lat))
     }
 
   } catch {
