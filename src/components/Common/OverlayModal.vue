@@ -2,7 +2,7 @@
 
 import Modal from '@/components/Common/Modal.vue'
 
-const { closeable = true } = defineProps<{
+const { closeable = true, variant = 'full', placing = 'center', wrapper = 'full' } = defineProps<{
   title?: string
   variant?: string
   closeable?: boolean

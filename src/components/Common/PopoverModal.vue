@@ -3,7 +3,7 @@
 import VueMarkdown from 'vue-markdown-render'
 import Modal from '@/components/Common/Modal.vue'
 
-defineProps<{
+const { placing = 'start' } = defineProps<{
   title: string
   text: string
   placing?: string

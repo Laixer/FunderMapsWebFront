@@ -2,7 +2,7 @@
 
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
 
-const { closeable = true } = defineProps<{
+const { closeable = true, placing = 'center', wrapper = 'full' } = defineProps<{
   title?: string
   variant?: string
   closeable?: boolean
