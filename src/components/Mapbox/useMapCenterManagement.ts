@@ -92,8 +92,8 @@ export const useMapCenterManagement = function useMapCenterManagement() {
         return
       }
 
-      if (mapset.options?.center) {
-        flyToCenter(mapset.options.center as mapboxgl.LngLatLike)
+      if (mapset.metadata?.center) {
+        flyToCenter(mapset.metadata.center as mapboxgl.LngLatLike)
       }
     },
     { immediate: true }
@@ -123,9 +123,9 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     
     if (locationData.value && locationData.value.residence) {
       flyToBuildingLocation(locationData.value)
-    } else if (activeMapset.value?.options?.center) {
+    } else if (activeMapset.value?.metadata?.center) {
       flyToCenter(
-        activeMapset.value.options.center as mapboxgl.LngLatLike
+        activeMapset.value.metadata.center as mapboxgl.LngLatLike
       )
     } else {
       handleMapMovement()

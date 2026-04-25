@@ -2,7 +2,7 @@ import { type IMapsetFE, type IMapset } from "@/datastructures/interfaces"
 import { get } from "../apiClient"
 
 const mapMapset = (rawmapset: IMapset): IMapsetFE => {
-  let options = {}
+  let metadata = {}
   let layerSet = []
 
   try {
@@ -12,9 +12,9 @@ const mapMapset = (rawmapset: IMapset): IMapsetFE => {
   }
 
   try {
-    options = rawmapset?.options ? JSON.parse(rawmapset.options) : {}
+    metadata = rawmapset?.metadata ? JSON.parse(rawmapset.metadata) : {}
   } catch {
-    console.warn('Failed to process mapset options')
+    console.warn('Failed to process mapset metadata')
   }
 
   return {
@@ -23,7 +23,7 @@ const mapMapset = (rawmapset: IMapset): IMapsetFE => {
     name: rawmapset?.name || 'Onbekende laag',
     style: rawmapset.style,
     layers: rawmapset?.layers || [],
-    options,
+    metadata,
     public: (!!rawmapset?.public) || false,
     consent: rawmapset?.consent || null,
     note: rawmapset?.note || null,
