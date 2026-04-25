@@ -20,6 +20,7 @@
           "ground_water_level_research",
           "second_opinion",
           "archieve_research",
+          "archive_research",
           "architectural_research",
           "facade_scan"
       ],
@@ -72,7 +73,7 @@
           [
               "match",
               ["get", "inquiry_type"],
-              ["archieve_research"],
+              ["archieve_research", "archive_research"],
               true,
               false
           ],
