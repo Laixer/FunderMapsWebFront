@@ -1,10 +1,13 @@
 import { get, put } from "../apiClient"
 
-// TS API stores metadata as jsonb (object), not as a string. The endpoint
-// at /api/user/metadata returns the raw object — no JSON.parse needed.
+// TS API stores metadata as a jsonb column on application.application_user
+// and returns the *whole row* ({userId, applicationId, metadata, updateDate}).
+// The actual user metadata is the nested .metadata field — unwrap it,
+// otherwise the store treats the row envelope as the metadata bag and every
+// getItem('lastCenterPosition') etc. comes back undefined.
 export const getMetadata = async (): Promise<unknown> => {
-  const response = await get({ endpoint: '/user/metadata' })
-  return response ?? null
+  const response = await get({ endpoint: '/user/metadata' }) as { metadata?: unknown } | null | undefined
+  return response?.metadata ?? null
 }
 
 export const setMetadata = (body: object): Promise<unknown> => {
