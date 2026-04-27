@@ -38,9 +38,9 @@ const busySaving = ref(false)
  * Keeping it simple. Let the API decide what is valid
  */
 const validationSchema = z.object({
-  oldPassword: z.string({ required_error: 'Dit veld is vereist' }).trim(),
-  newPassword: z.string({ required_error: 'Dit veld is vereist' }).trim().min(5, 'Het wachtwoord moet minimaal 5 karakters lang zijn.'),
-  passwordConfirm: z.string({ required_error: 'Dit veld is vereist' }).trim()
+  oldPassword: z.string({ error: 'Dit veld is vereist' }).trim(),
+  newPassword: z.string({ error: 'Dit veld is vereist' }).trim().min(5, 'Het wachtwoord moet minimaal 5 karakters lang zijn.'),
+  passwordConfirm: z.string({ error: 'Dit veld is vereist' }).trim()
 })
 .strict()
 .refine((data) => data.newPassword === data.passwordConfirm, {

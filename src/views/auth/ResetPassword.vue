@@ -42,9 +42,9 @@ const formData = ref({
  * Keeping it simple. Let the API decide what is valid
  */
 const validationSchema = z.object({
-  email: z.string({ required_error: 'Dit veld is vereist' }).trim().min(1, 'E-mail is vereist.'),
-  password: z.string({ required_error: 'Dit veld is vereist' }).trim().min(5, 'Het wachtwoord moet minimaal 5 karakters lang zijn.'),
-  passwordConfirm: z.string({ required_error: 'Dit veld is vereist' }).trim()
+  email: z.string({ error: 'Dit veld is vereist' }).trim().min(1, 'E-mail is vereist.'),
+  password: z.string({ error: 'Dit veld is vereist' }).trim().min(5, 'Het wachtwoord moet minimaal 5 karakters lang zijn.'),
+  passwordConfirm: z.string({ error: 'Dit veld is vereist' }).trim()
 })
   .strict()
   .refine((data) => data.password === data.passwordConfirm, {

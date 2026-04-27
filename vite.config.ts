@@ -23,11 +23,14 @@ export default defineConfig(() => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
-            'mapbox-gl': ['mapbox-gl'],
-            'chart': ['chart.js/auto', 'chartjs-plugin-trendline'],
-            'markdown': ['vue-markdown-render'],
-          }
+          // Vite 8 (rolldown) requires manualChunks as a function, not an
+          // object. Group third-party deps into named chunks to keep the
+          // initial bundle small.
+          manualChunks(id: string) {
+            if (id.includes('mapbox-gl')) return 'mapbox-gl'
+            if (id.includes('chart.js') || id.includes('chartjs-plugin-trendline')) return 'chart'
+            if (id.includes('vue-markdown-render')) return 'markdown'
+          },
         }
       }
     },

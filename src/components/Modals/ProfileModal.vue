@@ -58,12 +58,12 @@ setCleanProfileData()
  */
 const validationSchema = z.object({
   givenName: z.string({
-    required_error: 'Een voornaam is vereist'
+    error: 'Een voornaam is vereist'
   })
     .trim().min(2, 'Een voornaam moet minimaal 2 karakters bevatten'),
 
   lastName: z.string({
-    required_error: 'Een achternaam is vereist'
+    error: 'Een achternaam is vereist'
   })
     .trim().min(2, 'Een achternaam moet minimaal 2 karakters bevatten'),
   
