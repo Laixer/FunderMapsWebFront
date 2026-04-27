@@ -1,62 +1,56 @@
-import { get, post } from "../apiClient"
+import { post } from "../apiClient"
 
-interface AuthTokenResponse {
+interface SignInResponse {
   token: string
+  user: {
+    id: string
+    email: string
+    name?: string
+  }
 }
 
-export const login = async (email: string, password: string): Promise<AuthTokenResponse> => {
+export const login = async (email: string, password: string): Promise<SignInResponse> => {
   return await post({
-    endpoint: '/auth/signin',
-    body: {
-      email, password
-    },
+    endpoint: '/auth/sign-in/email',
+    body: { email, password },
     requireAuth: false
-  }) as AuthTokenResponse
+  }) as SignInResponse
 }
 
-export const refresh = async (): Promise<AuthTokenResponse> => {
-  return await get({
-    endpoint: 'auth/token-refresh',
+export const signOut = async (): Promise<void> => {
+  await post({
+    endpoint: '/auth/sign-out',
     requireAuth: true
-  }) as AuthTokenResponse
+  })
 }
 
 export const requestPasswordReset = async (email: string): Promise<void> => {
   await post({
-    endpoint: '/auth/reset-password',
-    body: {
-      email
-    },
+    endpoint: '/auth/forget-password',
+    body: { email },
     requireAuth: false
   })
 }
 
-export const resetPassword = async (email: string, token: string, password: string): Promise<void> => {
+export const resetPassword = async (token: string, newPassword: string): Promise<void> => {
   await post({
-    endpoint: '/auth/reset-new-password',
-    body: {
-      email,
-      resetKey: token,
-      newPassword: password
-    },
+    endpoint: '/auth/reset-password',
+    body: { token, newPassword },
     requireAuth: false
   })
 }
 
-export const changePassword = async (oldPassword: string, newPassword: string): Promise<void> => {
+export const changePassword = async (currentPassword: string, newPassword: string): Promise<void> => {
   await post({
     endpoint: '/auth/change-password',
-    body: {
-      oldPassword: oldPassword,
-      newPassword: newPassword
-    },
+    body: { currentPassword, newPassword },
     requireAuth: true
   })
 }
 
 export default {
   login,
-  refresh,
+  signOut,
   requestPasswordReset,
   resetPassword,
   changePassword
