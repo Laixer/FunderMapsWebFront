@@ -27,14 +27,19 @@ export const useSessionStore = defineStore('session', () => {
   /**
    * Fetch the user profile from /api/user/me and set the display name.
    * Called after login and after restoring a saved token.
+   *
+   * Discards its result if the user logged out (or signed in as someone
+   * else) while the request was in flight — otherwise a late /me response
+   * resurrects the previous session and the UI snaps back to "logged in".
    */
   const loadUser = async (): Promise<void> => {
     try {
       const profile = await api.userprofile.getUserProfile();
+      if (!hasToken()) return;
       currentUser.value = { name: displayName(profile) };
     } catch (e) {
       console.error('Failed to load user profile:', e);
-      logout();
+      if (hasToken()) logout();
     }
   };
 
