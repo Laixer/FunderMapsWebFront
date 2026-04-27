@@ -20,7 +20,6 @@
     "@vueuse/core": "^13.4.0",
     "chart.js": "^4.5.0",
     "chartjs-plugin-trendline": "^3.0.1",
-    "jwt-decode": "^4.0.0",
     "mapbox-gl": "^3.20.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.30",

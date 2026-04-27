@@ -3,12 +3,20 @@ import { defineStore } from 'pinia';
 
 import type { IUser } from '@/datastructures/interfaces';
 import api from '@/services/api';
-import { hasValidToken, getClaimFromAccessToken, removeAccessToken, storeAccessToken } from '@/services/jwt';
-import router from '@/router';
+import { hasToken, removeAccessToken, storeAccessToken } from '@/services/token';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { useOrgsStore } from '@/store/orgs';
 import { useMetadataStore } from './metadata';
+
+// Build a display name from /me's given_name + family_name; fall back to
+// email, then "Anoniem". Better Auth tokens are opaque so the username
+// can't be decoded from the bearer — we always have to ask the server.
+function displayName(profile: { givenName?: string; lastName?: string; email?: string } | null): string {
+  if (!profile) return 'Anoniem';
+  const full = `${profile.givenName ?? ''} ${profile.lastName ?? ''}`.trim();
+  return full || profile.email || 'Anoniem';
+}
 
 export const useSessionStore = defineStore('session', () => {
 
@@ -17,32 +25,40 @@ export const useSessionStore = defineStore('session', () => {
   const isAuthenticated = computed<boolean>(() => currentUser.value !== null);
 
   /**
-   * Sets currentUser from the JWT name claim.
+   * Fetch the user profile from /api/user/me and set the display name.
+   * Called after login and after restoring a saved token.
    */
-  const setUserNameFromToken = (): void => {
-    const username = getClaimFromAccessToken('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name');
-    currentUser.value = { name: username ? username.toString() : 'Anoniem' };
+  const loadUser = async (): Promise<void> => {
+    try {
+      const profile = await api.userprofile.getUserProfile();
+      currentUser.value = { name: displayName(profile) };
+    } catch (e) {
+      console.error('Failed to load user profile:', e);
+      logout();
+    }
   };
 
   /**
-   * Try to restore the session from a stored access token.
+   * Try to restore the session from a stored access token. The token is
+   * opaque — we can't validate it client-side, so we ask /me. If the server
+   * rejects, loadUser logs out.
    */
-  const authenticateFromAccessToken = (): void => {
-    if (hasValidToken()) {
-      setUserNameFromToken();
+  const authenticateFromAccessToken = async (): Promise<void> => {
+    if (hasToken()) {
+      await loadUser();
     } else {
       logout();
     }
   };
 
   /**
-   * Log in with email and password.
+   * Log in with email and password against Better Auth.
    */
   const login = async (email: string, password: string): Promise<void> => {
     try {
       const response = await api.auth.login(email, password);
       storeAccessToken(response.token);
-      setUserNameFromToken();
+      await loadUser();
     } catch (e) {
       console.error('Login failed:', e);
       logout();
@@ -54,7 +70,6 @@ export const useSessionStore = defineStore('session', () => {
    * Log out: clear token, user state, and dependent stores.
    */
   const logout = (): void => {
-    stopTokenRefreshInterval();
     removeAccessToken();
     currentUser.value = null;
 
@@ -64,50 +79,11 @@ export const useSessionStore = defineStore('session', () => {
     sessionStorage.clear();
   };
 
-
-  // **************************************************************************
-  //  Token refresh interval
-  // **************************************************************************
-
-  let refreshInterval: ReturnType<typeof setInterval> | null = null;
-
-  const startTokenRefreshInterval = (): void => {
-    stopTokenRefreshInterval();
-    refreshInterval = setInterval(refreshAccessToken, 10 * 60 * 1000);
-  };
-
-  const stopTokenRefreshInterval = (): void => {
-    if (refreshInterval !== null) {
-      clearInterval(refreshInterval);
-      refreshInterval = null;
-    }
-  };
-
-  /**
-   * Refresh the access token. On failure, log out and redirect to login.
-   */
-  const refreshAccessToken = async (): Promise<void> => {
-    if (!hasValidToken()) return;
-
-    try {
-      const response = await api.auth.refresh();
-      storeAccessToken(response.token);
-    } catch (error) {
-      console.error('Failed to refresh access token:', error);
-      logout();
-      router.push({ name: 'login' });
-    }
-  };
-
-
   return {
     currentUser,
     isAuthenticated,
     authenticateFromAccessToken,
     login,
     logout,
-    refreshAccessToken,
-    startTokenRefreshInterval,
-    stopTokenRefreshInterval,
   };
 });

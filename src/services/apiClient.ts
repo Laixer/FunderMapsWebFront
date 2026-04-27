@@ -1,6 +1,6 @@
 import { apiBasePath } from "@/config"
 import { trimLeadingChar, trimTrailingChar } from "@/utils/string"
-import { getAuthHeader, hasValidToken } from '@/services/jwt'
+import { getAuthHeader, hasToken } from '@/services/token'
 import router from '@/router'
 
 
@@ -27,8 +27,8 @@ const getAPIKeyAuthHeader = function getAPIKeyAuthHeader() {
 function verifyAuth(requireAuth: boolean): void {
   if (!requireAuth || hasAPIKey()) return
 
-  if (!hasValidToken()) {
-    throw new APITokenError("Missing or expired access token")
+  if (!hasToken()) {
+    throw new APITokenError("Missing access token")
   }
 }
 

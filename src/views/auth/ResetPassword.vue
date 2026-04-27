@@ -74,7 +74,6 @@ const handleSubmit = async function handleSubmit() {
       scrolltoError('.validation__message', { offset: 60 })
     } else {
       await api.auth.resetPassword(
-        formData.value.email,
         route.params.resetKey as string,
         formData.value.password
       )
