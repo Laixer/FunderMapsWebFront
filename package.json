@@ -16,16 +16,16 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@vueuse/components": "^13.6.0",
-    "@vueuse/core": "^13.4.0",
-    "chart.js": "^4.5.0",
-    "chartjs-plugin-trendline": "^3.0.1",
-    "mapbox-gl": "^3.20.0",
-    "pinia": "^3.0.3",
-    "vue": "^3.5.30",
-    "vue-markdown-render": "^2.2.1",
-    "vue-router": "^4.5.1",
-    "zod": "^3.25.67"
+    "@vueuse/components": "^14.2.1",
+    "@vueuse/core": "^14.2.1",
+    "chart.js": "^4.5.1",
+    "chartjs-plugin-trendline": "^3.2.4",
+    "mapbox-gl": "^3.22.0",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.33",
+    "vue-markdown-render": "^2.3.0",
+    "vue-router": "^5.0.6",
+    "zod": "^4.3.6"
   },
   "pnpm": {
     "overrides": {
@@ -34,20 +34,20 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.2.4",
     "@types/chartjs-plugin-trendline": "^1.0.4",
-    "@types/node": "^24.12.0",
-    "@vitejs/plugin-vue": "^6.0.5",
-    "eslint": "^10.0.3",
-    "eslint-plugin-vue": "^10.8.0",
-    "globals": "^17.4.0",
-    "prettier": "^3.6.2",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "tailwindcss": "^4.2.1",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.57.0",
-    "vite": "^6.3.5",
-    "vite-svg-loader": "^5.1.0",
-    "vue-tsc": "^3.0.5"
+    "@types/node": "^25.6.0",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "eslint": "^10.2.1",
+    "eslint-plugin-vue": "^10.9.0",
+    "globals": "^17.5.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.7.3",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0",
+    "vite": "^8.0.10",
+    "vite-svg-loader": "^5.1.1",
+    "vue-tsc": "^3.2.7"
   }
 }
