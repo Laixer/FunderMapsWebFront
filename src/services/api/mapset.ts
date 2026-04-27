@@ -37,9 +37,9 @@ const mapMapset = (raw: IMapset & { layerset?: unknown }): IMapsetFE => {
     consent: raw?.consent || null,
     note: raw?.note || null,
     icon: raw?.icon || 'home-info',
-    fenceNeighborhood: raw?.fenceNeighborhood || [],
-    fenceDistrict: raw?.fenceDistrict || [],
-    fenceMunicipality: raw?.fenceMunicipality || [],
+    fenceNeighborhood: (raw as { fence_neighborhood?: string[] | null }).fence_neighborhood ?? raw?.fenceNeighborhood ?? [],
+    fenceDistrict: (raw as { fence_district?: string[] | null }).fence_district ?? raw?.fenceDistrict ?? [],
+    fenceMunicipality: (raw as { fence_municipality?: string[] | null }).fence_municipality ?? raw?.fenceMunicipality ?? [],
     layerSet: layerSet as IMapsetLayer[],
     loadedAt: Date.now()
   }
