@@ -40,15 +40,22 @@ export const useSessionStore = defineStore('session', () => {
 
   /**
    * Try to restore the session from a stored access token. The token is
-   * opaque — we can't validate it client-side, so we ask /me. If the server
-   * rejects, loadUser logs out.
+   * opaque — we can't validate it client-side, so we ask /me. To avoid a
+   * race with route guards (which redirect to /login when isAuthenticated
+   * is false), set currentUser optimistically based on token presence and
+   * then refine the display name when /me responds. If /me rejects, the
+   * token was bad and we log out.
    */
   const authenticateFromAccessToken = async (): Promise<void> => {
-    if (hasToken()) {
-      await loadUser();
-    } else {
+    if (!hasToken()) {
       logout();
+      return;
     }
+    // Optimistic: token is present, treat the user as authenticated until
+    // /me proves otherwise. Without this the route guard fires before /me
+    // resolves and bounces the user to /login on every page reload.
+    currentUser.value = { name: 'Anoniem' };
+    await loadUser();
   };
 
   /**
