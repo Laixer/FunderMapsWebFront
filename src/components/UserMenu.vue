@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { vOnClickOutside } from '@vueuse/components'
 
@@ -26,7 +26,9 @@ const { isAuthenticated, currentUser } = storeToRefs( sessionStore )
  * Component related data
  */
 const isOpen = ref(false)
-const userName = currentUser.value?.name || 'Onbekend'
+// Reactive: currentUser is null at component mount (set after /me resolves
+// or after a re-login), so capturing once would freeze the avatar label.
+const userName = computed(() => currentUser.value?.name || 'Onbekend')
 
 /**
  * Open & close the menu

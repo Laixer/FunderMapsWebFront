@@ -74,9 +74,14 @@ export const useSessionStore = defineStore('session', () => {
   };
 
   /**
-   * Log out: clear token, user state, and dependent stores.
+   * Log out: invalidate server session (best-effort), clear token + user
+   * state, and clear dependent stores.
    */
-  const logout = (): void => {
+  const logout = async (): Promise<void> => {
+    // Server-side invalidation is best-effort — if it fails (network error,
+    // expired session) we still want to log out client-side.
+    try { await api.auth.signOut(); } catch { /* swallow */ }
+
     removeAccessToken();
     currentUser.value = null;
 
