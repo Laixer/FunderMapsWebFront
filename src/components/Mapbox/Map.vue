@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, shallowRef } from 'vue';
+import { computed, onBeforeUnmount, shallowRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MapBox from '@/components/Common/Mapbox/MapBox.vue';
@@ -22,7 +22,8 @@ import { useMetadataStore } from '@/store/metadata';
 
 const { isLeftSidebarOpen } = storeToRefs( useMainStore() )
 const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
-const { isAvailable: hasUserMetaData } = storeToRefs(useMetadataStore())
+const metadataStore = useMetadataStore()
+const { isAvailable: hasUserMetaData, metadata: userMetadata } = storeToRefs(metadataStore)
 
 const emit = defineEmits<{ ready: [] }>()
 
@@ -79,6 +80,30 @@ const onLoad = function onLoad({ map }: { map: Map }) {
 
   emit('ready')
 }
+
+/**
+ * After login, the metadata store refetches and the user's saved
+ * lastCenterPosition / zoom / pitch / bearing are reloaded — but the map
+ * was already mounted with the pre-login values, so we re-center it here.
+ * Only fires when the *center* changes from non-empty to a different value
+ * (avoids fighting our own moveend writes during normal panning).
+ */
+let lastAppliedCenterKey: string | null = null
+watch(
+  () => userMetadata.value?.lastCenterPosition as { lng: number; lat: number } | undefined,
+  (center) => {
+    if (!mapInstance.value || !center) return
+    const key = `${center.lng},${center.lat}`
+    if (key === lastAppliedCenterKey) return
+    lastAppliedCenterKey = key
+    mapInstance.value.jumpTo({
+      center: [center.lng, center.lat],
+      zoom: parseFloat(userMetadata.value?.lastZoomLevel as string) || mapInstance.value.getZoom(),
+      pitch: parseFloat(userMetadata.value?.lastPitchDegree as string) || mapInstance.value.getPitch(),
+      bearing: parseFloat(userMetadata.value?.lastRotation as string) || mapInstance.value.getBearing(),
+    })
+  },
+)
 
 /**
  * Cleanup event handlers

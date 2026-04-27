@@ -133,15 +133,15 @@ export const useMetadataStore = defineStore('metadata', () => {
   };
 
   /**
-   * Clears all metadata.
-   * Resets the in-memory `metadataState` to an empty object.
-   * If the user is authenticated, it triggers a debounced call to `storeToApi` to persist
-   * the cleared state to the backend.
-   * @returns {void}
+   * Clears the in-memory metadata. Does NOT push the cleared state to the
+   * server — server-side metadata is meant to persist across sessions.
+   * Calling storeToApi() here was the source of a race: logout schedules a
+   * debounced PUT, the user re-logs in inside 500ms, /me's GET races the
+   * debounced PUT, and depending on timing the empty {} can land on the
+   * server and wipe the user's saved map position.
    */
   const clear = (): void => {
     metadataState.value = {};
-    storeToApi();
   };
 
   return {
