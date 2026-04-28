@@ -5,7 +5,6 @@
 export type {
   IMapsetField,
   IMapsetLayer,
-  IMapset
 } from './api/Mapset'
 
 export type {
