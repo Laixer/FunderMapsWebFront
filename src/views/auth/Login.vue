@@ -15,13 +15,9 @@ import useValidation from '@/services/useValidation';
 
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/store/session';
-import { useOrgsStore } from '@/store/orgs'
-import { useMetadataStore } from '@/store/metadata'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
-const orgsStore = useOrgsStore()
-const metadataStore = useMetadataStore()
 
 /**
  * Form information
@@ -69,9 +65,8 @@ const handleSubmit = async function () {
         formData.value.password
       )
 
-      await orgsStore.loadAvailableOrgs()
-
-      await metadataStore.retrieve()
+      // /me is loaded by sessionStore.login (orgs come with it).
+      // Metadata is fetched by App.vue's isAuthenticated watcher.
 
       // TODO: Get previous route before 'Login' & redirect back to that route
       router.push({ name: 'home' })

@@ -2,7 +2,6 @@ import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { type IIncidentReport } from "@/datastructures/interfaces"
-import api from '@/services/api';
 import { useSessionStore } from '../session';
 import { IncidentReport } from '@/datastructures/classes/IncidentReport';
 
@@ -10,7 +9,6 @@ import { IncidentReport } from '@/datastructures/classes/IncidentReport';
 function useIncidentReports() {
   const incidentReportsById = ref<Record<string, IIncidentReport>>({})
   const incidentReportIdsByBuildingId = ref<Record<string, string[]>>({})
-  const isLoadingBuildingDataById = ref<Record<string, boolean>>({})
 
   const buildingIncidentReportDataHasBeenRetrieved = function buildingIncidentReportDataHasBeenRetrieved(buildingId: string): boolean {
     return Array.isArray(incidentReportIdsByBuildingId.value[buildingId])
@@ -36,29 +34,9 @@ function useIncidentReports() {
     incidentReportIdsByBuildingId.value[buildingId] = reports.map((incident: IIncidentReport) => incident.id)
   }
 
-  const loadIncidentReportDataByBuildingId = async function loadIncidentReportDataByBuildingId(buildingId: string, cache: boolean = true) {
-    try {
-      if (isLoadingBuildingDataById.value[buildingId] === true) return
-      isLoadingBuildingDataById.value[buildingId] = true
-
-      if (cache === true && buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
-        return
-      }
-
-      const response: IIncidentReport[] = await api.building.getIncidentReportsByBuildingId(buildingId)
-      setIncidentDataByBuildingId(buildingId, response)
-
-    } catch(e) {
-      console.error("Failed to load incident data", buildingId, e)
-    }
-
-    isLoadingBuildingDataById.value[buildingId] = false
-  }
-
   const clearIncidentReportData = function clearIncidentReportData() {
     incidentReportIdsByBuildingId.value = {}
     incidentReportsById.value = {}
-    isLoadingBuildingDataById.value = {}
   }
 
   /**
@@ -78,9 +56,7 @@ function useIncidentReports() {
     buildingIncidentReportDataHasBeenRetrieved,
     buildingHasIncidentReports,
     getIncidentReportsByBuildingId,
-
-    loadIncidentReportDataByBuildingId,
-    setIncidentDataByBuildingId
+    setIncidentDataByBuildingId,
   }
 }
 

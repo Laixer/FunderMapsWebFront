@@ -1,200 +1,205 @@
-// Wire-format adapters for the TS API cutover.
+// Wire-format adapters for the TS API.
 //
-// The TS API returns flat snake_case with string-valued enums (matching the
-// PG types). WebFront's existing types and the Analysis class were built for
-// the C# wire format: camelCase + integer-valued enums + nested envelopes
-// (state, attribution, access, record). Rather than touch every component
-// and template, we reshape on the client side here, in one file.
+// The TS API returns flat snake_case rows with string-valued enums (PG types)
+// and numeric/decimal columns serialized as strings (postgres.js). The
+// frontend types use camelCase + integer enums (legacy C# wire format) and
+// expect real numbers. This file maps between the two.
 //
-// Enum integer values mirror C# enum positions — sourced from FunderMapsApi
-// src/lib/inquiry-enums.ts. Keep in sync if those change.
+// Strategy: a single deep snake→camel transform handles the bulk; per-shape
+// adapters then coerce the few fields that need enum-int / numeric / nested
+// envelope handling. Enum integer positions mirror the C# enum, sourced from
+// FunderMapsApi src/lib/inquiry-enums.ts.
+
+import type {
+  IAnalysis,
+  ICombinedReportData,
+  IGeoLocationData,
+  IIncidentReport,
+  IInquiryReport,
+  IInquirySample,
+  IRecoveryReport,
+  IRecoverySample,
+  IStatistics,
+  ISubsidence,
+} from "@/datastructures/interfaces"
 
 // ---------------------------------------------------------------------------
-// Numeric coercion
+// Generic helpers
 // ---------------------------------------------------------------------------
 
-// postgres.js returns numeric/decimal/bigint columns as strings. Cast to
-// number in the adapter so downstream code (charts, formatters) sees real
-// numbers and IUserProfile/IAnalysis typings stay accurate.
-function num(v: unknown): number | undefined {
-  if (v === null || v === undefined) return undefined;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : undefined;
-}
-
-// ---------------------------------------------------------------------------
-// Enum string → int dictionaries (match C# wire format positions)
-// ---------------------------------------------------------------------------
-
-const E = {
-  inquiry_type: new Map<string, number>([
-    ["additional_research", 0], ["monitoring", 1], ["note", 2], ["quickscan", 3],
-    ["unknown", 4], ["demolition_research", 5], ["second_opinion", 6],
-    ["archive_research", 7], ["architectural_research", 8], ["foundation_advice", 9],
-    ["inspectionpit", 10], ["foundation_research", 11], ["ground_water_level_research", 12],
-    ["soil_investigation", 13], ["facade_scan", 14],
-  ]),
-  audit_status: new Map<string, number>([
-    ["todo", 0], ["pending", 1], ["done", 2], ["discarded", 3],
-    ["pending_review", 4], ["rejected", 5],
-  ]),
-  access_policy: new Map<string, number>([["public", 0], ["private", 1]]),
-  foundation_type: new Map<string, number>([
-    ["wood", 0], ["wood_amsterdam", 1], ["wood_rotterdam", 2], ["concrete", 3],
-    ["no_pile", 4], ["no_pile_masonry", 5], ["no_pile_strips", 6],
-    ["no_pile_bearing_floor", 7], ["no_pile_concrete_floor", 8], ["no_pile_slit", 9],
-    ["wood_charger", 10], ["weighted_pile", 11], ["combined", 12], ["steel_pile", 13],
-    ["other", 14], ["wood_rotterdam_amsterdam", 15], ["wood_rotterdam_arch", 16],
-    ["wood_amsterdam_arch", 17],
-  ]),
-  enforcement_term: new Map<string, number>([
-    ["term05", 0], ["term510", 1], ["term1020", 2], ["term5", 3], ["term10", 4],
-    ["term15", 5], ["term20", 6], ["term25", 7], ["term30", 8], ["term40", 9],
-  ]),
-  foundation_damage_cause: new Map<string, number>([
-    ["drainage", 0], ["construction_flaw", 1], ["drystand", 2], ["overcharge", 3],
-    ["overcharge_negative_cling", 4], ["negative_cling", 5], ["bio_infection", 6],
-    ["fungus_infection", 8], ["bio_fungus_infection", 9], ["foundation_flaw", 10],
-    ["construction_heave", 11], ["subsidence", 12], ["vegetation", 13],
-    ["gas", 14], ["vibrations", 15], ["partial_foundation_recovery", 16],
-    ["japanese_knotweed", 17], ["groundwater_level_reduction", 18],
-  ]),
-  foundation_damage_characteristics: new Map<string, number>([
-    ["jamming_door_window", 0], ["crack", 1], ["skewed", 2], ["crawlspace_flooding", 3],
-    ["threshold_above_subsurface", 4], ["threshold_below_subsurface", 5],
-    ["crooked_floor_wall", 6],
-  ]),
-  environment_damage_characteristics: new Map<string, number>([
-    ["subsidence", 0], ["sagging_sewer_connection", 1], ["sagging_cables_pipes", 2],
-    ["flooding", 3], ["foundation_damage_nearby", 4], ["elevation", 5],
-    ["increasing_traffic", 6], ["construction_nearby", 7], ["vegetation_nearby", 8],
-    ["sewage_leakage", 9], ["low_ground_water", 10],
-  ]),
-  foundation_quality: new Map<string, number>([
-    ["bad", 0], ["mediocre", 1], ["tolerable", 2], ["good", 3],
-    ["mediocre_good", 4], ["mediocre_bad", 5],
-  ]),
-  reliability: new Map<string, number>([
-    ["indicative", 0], ["established", 1], ["cluster", 2], ["supercluster", 3],
-  ]),
-  recovery_type: new Map<string, number>([
-    ["table", 0], ["beam_on_pile", 1], ["pile_lowering", 2], ["pile_in_wall", 3],
-    ["injection", 4], ["unknown", 5],
-  ]),
-  recovery_document_type: new Map<string, number>([
-    ["permit", 0], ["recovery_report", 1], ["consolidation_report", 2],
-    ["additional_research", 3], ["damage_research", 4], ["foundation_research", 5],
-    ["mediation", 6], ["unknown", 7],
-  ]),
-  foundation_risk: new Map<string, number>([
-    ["a", 0], ["b", 1], ["c", 2], ["d", 3], ["e", 4],
-  ]),
-  incident_question_type: new Map<string, number>([
-    ["other", 0], ["foundation_advice", 1], ["loan", 2], ["consequences", 3],
-    ["legal", 4], ["preliminary_recovery", 5], ["risks", 6], ["energy_saving", 7],
-    ["wood", 8], ["concrete", 9], ["foundation_age", 10], ["construction_inspection", 11],
-    ["recovery_costs", 12], ["recovery_methods", 13], ["other_question", 14],
-  ]),
-} as const;
-
-type EnumName = keyof typeof E;
-
-function toEnumInt(name: EnumName, value: unknown): number | undefined {
-  if (value === null || value === undefined) return undefined;
-  const i = E[name].get(value as string);
-  return i;
-}
-
-function toEnumIntArray(name: EnumName, values: unknown): number[] {
-  if (!Array.isArray(values)) return [];
-  const out: number[] = [];
-  for (const v of values) {
-    const i = E[name].get(v as string);
-    if (i !== undefined) out.push(i);
+const snakeToCamel = (input: unknown): unknown => {
+  if (Array.isArray(input)) return input.map(snakeToCamel)
+  if (input && typeof input === 'object' && input.constructor === Object) {
+    const out: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(input)) {
+      const camel = k.replace(/_([a-z])/g, (_, c) => (c as string).toUpperCase())
+      out[camel] = snakeToCamel(v)
+    }
+    return out
   }
-  return out;
+  return input
+}
+
+const toNumber = (v: unknown): number | undefined => {
+  if (v === null || v === undefined || v === '') return undefined
+  const n = Number(v)
+  return Number.isFinite(n) ? n : undefined
+}
+
+// Coerce a list of fields on a record to numbers (postgres returns decimals
+// as strings). Mutates in place.
+const coerceNumeric = (obj: Record<string, unknown>, fields: readonly string[]): void => {
+  for (const f of fields) {
+    if (f in obj) obj[f] = toNumber(obj[f])
+  }
 }
 
 // ---------------------------------------------------------------------------
-// IAnalysis (consumed by Analysis class)
+// Enum string → int (C# wire-format positions)
 // ---------------------------------------------------------------------------
 
-export function adaptAnalysis(raw: Record<string, unknown>): Record<string, unknown> {
-  // Pass shape that matches IAnalysis. Building/address IDs aren't returned
-  // by the new endpoint (it only takes building_id and SELECTs from a matview
-  // keyed on building_id); we surface the input id where possible.
-  return {
-    buildingId: raw.building_id ?? '',
-    externalBuildingId: raw.building_id ?? '',
-    addressId: '',
-    externalAddressId: '',
-    neighborhoodId: raw.neighborhood_id ?? '',
-    constructionYear: num(raw.construction_year),
-    constructionYearReliability: toEnumInt("reliability", raw.construction_year_reliability),
-    recoveryType: toEnumInt("recovery_type", raw.recovery_type),
-    restorationCosts: num(raw.restoration_costs),
-    height: num(raw.height),
-    velocity: num(raw.velocity),
-    groundWaterLevel: num(raw.ground_water_level),
-    groundLevel: num(raw.ground_level),
-    soil: raw.soil,
-    surfaceArea: num(raw.surface_area),
-    damageCause: toEnumInt("foundation_damage_cause", raw.damage_cause),
-    enforcementTerm: toEnumInt("enforcement_term", raw.enforcement_term),
-    overallQuality: toEnumInt("foundation_quality", raw.overall_quality),
-    inquiryType: toEnumInt("inquiry_type", raw.inquiry_type),
-    foundationType: toEnumInt("foundation_type", raw.foundation_type),
-    foundationTypeReliability: toEnumInt("reliability", raw.foundation_type_reliability),
-    drystand: num(raw.drystand),
-    drystandReliability: toEnumInt("reliability", raw.drystand_risk_reliability),
-    drystandRisk: toEnumInt("foundation_risk", raw.drystand_risk),
-    dewateringDepth: num(raw.dewatering_depth),
-    dewateringDepthReliability: toEnumInt("reliability", raw.dewatering_depth_risk_reliability),
-    dewateringDepthRisk: toEnumInt("foundation_risk", raw.dewatering_depth_risk),
-    bioInfectionReliability: toEnumInt("reliability", raw.bio_infection_risk_reliability),
-    bioInfectionRisk: toEnumInt("foundation_risk", raw.bio_infection_risk),
-    unclassifiedRisk: toEnumInt("foundation_risk", raw.unclassified_risk),
-  };
+const ENUM = {
+  inquiryType: ['additional_research', 'monitoring', 'note', 'quickscan', 'unknown',
+    'demolition_research', 'second_opinion', 'archive_research', 'architectural_research',
+    'foundation_advice', 'inspectionpit', 'foundation_research', 'ground_water_level_research',
+    'soil_investigation', 'facade_scan'],
+  auditStatus: ['todo', 'pending', 'done', 'discarded', 'pending_review', 'rejected'],
+  accessPolicy: ['public', 'private'],
+  foundationType: ['wood', 'wood_amsterdam', 'wood_rotterdam', 'concrete', 'no_pile',
+    'no_pile_masonry', 'no_pile_strips', 'no_pile_bearing_floor', 'no_pile_concrete_floor',
+    'no_pile_slit', 'wood_charger', 'weighted_pile', 'combined', 'steel_pile', 'other',
+    'wood_rotterdam_amsterdam', 'wood_rotterdam_arch', 'wood_amsterdam_arch'],
+  enforcementTerm: ['term05', 'term510', 'term1020', 'term5', 'term10', 'term15', 'term20',
+    'term25', 'term30', 'term40'],
+  foundationDamageCause: ['drainage', 'construction_flaw', 'drystand', 'overcharge',
+    'overcharge_negative_cling', 'negative_cling', 'bio_infection', '__gap_7__',
+    'fungus_infection', 'bio_fungus_infection', 'foundation_flaw', 'construction_heave',
+    'subsidence', 'vegetation', 'gas', 'vibrations', 'partial_foundation_recovery',
+    'japanese_knotweed', 'groundwater_level_reduction'],
+  foundationDamageCharacteristics: ['jamming_door_window', 'crack', 'skewed',
+    'crawlspace_flooding', 'threshold_above_subsurface', 'threshold_below_subsurface',
+    'crooked_floor_wall'],
+  environmentDamageCharacteristics: ['subsidence', 'sagging_sewer_connection',
+    'sagging_cables_pipes', 'flooding', 'foundation_damage_nearby', 'elevation',
+    'increasing_traffic', 'construction_nearby', 'vegetation_nearby', 'sewage_leakage',
+    'low_ground_water'],
+  foundationQuality: ['bad', 'mediocre', 'tolerable', 'good', 'mediocre_good', 'mediocre_bad'],
+  reliability: ['indicative', 'established', 'cluster', 'supercluster'],
+  recoveryType: ['table', 'beam_on_pile', 'pile_lowering', 'pile_in_wall', 'injection', 'unknown'],
+  recoveryDocumentType: ['permit', 'recovery_report', 'consolidation_report',
+    'additional_research', 'damage_research', 'foundation_research', 'mediation', 'unknown'],
+  foundationRisk: ['a', 'b', 'c', 'd', 'e'],
+  incidentQuestionType: ['other', 'foundation_advice', 'loan', 'consequences', 'legal',
+    'preliminary_recovery', 'risks', 'energy_saving', 'wood', 'concrete', 'foundation_age',
+    'construction_inspection', 'recovery_costs', 'recovery_methods', 'other_question'],
+} as const
+
+type EnumName = keyof typeof ENUM
+
+const toEnumInt = (name: EnumName, value: unknown): number | undefined => {
+  if (typeof value !== 'string') return undefined
+  const i = (ENUM[name] as readonly string[]).indexOf(value)
+  return i >= 0 ? i : undefined
+}
+
+const toEnumIntArray = (name: EnumName, values: unknown): number[] => {
+  if (!Array.isArray(values)) return []
+  return values
+    .map(v => toEnumInt(name, v))
+    .filter((i): i is number => i !== undefined)
+}
+
+// Coerce a list of fields on a record to enum ints. Mutates in place.
+const coerceEnums = (obj: Record<string, unknown>, fields: readonly [string, EnumName][]): void => {
+  for (const [field, name] of fields) {
+    if (field in obj) obj[field] = toEnumInt(name, obj[field])
+  }
 }
 
 // ---------------------------------------------------------------------------
-// IStatistics
+// IAnalysis
+// ---------------------------------------------------------------------------
+
+const ANALYSIS_NUMERIC = ['constructionYear', 'restorationCosts', 'height', 'velocity',
+  'groundWaterLevel', 'groundLevel', 'surfaceArea', 'drystand', 'dewateringDepth'] as const
+
+const ANALYSIS_ENUMS: readonly [string, EnumName][] = [
+  ['constructionYearReliability', 'reliability'],
+  ['recoveryType', 'recoveryType'],
+  ['damageCause', 'foundationDamageCause'],
+  ['enforcementTerm', 'enforcementTerm'],
+  ['overallQuality', 'foundationQuality'],
+  ['inquiryType', 'inquiryType'],
+  ['foundationType', 'foundationType'],
+  ['foundationTypeReliability', 'reliability'],
+  ['drystandRisk', 'foundationRisk'],
+  ['dewateringDepthRisk', 'foundationRisk'],
+  ['bioInfectionRisk', 'foundationRisk'],
+  ['unclassifiedRisk', 'foundationRisk'],
+]
+
+export const adaptAnalysis = (raw: unknown): IAnalysis => {
+  const o = snakeToCamel(raw) as Record<string, unknown>
+  // The API has *RiskReliability fields; the frontend type drops "Risk".
+  o.drystandReliability = toEnumInt('reliability', o.drystandRiskReliability)
+  o.dewateringDepthReliability = toEnumInt('reliability', o.dewateringDepthRiskReliability)
+  o.bioInfectionReliability = toEnumInt('reliability', o.bioInfectionRiskReliability)
+  delete o.drystandRiskReliability
+  delete o.dewateringDepthRiskReliability
+  delete o.bioInfectionRiskReliability
+
+  coerceNumeric(o, ANALYSIS_NUMERIC)
+  coerceEnums(o, ANALYSIS_ENUMS)
+
+  // The new endpoint is keyed on building_id only; address fields don't exist.
+  o.externalBuildingId = o.buildingId ?? ''
+  o.addressId = ''
+  o.externalAddressId = ''
+
+  return o as unknown as IAnalysis
+}
+
+// ---------------------------------------------------------------------------
+// IStatistics — shape rebuild (risk distribution, decade synthesis)
 // ---------------------------------------------------------------------------
 
 interface RawStatistics {
-  foundation_type_distribution: { foundation_type: string; percentage: string }[];
-  construction_year_distribution: { year_from: number; count: string }[];
-  foundation_risk_distribution: { foundation_risk: string; percentage: string }[];
-  data_collected_percentage: string | null;
-  total_building_restored_count: string | number | null;
-  total_incident_count: { year: number; count: string }[];
-  municipality_incident_count: { year: number; count: string }[];
-  total_report_count: { year: number; count: string }[];
-  municipality_report_count: { year: number; count: string }[];
+  foundation_type_distribution?: { foundation_type: string; percentage: string | number }[]
+  construction_year_distribution?: { year_from: number; count: string | number }[]
+  foundation_risk_distribution?: { foundation_risk: string; percentage: string | number }[]
+  data_collected_percentage?: string | number | null
+  total_building_restored_count?: string | number | null
+  total_incident_count?: { year: number; count: string | number }[]
+  municipality_incident_count?: { year: number; count: string | number }[]
+  total_report_count?: { year: number; count: string | number }[]
+  municipality_report_count?: { year: number; count: string | number }[]
 }
 
-export function adaptStatistics(raw: RawStatistics): Record<string, unknown> {
-  // Risk distribution: TS API returns rows {foundation_risk: "a", percentage: 6.79}.
-  // WebFront expects {percentageA, percentageB, percentageC, percentageD, percentageE}.
-  const riskByLetter: Record<string, number> = { a: 0, b: 0, c: 0, d: 0, e: 0 };
-  for (const row of raw.foundation_risk_distribution ?? []) {
-    riskByLetter[row.foundation_risk] = num(row.percentage) ?? 0;
+export const adaptStatistics = (raw: unknown): IStatistics => {
+  const r = (raw ?? {}) as RawStatistics
+
+  const riskByLetter: Record<string, number> = { a: 0, b: 0, c: 0, d: 0, e: 0 }
+  for (const row of r.foundation_risk_distribution ?? []) {
+    riskByLetter[row.foundation_risk] = toNumber(row.percentage) ?? 0
   }
+
+  const yearPairs = (rows: { year: number; count: string | number }[] | undefined) =>
+    (rows ?? []).map(x => ({ year: x.year, totalCount: toNumber(x.count) ?? 0 }))
 
   return {
     foundationTypeDistribution: {
-      foundationTypes: (raw.foundation_type_distribution ?? []).map((r) => ({
-        foundationType: toEnumInt("foundation_type", r.foundation_type),
-        percentage: num(r.percentage) ?? 0,
-      })),
+      foundationTypes: (r.foundation_type_distribution ?? []).map(x => ({
+        foundationType: toEnumInt('foundationType', x.foundation_type),
+        percentage: toNumber(x.percentage) ?? 0,
+      })) as IStatistics['foundationTypeDistribution']['foundationTypes'],
     },
     constructionYearDistribution: {
-      decades: (raw.construction_year_distribution ?? []).map((r) => ({
+      decades: (r.construction_year_distribution ?? []).map(x => ({
         decade: {
-          yearFrom: `${r.year_from}-01-01T00:00:00+00:00`,
-          yearTo: `${r.year_from + 9}-12-31T00:00:00+00:00`,
+          yearFrom: `${x.year_from}-01-01T00:00:00+00:00`,
+          yearTo: `${x.year_from + 9}-12-31T00:00:00+00:00`,
         },
-        totalCount: num(r.count) ?? 0,
+        totalCount: toNumber(x.count) ?? 0,
       })),
     },
     foundationRiskDistribution: {
@@ -204,242 +209,234 @@ export function adaptStatistics(raw: RawStatistics): Record<string, unknown> {
       percentageD: riskByLetter.d,
       percentageE: riskByLetter.e,
     },
-    dataCollectedPercentage: num(raw.data_collected_percentage) ?? 0,
-    totalBuildingRestoredCount: num(raw.total_building_restored_count) ?? 0,
-    totalIncidentCount: (raw.total_incident_count ?? []).map((r) => ({
-      year: r.year, totalCount: num(r.count) ?? 0,
-    })),
-    municipalityIncidentCount: (raw.municipality_incident_count ?? []).map((r) => ({
-      year: r.year, totalCount: num(r.count) ?? 0,
-    })),
-    totalReportCount: (raw.total_report_count ?? []).map((r) => ({
-      year: r.year, totalCount: num(r.count) ?? 0,
-    })),
-    municipalityReportCount: (raw.municipality_report_count ?? []).map((r) => ({
-      year: r.year, totalCount: num(r.count) ?? 0,
-    })),
-  };
+    dataCollectedPercentage: toNumber(r.data_collected_percentage) ?? 0,
+    totalBuildingRestoredCount: toNumber(r.total_building_restored_count) ?? 0,
+    totalIncidentCount: yearPairs(r.total_incident_count),
+    municipalityIncidentCount: yearPairs(r.municipality_incident_count),
+    totalReportCount: yearPairs(r.total_report_count),
+    municipalityReportCount: yearPairs(r.municipality_report_count),
+  }
 }
 
 // ---------------------------------------------------------------------------
-// IGeoLocationData (composite geocoder building-info)
+// IGeoLocationData — composite address synthesis
 // ---------------------------------------------------------------------------
 
-export function adaptGeoLocationData(raw: Record<string, unknown>): Record<string, unknown> {
-  const street = (raw.street as string) ?? '';
-  const number = (raw.building_number as string) ?? '';
-  const postal = (raw.postal_code as string) ?? '';
-  const city = (raw.city as string) ?? '';
-  const fullAddress = `${street} ${number}, ${postal} ${city}`.trim();
+export const adaptGeoLocationData = (raw: unknown): IGeoLocationData => {
+  const r = (raw ?? {}) as Record<string, unknown>
+  const street = (r.street as string) ?? ''
+  const number = (r.building_number as string) ?? ''
+  const postal = (r.postal_code as string) ?? ''
+  const city = (r.city as string) ?? ''
+
+  const opt = <T>(idField: string, build: () => T): T | null =>
+    r[idField] ? build() : null
 
   return {
     building: {
-      id: raw.building_id ?? '',
-      externalId: raw.building_id ?? '',
-      neighborhoodId: raw.neighborhood_id ?? null,
+      id: (r.building_id as string) ?? '',
+      externalId: (r.building_id as string) ?? '',
+      neighborhoodId: (r.neighborhood_id as string) ?? null,
     },
     address: {
-      id: raw.address_id ?? '',
-      externalId: raw.address_external_id ?? '',
-      buildingId: raw.building_id ?? '',
+      id: (r.address_id as string) ?? '',
+      externalId: (r.address_external_id as string) ?? '',
+      buildingId: (r.building_id as string) ?? '',
       buildingNumber: number,
       postalCode: postal,
       street,
       city,
-      fullAddress,
+      fullAddress: `${street} ${number}, ${postal} ${city}`.trim(),
     },
     residence: null,
-    neighborhood: raw.neighborhood_id ? {
-      id: raw.neighborhood_id,
-      externalId: raw.neighborhood_external_id,
-      name: raw.neighborhood_name,
-    } : null,
-    district: raw.district_id ? {
-      id: raw.district_id,
-      externalId: raw.district_external_id,
-      name: raw.district_name,
-    } : null,
-    municipality: raw.municipality_id ? {
-      id: raw.municipality_id,
-      externalId: raw.municipality_external_id,
-      name: raw.municipality_name,
-    } : null,
-    state: raw.state_id ? {
-      id: raw.state_id,
-      externalId: raw.state_external_id,
-      name: raw.state_name,
-    } : null,
-  };
+    neighborhood: opt('neighborhood_id', () => ({
+      id: r.neighborhood_id as string,
+      externalId: r.neighborhood_external_id as string,
+      name: r.neighborhood_name as string,
+    })),
+    district: opt('district_id', () => ({
+      id: r.district_id as string,
+      externalId: r.district_external_id as string,
+      name: r.district_name as string,
+    })),
+    municipality: opt('municipality_id', () => ({
+      id: r.municipality_id as string,
+      externalId: r.municipality_external_id as string,
+      name: r.municipality_name as string,
+    })),
+    state: opt('state_id', () => ({
+      id: r.state_id as string,
+      externalId: r.state_external_id as string,
+      name: r.state_name as string,
+    })),
+  } as IGeoLocationData
 }
 
 // ---------------------------------------------------------------------------
-// Inquiry / Recovery parents (build C#-shape envelopes from flat snake_case)
+// Inquiry / Recovery — wrap flat snake_case row into nested envelope shape
 // ---------------------------------------------------------------------------
 
 interface RawAttributedRow extends Record<string, unknown> {
-  attribution_reviewer?: string | null;
-  attribution_reviewer_name?: string | null;
-  attribution_creator?: string | null;
-  attribution_creator_name?: string | null;
-  attribution_owner?: string | null;
-  attribution_owner_name?: string | null;
-  attribution_contractor?: number | null;
-  attribution_contractor_name?: string | null;
-  audit_status?: string;
-  access_policy?: string;
-  create_date?: string | null;
-  update_date?: string | null;
-  delete_date?: string | null;
+  attribution_reviewer?: string | null
+  attribution_reviewer_name?: string | null
+  attribution_creator?: string | null
+  attribution_creator_name?: string | null
+  attribution_owner?: string | null
+  attribution_owner_name?: string | null
+  attribution_contractor?: number | null
+  attribution_contractor_name?: string | null
+  audit_status?: string
+  access_policy?: string
+  create_date?: string | null
+  update_date?: string | null
+  delete_date?: string | null
 }
 
-function envelopes(raw: RawAttributedRow): {
-  attribution: object; state: object; access: object; record: object;
-} {
-  return {
-    attribution: {
-      reviewer: raw.attribution_reviewer ?? null,
-      reviewerName: raw.attribution_reviewer_name ?? null,
-      creator: raw.attribution_creator ?? null,
-      creatorName: raw.attribution_creator_name ?? null,
-      owner: raw.attribution_owner ?? null,
-      ownerName: raw.attribution_owner_name ?? null,
-      contractor: raw.attribution_contractor ?? null,
-      contractorName: raw.attribution_contractor_name ?? null,
-    },
-    state: {
-      auditStatus: toEnumInt("audit_status", raw.audit_status),
-    },
-    access: {
-      accessPolicy: toEnumInt("access_policy", raw.access_policy),
-    },
-    record: {
-      createDate: raw.create_date ?? null,
-      updateDate: raw.update_date ?? null,
-      deleteDate: raw.delete_date ?? null,
-    },
-  };
-}
+const envelopes = (r: RawAttributedRow) => ({
+  attribution: {
+    reviewer: r.attribution_reviewer ?? null,
+    reviewerName: r.attribution_reviewer_name ?? null,
+    creator: r.attribution_creator ?? null,
+    creatorName: r.attribution_creator_name ?? null,
+    owner: r.attribution_owner ?? null,
+    ownerName: r.attribution_owner_name ?? null,
+    contractor: r.attribution_contractor ?? null,
+    contractorName: r.attribution_contractor_name ?? null,
+  },
+  state: { auditStatus: toEnumInt('auditStatus', r.audit_status) },
+  access: { accessPolicy: toEnumInt('accessPolicy', r.access_policy) },
+  record: {
+    createDate: r.create_date ?? null,
+    updateDate: r.update_date ?? null,
+    deleteDate: r.delete_date ?? null,
+  },
+})
 
-export function adaptInquiry(raw: Record<string, unknown>): Record<string, unknown> {
-  const r = raw as RawAttributedRow;
+export const adaptInquiry = (raw: unknown): IInquiryReport => {
+  const r = (raw ?? {}) as RawAttributedRow
   return {
-    id: raw.id,
-    identifier: raw.id,
-    documentName: raw.document_name ?? '',
-    inspection: !!raw.inspection,
-    jointMeasurement: !!raw.joint_measurement,
-    floorMeasurement: !!raw.floor_measurement,
-    note: raw.note ?? null,
-    documentDate: raw.document_date ?? '',
-    documentFile: raw.document_file ?? '',
-    type: toEnumInt("inquiry_type", raw.type),
-    standardF3o: !!raw.standard_f3o,
+    id: r.id,
+    identifier: r.id,
+    documentName: r.document_name ?? '',
+    inspection: !!r.inspection,
+    jointMeasurement: !!r.joint_measurement,
+    floorMeasurement: !!r.floor_measurement,
+    note: r.note ?? null,
+    documentDate: r.document_date ?? '',
+    documentFile: r.document_file ?? '',
+    type: toEnumInt('inquiryType', r.type),
+    standardF3o: !!r.standard_f3o,
     ...envelopes(r),
-  };
+  } as unknown as IInquiryReport
 }
 
-export function adaptRecovery(raw: Record<string, unknown>): Record<string, unknown> {
-  const r = raw as RawAttributedRow;
+export const adaptRecovery = (raw: unknown): IRecoveryReport => {
+  const r = (raw ?? {}) as RawAttributedRow
   return {
-    id: raw.id,
-    identifier: raw.id,
-    documentName: raw.document_name ?? '',
-    type: toEnumInt("recovery_document_type", raw.type),
-    documentFile: raw.document_file ?? '',
-    documentDate: raw.document_date ?? '',
-    note: raw.note ?? null,
+    id: r.id,
+    identifier: r.id,
+    documentName: r.document_name ?? '',
+    type: toEnumInt('recoveryDocumentType', r.type),
+    documentFile: r.document_file ?? '',
+    documentDate: r.document_date ?? '',
+    note: r.note ?? null,
     ...envelopes(r),
-  };
+  } as unknown as IRecoveryReport
 }
 
 // ---------------------------------------------------------------------------
-// Inquiry / Recovery samples — pass through with snake→camel for known fields
+// Inquiry / Recovery samples — snake→camel + parent FK rename
 // ---------------------------------------------------------------------------
 
-export function adaptInquirySample(raw: Record<string, unknown>): Record<string, unknown> {
-  // Sample shapes are wide (~40 fields). For now pass through with the known
-  // top-level renames; component templates that read snake_case fields will
-  // pick them up. Extend if bugs surface.
-  return {
-    id: raw.id,
-    inquiry: raw.inquiry_id,
-    address: raw.address ?? null,
-    building: raw.building_id ?? null,
-    note: raw.note ?? null,
-    builtYear: raw.built_year ?? null,
-    createDate: raw.create_date,
-    updateDate: raw.update_date,
-    deleteDate: raw.delete_date,
-    ...raw,
-  };
+export const adaptInquirySample = (raw: unknown): IInquirySample => {
+  const o = snakeToCamel(raw) as Record<string, unknown>
+  // Frontend type names the parent FK `inquiry`, not `inquiryId`.
+  if ('inquiryId' in o) { o.inquiry = o.inquiryId; delete o.inquiryId }
+  if ('buildingId' in o) { o.building = o.buildingId; delete o.buildingId }
+  return o as unknown as IInquirySample
 }
 
-export function adaptRecoverySample(raw: Record<string, unknown>): Record<string, unknown> {
-  return {
-    id: raw.id,
-    recovery: raw.recovery_id,
-    note: raw.note ?? null,
-    pileType: raw.pile_type,
-    permitDate: raw.permit_date,
-    recoveryDate: raw.recovery_date,
-    contractor: raw.contractor_id,
-    building: raw.building_id,
-    createDate: raw.create_date,
-    updateDate: raw.update_date,
-    deleteDate: raw.delete_date,
-    ...raw,
-  };
+export const adaptRecoverySample = (raw: unknown): IRecoverySample => {
+  const o = snakeToCamel(raw) as Record<string, unknown>
+  if ('recoveryId' in o) { o.recovery = o.recoveryId; delete o.recoveryId }
+  if ('buildingId' in o) { o.building = o.buildingId; delete o.buildingId }
+  if ('contractorId' in o) { o.contractor = o.contractorId; delete o.contractorId }
+  return o as unknown as IRecoverySample
 }
 
 // ---------------------------------------------------------------------------
-// Incident
+// IIncidentReport — flat snake_case + boolean coercion + a few renames
 // ---------------------------------------------------------------------------
 
-export function adaptIncident(raw: Record<string, unknown>): Record<string, unknown> {
-  return {
-    id: raw.id,
-    clientId: undefined,
-    clientName: 'FunderMaps',
-    foundationType: toEnumInt("foundation_type", raw.foundation_type),
-    chainedBuilding: !!raw.chained_building,
-    owner: !!raw.owner,
-    foundationRecovery: !!raw.foundation_recovery,
-    neighborRecovery: !!raw.neighbor_recovery,
-    foundationDamageCause: toEnumInt("foundation_damage_cause", raw.foundation_damage_cause),
-    documentFile: raw.document_file ?? [],
-    note: raw.note ?? null,
-    internalNote: raw.internal_note ?? null,
-    foundationDamageCharacteristics: toEnumIntArray("foundation_damage_characteristics", raw.foundation_damage_characteristics),
-    environmentDamageCharacteristics: toEnumIntArray("environment_damage_characteristics", raw.environment_damage_characteristics),
-    email: raw.contact ?? '',
-    name: raw.contact_name ?? null,
-    phoneNumber: raw.contact_phone_number ?? null,
-    address: '',
-    building: raw.building_id ?? '',
-    auditStatus: toEnumInt("audit_status", raw.audit_status),
-    incidentQuestionType: toEnumInt("incident_question_type", raw.question_type),
-    meta: raw.metadata ?? {},
-  };
+const INCIDENT_ENUMS: readonly [string, EnumName][] = [
+  ['foundationType', 'foundationType'],
+  ['foundationDamageCause', 'foundationDamageCause'],
+  ['auditStatus', 'auditStatus'],
+]
+
+export const adaptIncident = (raw: unknown): IIncidentReport => {
+  const o = snakeToCamel(raw) as Record<string, unknown>
+
+  for (const f of ['chainedBuilding', 'owner', 'foundationRecovery', 'neighborRecovery']) {
+    o[f] = !!o[f]
+  }
+  o.foundationDamageCharacteristics = toEnumIntArray('foundationDamageCharacteristics',
+    o.foundationDamageCharacteristics)
+  o.environmentDamageCharacteristics = toEnumIntArray('environmentDamageCharacteristics',
+    o.environmentDamageCharacteristics)
+  o.incidentQuestionType = toEnumInt('incidentQuestionType', o.questionType)
+  delete o.questionType
+  coerceEnums(o, INCIDENT_ENUMS)
+
+  o.documentFile = o.documentFile ?? []
+  o.note = o.note ?? null
+  o.internalNote = o.internalNote ?? null
+  o.email = (o.contact as string) ?? ''
+  o.name = (o.contactName as string) ?? null
+  o.phoneNumber = (o.contactPhoneNumber as string) ?? null
+  delete o.contact; delete o.contactName; delete o.contactPhoneNumber
+  o.address = ''
+  o.building = (o.buildingId as string) ?? ''
+  delete o.buildingId
+  o.meta = (o.metadata as object) ?? {}
+  delete o.metadata
+  o.clientId = undefined
+  o.clientName = 'FunderMaps'
+
+  return o as unknown as IIncidentReport
 }
 
 // ---------------------------------------------------------------------------
-// ICombinedReportData (5-array report endpoint)
+// ICombinedReportData — the /report/:id 5-array endpoint
 // ---------------------------------------------------------------------------
 
 interface RawReport {
-  incidents: Record<string, unknown>[];
-  inquiries: Record<string, unknown>[];
-  inquiry_samples: Record<string, unknown>[];
-  recoveries: Record<string, unknown>[];
-  recovery_samples: Record<string, unknown>[];
+  incidents?: unknown[]
+  inquiries?: unknown[]
+  inquiry_samples?: unknown[]
+  recoveries?: unknown[]
+  recovery_samples?: unknown[]
 }
 
-export function adaptCombinedReport(raw: RawReport): Record<string, unknown> {
+export const adaptCombinedReport = (raw: unknown): ICombinedReportData => {
+  const r = (raw ?? {}) as RawReport
   return {
-    incidents: (raw.incidents ?? []).map(adaptIncident),
-    inquiries: (raw.inquiries ?? []).map(adaptInquiry),
-    inquirySamples: (raw.inquiry_samples ?? []).map(adaptInquirySample),
-    recoveries: (raw.recoveries ?? []).map(adaptRecovery),
-    recoverySamples: (raw.recovery_samples ?? []).map(adaptRecoverySample),
-  };
+    incidents: (r.incidents ?? []).map(adaptIncident),
+    inquiries: (r.inquiries ?? []).map(adaptInquiry),
+    inquirySamples: (r.inquiry_samples ?? []).map(adaptInquirySample),
+    recoveries: (r.recoveries ?? []).map(adaptRecovery),
+    recoverySamples: (r.recovery_samples ?? []).map(adaptRecoverySample),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ISubsidence — snake→camel + numeric coercion
+// ---------------------------------------------------------------------------
+
+export const adaptSubsidence = (raw: unknown): ISubsidence[] => {
+  if (!Array.isArray(raw)) return []
+  return raw.map(row => {
+    const r = row as { velocity: number | string; mark_at: string }
+    return { velocity: Number(r.velocity), markAt: r.mark_at }
+  })
 }

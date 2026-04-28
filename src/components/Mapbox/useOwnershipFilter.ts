@@ -1,13 +1,11 @@
 import { FilterSpecification, LayerSpecification } from "mapbox-gl"
 import { storeToRefs } from "pinia"
 import { useFiltersStore } from "@/store/filters"
-import { useOrgsStore } from "@/store/orgs"
+import { useSessionStore } from "@/store/session"
 
 export const useOwnershipFilter = function useOwnershipFilter() {
 
-  const { 
-    selectedOrg
-  } = storeToRefs(useOrgsStore())
+  const { selectedOrg } = storeToRefs(useSessionStore())
 
   const {
     applyOwnershipFilter: applyOwnershipFilterToggle

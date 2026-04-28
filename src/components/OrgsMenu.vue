@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { vOnClickOutside } from '@vueuse/components'
@@ -10,21 +10,10 @@ import SwitchIcon from '@assets/svg/icons/switch.svg'
 import CheckIcon from '@assets/svg/icons/check.svg'
 
 import { useSessionStore } from '@/store/session';
-import { useOrgsStore } from '@/store/orgs';
+
 const sessionStore = useSessionStore()
-const OrgsStore = useOrgsStore()
-
-const { isAuthenticated } = storeToRefs( sessionStore )
-const {
-  selectOrgById, loadAvailableOrgs
-} = OrgsStore
-
-const { 
-  availableOrgs,
-  hasAvailableOrgs,
-  selectedOrg,
-  selectedOrgId
-} = storeToRefs( OrgsStore )
+const { selectOrgById } = sessionStore
+const { organizations, selectedOrg, selectedOrgId } = storeToRefs(sessionStore)
 
 /**
  * Whether the menu is open
@@ -50,27 +39,16 @@ const handleSelectOrg = function handleSelectOrg(id: string) {
   handleClose()
 }
 
-/**
- * When continuing a session from a token, the available orgs need to be loaded
- *  TODO: In the future this may need to be done before loading the mapset, 
- *  TODO: which happens in Main
- */
-onBeforeMount(async () => {
-  if (isAuthenticated.value && ! hasAvailableOrgs.value) {
-    await loadAvailableOrgs()
-  }
-})
-
 </script>
 <template>
   <div> <!-- extra div for Transition in parent component -->
-    <div 
-      v-if="hasAvailableOrgs && selectedOrg"
+    <div
+      v-if="organizations.length > 0 && selectedOrg"
       v-on-click-outside="handleClose"
       class="relative">
 
-      <button 
-        v-if="availableOrgs.length !== 1"
+      <button
+        v-if="organizations.length !== 1"
         @click.prevent="handleToggle" 
         class="button group flex p-0">
 
@@ -99,7 +77,7 @@ onBeforeMount(async () => {
 
       <Transition name="slide-down">
         <div
-          v-if="isOpen && availableOrgs.length !== 1"
+          v-if="isOpen && organizations.length !== 1"
           class="dropdown arrow arrow--top-left | absolute -left-7 top-full origin-top-left outline-none"
         >
           <div
@@ -115,7 +93,7 @@ onBeforeMount(async () => {
             </div>
             <div class="dropdown__content">
               <ol>
-                <li v-for="Mapset in availableOrgs" :key="Mapset.id">
+                <li v-for="Mapset in organizations" :key="Mapset.id">
                   <a
                     href="#"
                     class="flex cursor-pointer gap-3 px-8 py-2 transition-colors duration-100 hover:bg-grey-100"

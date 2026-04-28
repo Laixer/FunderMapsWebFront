@@ -37,18 +37,12 @@ export const useMetadataStore = defineStore('metadata', () => {
         isAvailable.value = true;
         return;
       }
-
-      const response = await api.metadata.getMetadata() as MetadataObject | null | undefined;
-      if (response) {
-        metadataState.value = response;
-      } else {
-        metadataState.value = {}; // Ensure it's an object if API returns null/undefined
-      }
+      metadataState.value = await api.metadata.getMetadata() as MetadataObject;
       isAvailable.value = true;
     } catch (error) {
       console.error("Failed to retrieve metadata:", error);
       // Even on error, mark as available so the app doesn't hang,
-      // allowing potential fallback to localStorage or an empty state.
+      // allowing fallback to an empty state.
       isAvailable.value = true;
     }
   };

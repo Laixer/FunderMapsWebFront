@@ -18,7 +18,7 @@ import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataCon
 import { useBuildingStore } from '@/store/buildings';
 import { useInquiriesStore } from '@/store/building/inquiries';
 import { useMainStore } from '@/store/main';
-import { useOrgsStore } from '@/store/orgs';
+import { useSessionStore } from '@/store/session';
 
 import DocumentDownload from '@/components/DocumentDownload.vue';
 
@@ -27,7 +27,7 @@ const { getCombinedInquiryDataByBuildingId, buildingInquiryDataHasBeenRetrieved,
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useInquiriesStore())
 const { buildingId } = storeToRefs(useBuildingStore())
 const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
-const { isOrgAvailable } = useOrgsStore()
+const { isOrgAvailable } = useSessionStore()
 
 /**
  * Props & events

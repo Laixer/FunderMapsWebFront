@@ -2,7 +2,6 @@ import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { IRecoverySample, type IRecoveryReport } from "@/datastructures/interfaces"
-import api from '@/services/api';
 import { useSessionStore } from '../session';
 import { RecoveryReport } from '@/datastructures/classes/RecoveryReport';
 import { RecoverySample } from '@/datastructures/classes/RecoverySample';
@@ -15,7 +14,6 @@ function useRecoveryReports() {
   const recoverySamplesByBuildingId = ref<Record<string, IRecoverySample[]>>({})
   const recoverySampleIdsByBuildingId = ref<Record<string, number[]>>({})
   const recoveryReportIdsByBuildingId = ref<Record<string, number[]>>({})
-  const isLoadingBuildingDataById = ref<Record<string, boolean>>({})
 
   /**
    * Whether the recovery sample panel is open
@@ -104,48 +102,12 @@ function useRecoveryReports() {
     })
   }
 
-  const loadRecoveryReportDataByBuildingId = async function loadRecoveryReportDataByBuildingId(buildingId: string, cache: boolean = true) {
-    try {
-      if (isLoadingBuildingDataById.value[buildingId] === true) return
-      isLoadingBuildingDataById.value[buildingId] = true
-
-      if (cache === true && buildingRecoveryReportDataHasBeenRetrieved(buildingId)) {
-        return
-      }
-
-      const response: IRecoveryReport[] = await api.building.getRecoveryReportsByBuildingId(buildingId)
-
-      response.forEach((recoveryReport: IRecoveryReport) => {
-        recoveryReportsById.value[recoveryReport.id] = new RecoveryReport(recoveryReport)
-      })
-
-      recoveryReportIdsByBuildingId.value[buildingId] = response.map((report: IRecoveryReport) => report.id)
-
-      const sampleResults = await Promise.allSettled(
-        response.map(report => api.building.getRecoverySamplesByRecoveryId(report.id))
-      )
-      sampleResults.forEach((result, index) => {
-        if (result.status !== 'fulfilled') return
-        const recoveryReportId = response[index].id
-        recoverySamplesByRecoveryReportId.value[recoveryReportId] = result.value.map(
-          (sample: IRecoverySample) => new RecoverySample(sample)
-        )
-      })
-
-    } catch (e) {
-      console.error("Failed to load recovery data", buildingId, e)
-    }
-
-    isLoadingBuildingDataById.value[buildingId] = false
-  }
-
   const clearRecoveryReportData = function clearRecoveryReportData() {
     recoveryReportIdsByBuildingId.value = {}
     recoveryReportsById.value = {}
     recoverySamplesByRecoveryReportId.value = {}
     recoverySamplesByBuildingId.value = {}
     recoverySampleIdsByBuildingId.value = {}
-    isLoadingBuildingDataById.value = {}
   }
 
   /**
@@ -165,16 +127,11 @@ function useRecoveryReports() {
     buildingRecoveryReportDataHasBeenRetrieved,
     buildingHasRecoveryReports,
     getRecoveryReportByBuildingId,
-
     getRecoverySamplesByRecoveryReportId,
-
-    loadRecoveryReportDataByBuildingId,
     setRecoveryDataByBuildingId,
-
     getCombinedRecoveryDataByBuildingId,
-
     isSamplePanelOpen,
-    shownReportIndex
+    shownReportIndex,
   }
 }
 
