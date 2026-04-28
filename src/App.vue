@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
 import { useSessionStore } from '@/store/session';
 import { useMetadataStore } from '@/store/metadata'
+import { onAuthExpired } from '@/services/authEvents'
 
+const router = useRouter()
 const sessionStore = useSessionStore()
 const metadataStore = useMetadataStore()
 const { isAuthenticated } = storeToRefs(sessionStore)
@@ -22,6 +25,18 @@ watch(
   },
   { immediate: true }
 )
+
+// Single global handler for "the API client says auth is invalid" (missing
+// or server-rejected token). Clears session state and lands the user on
+// /login so they can sign back in. UserMenu's manual logout doesn't go
+// through this path — it intentionally keeps the user on the current page
+// (public mapsets remain accessible).
+onAuthExpired(async () => {
+  await sessionStore.logout()
+  if (router.currentRoute.value.name !== 'login') {
+    router.push({ name: 'login' })
+  }
+})
 </script>
 
 <template>
