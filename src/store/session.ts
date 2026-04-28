@@ -1,4 +1,4 @@
-import { computed, type ShallowRef, shallowRef } from 'vue';
+import { computed, ref, type ShallowRef, shallowRef } from 'vue';
 import { defineStore } from 'pinia';
 
 import type { IUser } from '@/datastructures/interfaces';
@@ -6,7 +6,6 @@ import api from '@/services/api';
 import { hasToken, removeAccessToken, storeAccessToken } from '@/services/token';
 
 import { useMapsetStore } from '@/store/mapsets';
-import { useOrgsStore } from '@/store/orgs';
 import { useMetadataStore } from './metadata';
 
 // Build a display name from /me's given_name + family_name; fall back to
@@ -24,19 +23,44 @@ export const useSessionStore = defineStore('session', () => {
 
   const isAuthenticated = computed<boolean>(() => currentUser.value !== null);
 
+  const organizations = computed(() => currentUser.value?.organizations ?? []);
+
+  // The org the user is currently acting as. Defaults to the first org on
+  // load and survives until logout. Drives the ownership filter on the map
+  // and the "is this report owned by me" check on inquiry downloads.
+  const selectedOrgId = ref<string | null>(null);
+
+  const selectedOrg = computed(() =>
+    organizations.value.find(o => o.id === selectedOrgId.value) ?? null,
+  );
+
+  const selectOrgById = (id: string): void => {
+    if (organizations.value.some(o => o.id === id)) {
+      selectedOrgId.value = id;
+    }
+  };
+
+  const isOrgAvailable = (id: string | null | undefined): boolean =>
+    !!id && organizations.value.some(o => o.id === id);
+
   /**
-   * Fetch the user profile from /api/user/me and set the display name.
-   * Called after login and after restoring a saved token.
-   *
-   * Discards its result if the user logged out (or signed in as someone
-   * else) while the request was in flight — otherwise a late /me response
-   * resurrects the previous session and the UI snaps back to "logged in".
+   * Fetch the user profile + organizations from /api/user/me. Discards its
+   * result if the user logged out (or signed in as someone else) while the
+   * request was in flight — otherwise a late /me response resurrects the
+   * previous session and the UI snaps back to "logged in".
    */
   const loadUser = async (): Promise<void> => {
     try {
-      const profile = await api.userprofile.getUserProfile();
+      const { profile, organizations: orgs } = await api.userprofile.getMe();
       if (!hasToken()) return;
-      currentUser.value = { name: displayName(profile) };
+      currentUser.value = {
+        name: displayName(profile),
+        email: profile.email,
+        organizations: orgs,
+      };
+      if (selectedOrgId.value === null && orgs.length > 0) {
+        selectedOrgId.value = orgs[0].id;
+      }
     } catch (e) {
       console.error('Failed to load user profile:', e);
       if (hasToken()) logout();
@@ -48,24 +72,18 @@ export const useSessionStore = defineStore('session', () => {
    * opaque — we can't validate it client-side, so we ask /me. To avoid a
    * race with route guards (which redirect to /login when isAuthenticated
    * is false), set currentUser optimistically based on token presence and
-   * then refine the display name when /me responds. If /me rejects, the
-   * token was bad and we log out.
+   * then refine when /me responds. If /me rejects, the token was bad and
+   * we log out.
    */
   const authenticateFromAccessToken = async (): Promise<void> => {
     if (!hasToken()) {
       logout();
       return;
     }
-    // Optimistic: token is present, treat the user as authenticated until
-    // /me proves otherwise. Without this the route guard fires before /me
-    // resolves and bounces the user to /login on every page reload.
-    currentUser.value = { name: 'Anoniem' };
+    currentUser.value = { name: 'Anoniem', email: '', organizations: [] };
     await loadUser();
   };
 
-  /**
-   * Log in with email and password against Better Auth.
-   */
   const login = async (email: string, password: string): Promise<void> => {
     try {
       const response = await api.auth.login(email, password);
@@ -89,9 +107,9 @@ export const useSessionStore = defineStore('session', () => {
 
     removeAccessToken();
     currentUser.value = null;
+    selectedOrgId.value = null;
 
     useMapsetStore().removePrivateMapsets();
-    useOrgsStore().removeOrgs();
     useMetadataStore().clear();
     sessionStorage.clear();
   };
@@ -99,6 +117,11 @@ export const useSessionStore = defineStore('session', () => {
   return {
     currentUser,
     isAuthenticated,
+    organizations,
+    selectedOrgId,
+    selectedOrg,
+    selectOrgById,
+    isOrgAvailable,
     authenticateFromAccessToken,
     login,
     logout,

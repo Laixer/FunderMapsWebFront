@@ -2,7 +2,6 @@ import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia'
 
 import { type ICombinedInquiryData, type IInquirySample, type IInquiryReport } from "@/datastructures/interfaces"
-import api from '@/services/api';
 import { useSessionStore } from '../session';
 import { InquirySample } from '@/datastructures/classes/InquirySample';
 import { Inquiry } from '@/datastructures/classes/Inquiry';
@@ -14,7 +13,6 @@ function useInquiries() {
   const inquirySamplesByBuildingId = ref<Record<string, IInquirySample[]>>({})
   const inquirySampleIdsByBuildingId = ref<Record<string, number[]>>({})
   const inquiryIdsByBuildingId = ref<Record<string, number[]>>({})
-  const isLoadingBuildingDataById = ref<Record<string, boolean>>({})
 
   /**
    * Whether the inquiry sample panel is open
@@ -103,39 +101,12 @@ function useInquiries() {
     })
   }
 
-  const loadInquiryDataByBuildingId = async function loadInquiryDataByBuildingId(buildingId: string, cache: boolean = true) {
-    try {
-      if (isLoadingBuildingDataById.value[buildingId] === true) return
-      isLoadingBuildingDataById.value[buildingId] = true
-
-      if (cache === true && buildingInquiryDataHasBeenRetrieved(buildingId)) {
-        return
-      }
-
-      const reports: IInquiryReport[] = await api.building.getInquiriesByBuildingId(buildingId)
-
-      const sampleResults = await Promise.allSettled(
-        reports.map(report => api.building.getInquirySamplesByInquiryId(report.id))
-      )
-      const samples = sampleResults
-        .filter((r): r is PromiseFulfilledResult<IInquirySample[]> => r.status === 'fulfilled')
-        .flatMap(r => r.value)
-
-      setInquiryDataByBuildingId(buildingId, reports, samples)
-    } catch(e) {
-      console.error("Failed to load inquiry data", buildingId, e)
-    }
-
-    isLoadingBuildingDataById.value[buildingId] = false
-  }
-
   const clearInquiryData = function clearInquiryData() {
     inquiryIdsByBuildingId.value = {}
     inquiriesById.value = {}
     inquirySamplesByInquiryId.value = {}
     inquirySamplesByBuildingId.value = {}
     inquirySampleIdsByBuildingId.value = {}
-    isLoadingBuildingDataById.value = {}
   }
 
   /**
@@ -155,16 +126,11 @@ function useInquiries() {
     buildingInquiryDataHasBeenRetrieved,
     buildingHasInquiries,
     getInquiryByBuildingId,
-
     getInquirySamplesByInquiryId,
-
-    loadInquiryDataByBuildingId,
     setInquiryDataByBuildingId,
-
     getCombinedInquiryDataByBuildingId,
-
     isSamplePanelOpen,
-    shownReportIndex
+    shownReportIndex,
   }
 }
 

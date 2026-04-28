@@ -108,16 +108,14 @@ watch(
   async (value) => {
     
     if (value === true && isProfileDataAvailable.value === false) {
-      const response = await api.userprofile.getUserProfile()
-
-      // TODO: Error handling & all that fun stuff
+      const { profile } = await api.userprofile.getMe()
 
       profileData.value = {
-        email: response.email, // required input
-        givenName: response.givenName || '',
-        lastName: response.lastName || '',
-        jobTitle: response.jobTitle || '',
-        phoneNumber: response.phoneNumber || ''
+        email: profile.email, // required input
+        givenName: profile.givenName || '',
+        lastName: profile.lastName || '',
+        jobTitle: profile.jobTitle || '',
+        phoneNumber: profile.phoneNumber || ''
       }
 
       isProfileDataAvailable.value = true
