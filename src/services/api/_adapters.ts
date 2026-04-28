@@ -22,6 +22,22 @@ import type {
   IStatistics,
   ISubsidence,
 } from "@/datastructures/interfaces"
+import {
+  EAccessPolicy,
+  EAuditStatus,
+  EEnforcementTerm,
+  EEnvironmentDamageCharacteristics,
+  EFoundationDamageCause,
+  EFoundationDamageCharacteristics,
+  EFoundationQuality,
+  EFoundationRisk,
+  EFoundationType,
+  EIncidentQuestionType,
+  EInquiryType,
+  ERecoveryDocumentType,
+  ERecoveryType,
+  EReliability,
+} from "@/datastructures/enums"
 
 // ---------------------------------------------------------------------------
 // Generic helpers
@@ -56,42 +72,45 @@ const coerceNumeric = (obj: Record<string, unknown>, fields: readonly string[]):
 
 // ---------------------------------------------------------------------------
 // Enum string → int (C# wire-format positions)
+//
+// The TS enums in src/datastructures/enums/E*.ts are the source of truth
+// for integer positions (mirroring C#). The wire format from postgres.js is
+// the snake_case key, so we derive a position-indexed array of snake keys
+// from each enum at module load time. Sparse positions (e.g.
+// EFoundationDamageCause skips 7) become sparse array slots — indexOf still
+// returns -1 for them, which toEnumInt translates to undefined.
 // ---------------------------------------------------------------------------
 
+// PascalCase identifier → snake_case wire key. Inserts an underscore at
+// every lower→upper boundary; digits stay attached to whatever precedes
+// them (so Term05 → term05, not term_05).
+const pascalToSnake = (s: string): string =>
+  s.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
+
+const enumToWireKeys = (e: Record<string, string | number>): string[] => {
+  const out: string[] = []
+  for (const key of Object.keys(e)) {
+    const value = e[key]
+    if (typeof value === 'number') out[value] = pascalToSnake(key)
+  }
+  return out
+}
+
 const ENUM = {
-  inquiryType: ['additional_research', 'monitoring', 'note', 'quickscan', 'unknown',
-    'demolition_research', 'second_opinion', 'archive_research', 'architectural_research',
-    'foundation_advice', 'inspectionpit', 'foundation_research', 'ground_water_level_research',
-    'soil_investigation', 'facade_scan'],
-  auditStatus: ['todo', 'pending', 'done', 'discarded', 'pending_review', 'rejected'],
-  accessPolicy: ['public', 'private'],
-  foundationType: ['wood', 'wood_amsterdam', 'wood_rotterdam', 'concrete', 'no_pile',
-    'no_pile_masonry', 'no_pile_strips', 'no_pile_bearing_floor', 'no_pile_concrete_floor',
-    'no_pile_slit', 'wood_charger', 'weighted_pile', 'combined', 'steel_pile', 'other',
-    'wood_rotterdam_amsterdam', 'wood_rotterdam_arch', 'wood_amsterdam_arch'],
-  enforcementTerm: ['term05', 'term510', 'term1020', 'term5', 'term10', 'term15', 'term20',
-    'term25', 'term30', 'term40'],
-  foundationDamageCause: ['drainage', 'construction_flaw', 'drystand', 'overcharge',
-    'overcharge_negative_cling', 'negative_cling', 'bio_infection', '__gap_7__',
-    'fungus_infection', 'bio_fungus_infection', 'foundation_flaw', 'construction_heave',
-    'subsidence', 'vegetation', 'gas', 'vibrations', 'partial_foundation_recovery',
-    'japanese_knotweed', 'groundwater_level_reduction'],
-  foundationDamageCharacteristics: ['jamming_door_window', 'crack', 'skewed',
-    'crawlspace_flooding', 'threshold_above_subsurface', 'threshold_below_subsurface',
-    'crooked_floor_wall'],
-  environmentDamageCharacteristics: ['subsidence', 'sagging_sewer_connection',
-    'sagging_cables_pipes', 'flooding', 'foundation_damage_nearby', 'elevation',
-    'increasing_traffic', 'construction_nearby', 'vegetation_nearby', 'sewage_leakage',
-    'low_ground_water'],
-  foundationQuality: ['bad', 'mediocre', 'tolerable', 'good', 'mediocre_good', 'mediocre_bad'],
-  reliability: ['indicative', 'established', 'cluster', 'supercluster'],
-  recoveryType: ['table', 'beam_on_pile', 'pile_lowering', 'pile_in_wall', 'injection', 'unknown'],
-  recoveryDocumentType: ['permit', 'recovery_report', 'consolidation_report',
-    'additional_research', 'damage_research', 'foundation_research', 'mediation', 'unknown'],
-  foundationRisk: ['a', 'b', 'c', 'd', 'e'],
-  incidentQuestionType: ['other', 'foundation_advice', 'loan', 'consequences', 'legal',
-    'preliminary_recovery', 'risks', 'energy_saving', 'wood', 'concrete', 'foundation_age',
-    'construction_inspection', 'recovery_costs', 'recovery_methods', 'other_question'],
+  inquiryType: enumToWireKeys(EInquiryType),
+  auditStatus: enumToWireKeys(EAuditStatus),
+  accessPolicy: enumToWireKeys(EAccessPolicy),
+  foundationType: enumToWireKeys(EFoundationType),
+  enforcementTerm: enumToWireKeys(EEnforcementTerm),
+  foundationDamageCause: enumToWireKeys(EFoundationDamageCause),
+  foundationDamageCharacteristics: enumToWireKeys(EFoundationDamageCharacteristics),
+  environmentDamageCharacteristics: enumToWireKeys(EEnvironmentDamageCharacteristics),
+  foundationQuality: enumToWireKeys(EFoundationQuality),
+  reliability: enumToWireKeys(EReliability),
+  recoveryType: enumToWireKeys(ERecoveryType),
+  recoveryDocumentType: enumToWireKeys(ERecoveryDocumentType),
+  foundationRisk: enumToWireKeys(EFoundationRisk),
+  incidentQuestionType: enumToWireKeys(EIncidentQuestionType),
 } as const
 
 type EnumName = keyof typeof ENUM
