@@ -2,10 +2,10 @@ import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
 import { useMapsetStore } from '@/store/mapsets';
-import { getItemsStartingWith } from '@/utils/sessionStorage';
+import { getItemsStartingWith } from '@/utils/localStorage';
 
-// A full session storage key = prefix + mapsetId
-const sessionStorageKeyPrefix = 'layer_visibility_';
+// A full localStorage key = prefix + mapsetId
+const storageKeyPrefix = 'layer_visibility_';
 
 /**
  * Defines the store for managing layer visibility and related settings.
@@ -99,34 +99,34 @@ export const useLayersStore = defineStore('layers', () => {
   };
 
   /**
-   * Loads layer visibility information from session storage for all mapsets.
+   * Loads layer visibility information from localStorage for all mapsets.
    * This is typically called once at application startup to restore previous state.
    */
-  const retrieveLayerVisibilityFromSessionStorage = (): void => {
+  const retrieveLayerVisibility = (): void => {
     try {
-      const visibilityPerMapset = getItemsStartingWith(sessionStorageKeyPrefix);
+      const visibilityPerMapset = getItemsStartingWith(storageKeyPrefix);
       Object.keys(visibilityPerMapset).forEach(key => {
-        const id = key.substring(sessionStorageKeyPrefix.length);
+        const id = key.substring(storageKeyPrefix.length);
         if (id) { // Ensure id is not empty (e.g., if key was exactly the prefix)
           try {
             const parsedLayers = JSON.parse(visibilityPerMapset[key]);
             if (Array.isArray(parsedLayers) && parsedLayers.every(item => typeof item === 'string')) {
               visibleLayersByMapsetId.value[id] = parsedLayers;
             } else {
-              console.warn(`Invalid layer visibility data in session storage for mapset ${id}: not an array of strings.`);
+              console.warn(`Invalid layer visibility data in localStorage for mapset ${id}: not an array of strings.`);
             }
           } catch (parseError) {
-            console.error(`Failed to parse layer visibility for mapset ${id} from session storage:`, parseError);
+            console.error(`Failed to parse layer visibility for mapset ${id} from localStorage:`, parseError);
           }
         }
       });
     } catch (e) {
-      console.error("Failed to retrieve layer visibility information from session storage. Starting with default settings.", e);
+      console.error("Failed to retrieve layer visibility information from localStorage. Starting with default settings.", e);
     }
   };
 
   /**
-   * Changes the visibility of a layer for a specific mapset and updates session storage.
+   * Changes the visibility of a layer for a specific mapset and updates localStorage.
    * @param {string} layerId - The ID of the layer whose visibility is to be changed.
    * @param {boolean} visibility - The new visibility state (true for visible, false for hidden).
    * @param {string | null | undefined} mapsetIdInput - The mapset ID or identifier; defaults to the active mapset if null or undefined.
@@ -158,12 +158,12 @@ export const useLayersStore = defineStore('layers', () => {
     if (JSON.stringify(currentVisibleForMapset) !== JSON.stringify(futureVisibleLayers)) {
       visibleLayersByMapsetId.value[finalMapsetId] = futureVisibleLayers;
       try {
-        sessionStorage.setItem(
-          `${sessionStorageKeyPrefix}${finalMapsetId}`,
+        localStorage.setItem(
+          `${storageKeyPrefix}${finalMapsetId}`,
           JSON.stringify(futureVisibleLayers)
         );
       } catch (e) {
-        console.error(`Failed to save layer visibility to session storage for mapset ${finalMapsetId}:`, e);
+        console.error(`Failed to save layer visibility to localStorage for mapset ${finalMapsetId}:`, e);
       }
     }
   };
@@ -193,7 +193,7 @@ export const useLayersStore = defineStore('layers', () => {
     getVisibleLayersByMapsetId,
     getVisibleLayersOfActiveMapset,
     isLayerVisible,
-    retrieveLayerVisibilityFromSessionStorage,
+    retrieveLayerVisibility,
     changeLayerVisibility,
     toggleLayerVisibility,
   };

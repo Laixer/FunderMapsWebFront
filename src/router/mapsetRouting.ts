@@ -40,12 +40,12 @@ export const useMapsetRouting = function useMapsetRouting() {
   watch(
     () => route.params.mapsetId,
     async () => {
-      const publicMapsetSessionKey = 'last-viewed-public-mapset'
-      const privateMapsetSessionKey = 'last-viewed-private-mapset'
+      const publicMapsetStorageKey = 'last-viewed-public-mapset'
+      const privateMapsetStorageKey = 'last-viewed-private-mapset'
 
       const mapsetId = route.params?.mapsetId
-        || sessionStorage.getItem(publicMapsetSessionKey)
-        || sessionStorage.getItem(privateMapsetSessionKey)
+        || localStorage.getItem(publicMapsetStorageKey)
+        || localStorage.getItem(privateMapsetStorageKey)
 
       // Logged in, but no private mapsets available yet? Load them first
       if (isAuthenticated.value && ! hasAvailablePrivateMapsets.value) {
@@ -63,9 +63,9 @@ export const useMapsetRouting = function useMapsetRouting() {
         // If (now) available, mark it as the last visited mapset and select it
         if (isMapsetAvailable(mapsetId as string)) {
           if (isPublicMapset(mapsetId as string)) {
-            sessionStorage.setItem(publicMapsetSessionKey, mapsetId.toString())
+            localStorage.setItem(publicMapsetStorageKey, mapsetId.toString())
           } else {
-            sessionStorage.setItem(privateMapsetSessionKey, mapsetId.toString())
+            localStorage.setItem(privateMapsetStorageKey, mapsetId.toString())
           }
 
           selectMapsetById(mapsetId as string)
@@ -76,7 +76,7 @@ export const useMapsetRouting = function useMapsetRouting() {
       // Unable to load the requested mapset and not logged in
       if (! isAuthenticated.value) {
         // Try to redirect to the last visited public mapset
-        const lastPublic = sessionStorage.getItem(publicMapsetSessionKey)
+        const lastPublic = localStorage.getItem(publicMapsetStorageKey)
         if (lastPublic && mapsetId !== lastPublic) {
           navigateToMapset(lastPublic)
         } else {
@@ -87,7 +87,7 @@ export const useMapsetRouting = function useMapsetRouting() {
 
       // Logged in and no mapsets available at all
       if (! hasAvailableMapsets.value) {
-        const lastPublic = sessionStorage.getItem(publicMapsetSessionKey)
+        const lastPublic = localStorage.getItem(publicMapsetStorageKey)
         if (lastPublic && mapsetId !== lastPublic) {
           navigateToMapset(lastPublic)
         }

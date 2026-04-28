@@ -82,8 +82,9 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
       class="panels transition-transform duration-300"
       :class="{'-translate-x-full': isShowingMapsetSelection === false}"
     >
-      <Panel 
+      <Panel
         subtitle="Selecteer een kaart"
+        close-direction="left"
         @close="isLeftSidebarOpen = false">
         <section class="grid space-y-2">
           <MenuLink
@@ -106,6 +107,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
       </Panel>
 
       <Panel
+        close-direction="left"
         @close="isLeftSidebarOpen = false">
         <template v-slot:subtitle>
           <FundermapsIcon

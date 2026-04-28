@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
+import SidebarToggle from '@/components/Common/Buttons/SidebarToggle.vue'
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 
-const { closeable = true } = defineProps<{
+const { closeable = true, closeDirection = 'right' } = defineProps<{
   title?: string | null
   icon?: string | null
   subtitle?: string | null
   closeable?: boolean
+  closeDirection?: 'left' | 'right'
 }>()
 
 const emit = defineEmits<{ close: [] }>()
@@ -28,9 +29,9 @@ const handleClose = function handleClose() {
         aria-hidden="true"
       />
       <h6 v-if="title" class="heading-6">{{ title }}</h6>
-      <CloseBtn 
+      <SidebarToggle
         v-if="closeable"
-        :small="false"
+        :direction="closeDirection"
         @close="handleClose" />
     </div>
     <div class="panel__content" :class="{ 'pb-4': $slots.footer }">

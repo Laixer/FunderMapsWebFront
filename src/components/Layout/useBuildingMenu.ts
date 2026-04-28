@@ -16,16 +16,19 @@ interface BaseMenuItem {
 
 export interface BuildingMenuItem extends BaseMenuItem {
   icon: string
-  // A menu item routes to a panel by name OR runs a one-shot action
-  // (e.g. opening a modal). Exactly one of the two is set.
-  panel?: string
-  action?: () => void
+  panel: string
 }
 
 // Report menu items render as buttons without an icon and always route
 // to a panel.
 export interface ReportMenuItem extends BaseMenuItem {
   panel: string
+}
+
+// Action menu items render as buttons and run a one-shot callback
+// (e.g. opening a modal) instead of routing to a panel.
+export interface ActionMenuItem extends BaseMenuItem {
+  action: () => void
 }
 
 export function useBuildingMenu() {
@@ -42,12 +45,15 @@ export function useBuildingMenu() {
       loading: false, disabled: false },
     { slug: 'foundation', panel: 'FoundationPanel', icon: 'file-foundation', name: 'Fundering',
       loading: false, disabled: false },
-    { slug: 'statistics', icon: 'graph', name: 'Statistieken',
+    { slug: 'foundation-risk', panel: 'FoundationRiskPanel', icon: 'alert', name: 'Funderingsrisico',
+      loading: false, disabled: false },
+  ])
+
+  const actionMenu = computed<ActionMenuItem[]>(() => [
+    { slug: 'statistics', name: 'Bekijk statistieken',
       loading: false,
       disabled: !!(buildingId.value && statisticsStore.failedToLoad(buildingId.value)),
       action: () => { statisticsStore.showStatisticsModal = true } },
-    { slug: 'foundation-risk', panel: 'FoundationRiskPanel', icon: 'alert', name: 'Funderingsrisico',
-      loading: false, disabled: false },
   ])
 
   const reportMenu = computed<ReportMenuItem[]>(() => [
@@ -65,5 +71,5 @@ export function useBuildingMenu() {
       disabled: !!(buildingId.value && !incidentsStore.buildingHasIncidentReports(buildingId.value)) },
   ])
 
-  return { buildingMenu, reportMenu }
+  return { buildingMenu, actionMenu, reportMenu }
 }

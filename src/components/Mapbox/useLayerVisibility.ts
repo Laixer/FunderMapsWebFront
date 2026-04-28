@@ -103,7 +103,7 @@ export const useLayerVisibility = function useLayerVisibility(
   }
 
   /**
-   * Reveal layers that were previously enabled (by referencing sessionStorage)
+   * Reveal layers that were previously enabled (by referencing localStorage)
    *  If none were enabled, enable the first layer of the layerSet
    */
   const setLayerVisibilityForMapset = function setLayerVisibilityForMapset(
