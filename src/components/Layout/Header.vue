@@ -16,7 +16,7 @@ const { hasAvailableMapsets } = storeToRefs(
 </script>
 
 <template>
-  <header class="app-header isolate z-50 flex items-center gap-8 border-b border-grey-200 border-t-2 border-t-green-500 px-8 py-5">
+  <header class="app-header isolate z-50 flex items-center gap-6 border-b border-grey-200 border-t-2 border-t-green-500 px-6 py-5">
     <GrayLogo />
     
     <Transition>

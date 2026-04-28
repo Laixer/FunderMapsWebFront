@@ -13,7 +13,7 @@ const COLOR_GRID = '#e8eaf1'      // grey-200 — subtle separators
 const COLOR_BG = '#ffffff'
 
 Chart.defaults.font.family = FONT_FAMILY
-Chart.defaults.font.size = 12
+Chart.defaults.font.size = 14
 Chart.defaults.color = COLOR_TEXT
 Chart.defaults.borderColor = COLOR_GRID
 
@@ -21,14 +21,22 @@ Chart.defaults.borderColor = COLOR_GRID
 // twitchy and the components disable it per-chart anyway.
 Chart.defaults.animation = false
 
-// Plugin defaults
+// Pin legend to the bottom of every chart. chart.js otherwise auto-flips
+// it to the side when the chart is narrow, producing inconsistent
+// placements across the unified Statistieken modal.
+Chart.defaults.plugins.legend.position = 'bottom'
 Chart.defaults.plugins.legend.labels.color = COLOR_TEXT
-Chart.defaults.plugins.legend.labels.boxWidth = 12
-Chart.defaults.plugins.legend.labels.boxHeight = 12
-Chart.defaults.plugins.legend.labels.padding = 12
+Chart.defaults.plugins.legend.labels.boxWidth = 14
+Chart.defaults.plugins.legend.labels.boxHeight = 14
+Chart.defaults.plugins.legend.labels.padding = 14
+Chart.defaults.plugins.legend.labels.font = { family: FONT_FAMILY, size: 14 }
 
+// Section headings own the title — disable chart.js's own title plugin
+// by default. Defaults below keep the styling sensible if a chart
+// re-enables it.
+Chart.defaults.plugins.title.display = false
 Chart.defaults.plugins.title.color = COLOR_TEXT
-Chart.defaults.plugins.title.font = { family: FONT_FAMILY, size: 14, weight: 'bold' }
+Chart.defaults.plugins.title.font = { family: FONT_FAMILY, size: 16, weight: 'bold' }
 Chart.defaults.plugins.title.padding = { top: 4, bottom: 16 }
 
 Chart.defaults.plugins.tooltip.backgroundColor = COLOR_BG
@@ -36,10 +44,10 @@ Chart.defaults.plugins.tooltip.titleColor = COLOR_TEXT
 Chart.defaults.plugins.tooltip.bodyColor = COLOR_TEXT_MUTED
 Chart.defaults.plugins.tooltip.borderColor = COLOR_GRID
 Chart.defaults.plugins.tooltip.borderWidth = 1
-Chart.defaults.plugins.tooltip.padding = 10
+Chart.defaults.plugins.tooltip.padding = 12
 Chart.defaults.plugins.tooltip.cornerRadius = 6
-Chart.defaults.plugins.tooltip.titleFont = { family: FONT_FAMILY, weight: 'bold', size: 12 }
-Chart.defaults.plugins.tooltip.bodyFont = { family: FONT_FAMILY, size: 12 }
+Chart.defaults.plugins.tooltip.titleFont = { family: FONT_FAMILY, weight: 'bold', size: 13 }
+Chart.defaults.plugins.tooltip.bodyFont = { family: FONT_FAMILY, size: 13 }
 Chart.defaults.plugins.tooltip.boxPadding = 4
 
 // Theme palette for chart fills/borders. Solid versions are used for

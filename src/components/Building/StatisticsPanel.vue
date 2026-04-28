@@ -14,7 +14,7 @@ import { useStatisticsStore } from '@/store/building/statistics';
 
 import { useBuildingStore } from '@/store/buildings';
 const statisticsStore = useStatisticsStore()
-const { showStatisticsModal, statisticsGraph } = storeToRefs(statisticsStore)
+const { showStatisticsModal, scrollToSection } = storeToRefs(statisticsStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 
 /**
@@ -40,10 +40,10 @@ const noTotalReportCount = computed(() => {
 
 
 /**
- * Open the statistics modal
+ * Open the unified statistics modal, optionally scrolled to a section.
  */
 const handleOpenChart = function handleOpenChart(name: string) {
-  statisticsGraph.value = name
+  scrollToSection.value = name
   showStatisticsModal.value = true
 }
 
