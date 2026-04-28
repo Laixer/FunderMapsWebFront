@@ -42,22 +42,4 @@ export interface IAnalysis extends IEnumMethods {
   bioInfectionReliability: EReliability,
   bioInfectionRisk?: EFoundationRisk,
   unclassifiedRisk?: EFoundationRisk
-
-  // Getters for enum properties
-  get constructionYearReliabilityLabel(): string;
-  get recoveryTypeLabel(): string;
-  get damageCauseLabel(): string;
-  get enforcementTermLabel(): string;
-  get overallQualityLabel(): string;
-  get inquiryTypeLabel(): string;
-  get foundationTypeLabel(): string;
-  get foundationTypeReliabilityLabel(): string;
-  get drystandReliabilityLabel(): string;
-  get drystandRiskLabel(): string;
-  get dewateringDepthReliabilityLabel(): string;
-  get dewateringDepthRiskLabel(): string;
-  get bioInfectionRiskLabel(): string;
-  get bioInfectionReliabilityLabel(): string;
-  get unclassifiedRiskLabel(): string;
-  get soilLabel(): string
 }

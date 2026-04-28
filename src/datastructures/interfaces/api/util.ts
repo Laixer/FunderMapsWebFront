@@ -1,16 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface IAPIModel { }
+export interface IAPIModel {}
 
+// Implemented by TypedRecord. Templates that pass a record into fieldData.ts
+// rely on this surface (className for label lookup, isEnum/getEnumLabel for
+// rendering enum values).
 export interface IEnumMethods extends IAPIModel {
   className: string
-
-  enumProperties: string[]
-
-  // Method to check if a property is an enum
-  isEnum(propertyName: string): boolean;
-
-  // Method to get the label of an enum property or null
-  getEnumLabel(property: string): string | number | null
-
+  isEnum(propertyName: string): boolean
+  getEnumLabel(property: string): string | null
   getClassName(): string
 }

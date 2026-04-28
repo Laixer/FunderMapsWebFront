@@ -1,25 +1,15 @@
-import { EAccessPolicy, EAccessPolicyLabels } from "@/datastructures/enums";
-import { IAccessControl } from "@/datastructures/interfaces/api/Controls";
-import { EnumMethods } from "../EnumMethods";
+import { EAccessPolicyLabels } from '@/datastructures/enums'
+import type { IAccessControl } from '@/datastructures/interfaces/api/Controls'
+import { TypedRecord } from '../TypedRecord'
 
-export class AccessControl extends EnumMethods implements IAccessControl {
-  accessPolicy: EAccessPolicy;
-  isPublic: boolean;
-  isPrivate: boolean;
+export interface AccessControl extends IAccessControl {}
 
+export class AccessControl extends TypedRecord {
   className = 'AccessControl'
-
-  enumProperties = ['accessPolicy']
+  protected enumLabels = { accessPolicy: EAccessPolicyLabels }
 
   constructor(data: IAccessControl) {
     super()
-
-    this.accessPolicy = data.accessPolicy;
-    this.isPublic = data.isPublic;
-    this.isPrivate = data.isPrivate;
-  }
-
-  get accessPolicyLabel(): string {
-    return (this.accessPolicy || this.accessPolicy === 0) ? (EAccessPolicyLabels.get(this.accessPolicy) || '') : '';
+    Object.assign(this, data)
   }
 }

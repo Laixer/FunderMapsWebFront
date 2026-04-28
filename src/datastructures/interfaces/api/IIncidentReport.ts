@@ -31,13 +31,4 @@ export interface IIncidentReport extends IEnumMethods {
   auditStatus: EAuditStatus,
   incidentQuestionType: EIncidentQuestionType,
   meta: object
-
-  // Getters for enums
-  get foundationTypeLabel(): string;
-  get foundationDamageCauseLabel(): string;
-  get foundationDamageCharacteristicsLabel(): string;
-  get environmentDamageCharacteristicsLabel(): string;
-  get auditStatusLabel(): string;
-  get incidentQuestionTypeLabel(): string;
-
 }

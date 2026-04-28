@@ -18,11 +18,8 @@ export interface IRecoveryReport extends IEnumMethods {
   documentDate: string,
   documentName: string,
 
-  attribution: IAttributionControl, 
+  attribution: IAttributionControl,
   state: IStateControl,
-  access: IAccessControl, 
+  access: IAccessControl,
   record: IRecordControl
-
-  // Getter methods for enums
-  get typeLabel(): string
 }

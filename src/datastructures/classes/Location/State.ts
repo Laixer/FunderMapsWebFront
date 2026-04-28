@@ -1,21 +1,13 @@
-import { IState } from "@/datastructures/interfaces";
-import { EnumMethods } from "../EnumMethods";
+import type { IState } from '@/datastructures/interfaces'
+import { TypedRecord } from '../TypedRecord'
 
-export class State extends EnumMethods implements IState {
-  identifier: string;
-  id: string;
-  externalId: string;
-  water: boolean;
-  name: string;
+export interface State extends IState {}
 
+export class State extends TypedRecord {
   className = 'State'
-  
+
   constructor(data: IState) {
-    super();
-    this.identifier = data.identifier;
-    this.id = data.id;
-    this.externalId = data.externalId;
-    this.water = data.water;
-    this.name = data.name;
+    super()
+    Object.assign(this, data)
   }
 }

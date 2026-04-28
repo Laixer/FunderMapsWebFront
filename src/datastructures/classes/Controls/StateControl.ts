@@ -1,23 +1,15 @@
-import { EAuditStatus, EAuditStatusLabels } from "@/datastructures/enums";
-import { IStateControl } from "@/datastructures/interfaces/api/Controls";
-import { EnumMethods } from "../EnumMethods";
+import { EAuditStatusLabels } from '@/datastructures/enums'
+import type { IStateControl } from '@/datastructures/interfaces/api/Controls'
+import { TypedRecord } from '../TypedRecord'
 
-export class StateControl extends EnumMethods implements IStateControl {
-  auditStatus: EAuditStatus;
-  allowWrite: boolean;
+export interface StateControl extends IStateControl {}
 
+export class StateControl extends TypedRecord {
   className = 'StateControl'
-
-  enumProperties = ['auditStatus']
+  protected enumLabels = { auditStatus: EAuditStatusLabels }
 
   constructor(data: IStateControl) {
-    super();
-    this.auditStatus = data.auditStatus;
-    this.allowWrite = data.allowWrite;
-  }
-
-  // Getter method for enum label
-  get auditStatusLabel(): string {
-    return (this.auditStatus || this.auditStatus === 0) ? (EAuditStatusLabels.get(this.auditStatus) || '') : '';
+    super()
+    Object.assign(this, data)
   }
 }
