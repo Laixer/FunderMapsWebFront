@@ -43,16 +43,24 @@ export const useSessionStore = defineStore('session', () => {
   const isOrgAvailable = (id: string | null | undefined): boolean =>
     !!id && organizations.value.some(o => o.id === id);
 
+  // Tracks the in-flight /me request so logout (or a fresh login as someone
+  // else) can cancel it. Without this, a late /me response could land its
+  // profile under whatever session is now active — the hasToken() guard
+  // catches the logout case but not user-A-then-user-B re-login.
+  let inflightController: AbortController | null = null;
+
   /**
-   * Fetch the user profile + organizations from /api/user/me. Discards its
-   * result if the user logged out (or signed in as someone else) while the
-   * request was in flight — otherwise a late /me response resurrects the
-   * previous session and the UI snaps back to "logged in".
+   * Fetch the user profile + organizations from /api/user/me. The request
+   * is bound to a fresh AbortController so logout/re-login can cancel it.
    */
   const loadUser = async (): Promise<void> => {
+    inflightController?.abort();
+    const controller = new AbortController();
+    inflightController = controller;
+
     try {
-      const { profile, organizations: orgs } = await api.userprofile.getMe();
-      if (!hasToken()) return;
+      const { profile, organizations: orgs } = await api.userprofile.getMe(controller.signal);
+      if (controller.signal.aborted || !hasToken()) return;
       currentUser.value = {
         name: displayName(profile),
         email: profile.email,
@@ -62,8 +70,11 @@ export const useSessionStore = defineStore('session', () => {
         selectedOrgId.value = orgs[0].id;
       }
     } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') return;
       console.error('Failed to load user profile:', e);
       if (hasToken()) logout();
+    } finally {
+      if (inflightController === controller) inflightController = null;
     }
   };
 
@@ -101,6 +112,10 @@ export const useSessionStore = defineStore('session', () => {
    * state, and clear dependent stores.
    */
   const logout = async (): Promise<void> => {
+    // Cancel any /me request still in flight before tearing down state.
+    inflightController?.abort();
+    inflightController = null;
+
     // Server-side invalidation is best-effort — if it fails (network error,
     // expired session) we still want to log out client-side.
     try { await api.auth.signOut(); } catch { /* swallow */ }
