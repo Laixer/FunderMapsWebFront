@@ -24,24 +24,9 @@ export function useBuildingData() {
   const analysisStore = useAnalysisStore()
   const statisticsStore = useStatisticsStore()
   const subsidenceStore = useSubsidenceStore()
-
-  const {
-    buildingRecoveryReportDataHasBeenRetrieved,
-    buildingHasRecoveryReports,
-    setRecoveryDataByBuildingId
-  } = useRecoveryReportsStore()
-
-  const {
-    buildingInquiryDataHasBeenRetrieved,
-    buildingHasInquiries,
-    setInquiryDataByBuildingId
-  } = useInquiriesStore()
-
-  const {
-    buildingIncidentReportDataHasBeenRetrieved,
-    buildingHasIncidentReports,
-    setIncidentDataByBuildingId
-  } = useIncidentReportsStore()
+  const inquiriesStore = useInquiriesStore()
+  const recoveryStore = useRecoveryReportsStore()
+  const incidentsStore = useIncidentReportsStore()
 
   /**
    * Without either location or analysis data there are too many gaps to present the building information
@@ -68,20 +53,20 @@ export function useBuildingData() {
    */
   async function loadReportData(buildingId: string) {
     if (
-      ! buildingRecoveryReportDataHasBeenRetrieved(buildingId) ||
-      ! buildingIncidentReportDataHasBeenRetrieved(buildingId) ||
-      ! buildingInquiryDataHasBeenRetrieved(buildingId)
+      ! recoveryStore.hasBeenRetrieved(buildingId) ||
+      ! incidentsStore.buildingIncidentReportDataHasBeenRetrieved(buildingId) ||
+      ! inquiriesStore.hasBeenRetrieved(buildingId)
     ) {
       const response = await api.building.getAllReportDataByBuildingId(buildingId)
 
-      if (! buildingRecoveryReportDataHasBeenRetrieved(buildingId)) {
-        setRecoveryDataByBuildingId(buildingId, response.recoveries, response.recoverySamples)
+      if (! recoveryStore.hasBeenRetrieved(buildingId)) {
+        recoveryStore.setData(buildingId, response.recoveries, response.recoverySamples)
       }
-      if (! buildingInquiryDataHasBeenRetrieved(buildingId)) {
-        setInquiryDataByBuildingId(buildingId, response.inquiries, response.inquirySamples)
+      if (! inquiriesStore.hasBeenRetrieved(buildingId)) {
+        inquiriesStore.setData(buildingId, response.inquiries, response.inquirySamples)
       }
-      if (! buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
-        setIncidentDataByBuildingId(buildingId, response.incidents)
+      if (! incidentsStore.buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
+        incidentsStore.setIncidentDataByBuildingId(buildingId, response.incidents)
       }
     }
   }
@@ -114,16 +99,10 @@ export function useBuildingData() {
   return {
     failedToLoad,
     isLoadingCoreData,
-
-    // Store accessors for menu state
     statisticsStore,
-    buildingRecoveryReportDataHasBeenRetrieved,
-    buildingHasRecoveryReports,
-    buildingInquiryDataHasBeenRetrieved,
-    buildingHasInquiries,
-    buildingIncidentReportDataHasBeenRetrieved,
-    buildingHasIncidentReports,
-
+    inquiriesStore,
+    recoveryStore,
+    incidentsStore,
     startWatching,
   }
 }

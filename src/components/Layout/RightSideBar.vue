@@ -41,12 +41,9 @@ const {
   failedToLoad,
   isLoadingCoreData,
   statisticsStore,
-  buildingRecoveryReportDataHasBeenRetrieved,
-  buildingHasRecoveryReports,
-  buildingInquiryDataHasBeenRetrieved,
-  buildingHasInquiries,
-  buildingIncidentReportDataHasBeenRetrieved,
-  buildingHasIncidentReports,
+  inquiriesStore,
+  recoveryStore,
+  incidentsStore,
   startWatching,
 } = useBuildingData()
 
@@ -144,12 +141,8 @@ const ReportMenuList = computed(
         panel: 'InquiryPanel',
         icon: null,
         name: 'Bekijk onderzoeks informatie',
-        loading: !! (buildingId.value && ! buildingInquiryDataHasBeenRetrieved(
-          buildingId.value
-        )),
-        disabled: !! (buildingId.value && ! buildingHasInquiries(
-          buildingId.value
-        )),
+        loading: !!(buildingId.value && !inquiriesStore.hasBeenRetrieved(buildingId.value)),
+        disabled: !!(buildingId.value && !inquiriesStore.hasReports(buildingId.value)),
         route: null
       },
       {
@@ -157,12 +150,8 @@ const ReportMenuList = computed(
         panel: 'RecoveryPanel',
         icon: null,
         name: 'Bekijk herstel informatie',
-        loading: !! (buildingId.value && ! buildingRecoveryReportDataHasBeenRetrieved(
-          buildingId.value
-        )),
-        disabled: !! (buildingId.value && ! buildingHasRecoveryReports(
-          buildingId.value
-        )),
+        loading: !!(buildingId.value && !recoveryStore.hasBeenRetrieved(buildingId.value)),
+        disabled: !!(buildingId.value && !recoveryStore.hasReports(buildingId.value)),
         route: null
       },
       {
@@ -170,12 +159,8 @@ const ReportMenuList = computed(
         panel: 'IncidentsPanel',
         icon: null,
         name: 'Bekijk incidenten',
-        loading: !! (buildingId.value && ! buildingIncidentReportDataHasBeenRetrieved(
-          buildingId.value
-        )),
-        disabled: !! (buildingId.value && ! buildingHasIncidentReports(
-          buildingId.value
-        )),
+        loading: !!(buildingId.value && !incidentsStore.buildingIncidentReportDataHasBeenRetrieved(buildingId.value)),
+        disabled: !!(buildingId.value && !incidentsStore.buildingHasIncidentReports(buildingId.value)),
         route: null
       }
     ]

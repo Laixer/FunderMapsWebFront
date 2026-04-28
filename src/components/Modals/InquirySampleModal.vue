@@ -10,8 +10,8 @@ import { useInquiriesStore } from '@/store/building/inquiries';
 import { useBuildingStore } from '@/store/buildings';
 
 
-const { isSamplePanelOpen, shownReportIndex } = storeToRefs(useInquiriesStore())
-const { getCombinedInquiryDataByBuildingId } = useInquiriesStore()
+const inquiriesStore = useInquiriesStore()
+const { isSamplePanelOpen, shownReportIndex } = storeToRefs(inquiriesStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 
 
@@ -20,7 +20,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
  */
 const caseItems = computed(() => {
   if (! buildingId.value) return []
-  return getCombinedInquiryDataByBuildingId(buildingId.value) || []
+  return inquiriesStore.getCombined(buildingId.value) || []
 })
 
 
