@@ -21,6 +21,11 @@ export default defineConfig(() => {
       ],
     },
     build: {
+      // mapbox-gl is the floor of the bundle (~1.7MB minified, ~470kB
+      // gzipped) and already lives in its own chunk via manualChunks
+      // below. Raise the warning so the build output isn't noisy; other
+      // chunks all sit comfortably below.
+      chunkSizeWarningLimit: 1800,
       rollupOptions: {
         output: {
           // Vite 8 (rolldown) requires manualChunks as a function, not an
