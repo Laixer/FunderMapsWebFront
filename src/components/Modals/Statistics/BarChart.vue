@@ -1,105 +1,66 @@
 <script setup lang="ts">
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import Chart from 'chart.js/auto'
 
-import { onMounted, ref, watch } from 'vue';
-
-import { CHART_TRANSPARENT_COLORS, CHART_COLORS } from '@/config';
-import Chart from 'chart.js/auto';
+import { CHART_PALETTE, CHART_PALETTE_SOFT } from './chartDefaults'
 
 const props = withDefaults(defineProps<{
-  title?: string,
-  labels?: string[],
-  data?: number[],
-  horizontal?: boolean,
-  borderColors?: string[],
+  title?: string
+  labels?: string[]
+  data?: number[]
+  horizontal?: boolean
+  borderColors?: string[]
   backgroundColors?: string[]
 }>(), {
   title: 'Statistiek',
-  labels: () => ['red', 'blue', 'green'],
-  data: () => [100, 200, 600],
+  labels: () => [],
+  data: () => [],
   horizontal: false,
-  borderColors: () => Object.values(CHART_COLORS),
-  backgroundColors: () => Object.values(CHART_TRANSPARENT_COLORS)
+  borderColors: () => Object.values(CHART_PALETTE),
+  backgroundColors: () => Object.values(CHART_PALETTE_SOFT),
 })
 
+const canvas = ref<HTMLCanvasElement>()
 let chart: Chart | null = null
 
-// Reference to Chart canvas element
-const canvas = ref<HTMLCanvasElement>();
+const createChart = (): void => {
+  const ctx = canvas.value?.getContext('2d')
+  if (!ctx) return
 
-const createChart = function createChart(
-  title: string, labels: string[], data: number[], backgroundColors: string[], borderColors: string[], horizontal: boolean
-) {
-  if (! canvas.value || ! canvas.value.getContext("2d")) {
-    console.warn("No canvas available", title)
-    return
-  } 
-
-   
-  chart = new Chart(
-    canvas.value.getContext("2d") as CanvasRenderingContext2D, 
-    {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [
-          {
-            label: title,
-            data,
-            backgroundColor: backgroundColors,
-            borderColor: borderColors,
-            borderWidth: 1
-          },
-        ]
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: props.labels,
+      datasets: [{
+        label: props.title,
+        data: props.data,
+        backgroundColor: props.backgroundColors,
+        borderColor: props.borderColors,
+        borderWidth: 1,
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      indexAxis: props.horizontal ? 'y' : 'x',
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
       },
-      options: {
-        indexAxis: horizontal ? 'y' : 'x',
-        scales: {
-          y: {
-            beginAtZero: true
-          },
-          x: {
-            beginAtZero: true
-          }
-        }
+      scales: {
+        x: { beginAtZero: true, grid: { display: !props.horizontal } },
+        y: { beginAtZero: true, grid: { display: props.horizontal } },
       },
-    }
-  );
-
-  // Disable animation in the popup, it is too much
-  chart!.options.animation = false;
+    },
+  })
 }
 
-onMounted(() => {
-  createChart(
-    props.title,
-    props.labels,
-    props.data,
-    props.backgroundColors,
-    props.borderColors,
-    props.horizontal
-  )
-})
+onMounted(createChart)
+onBeforeUnmount(() => { chart?.destroy() })
 
-watch(
-  () => props,
-  (props) => {
-    if (! chart) return 
-
-    chart.destroy()
-    createChart(
-      props.title,
-      props.labels,
-      props.data,
-      props.backgroundColors,
-      props.borderColors,
-      props.horizontal
-    )
-  },
-  {
-    deep: true
-  }
-)
-
+watch(() => props, () => {
+  chart?.destroy()
+  createChart()
+}, { deep: true })
 </script>
 
 <template>

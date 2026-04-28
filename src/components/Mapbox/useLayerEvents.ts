@@ -9,6 +9,7 @@ import { storeToRefs } from "pinia";
 
 import { useBuildingRouting } from '@/router/buildingRouting'
 import { useSessionStore } from "@/store/session";
+import { useMainStore } from "@/store/main";
 
 export const useLayerEvents = function useLayerEvents(
   Map: MaybeRef<Map | null | undefined>
@@ -18,6 +19,7 @@ export const useLayerEvents = function useLayerEvents(
 
   const sessionStore = useSessionStore()
   const { isAuthenticated } = storeToRefs(sessionStore)
+  const { mapMarkerLatLon } = storeToRefs(useMainStore())
 
   const mapInstance = shallowRef(Map)
 
@@ -54,7 +56,10 @@ export const useLayerEvents = function useLayerEvents(
       return
     }
 
-    // Select the building by navigating to it
+    // Drop a marker at the click position. The geocoder API doesn't return
+    // building coordinates, so the marker can only land where the click did.
+    mapMarkerLatLon.value = e.lngLat
+
     buildingRouting.navigateToBuilding(building_id)
   }
 
