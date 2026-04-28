@@ -13,7 +13,7 @@ import { useBuildingStore } from "@/store/buildings";
 import { useStatisticsStore } from '@/store/building/statistics';
 import { useSubsidenceStore } from '@/store/building/subsidence';
 import { IConstructionYearPair, IFoundationTypePair, IIncidentYearPair, IInquiryYearPair } from '@/datastructures/interfaces/api/IStatistics';
-import { CHART_COLORS, CHART_TRANSPARENT_COLORS } from '@/config';
+import { CHART_PALETTE, CHART_PALETTE_SOFT } from './Statistics/chartDefaults';
 
 const { buildingId } = storeToRefs(useBuildingStore())
 const statisticsStore = useStatisticsStore()
@@ -279,37 +279,32 @@ const data = computed(() => {
 })
 
 const backgroundColors = computed(() => {
- switch(statisticsGraph.value) {
+  switch (statisticsGraph.value) {
     case 'displacement':
-      return ['#191e3c']
+      return [CHART_PALETTE.navy]
 
-    case 'foundationTypeDistribution': 
-      return ['#7f8fa4', '#c9b441', '#7b2a2d', '#ce0015', '#ffcc69']
+    case 'foundationTypeDistribution':
+      return [CHART_PALETTE.grey, CHART_PALETTE.yellow, CHART_PALETTE.orange,
+        CHART_PALETTE.red, CHART_PALETTE.blue]
 
     case 'foundationRiskDistribution': {
-      const riskColorMap = {
-        'Label A': '#28CC8B',
-        'Label B': '#A7DDB7',
-        'Label C': '#FFCC69',
-        'Label D': '#FF7D1F',
-        'Label E': '#ED1C24'
+      const riskColorMap: Record<string, string> = {
+        'Label A': CHART_PALETTE.green,
+        'Label B': CHART_PALETTE_SOFT.green,
+        'Label C': CHART_PALETTE.yellow,
+        'Label D': CHART_PALETTE.orange,
+        'Label E': CHART_PALETTE.red,
       }
-
-      return (labels.value as string[])
-        .map((label) => (riskColorMap[label as keyof typeof riskColorMap] || ''))
+      return (labels.value as string[]).map(label => riskColorMap[label] ?? CHART_PALETTE.grey)
     }
   }
 
-  return Object.values(CHART_TRANSPARENT_COLORS)
+  return Object.values(CHART_PALETTE_SOFT)
 })
 
 const borderColors = computed(() => {
-  switch(statisticsGraph.value) {
-    case 'displacement':
-      return ['#191e3c']
-  }
-
-  return Object.values(CHART_COLORS)
+  if (statisticsGraph.value === 'displacement') return [CHART_PALETTE.navy]
+  return Object.values(CHART_PALETTE)
 })
 
 

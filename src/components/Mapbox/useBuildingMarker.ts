@@ -1,108 +1,53 @@
-/**
- * Create a single marker on the specified coordinates
- */
-import { computed, watch, type MaybeRef, shallowRef } from "vue";
-import mapboxgl, { type Map, type LngLat } from "mapbox-gl";
-import { storeToRefs } from "pinia";
+import { type MaybeRef, shallowRef, watch } from 'vue'
+import mapboxgl, { type LngLat, type Map } from 'mapbox-gl'
+import { storeToRefs } from 'pinia'
 
-import { useBuildingStore } from '@/store/buildings';
-import { useMainStore } from "@/store/main";
-import { useGeoLocationsStore } from '@/store/building/geolocations'
+import { useBuildingStore } from '@/store/buildings'
+import { useMainStore } from '@/store/main'
 
-import { IGeoLocationData } from "@/datastructures/interfaces";
-
-
+// Single marker pinning the most recently clicked building. The geocoder
+// API doesn't return building coordinates, so the marker tracks the click
+// position (set in useLayerEvents) and the search-result position (set
+// from SearchBar). When the building selection clears, the marker hides.
 export const useBuildingMarker = function useBuildingMarker(
-  Map: MaybeRef<Map | null | undefined>
+  Map: MaybeRef<Map | null | undefined>,
 ) {
-  const Marker = new mapboxgl.Marker()
+  const marker = new mapboxgl.Marker()
   const mapInstance = shallowRef(Map)
 
   const { buildingId } = storeToRefs(useBuildingStore())
-  const locationStore = useGeoLocationsStore()
+  const { mapMarkerLatLon } = storeToRefs(useMainStore())
 
-  const { mapMarkerLatLon } = storeToRefs( useMainStore() )
+  const hide = (): void => { marker.remove() }
 
-  const locationData = computed<IGeoLocationData|null>(() => {
-    if (! buildingId.value) return null
-    return locationStore.getData(buildingId.value)
-  })
-
-  function hide() {
-    // Remove from map, not destroy
-    Marker.remove() 
+  const show = (lngLat: LngLat): void => {
+    if (!mapInstance.value) return
+    const el = marker.getElement()
+    el.style.display = 'none'
+    marker.setLngLat(lngLat).addTo(mapInstance.value)
+    // Animate the drop-in once mapbox has projected the coordinates.
+    requestAnimationFrame(() => {
+      el.classList.remove('marker-drop')
+      el.style.display = ''
+      void el.offsetWidth
+      el.classList.add('marker-drop')
+    })
   }
 
-  function show(LngLat: LngLat) {
-    if (mapInstance.value) {
-      const el = Marker.getElement()
+  // Clear the marker when no building is selected (sidebar closed or logout).
+  watch(buildingId, value => { if (!value) hide() })
 
-      // Hide until Mapbox has projected the coordinates to screen position
-      el.style.display = 'none'
-
-      Marker.setLngLat(LngLat).addTo(mapInstance.value as Map)
-
-      // Wait for Mapbox to update the transform, then animate in
-      requestAnimationFrame(() => {
-        el.classList.remove('marker-drop')
-        el.style.display = ''
-        void el.offsetWidth
-        el.classList.add('marker-drop')
-      })
-    }
-  }
-
-  function maybeShownResidence() {
-    if (locationData.value && locationData.value.residence) {
-      show(
-        new mapboxgl.LngLat(
-          locationData.value.residence.longitude, 
-          locationData.value.residence.latitude
-        )
-      )
-    }
-  }
-  
-  /**
-   * Show a marker if we have location data with coordinates
-   */
+  // Show / move the marker whenever a new position is set.
   watch(
-    () => locationData.value,
-    (value: IGeoLocationData|null) => {
-      if (value === null) {
-        hide()
-      } else {
-        maybeShownResidence()
-      }
-    },
-    { immediate: true }
+    mapMarkerLatLon,
+    value => { if (value) show(value); else hide() },
+    { immediate: true },
   )
 
-  /**
-   * Show a marker if LngLat coordinates are provided, and no building is selected
-   */
-  watch(
-    () => mapMarkerLatLon.value,
-    (value: LngLat|null) => {
-      if (locationData.value && locationData.value.residence) {
-        return
-      }
-
-      if (value === null) {
-        hide()
-      } else {
-        show(value)
-      }
-    },
-   { immediate: true }
-  )
-
-  /**
-   * When the map instantiates, show the marker if one can be shown
-   */
+  // If the map mounts after the position was already set, drop the marker now.
   watch(
     () => mapInstance.value,
-    () => maybeShownResidence(), 
-    { once: true }
+    () => { if (mapMarkerLatLon.value) show(mapMarkerLatLon.value) },
+    { once: true },
   )
 }

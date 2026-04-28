@@ -1,85 +1,57 @@
 <script setup lang="ts">
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import Chart from 'chart.js/auto'
 
-import { onMounted, watch, ref } from 'vue';
-
-import { CHART_TRANSPARENT_COLORS } from '@/config';
-import Chart from 'chart.js/auto';
+import { CHART_PALETTE_SOFT } from './chartDefaults'
 
 const props = withDefaults(defineProps<{
-  title?: string,
-  labels?: string[],
-  data?: number[],
+  title?: string
+  labels?: string[]
+  data?: number[]
   backgroundColors?: string[]
 }>(), {
   title: 'Statistiek',
-  labels: () => ['red', 'blue', 'green'],
-  data: () => [100, 200, 600],
-  backgroundColors: () => Object.values(CHART_TRANSPARENT_COLORS)
+  labels: () => [],
+  data: () => [],
+  backgroundColors: () => Object.values(CHART_PALETTE_SOFT),
 })
 
+const canvas = ref<HTMLCanvasElement>()
 let chart: Chart | null = null
 
-// Reference to Chart canvas element
-const canvas = ref<HTMLCanvasElement>();
+const createChart = (): void => {
+  const ctx = canvas.value?.getContext('2d')
+  if (!ctx) return
 
-const createChart = function createChart(
-  title: string, labels: string[], data: number[], backgroundColors: string[]
-) {
-  if (! canvas.value || ! canvas.value.getContext("2d")) {
-    console.warn("No canvas available", title)
-    return
-  } 
-
-   
-  chart = new Chart(
-    canvas.value.getContext("2d") as CanvasRenderingContext2D, 
-    {
-      type: "pie",
-      data: {
-        labels,
-        datasets: [
-          {
-            label: title,
-            data,
-            backgroundColor: backgroundColors,
-            hoverOffset: 4
-          },
-        ]
-      }
-    }
-  );
-
-  // Disable animation in the popup, it is too much
-  chart!.options.animation = false;
+  chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: props.labels,
+      datasets: [{
+        label: props.title,
+        data: props.data,
+        backgroundColor: props.backgroundColors,
+        borderColor: '#ffffff',
+        borderWidth: 2,
+        hoverOffset: 6,
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' },
+      },
+    },
+  })
 }
 
-onMounted(() => {
-  createChart(
-    props.title,
-    props.labels,
-    props.data,
-    props.backgroundColors
-  )
-})
+onMounted(createChart)
+onBeforeUnmount(() => { chart?.destroy() })
 
-watch(
-  () => props,
-  (props) => {
-    if (! chart) return 
-
-    chart.destroy()
-    createChart(
-      props.title,
-      props.labels,
-      props.data,
-      props.backgroundColors
-    )
-  },
-  {
-    deep: true
-  }
-)
-
+watch(() => props, () => {
+  chart?.destroy()
+  createChart()
+}, { deep: true })
 </script>
 
 <template>

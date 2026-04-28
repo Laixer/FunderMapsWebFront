@@ -1,31 +1,29 @@
 <script setup lang="ts">
-
-import { CHART_COLORS, CHART_TRANSPARENT_COLORS } from '@/config';
 import BarChart from './BarChart.vue'
+import { CHART_PALETTE, CHART_PALETTE_SOFT } from './chartDefaults'
 
 withDefaults(defineProps<{
-  title?: string,
-  labels?: string[],
-  data?: number[],
-  borderColors?: string[],
+  title?: string
+  labels?: string[]
+  data?: number[]
+  borderColors?: string[]
   backgroundColors?: string[]
 }>(), {
   title: 'Statistiek',
-  labels: () => ['red', 'blue', 'green'],
-  data: () => [100, 200, 600],
-  borderColors: () => Object.values(CHART_COLORS),
-  backgroundColors: () => Object.values(CHART_TRANSPARENT_COLORS)
+  labels: () => [],
+  data: () => [],
+  borderColors: () => Object.values(CHART_PALETTE),
+  backgroundColors: () => Object.values(CHART_PALETTE_SOFT),
 })
-
 </script>
 
 <template>
-  <BarChart 
+  <BarChart
     :title="title"
     :labels="labels"
     :data="data"
     :horizontal="true"
     :border-colors="borderColors"
-    :background-color="backgroundColors"
+    :background-colors="backgroundColors"
   />
 </template>

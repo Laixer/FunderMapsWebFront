@@ -47,14 +47,14 @@ const handleClose = function handleClose() {
         <slot name="header">
           <h4 v-if="title" id="dialog-label" class="heading-4">{{ title }}</h4>
         </slot>
-        
-        <CloseBtn 
-          v-if="closeable" 
+
+        <CloseBtn
+          v-if="closeable"
           :small="false"
-          class="absolute right-8 top-3"
+          class="absolute right-4 top-4"
           @close="handleClose" />
       </header>
-      <div class="panel__content content | -mx-6 space-y-4 px-6">
+      <div class="panel__content space-y-4">
         <slot />
       </div>
 

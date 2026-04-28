@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import Chart from 'chart.js/auto'
+import chartTrendline from 'chartjs-plugin-trendline'
 
-import { onMounted, ref, watch } from 'vue';
+import { CHART_PALETTE } from './chartDefaults'
 
-import { CHART_COLORS } from '@/config';
-import Chart from 'chart.js/auto';
-
-import chartTrendline from 'chartjs-plugin-trendline';
 Chart.register(chartTrendline)
 
 declare module 'chart.js' {
@@ -20,145 +19,90 @@ declare module 'chart.js' {
   }
 }
 
-type point = {
-  x: number
-  y: number
-}
+interface Point { x: number; y: number }
 
 const props = withDefaults(defineProps<{
-  title?: string,
-  labels?: string[],
-  data?: point[],
-  horizontal?: boolean,
-  borderColors?: string[],
+  title?: string
+  labels?: string[]
+  data?: Point[]
+  horizontal?: boolean
+  borderColors?: string[]
   backgroundColors?: string[]
 }>(), {
   title: 'Statistiek',
-  labels: () => ['red', 'blue', 'green'],
+  labels: () => [],
   data: () => [],
   horizontal: false,
-  borderColors: () => Object.values(CHART_COLORS),
-  backgroundColors: () => Object.values(CHART_COLORS)
+  borderColors: () => [CHART_PALETTE.blue],
+  backgroundColors: () => [CHART_PALETTE.blue],
 })
 
+const canvas = ref<HTMLCanvasElement>()
 let chart: Chart | null = null
 
-// Reference to Chart canvas element
-const canvas = ref<HTMLCanvasElement>();
+const createChart = (): void => {
+  const ctx = canvas.value?.getContext('2d')
+  if (!ctx) return
 
-const createChart = function createChart(
-  title: string, labels: string[], data: point[], backgroundColors: string[], borderColors: string[], horizontal: boolean
-) {
-  if (! canvas.value || ! canvas.value.getContext("2d")) {
-    return
-  } 
-
-   
-  chart = new Chart(
-    canvas.value.getContext("2d") as CanvasRenderingContext2D, 
-    {
-      type: "bubble",
-      data: {
-        labels,
-        datasets: [
-          {
-            data,
-            backgroundColor: backgroundColors,
-            borderColor: borderColors,
-            borderWidth: 1,
-            trendlineLinear: {
-              colorMin: "#17a4ea",
-		          colorMax: "#17a4ea",
-              lineStyle: "solid",
-              width: 2,
-            }
-          },
-          
-        ]
-      },
-      options: {
-        indexAxis: horizontal ? 'y' : 'x',
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              color: '#808c99',
-              precision: 0
-            },
-            title: {
-              display: true,
-              text: 'mm'
-            }
-          },
-          x: {
-            // beginAtZero: true,
-            ticks: {
-              color: '#808c99',
-              callback: function(value: string | number) {
-                return (new Date(value)).toLocaleDateString('nl-NL', { 
-                  year: 'numeric',
-                  month: 'short',
-                }).split(' ')
-              }
-            }
-          }
+  chart = new Chart(ctx, {
+    type: 'bubble',
+    data: {
+      labels: props.labels,
+      datasets: [{
+        data: props.data,
+        backgroundColor: props.backgroundColors,
+        borderColor: props.borderColors,
+        borderWidth: 1,
+        trendlineLinear: {
+          colorMin: CHART_PALETTE.blue,
+          colorMax: CHART_PALETTE.blue,
+          lineStyle: 'solid',
+          width: 2,
         },
-        plugins: {
-          title: {
-            text: title,
-            display: true
+      }],
+    },
+    options: {
+      indexAxis: props.horizontal ? 'y' : 'x',
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { precision: 0 },
+          title: { display: true, text: 'mm' },
+        },
+        x: {
+          ticks: {
+            callback: (value: string | number) =>
+              new Date(value).toLocaleDateString('nl-NL', {
+                year: 'numeric',
+                month: 'short',
+              }).split(' '),
           },
-          legend: {
-            display: false
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context: { raw: unknown }) {
-                const raw = context.raw as { x: number; y: number }
-                return `${(new Date(raw.x)).toLocaleDateString('nl-NL')}: ${(raw.y)} mm`
-              }
-            }
-          }
-        }
+        },
       },
-    }
-  );
-
-  // Disable animation in the popup, it is too much
-  chart!.options.animation = false;
+      plugins: {
+        title: { text: props.title, display: true },
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context: { raw: unknown }) => {
+              const raw = context.raw as Point
+              return `${new Date(raw.x).toLocaleDateString('nl-NL')}: ${raw.y} mm`
+            },
+          },
+        },
+      },
+    },
+  })
 }
 
-onMounted(() => {
-  createChart(
-    props.title,
-    props.labels,
-    props.data,
-    props.backgroundColors,
-    props.borderColors,
-    props.horizontal
-  )
-})
+onMounted(createChart)
+onBeforeUnmount(() => { chart?.destroy() })
 
-watch(
-  () => props,
-  (props) => {
-    if (! chart) return 
-
-    chart.destroy()
-    createChart(
-      props.title,
-      props.labels,
-      props.data,
-      props.backgroundColors,
-      props.borderColors,
-      props.horizontal
-    )
-  },
-  {
-    deep: true
-  }
-)
-
+watch(() => props, () => {
+  chart?.destroy()
+  createChart()
+}, { deep: true })
 </script>
 
 <template>

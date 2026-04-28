@@ -1,17 +1,15 @@
 .modal {
   .panel {
-    @apply relative max-h-full w-full max-w-3xl space-y-4 rounded-lg bg-white px-16 py-12 shadow-float xl:px-12 2xl:px-16;
+    /* Padding/shadow match Common/Card.vue (used by the auth pages) so modals
+       and the login card share the same visual language. */
+    @apply relative max-h-full w-full max-w-3xl space-y-6 rounded-lg bg-white p-8 shadow-card;
 
     &[data-variant="narrow"] {
       @apply max-w-xl;
     }
 
     &[data-variant="popover"] {
-      @apply max-w-prose rounded-none rounded-r-lg p-8 shadow-none;
-    }
-
-    .panel__footer {
-      @apply pb-6;
+      @apply max-w-prose rounded-none rounded-r-lg shadow-none;
     }
   }
 }
