@@ -1,335 +1,238 @@
 <script setup lang="ts">
-import { computed, type Component  } from 'vue';
-import { storeToRefs } from 'pinia';
+import { computed, nextTick, watch, type Component } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import OverlayModal from '@/components/Common/OverlayModal.vue'
 
 import BarChart from '@/components/Modals/Statistics/BarChart.vue'
 import PieChart from '@/components/Modals/Statistics/PieChart.vue'
-import ScatterChart from '@/components/Modals/Statistics/ScatterChart.vue';
+import ScatterChart from '@/components/Modals/Statistics/ScatterChart.vue'
 import HorizontalBarChart from '@/components/Modals/Statistics/HorizontalBarChart.vue'
 
-import { useBuildingStore } from "@/store/buildings";
-import { useStatisticsStore } from '@/store/building/statistics';
-import { useSubsidenceStore } from '@/store/building/subsidence';
-import { IConstructionYearPair, IFoundationTypePair, IIncidentYearPair, IInquiryYearPair } from '@/datastructures/interfaces/api/IStatistics';
-import { CHART_PALETTE, CHART_PALETTE_SOFT } from './Statistics/chartDefaults';
+import { useBuildingStore } from '@/store/buildings'
+import { useStatisticsStore } from '@/store/building/statistics'
+import { useSubsidenceStore } from '@/store/building/subsidence'
+import type {
+  IConstructionYearPair,
+  IFoundationTypePair,
+  IIncidentYearPair,
+  IInquiryYearPair,
+} from '@/datastructures/interfaces/api/IStatistics'
+import { CHART_PALETTE, CHART_PALETTE_SOFT } from './Statistics/chartDefaults'
 
 const { buildingId } = storeToRefs(useBuildingStore())
 const statisticsStore = useStatisticsStore()
-const { showStatisticsModal, statisticsGraph } = storeToRefs(statisticsStore)
+const { showStatisticsModal, scrollToSection } = storeToRefs(statisticsStore)
 const subsidenceStore = useSubsidenceStore()
 
-defineEmits<{ close: [] }>()
-
-interface IComponents {
-    [key: string]: Component
-}
-const availableChartComponents: IComponents = {
-  BarChart,
-  PieChart,
-  HorizontalBarChart,
-  ScatterChart
-}
-
-
 const buildingStatistics = computed(() => {
-  if (! buildingId.value) return null
+  if (!buildingId.value) return null
   return statisticsStore.getData(buildingId.value)
 })
 
-
 const subsidenceData = computed(() => {
-  if (! buildingId.value) return []
+  if (!buildingId.value) return []
   return subsidenceStore.getData(buildingId.value)
 })
 
-
-/**
- * The chart title, based on the statistic name
- */
-const title = computed(() => {
-  switch(statisticsGraph.value) {
-
-    case 'displacement':
-      return 'Pandzakking (mm)'
-    
-    case 'foundationTypeDistribution': 
-      return 'Verhouding funderingstype in de buurt'
-
-    case 'constructionYearDistribution':
-      return 'Aantal bouwjaren per decennia in de buurt'
-
-    case 'foundationRiskDistribution':
-      return 'Verhouding funderingsrisico in de buurt'
-
-    case 'totalBuildingRestoredCount':
-      return 'Aantal herstel panden per jaar in de buurt'
-
-    case 'totalIncidentCount':
-      return 'Aantal incidenten per jaar in de buurt'
-
-    case 'municipalityIncidentCount':
-      return 'Aantal incidenten per jaar in de gemeente'
-  
-    case 'totalReportCount':
-      return 'Aantal onderzoeken per jaar in de buurt'
-
-    case 'municipalityReportCount':
-      return 'Aantal onderzoeken per jaar in de gemeente'
-  }
-
-  return 'Statistiek'
-})
-
-/**
- * The graph type, based on the statistic name
- */
-const chartComponentName = computed(() => {
-  switch(statisticsGraph.value) {
-    case 'displacement':
-      return 'ScatterChart'
-
-    case 'foundationTypeDistribution': 
-    case 'foundationRiskDistribution':
-      return 'PieChart'
-    
-    case 'constructionYearDistribution':
-      return 'BarChart'
-
-    case 'totalBuildingRestoredCount':
-    case 'totalIncidentCount':
-    case 'municipalityIncidentCount':
-    case 'totalReportCount':
-    case 'municipalityReportCount':
-      return 'HorizontalBarChart'
-  }
-
-  return ''
-})
-
-const labels = computed(() => {
-
-  switch(statisticsGraph.value) {
-    case 'displacement':
-      return []
-
-    case 'foundationTypeDistribution': 
-
-      return ['Betonnen', 'Houten paal met betonoplanger', 'Houten palen', 'Niet onderheid', 'Overige']
-
-    case 'constructionYearDistribution':
-  
-      if (! buildingStatistics.value?.constructionYearDistribution) return []
-
-      return buildingStatistics.value.constructionYearDistribution.decades.map((decade: IConstructionYearPair) => {
-        return `${decade.decade.yearFrom.substring(0, 4)}-${decade.decade.yearTo.substring(0, 4)}`
-      })
-
-    case 'foundationRiskDistribution':
-      if (! buildingStatistics.value?.foundationRiskDistribution) return []
-
-      return Object.keys(buildingStatistics.value?.foundationRiskDistribution)
-        .map(key => `Label ${key.replace('percentage', '')}`)
-
-    // TODO: API does not yet provide graph data
-    case 'totalBuildingRestoredCount':
-      if (! buildingStatistics.value?.totalBuildingRestoredCount) return []
-
-      return [ 'Aantal' ]
-
-    case 'totalIncidentCount':
-      if (! buildingStatistics.value?.totalIncidentCount) return []
-
-      return buildingStatistics.value.totalIncidentCount.map((decade: IIncidentYearPair) => {
-        return decade.year
-      })
-
-    case 'municipalityIncidentCount':
-      if (! buildingStatistics.value?.municipalityIncidentCount) return []
-
-      return buildingStatistics.value.municipalityIncidentCount.map((decade: IIncidentYearPair) => {
-        return decade.year
-      })
-
-    case 'totalReportCount': 
-      if (! buildingStatistics.value?.totalReportCount) return []
-
-      return buildingStatistics.value.totalReportCount.map((decade: IInquiryYearPair) => {
-        return decade.year
-      })
-
-    case 'municipalityReportCount': 
-      if (! buildingStatistics.value?.municipalityReportCount) return []
-
-      return buildingStatistics.value.municipalityReportCount.map((decade: IInquiryYearPair) => {
-        return decade.year
-      })
-
-  }
-
-  return ['red', 'blue', 'yellow']
-})
-
-const data = computed(() => {
-
-  if (! buildingStatistics.value) return []
-
-  switch(statisticsGraph.value) {
-
-    case 'displacement':
-      return subsidenceData.value?.map(item => {
-        return {
-          y: item.velocity,
-          x: Date.parse(item.markAt),
-          r: 2
-        }
-      })
-
-    case 'foundationTypeDistribution': 
-      if (! buildingStatistics.value.foundationTypeDistribution.foundationTypes) return []
-
-      return buildingStatistics.value.foundationTypeDistribution.foundationTypes.reduce((acc: number[], pair: IFoundationTypePair ) => {
-        switch(pair.foundationType) {
-          case 3:
-          case 11:
-          case 12:
-          case 13:
-            acc[0] = acc[0] + pair.percentage
-            return acc
-
-          case 10:
-            acc[1] = acc[1] + pair.percentage
-            return acc
-          
-          case 0:
-          case 1:
-          case 2:
-          case 15:
-          case 16:
-          case 17:
-            acc[2] = acc[2] + pair.percentage
-            return acc
-          
-          case 4:
-          case 5:
-          case 6:
-          case 7:
-          case 8:
-          case 9:
-            acc[3] = acc[3] + pair.percentage
-            return acc
-
-          default:
-            acc[4] = acc[4] + pair.percentage
-            return acc
-        }
-      }, [0, 0, 0, 0, 0])
-
-    case 'constructionYearDistribution':
-  
-      if (! buildingStatistics.value?.constructionYearDistribution) return []
-
-      return buildingStatistics.value.constructionYearDistribution.decades.map((decade: IConstructionYearPair) => {
-        return decade.totalCount
-      })
-
-    case 'foundationRiskDistribution':
-      if (! buildingStatistics.value?.foundationRiskDistribution) return []
-
-      return Object.values(buildingStatistics.value.foundationRiskDistribution)
-
-    // TODO: API does not yet provide graph data
-    case 'totalBuildingRestoredCount':
-      if (! buildingStatistics.value?.totalBuildingRestoredCount) return []
-
-      return [ buildingStatistics.value.totalBuildingRestoredCount ]
-
-    case 'totalIncidentCount':
-      if (! buildingStatistics.value?.totalIncidentCount) return []
-
-      return buildingStatistics.value.totalIncidentCount.map((decade: IIncidentYearPair) => {
-        return decade.totalCount
-      })
-
-    case 'municipalityIncidentCount':
-      if (! buildingStatistics.value?.municipalityIncidentCount) return []
-
-      return buildingStatistics.value.municipalityIncidentCount.map((decade: IIncidentYearPair) => {
-        return decade.totalCount
-      })
-
-    case 'totalReportCount': 
-      if (! buildingStatistics.value?.totalReportCount) return []
-
-      return buildingStatistics.value.totalReportCount.map((decade: IInquiryYearPair) => {
-        return decade.totalCount
-      })
-
-
-    case 'municipalityReportCount': 
-      if (! buildingStatistics.value?.municipalityReportCount) return []
-
-      return buildingStatistics.value.municipalityReportCount.map((decade: IInquiryYearPair) => {
-        return decade.totalCount
-      })
-  }
-
-  return [300, 200, 600]
-})
-
-const backgroundColors = computed(() => {
-  switch (statisticsGraph.value) {
-    case 'displacement':
-      return [CHART_PALETTE.navy]
-
-    case 'foundationTypeDistribution':
-      return [CHART_PALETTE.grey, CHART_PALETTE.yellow, CHART_PALETTE.orange,
-        CHART_PALETTE.red, CHART_PALETTE.blue]
-
-    case 'foundationRiskDistribution': {
-      const riskColorMap: Record<string, string> = {
-        'Label A': CHART_PALETTE.green,
-        'Label B': CHART_PALETTE_SOFT.green,
-        'Label C': CHART_PALETTE.yellow,
-        'Label D': CHART_PALETTE.orange,
-        'Label E': CHART_PALETTE.red,
-      }
-      return (labels.value as string[]).map(label => riskColorMap[label] ?? CHART_PALETTE.grey)
+// Foundation type buckets: collapse the 18 raw enum values to 5 user-facing
+// categories. Index 0..4 corresponds to the labels below.
+const foundationTypeBuckets = computed<number[]>(() => {
+  const stats = buildingStatistics.value?.foundationTypeDistribution?.foundationTypes ?? []
+  const out = [0, 0, 0, 0, 0]
+  for (const pair of stats as IFoundationTypePair[]) {
+    switch (pair.foundationType) {
+      case 3: case 11: case 12: case 13: out[0] += pair.percentage; break
+      case 10: out[1] += pair.percentage; break
+      case 0: case 1: case 2: case 15: case 16: case 17:
+        out[2] += pair.percentage; break
+      case 4: case 5: case 6: case 7: case 8: case 9:
+        out[3] += pair.percentage; break
+      default: out[4] += pair.percentage
     }
   }
-
-  return Object.values(CHART_PALETTE_SOFT)
+  return out
 })
 
-const borderColors = computed(() => {
-  if (statisticsGraph.value === 'displacement') return [CHART_PALETTE.navy]
-  return Object.values(CHART_PALETTE)
-})
-
-
-const handleClose = function handleClose() {
-  showStatisticsModal.value = false
+const riskColors = (labels: string[]): string[] => {
+  const map: Record<string, string> = {
+    'Label A': CHART_PALETTE.green,
+    'Label B': CHART_PALETTE_SOFT.green,
+    'Label C': CHART_PALETTE.yellow,
+    'Label D': CHART_PALETTE.orange,
+    'Label E': CHART_PALETTE.red,
+  }
+  return labels.map(l => map[l] ?? CHART_PALETTE.grey)
 }
 
+interface Section {
+  key: string
+  title: string
+  // Typed as Component (not union of specific charts) so the dynamic
+  // <component :is="..."> render doesn't try to enforce the most-strict
+  // intersection of all chart prop types — the data shape varies per
+  // chart and is validated by the chart components themselves.
+  component: Component
+  labels: string[]
+  data: number[] | { x: number; y: number; r: number }[]
+  backgroundColors: string[]
+  borderColors: string[]
+}
+
+// All chart sections rendered in the modal, in display order. Sections
+// where data is absent are filtered out. Conditional incident/report
+// pairs prefer neighborhood-level data, falling back to municipality.
+const sections = computed<Section[]>(() => {
+  const stats = buildingStatistics.value
+  if (!stats) return []
+
+  const out: Section[] = []
+
+  if (subsidenceData.value && subsidenceData.value.length > 0) {
+    out.push({
+      key: 'displacement',
+      title: 'Pandzakkingssnelheid (mm)',
+      component: ScatterChart,
+      labels: [],
+      data: subsidenceData.value.map(item => ({
+        x: Date.parse(item.markAt),
+        y: item.velocity,
+        r: 2,
+      })),
+      backgroundColors: [CHART_PALETTE.navy],
+      borderColors: [CHART_PALETTE.navy],
+    })
+  }
+
+  out.push({
+    key: 'foundationTypeDistribution',
+    title: 'Verhouding funderingstype in de buurt',
+    component: PieChart,
+    labels: ['Betonnen', 'Houten paal met betonoplanger', 'Houten palen', 'Niet onderheid', 'Overige'],
+    data: foundationTypeBuckets.value,
+    backgroundColors: [CHART_PALETTE.grey, CHART_PALETTE.yellow, CHART_PALETTE.orange,
+      CHART_PALETTE.red, CHART_PALETTE.blue],
+    borderColors: [],
+  })
+
+  const decades = stats.constructionYearDistribution?.decades ?? []
+  if (decades.length > 0) {
+    out.push({
+      key: 'constructionYearDistribution',
+      title: 'Aantal bouwjaren per decennia in de buurt',
+      component: BarChart,
+      labels: decades.map((d: IConstructionYearPair) =>
+        `${d.decade.yearFrom.substring(0, 4)}-${d.decade.yearTo.substring(0, 4)}`),
+      data: decades.map((d: IConstructionYearPair) => d.totalCount),
+      backgroundColors: Object.values(CHART_PALETTE_SOFT),
+      borderColors: Object.values(CHART_PALETTE),
+    })
+  }
+
+  if (stats.foundationRiskDistribution) {
+    const riskLabels = Object.keys(stats.foundationRiskDistribution)
+      .map(k => `Label ${k.replace('percentage', '')}`)
+    out.push({
+      key: 'foundationRiskDistribution',
+      title: 'Verhouding funderingsrisico in de buurt',
+      component: PieChart,
+      labels: riskLabels,
+      data: Object.values(stats.foundationRiskDistribution),
+      backgroundColors: riskColors(riskLabels),
+      borderColors: [],
+    })
+  }
+
+  const incidentSource = stats.totalIncidentCount.length > 0
+    ? { rows: stats.totalIncidentCount, scope: 'buurt' as const }
+    : stats.municipalityIncidentCount.length > 0
+      ? { rows: stats.municipalityIncidentCount, scope: 'gemeente' as const }
+      : null
+  if (incidentSource) {
+    out.push({
+      key: 'incidentCount',
+      title: `Aantal incidenten per jaar in de ${incidentSource.scope}`,
+      component: HorizontalBarChart,
+      labels: incidentSource.rows.map((d: IIncidentYearPair) => String(d.year)),
+      data: incidentSource.rows.map((d: IIncidentYearPair) => d.totalCount),
+      backgroundColors: Object.values(CHART_PALETTE_SOFT),
+      borderColors: Object.values(CHART_PALETTE),
+    })
+  }
+
+  const reportSource = stats.totalReportCount.length > 0
+    ? { rows: stats.totalReportCount, scope: 'buurt' as const }
+    : stats.municipalityReportCount.length > 0
+      ? { rows: stats.municipalityReportCount, scope: 'gemeente' as const }
+      : null
+  if (reportSource) {
+    out.push({
+      key: 'reportCount',
+      title: `Aantal onderzoeken per jaar in de ${reportSource.scope}`,
+      component: HorizontalBarChart,
+      labels: reportSource.rows.map((d: IInquiryYearPair) => String(d.year)),
+      data: reportSource.rows.map((d: IInquiryYearPair) => d.totalCount),
+      backgroundColors: Object.values(CHART_PALETTE_SOFT),
+      borderColors: Object.values(CHART_PALETTE),
+    })
+  }
+
+  return out
+})
+
+// When the modal opens with a target section, scroll it into view after
+// the DOM has rendered. Map legacy keys to the new merged section keys.
+const sectionAlias: Record<string, string> = {
+  totalIncidentCount: 'incidentCount',
+  municipalityIncidentCount: 'incidentCount',
+  totalReportCount: 'reportCount',
+  municipalityReportCount: 'reportCount',
+}
+
+watch(showStatisticsModal, async open => {
+  if (!open) return
+  await nextTick()
+  const target = scrollToSection.value
+  if (!target) return
+  const id = sectionAlias[target] ?? target
+  document.getElementById(`stats-section-${id}`)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  scrollToSection.value = null
+})
+
+const handleClose = (): void => {
+  showStatisticsModal.value = false
+}
 </script>
 
 <template>
   <OverlayModal
     v-if="showStatisticsModal && buildingStatistics"
-    :title="title"
+    title="Statistieken"
     @close="handleClose">
-    <div 
-      v-if="chartComponentName !== ''"
-      class="w-full">
-      <component 
-        :is="availableChartComponents[chartComponentName]"
-        :title="title" 
-        :labels="labels"
-        :data="data"
-        :background-colors="backgroundColors"
-        :border-colors="borderColors"
-      />
+    <div class="space-y-10">
+      <section
+        v-for="section in sections"
+        :id="`stats-section-${section.key}`"
+        :key="section.key"
+        class="space-y-4 scroll-mt-4"
+      >
+        <h5 class="heading-5">{{ section.title }}</h5>
+        <div class="h-80">
+          <component
+            :is="section.component"
+            :title="section.title"
+            :labels="section.labels"
+            :data="section.data"
+            :background-colors="section.backgroundColors"
+            :border-colors="section.borderColors"
+          />
+        </div>
+      </section>
+
+      <p v-if="sections.length === 0" class="text-sm text-grey-700">
+        Er zijn geen statistieken beschikbaar voor dit pand.
+      </p>
     </div>
   </OverlayModal>
 </template>

@@ -8,7 +8,10 @@ import { createBuildingDataLoader } from './createBuildingDataLoader'
 
 export const useStatisticsStore = defineStore('statistics', () => {
   const showStatisticsModal = ref(false)
-  const statisticsGraph = ref<string | null>(null)
+
+  // When set, the unified Statistieken modal scrolls this section into
+  // view on open. Cleared after scrolling.
+  const scrollToSection = ref<string | null>(null)
 
   const { hasBeenRetrieved, failedToLoad, hasData, getData, loadData } =
     createBuildingDataLoader<IStatistics>('statistics', api.building.getStatisticsByBuildingId)
@@ -20,6 +23,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
     getData,
     loadData,
     showStatisticsModal,
-    statisticsGraph,
+    scrollToSection,
   }
 })

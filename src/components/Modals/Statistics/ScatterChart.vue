@@ -81,7 +81,6 @@ const createChart = (): void => {
         },
       },
       plugins: {
-        title: { text: props.title, display: true },
         legend: { display: false },
         tooltip: {
           callbacks: {

@@ -4,7 +4,6 @@ import { storeToRefs } from 'pinia';
 
 import { vOnClickOutside } from '@vueuse/components'
 
-import Avatar from './Common/Avatar.vue';
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue';
 import SwitchIcon from '@assets/svg/icons/switch.svg'
 import CheckIcon from '@assets/svg/icons/check.svg'
@@ -49,31 +48,18 @@ const handleSelectOrg = function handleSelectOrg(id: string) {
 
       <button
         v-if="organizations.length !== 1"
-        @click.prevent="handleToggle" 
-        class="button group flex p-0">
-
-        <Avatar class="aspect-square w-10 rounded-full" :name="selectedOrg.name" />
-
-        <div class="flex flex-col items-start">
-          <h2 class="heading-5">{{ selectedOrg.name }}</h2>
-          <div
-            class="flex gap-2 text-sm font-bold text-green-500 transition-colors duration-150 group-hover:text-blue-500"
-          >
-            <SwitchIcon 
-              class="aspect-square w-4"
-              aria-hidden="true"
-            />
-            Wijzig organisatie
-          </div>
+        @click.prevent="handleToggle"
+        class="button group flex flex-col items-start p-0">
+        <h2 class="heading-5">{{ selectedOrg.name }}</h2>
+        <div
+          class="flex gap-2 text-sm font-bold text-green-500 transition-colors duration-150 group-hover:text-blue-500"
+        >
+          <SwitchIcon class="aspect-square w-4" aria-hidden="true" />
+          Wijzig organisatie
         </div>
       </button>
 
-      <div v-else class="flex gap-2 p-0">
-        <Avatar class="aspect-square w-10 rounded-full" :name="selectedOrg.name" />
-        <div class="flex items-center">
-          <h2 class="heading-5">{{ selectedOrg.name }}</h2>
-        </div>
-      </div>
+      <h2 v-else class="heading-5">{{ selectedOrg.name }}</h2>
 
       <Transition name="slide-down">
         <div
