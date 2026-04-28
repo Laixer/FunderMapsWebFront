@@ -70,28 +70,4 @@ export interface IInquirySample extends IEnumMethods {
   skewedPerpendicularFacade?: ERotationType,
   settlementSpeed?: number,
   skewedWindowFrame?: boolean
-
-  // Getter methods for enum labels
-  get substructureLabel(): string;
-  get foundationTypeLabel(): string;
-  get enforcementTermLabel(): string;
-  get damageCauseLabel(): string;
-  get damageCharacteristicsLabel(): string;
-  get constructionPileLabel(): string;
-  get woodTypeLabel(): string;
-  get woodEncroachementLabel(): string;
-  get overallQualityLabel(): string;
-  get woodQualityLabel(): string;
-  get constructionQualityLabel(): string;
-  get woodCapacityHorizontalQualityLabel(): string;
-  get pileWoodCapacityVerticalQualityLabel(): string;
-  get carryingCapacityQualityLabel(): string;
-  get masonQualityLabel(): string;
-  get crackIndoorTypeLabel(): string;
-  get crackFacadeFrontTypeLabel(): string;
-  get crackFacadeBackTypeLabel(): string;
-  get crackFacadeLeftTypeLabel(): string;
-  get crackFacadeRightTypeLabel(): string;
-  get skewedParallelFacadeLabel(): string;
-  get skewedPerpendicularFacadeLabel(): string;
 }

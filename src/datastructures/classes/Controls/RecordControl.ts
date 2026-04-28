@@ -1,18 +1,13 @@
-import { IRecordControl } from "@/datastructures/interfaces/api/Controls";
-import { EnumMethods } from "../EnumMethods";
+import type { IRecordControl } from '@/datastructures/interfaces/api/Controls'
+import { TypedRecord } from '../TypedRecord'
 
-export class RecordControl extends EnumMethods implements IRecordControl {
-  createDate: string;
-  updateDate?: string;
-  deleteDate?: string;
+export interface RecordControl extends IRecordControl {}
 
+export class RecordControl extends TypedRecord {
   className = 'RecordControl'
 
   constructor(data: IRecordControl) {
     super()
-    
-    this.createDate = data.createDate;
-    this.updateDate = data.updateDate;
-    this.deleteDate = data.deleteDate;
+    Object.assign(this, data)
   }
 }

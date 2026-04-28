@@ -1,23 +1,13 @@
-import { IMunicipality } from "@/datastructures/interfaces";
-import { EnumMethods } from "../EnumMethods";
+import type { IMunicipality } from '@/datastructures/interfaces'
+import { TypedRecord } from '../TypedRecord'
 
-export class Municipality extends EnumMethods implements IMunicipality {
-  identifier: string;
-  id: string;
-  externalId: string;
-  name: string;
-  water: boolean;
-  stateId: string | undefined;
+export interface Municipality extends IMunicipality {}
 
+export class Municipality extends TypedRecord {
   className = 'Municipality'
-  
+
   constructor(data: IMunicipality) {
-    super();
-    this.identifier = data.identifier;
-    this.id = data.id;
-    this.externalId = data.externalId;
-    this.name = data.name;
-    this.water = data.water;
-    this.stateId = data.stateId;
+    super()
+    Object.assign(this, data)
   }
 }

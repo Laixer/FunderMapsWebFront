@@ -1,22 +1,13 @@
-import { IResidence } from "@/datastructures/interfaces";
-import { EnumMethods } from "../EnumMethods";
+import type { IResidence } from '@/datastructures/interfaces'
+import { TypedRecord } from '../TypedRecord'
 
-export class Residence extends EnumMethods implements IResidence {
-  id: string;
-  addressId: string
-  buildingId: string
-  latitude: number
-  longitude: number
+export interface Residence extends IResidence {}
 
+export class Residence extends TypedRecord {
   className = 'Residence'
 
   constructor(data: IResidence) {
-    super();
-
-    this.id = data.id;
-    this.addressId = data.addressId
-    this.buildingId = data.buildingId
-    this.latitude = data.latitude
-    this.longitude = data.longitude
+    super()
+    Object.assign(this, data)
   }
 }

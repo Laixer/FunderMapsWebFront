@@ -16,10 +16,4 @@ export interface IRecoverySample extends IEnumMethods {
   permit?: string,
   permitDate?: string, // DateTime
   recoveryDate?: string // DateTime
-
-  // Getters for enum labels
-  get statusLabel(): string;
-  get typeLabel(): string;
-  get pileTypeLabel(): string;
-  get facadeLabel(): string;
 }

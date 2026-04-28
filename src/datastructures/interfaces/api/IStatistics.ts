@@ -1,6 +1,5 @@
 
 import { EFoundationType } from "@/datastructures/enums"
-import { IEnumMethods } from "./util"
 
 export interface IStatistics {
   foundationTypeDistribution: IFoundationTypeDistribution,
@@ -28,12 +27,9 @@ export interface IConstructionYearDistribution {
   decades: IConstructionYearPair[]
 }
 
-export interface IFoundationTypePair extends IEnumMethods {
+export interface IFoundationTypePair {
   foundationType: EFoundationType,
   percentage: number
-
-  // Getter methods for enums
-  get foundationTypeLabel(): string
 }
 
 export interface IFoundationTypeDistribution {

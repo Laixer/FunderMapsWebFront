@@ -39,4 +39,14 @@ export default ts.config(
       'vue/no-parsing-error': 'error',
     },
   },
+  {
+    // Data records use intentional class+interface declaration merging:
+    // the class extends TypedRecord and implements an interface via the
+    // merge, with Object.assign populating fields at runtime.
+    files: ['src/datastructures/classes/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unsafe-declaration-merging': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+    },
+  },
 )

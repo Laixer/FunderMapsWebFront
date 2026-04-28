@@ -24,11 +24,8 @@ export interface IInquiryReport extends IEnumMethods  {
   documentFile: string,
   type: EInquiryType, 
   standardF3o: boolean,
-  attribution: IAttributionControl, 
+  attribution: IAttributionControl,
   state: IStateControl,
-  access: IAccessControl, 
+  access: IAccessControl,
   record: IRecordControl
-
-  // Getter methods for enums
-  get typeLabel(): string;
 }

@@ -1,7 +1,7 @@
 import { apiBasePath } from "@/config"
 import { trimLeadingChar, trimTrailingChar } from "@/utils/string"
-import { getAuthHeader, hasToken } from '@/services/token'
-import router from '@/router'
+import { getAuthHeader, hasToken, removeAccessToken } from '@/services/token'
+import { emitAuthExpired } from '@/services/authEvents'
 
 type Method = 'GET' | 'POST' | 'PUT'
 
@@ -20,6 +20,10 @@ const makeCall = async ({
   let responseBody: unknown = null
 
   try {
+    // Pre-flight: throw without emitting auth-expired. Callers should
+    // guard on isAuthenticated before making authenticated calls; this
+    // is the safety net. Emitting here would cycle if a logout flow
+    // makes its own (now-tokenless) calls.
     if (requireAuth && !hasToken()) {
       throw new APITokenError('Missing access token')
     }
@@ -47,20 +51,20 @@ const makeCall = async ({
     }
 
     if (!response.ok) {
+      // Server says our token is no good. Drop it locally and signal the
+      // shell so it can clear session state and navigate to login.
+      if (requireAuth && response.status === 401) {
+        removeAccessToken()
+        emitAuthExpired()
+        throw new APITokenError('Server rejected token (401)')
+      }
       throw new APIErrorResponse(response.status, responseBody)
     }
 
     return responseBody
   } catch (err: unknown) {
-    if (err instanceof APITokenError) {
-      if (router.currentRoute.value.name !== 'login') {
-        router.push({ name: 'login' })
-      }
-      throw err
-    }
     if (err instanceof APIClientError) throw err
     if (err instanceof DOMException && err.name === 'AbortError') throw err
-
     throw new APICallError(err, endpoint, fetchOptions, responseBody)
   }
 }
@@ -89,7 +93,7 @@ export class APIErrorResponse extends APIClientError {
 }
 
 export class APITokenError extends APIClientError {
-  status = 403
+  status = 401
 
   constructor(message: string) {
     super(message)

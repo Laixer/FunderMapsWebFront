@@ -1,23 +1,13 @@
-import { IBuilding } from "@/datastructures/interfaces";
-import { EnumMethods } from "../EnumMethods";
+import type { IBuilding } from '@/datastructures/interfaces'
+import { TypedRecord } from '../TypedRecord'
 
-export class Building extends EnumMethods implements IBuilding {
-  identifier: string;
-  id: string;
-  externalId: string;
-  builtYear: string | undefined;
-  active: boolean;
-  neighborhoodId: string | undefined;
+export interface Building extends IBuilding {}
 
+export class Building extends TypedRecord {
   className = 'Building'
-  
+
   constructor(data: IBuilding) {
-    super();
-    this.identifier = data.identifier;
-    this.id = data.id;
-    this.externalId = data.externalId;
-    this.builtYear = data.builtYear;
-    this.active = data.active;
-    this.neighborhoodId = data.neighborhoodId;
+    super()
+    Object.assign(this, data)
   }
 }
