@@ -43,7 +43,7 @@ const {
 } = useMapsetStore()
 
 const {
-  retrieveLayerVisibilityFromSessionStorage
+  retrieveLayerVisibility
 } = useLayersStore()
 
 const {
@@ -104,7 +104,7 @@ watch(() => hasAvailableMapsets.value, (value, oldValue) => {
  * The layer visibility impacts both the legend and the map
  */
 onBeforeMount(() => {
-  retrieveLayerVisibilityFromSessionStorage()
+  retrieveLayerVisibility()
 })
 
 /**

@@ -24,7 +24,7 @@ import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
 import { useSessionStore } from '@/store/session';
 import { useBuildingStore } from '@/store/buildings';
 import { useBuildingData } from './useBuildingData';
-import { useBuildingMenu, type BuildingMenuItem } from './useBuildingMenu';
+import { useBuildingMenu } from './useBuildingMenu';
 import { usePanelRouting } from './usePanelRouting';
 
 
@@ -33,7 +33,7 @@ const { clearBuildingId } = useBuildingStore()
 const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
 
 const { failedToLoad, isLoadingCoreData, startWatching } = useBuildingData()
-const { buildingMenu, reportMenu } = useBuildingMenu()
+const { buildingMenu, actionMenu, reportMenu } = useBuildingMenu()
 const { selectedPanel, rightPanelSlide, openPanel, backToMainMenu } =
   usePanelRouting([buildingMenu, reportMenu])
 
@@ -55,13 +55,6 @@ const handleCloseSideBar = (): void => {
   isOpen.value = false
   // Delay clearing the building id until the leave animation finishes.
   setTimeout(() => { clearBuildingId() }, 300)
-}
-
-// A building-menu item either routes to a sub-panel or fires an action
-// (modal opener). Dispatch on whichever is set.
-const handleBuildingMenuClick = (item: BuildingMenuItem): void => {
-  if (item.action) item.action()
-  else if (item.panel) openPanel(item.panel, item.slug)
 }
 </script>
 
@@ -105,7 +98,7 @@ const handleBuildingMenuClick = (item: BuildingMenuItem): void => {
                 :label="MenuItem.name"
                 :disabled="MenuItem.disabled"
                 :loading="MenuItem.loading"
-                @click.prevent="handleBuildingMenuClick(MenuItem)"
+                @click.prevent="openPanel(MenuItem.panel, MenuItem.slug)"
               >
                 <FundermapsIcon
                   :name="MenuItem.icon"
@@ -117,6 +110,14 @@ const handleBuildingMenuClick = (item: BuildingMenuItem): void => {
           </section>
 
           <section class="grid space-y-2">
+            <OutlineButton
+              v-for="MenuItem in actionMenu"
+              :key="MenuItem.slug"
+              :label="MenuItem.name"
+              :disabled="MenuItem.disabled || MenuItem.loading"
+              class="w-full"
+              @click.prevent="MenuItem.action()"
+            />
             <OutlineButton
               v-for="MenuItem in reportMenu"
               :key="MenuItem.name"
