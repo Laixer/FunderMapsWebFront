@@ -16,7 +16,6 @@ import IncidentsPanel from '@/components/Building/IncidentsPanel.vue';
 import InquiryPanel from '@/components/Building/InquiryPanel.vue';
 import LocationPanel from '@/components/Building/LocationPanel.vue';
 import RecoveryPanel from '@/components/Building/RecoveryPanel.vue';
-import StatisticsPanel from '@/components/Building/StatisticsPanel.vue';
 import BuildingErrorPanel from '@/components/Building/BuildingErrorPanel.vue';
 import MapsetDetails from '@/components/Building/MapsetDetails.vue';
 
@@ -25,7 +24,7 @@ import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
 import { useSessionStore } from '@/store/session';
 import { useBuildingStore } from '@/store/buildings';
 import { useBuildingData } from './useBuildingData';
-import { useBuildingMenu } from './useBuildingMenu';
+import { useBuildingMenu, type BuildingMenuItem } from './useBuildingMenu';
 import { usePanelRouting } from './usePanelRouting';
 
 
@@ -46,7 +45,6 @@ const availablePanels: Record<string, Component> = {
   InquiryPanel,
   LocationPanel,
   RecoveryPanel,
-  StatisticsPanel,
 }
 
 const isOpen = ref(false)
@@ -57,6 +55,13 @@ const handleCloseSideBar = (): void => {
   isOpen.value = false
   // Delay clearing the building id until the leave animation finishes.
   setTimeout(() => { clearBuildingId() }, 300)
+}
+
+// A building-menu item either routes to a sub-panel or fires an action
+// (modal opener). Dispatch on whichever is set.
+const handleBuildingMenuClick = (item: BuildingMenuItem): void => {
+  if (item.action) item.action()
+  else if (item.panel) openPanel(item.panel, item.slug)
 }
 </script>
 
@@ -96,11 +101,11 @@ const handleCloseSideBar = (): void => {
             <div class="grid space-y-2">
               <MenuLink
                 v-for="MenuItem in buildingMenu"
-                :key="MenuItem.name"
+                :key="MenuItem.slug"
                 :label="MenuItem.name"
                 :disabled="MenuItem.disabled"
                 :loading="MenuItem.loading"
-                @click.prevent="openPanel(MenuItem.panel, MenuItem.slug)"
+                @click.prevent="handleBuildingMenuClick(MenuItem)"
               >
                 <FundermapsIcon
                   :name="MenuItem.icon"

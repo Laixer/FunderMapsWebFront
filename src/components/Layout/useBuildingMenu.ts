@@ -9,23 +9,25 @@ import { useIncidentReportsStore } from '@/store/building/incidents'
 
 interface BaseMenuItem {
   slug: string
-  panel: string
   name: string
   loading: boolean
   disabled: boolean
-  route: null
 }
 
 export interface BuildingMenuItem extends BaseMenuItem {
   icon: string
+  // A menu item routes to a panel by name OR runs a one-shot action
+  // (e.g. opening a modal). Exactly one of the two is set.
+  panel?: string
+  action?: () => void
 }
 
-// Report menu items render as buttons without an icon.
-export type ReportMenuItem = BaseMenuItem
+// Report menu items render as buttons without an icon and always route
+// to a panel.
+export interface ReportMenuItem extends BaseMenuItem {
+  panel: string
+}
 
-// Menu lists rendered in the building sidebar's main view. Split into the
-// "always visible" core panels and the "may be empty" report panels —
-// which separately track per-building loading/disabled state.
 export function useBuildingMenu() {
   const { buildingId } = storeToRefs(useBuildingStore())
   const statisticsStore = useStatisticsStore()
@@ -35,35 +37,32 @@ export function useBuildingMenu() {
 
   const buildingMenu = computed<BuildingMenuItem[]>(() => [
     { slug: 'building', panel: 'BuildingPanel', icon: 'building', name: 'Pand',
-      loading: false, disabled: false, route: null },
+      loading: false, disabled: false },
     { slug: 'location', panel: 'LocationPanel', icon: 'pin', name: 'Locatie',
-      loading: false, disabled: false, route: null },
+      loading: false, disabled: false },
     { slug: 'foundation', panel: 'FoundationPanel', icon: 'file-foundation', name: 'Fundering',
-      loading: false, disabled: false, route: null },
-    { slug: 'statistics', panel: 'StatisticsPanel', icon: 'graph', name: 'Statistiek',
+      loading: false, disabled: false },
+    { slug: 'statistics', icon: 'graph', name: 'Statistieken',
       loading: false,
       disabled: !!(buildingId.value && statisticsStore.failedToLoad(buildingId.value)),
-      route: null },
+      action: () => { statisticsStore.showStatisticsModal = true } },
     { slug: 'foundation-risk', panel: 'FoundationRiskPanel', icon: 'alert', name: 'Funderingsrisico',
-      loading: false, disabled: false, route: null },
+      loading: false, disabled: false },
   ])
 
   const reportMenu = computed<ReportMenuItem[]>(() => [
     { slug: 'inquiry', panel: 'InquiryPanel',
       name: 'Bekijk onderzoeks informatie',
       loading: !!(buildingId.value && !inquiriesStore.hasBeenRetrieved(buildingId.value)),
-      disabled: !!(buildingId.value && !inquiriesStore.hasReports(buildingId.value)),
-      route: null },
+      disabled: !!(buildingId.value && !inquiriesStore.hasReports(buildingId.value)) },
     { slug: 'recovery', panel: 'RecoveryPanel',
       name: 'Bekijk herstel informatie',
       loading: !!(buildingId.value && !recoveryStore.hasBeenRetrieved(buildingId.value)),
-      disabled: !!(buildingId.value && !recoveryStore.hasReports(buildingId.value)),
-      route: null },
+      disabled: !!(buildingId.value && !recoveryStore.hasReports(buildingId.value)) },
     { slug: 'incidents', panel: 'IncidentsPanel',
       name: 'Bekijk incidenten',
       loading: !!(buildingId.value && !incidentsStore.buildingIncidentReportDataHasBeenRetrieved(buildingId.value)),
-      disabled: !!(buildingId.value && !incidentsStore.buildingHasIncidentReports(buildingId.value)),
-      route: null },
+      disabled: !!(buildingId.value && !incidentsStore.buildingHasIncidentReports(buildingId.value)) },
   ])
 
   return { buildingMenu, reportMenu }
