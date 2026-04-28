@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import { computed, onMounted, ref, watch, type Component } from 'vue';
+import { ref, type Component } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
@@ -18,47 +17,28 @@ import InquiryPanel from '@/components/Building/InquiryPanel.vue';
 import LocationPanel from '@/components/Building/LocationPanel.vue';
 import RecoveryPanel from '@/components/Building/RecoveryPanel.vue';
 import StatisticsPanel from '@/components/Building/StatisticsPanel.vue';
+import BuildingErrorPanel from '@/components/Building/BuildingErrorPanel.vue';
+import MapsetDetails from '@/components/Building/MapsetDetails.vue';
 
 import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
-import AlertIcon from '@assets/svg/icons/alert.svg';
-import MapsetDetails from '../Building/MapsetDetails.vue';
 
 import { useSessionStore } from '@/store/session';
-import { useBuildingStore } from "@/store/buildings";
+import { useBuildingStore } from '@/store/buildings';
 import { useBuildingData } from './useBuildingData';
+import { useBuildingMenu } from './useBuildingMenu';
+import { usePanelRouting } from './usePanelRouting';
 
-import { useRoute, useRouter } from 'vue-router';
-
-
-const route = useRoute()
-const router = useRouter()
 
 const { isAuthenticated } = storeToRefs(useSessionStore())
 const { clearBuildingId } = useBuildingStore()
-const { hasSelectedBuilding, buildingId } = storeToRefs(useBuildingStore())
+const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
 
-const {
-  failedToLoad,
-  isLoadingCoreData,
-  statisticsStore,
-  inquiriesStore,
-  recoveryStore,
-  incidentsStore,
-  startWatching,
-} = useBuildingData()
+const { failedToLoad, isLoadingCoreData, startWatching } = useBuildingData()
+const { buildingMenu, reportMenu } = useBuildingMenu()
+const { selectedPanel, rightPanelSlide, openPanel, backToMainMenu } =
+  usePanelRouting([buildingMenu, reportMenu])
 
-
-/**
- * UI state
- */
-const isOpen = ref(false)
-const rightPanelSlide = ref(false)
-const selectedPanel = ref('')
-
-interface IComponents {
-    [key: string]: Component
-}
-const availablePanels: IComponents = {
+const availablePanels: Record<string, Component> = {
   BuildingPanel,
   FoundationPanel,
   FoundationRiskPanel,
@@ -66,184 +46,18 @@ const availablePanels: IComponents = {
   InquiryPanel,
   LocationPanel,
   RecoveryPanel,
-  StatisticsPanel
+  StatisticsPanel,
 }
 
-/**
- * Start loading building data when a building is selected
- */
-startWatching(() => {
-  isOpen.value = true
-})
+const isOpen = ref(false)
 
-/**
- * These menu items are always available
- */
-const BuildingMenuList = computed(
-  () => {
-    return [
-      {
-        slug: 'pand',
-        panel: 'BuildingPanel',
-        icon: 'building',
-        name: 'Pand',
-        loading: false,
-        disabled: false,
-        route: null
-      },
-      {
-        slug: 'locatie',
-        panel: 'LocationPanel',
-        icon: 'pin',
-        name: 'Locatie',
-        loading: false,
-        disabled: false,
-        route: null
-      },
-      {
-        slug: 'fundering',
-        panel: 'FoundationPanel',
-        icon: 'file-foundation',
-        name: 'Fundering',
-        loading: false,
-        disabled: false,
-        route: null
-      },
-      {
-        slug: 'statistiek',
-        panel: 'StatisticsPanel',
-        icon: 'graph',
-        name: 'Statistiek',
-        loading: false,
-        disabled: !! (buildingId.value && statisticsStore.failedToLoad(buildingId.value)),
-        route: null
-      },
-      {
-        slug: 'funderingsrisico',
-        panel: 'FoundationRiskPanel',
-        icon: 'alert',
-        name: 'Funderingsrisico',
-        loading: false,
-        disabled: false,
-        route: null
-      },
-    ]
-  }
-)
-/**
- * These menu items are only available if there is data available
- */
-const ReportMenuList = computed(
-  () => {
-    return [
-      {
-        slug: 'onderzoek',
-        panel: 'InquiryPanel',
-        icon: null,
-        name: 'Bekijk onderzoeks informatie',
-        loading: !!(buildingId.value && !inquiriesStore.hasBeenRetrieved(buildingId.value)),
-        disabled: !!(buildingId.value && !inquiriesStore.hasReports(buildingId.value)),
-        route: null
-      },
-      {
-        slug: 'herstel',
-        panel: 'RecoveryPanel',
-        icon: null,
-        name: 'Bekijk herstel informatie',
-        loading: !!(buildingId.value && !recoveryStore.hasBeenRetrieved(buildingId.value)),
-        disabled: !!(buildingId.value && !recoveryStore.hasReports(buildingId.value)),
-        route: null
-      },
-      {
-        slug: 'incidenten',
-        panel: 'IncidentsPanel',
-        icon: null,
-        name: 'Bekijk incidenten',
-        loading: !!(buildingId.value && !incidentsStore.buildingIncidentReportDataHasBeenRetrieved(buildingId.value)),
-        disabled: !!(buildingId.value && !incidentsStore.buildingHasIncidentReports(buildingId.value)),
-        route: null
-      }
-    ]
-  }
-)
+startWatching(() => { isOpen.value = true })
 
-/**
- * If the panel slug changed in the url, open the panel
- */
-watch(
-  () => route.params.panel,
-  (slug) => {
-    if (slug) {
-      openPanelBySlug(slug as string)
-    }
-  }
-)
-
-// Wait before components are available
-onMounted(() => {
-  if (route.name === 'building-panel') {
-    openPanelBySlug(route.params.panel as string)
-  }
-})
-
-/**
- * Clear the selected building
- */
-const handleCloseSideBar = function handleCloseSideBar() {
+const handleCloseSideBar = (): void => {
   isOpen.value = false
-
-  // Delayed by leave animation duration
-  setTimeout(() => {
-    clearBuildingId()
-  }, 300)
+  // Delay clearing the building id until the leave animation finishes.
+  setTimeout(() => { clearBuildingId() }, 300)
 }
-
-const openPanelBySlug = function openPanelBySlug(slug: string) {
-  const TabMenuItem = BuildingMenuList.value.find(MenuItem => MenuItem.slug === slug)
-  if (TabMenuItem) {
-    handleOpenPanel(TabMenuItem.panel, TabMenuItem.slug)
-    return
-  }
-
-  const ReportMenuItem = ReportMenuList.value.find(MenuItem => MenuItem.slug === slug)
-  if (ReportMenuItem) {
-    handleOpenPanel(ReportMenuItem.panel, ReportMenuItem.slug)
-  }
-}
-
-/**
- * Open a panel with details
- */
-const handleOpenPanel = function handleOpenPanel(name: string, slug: string) {
-  selectedPanel.value = name
-  isOpen.value = true
-  rightPanelSlide.value = true
-
-  // No redirect to self
-  if (route.name !== 'building-panel' || route.params.panel !== slug) {
-    router.push({
-      name: 'building-panel',
-      params: {
-        buildingId: route.params.buildingId,
-        mapsetId: route.params.mapsetId,
-        panel: slug
-      },
-      query: route.query
-    })
-  }
-}
-
-/**
- * Slide back to the main menu
- */
-const handleBackToMainMenu = function handleBackToMainMenu() {
-  rightPanelSlide.value = false
-
-  if (route.name === 'building-panel') {
-    router.push({ name: 'building', params: route.params, query: route.query })
-  }
-}
-
 </script>
 
 <template>
@@ -257,20 +71,10 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
       class="panels transition-transform duration-300"
       :class="{'-translate-x-full': rightPanelSlide}"
     >
-      <Panel
+      <BuildingErrorPanel
         v-if="failedToLoad"
-        title="Pand Informatie"
-        @close="handleCloseSideBar">
-        <div class="flex flex-col items-center gap-4 py-8 text-center">
-          <AlertIcon class="w-12 text-grey-400" aria-hidden="true" />
-          <div class="space-y-1">
-            <h5 class="heading-5 text-grey-700">Geen data beschikbaar</h5>
-            <p class="text-sm text-grey-400">
-              De informatie over dit pand kon niet geladen worden. Selecteer een ander pand op de kaart.
-            </p>
-          </div>
-        </div>
-      </Panel>
+        @close="handleCloseSideBar"
+      />
       <Panel
         v-else
         @close="handleCloseSideBar"
@@ -279,45 +83,44 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
         <SkeletonLoader v-if="isLoadingCoreData" />
 
         <template v-else>
-        <Transition>
-          <BuildingIdHeader />
-        </Transition>
+          <Transition>
+            <BuildingIdHeader />
+          </Transition>
 
-        <MapsetDetails />
+          <MapsetDetails />
 
-        <section class="grid space-y-4">
-          <div class="flex justify-between">
-            <h5 class="heading-5">Over het pand</h5>
-          </div>
-          <div class="grid space-y-2">
-            <MenuLink
-              v-for="MenuItem in BuildingMenuList"
+          <section class="grid space-y-4">
+            <div class="flex justify-between">
+              <h5 class="heading-5">Over het pand</h5>
+            </div>
+            <div class="grid space-y-2">
+              <MenuLink
+                v-for="MenuItem in buildingMenu"
+                :key="MenuItem.name"
+                :label="MenuItem.name"
+                :disabled="MenuItem.disabled"
+                :loading="MenuItem.loading"
+                @click.prevent="openPanel(MenuItem.panel, MenuItem.slug)"
+              >
+                <FundermapsIcon
+                  :name="MenuItem.icon"
+                  class="accent-color-blue aspect-square w-6"
+                  aria-hidden="true"
+                />
+              </MenuLink>
+            </div>
+          </section>
+
+          <section class="grid space-y-2">
+            <OutlineButton
+              v-for="MenuItem in reportMenu"
               :key="MenuItem.name"
               :label="MenuItem.name"
-              :disabled="MenuItem.disabled"
-              :loading="MenuItem.loading"
-              @click.prevent="handleOpenPanel(MenuItem.panel, MenuItem.slug)"
-            >
-              <FundermapsIcon
-                :name="MenuItem.icon"
-                class="accent-color-blue aspect-square w-6"
-                aria-hidden="true"
-              />
-            </MenuLink>
-          </div>
-        </section>
-
-        <section class="grid space-y-2">
-          <OutlineButton
-            v-for="MenuItem in ReportMenuList"
-            :key="MenuItem.name"
-            :label="MenuItem.name"
-            :disabled="MenuItem.disabled || MenuItem.loading"
-            class="w-full"
-            @click.prevent="handleOpenPanel(MenuItem.panel, MenuItem.slug)"
-          />
-
-        </section>
+              :disabled="MenuItem.disabled || MenuItem.loading"
+              class="w-full"
+              @click.prevent="openPanel(MenuItem.panel, MenuItem.slug)"
+            />
+          </section>
         </template>
 
         <template v-slot:footer>
@@ -328,8 +131,7 @@ const handleBackToMainMenu = function handleBackToMainMenu() {
       <component
         :is="availablePanels[selectedPanel]"
         @close="handleCloseSideBar"
-        @back="handleBackToMainMenu" />
-
+        @back="backToMainMenu" />
     </div>
   </div>
 </template>

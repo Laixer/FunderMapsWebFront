@@ -67,13 +67,38 @@ const options = computed(() => {
 })
 
 
+// Applies the user's saved lastCenterPosition/zoom/pitch/bearing to the
+// map. Called from two places to cover both orderings of the
+// metadata-load and map-onLoad events:
+//   - onLoad: handles "metadata arrived first" — the watcher below
+//     already fired with mapInstance still null, so onLoad re-applies.
+//   - watcher: handles "map loaded first" — fires when metadata arrives
+//     later and updates lastCenterPosition.
+// The dedup key prevents re-applying the same position twice (which
+// would also trigger our own moveend listener and cause a redundant PUT).
+let lastAppliedCenterKey: string | null = null
+const applySavedPosition = (map: Map): void => {
+  const center = userMetadata.value?.lastCenterPosition as { lng: number; lat: number } | undefined
+  if (!center) return
+  const key = `${center.lng},${center.lat}`
+  if (key === lastAppliedCenterKey) return
+  lastAppliedCenterKey = key
+  map.jumpTo({
+    center: [center.lng, center.lat],
+    zoom: parseFloat(userMetadata.value?.lastZoomLevel as string) || map.getZoom(),
+    pitch: parseFloat(userMetadata.value?.lastPitchDegree as string) || map.getPitch(),
+    bearing: parseFloat(userMetadata.value?.lastRotation as string) || map.getBearing(),
+  })
+}
+
 const onLoad = function onLoad({ map }: { map: Map }) {
-  
   mapInstance.value = map
 
-  MapCenterManagement.attachMap(map)
+  // If metadata loaded before the map finished initializing, the watcher
+  // already saw the change but bailed (mapInstance was null). Re-apply now.
+  applySavedPosition(map)
 
-  // Controls & control positioning nudges if sidebars are open
+  MapCenterManagement.attachMap(map)
   addControls(map)
   maybeNudgeRight()
   maybeNudgeLeft()
@@ -81,28 +106,9 @@ const onLoad = function onLoad({ map }: { map: Map }) {
   emit('ready')
 }
 
-/**
- * After login, the metadata store refetches and the user's saved
- * lastCenterPosition / zoom / pitch / bearing are reloaded — but the map
- * was already mounted with the pre-login values, so we re-center it here.
- * Only fires when the *center* changes from non-empty to a different value
- * (avoids fighting our own moveend writes during normal panning).
- */
-let lastAppliedCenterKey: string | null = null
 watch(
-  () => userMetadata.value?.lastCenterPosition as { lng: number; lat: number } | undefined,
-  (center) => {
-    if (!mapInstance.value || !center) return
-    const key = `${center.lng},${center.lat}`
-    if (key === lastAppliedCenterKey) return
-    lastAppliedCenterKey = key
-    mapInstance.value.jumpTo({
-      center: [center.lng, center.lat],
-      zoom: parseFloat(userMetadata.value?.lastZoomLevel as string) || mapInstance.value.getZoom(),
-      pitch: parseFloat(userMetadata.value?.lastPitchDegree as string) || mapInstance.value.getPitch(),
-      bearing: parseFloat(userMetadata.value?.lastRotation as string) || mapInstance.value.getBearing(),
-    })
-  },
+  () => userMetadata.value?.lastCenterPosition,
+  () => { if (mapInstance.value) applySavedPosition(mapInstance.value) },
 )
 
 /**

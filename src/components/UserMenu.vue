@@ -60,17 +60,10 @@ const handleOpenPasswordModal = function() {
   isOpen.value = false
 }
 
-/**
- * Log the user out, and redirect to the login page
- * 
- * Note: 
- *  There is no redirect to login. This is intentional.
- *  We let the data store decide. 
- *  Perhaps there will still be a public mapset available.
- */
 const handleLogout = async function() {
   await sessionStore.logout()
   isOpen.value = false
+  router.push({ name: 'login' })
 }
 
 /**
