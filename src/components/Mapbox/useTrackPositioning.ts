@@ -45,17 +45,18 @@ export const useTrackPositioning = function useTrackPositioning(
 
 
   const attachEventHandlers = function attachEventHandlers() {
-    if (! mapInstance.value) return 
+    if (! mapInstance.value) return
 
+    // Listeners only — no initial write. Writing the map's current
+    // position right after attach used to overwrite the user's saved
+    // position with the Amsterdam default before metadata had a chance to
+    // load and re-center the map (and queued a debounced PUT that
+    // persisted that default to the server). storing now happens only
+    // when the user actually pans/zooms.
     mapInstance.value.on('moveend', storeLastCenterPosition);
     mapInstance.value.on('zoomend', storeLastZoomLevel);
     mapInstance.value.on('pitchend', storeLastPitchDegree);
     mapInstance.value.on('rotateend', storeLastRotation);
-
-    storeLastCenterPosition()
-    storeLastZoomLevel()
-    storeLastPitchDegree()
-    storeLastRotation()
   }
 
   watch(
