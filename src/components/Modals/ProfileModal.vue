@@ -251,7 +251,7 @@ const handleClose = function handleClose() {
     class="ProfileModal"
     @close="handleClose">
 
-    <div class="-mx-6 space-y-4 px-6">
+    <div class="space-y-4">
       <form
         @submit.prevent="handleSubmit"
         class="space-y-6">

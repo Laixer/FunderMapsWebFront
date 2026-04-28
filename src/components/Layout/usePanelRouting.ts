@@ -1,7 +1,9 @@
 import { ref, watch, onMounted, type ComputedRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-interface MenuEntry { slug: string; panel: string }
+// Items without a panel (action-only, e.g. modal openers) are skipped
+// by the panel-routing system entirely.
+interface MenuEntry { slug: string; panel?: string }
 
 // Two-way binding between the building-panel route param and the visually
 // open detail panel. The component owns the panel <-> menu lookup; this
@@ -16,7 +18,7 @@ export function usePanelRouting(menus: ComputedRef<MenuEntry[]>[]) {
   const findPanelName = (slug: string): string | null => {
     for (const menu of menus) {
       const entry = menu.value.find(m => m.slug === slug)
-      if (entry) return entry.panel
+      if (entry?.panel) return entry.panel
     }
     return null
   }

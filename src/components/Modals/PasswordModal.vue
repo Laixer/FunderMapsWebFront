@@ -111,7 +111,7 @@ const handleClose = function handleClose() {
     class="PasswordModal"
     @close="handleClose">
 
-    <div class="-mx-6 space-y-4 px-6">
+    <div class="space-y-4">
       <p v-if="changeFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
         Het wijzigen van het wachtwoord is niet gelukt.
       </p>
