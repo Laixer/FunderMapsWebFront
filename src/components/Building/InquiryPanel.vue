@@ -23,8 +23,8 @@ import { useSessionStore } from '@/store/session';
 import DocumentDownload from '@/components/DocumentDownload.vue';
 
 
-const { getCombinedInquiryDataByBuildingId, buildingInquiryDataHasBeenRetrieved, buildingHasInquiries } = useInquiriesStore()
-const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useInquiriesStore())
+const inquiriesStore = useInquiriesStore()
+const { shownReportIndex, isSamplePanelOpen } = storeToRefs(inquiriesStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
 const { isOrgAvailable } = useSessionStore()
@@ -48,7 +48,7 @@ const isClamped = ref(false)
  */
 const caseItems = computed(() => {
   if (! buildingId.value) return []
-  return getCombinedInquiryDataByBuildingId(buildingId.value) || []
+  return inquiriesStore.getCombined(buildingId.value) || []
 })
 
 /**
@@ -57,8 +57,8 @@ const caseItems = computed(() => {
 const noCaseItemAvailableForBuilding = computed(() => {
   if (! buildingId.value) return false
   return (
-    buildingInquiryDataHasBeenRetrieved(buildingId.value) 
-    && ! buildingHasInquiries(buildingId.value)
+    inquiriesStore.hasBeenRetrieved(buildingId.value)
+    && !inquiriesStore.hasReports(buildingId.value)
   )
 })
 

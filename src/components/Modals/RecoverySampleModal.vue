@@ -10,8 +10,8 @@ import { useRecoveryReportsStore } from '@/store/building/recovery';
 import { useBuildingStore } from '@/store/buildings';
 
 
-const { getCombinedRecoveryDataByBuildingId } = useRecoveryReportsStore()
-const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useRecoveryReportsStore())
+const recoveryStore = useRecoveryReportsStore()
+const { shownReportIndex, isSamplePanelOpen } = storeToRefs(recoveryStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 
 
@@ -20,7 +20,7 @@ const { buildingId } = storeToRefs(useBuildingStore())
  */
 const caseItems = computed(() => {
   if (! buildingId.value) return []
-  return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
+  return recoveryStore.getCombined(buildingId.value) || []
 })
 
 

@@ -21,8 +21,8 @@ const { activeMapsetId } = storeToRefs(useMapsetStore())
 const { buildingId } = storeToRefs(useBuildingStore())
 const analysisStore = useAnalysisStore()
 const locationStore = useGeoLocationsStore()
-const { getCombinedInquiryDataByBuildingId } = useInquiriesStore()
-const { getCombinedRecoveryDataByBuildingId } = useRecoveryReportsStore()
+const inquiriesStore = useInquiriesStore()
+const recoveryStore = useRecoveryReportsStore()
 const { getIncidentReportsByBuildingId } = useIncidentReportsStore()
 
 
@@ -38,12 +38,12 @@ const locationData = computed(() => {
 
 const inquiryData = computed(() => {
   if (! buildingId.value) return []
-  return getCombinedInquiryDataByBuildingId(buildingId.value) || []
+  return inquiriesStore.getCombined(buildingId.value) || []
 })
 
 const recoveryData = computed(() => {
   if (! buildingId.value) return []
-  return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
+  return recoveryStore.getCombined(buildingId.value) || []
 })
 
 

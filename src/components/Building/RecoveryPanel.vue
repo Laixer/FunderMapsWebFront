@@ -20,8 +20,8 @@ import { useBuildingStore } from '@/store/buildings';
 import { useMainStore } from '@/store/main';
 
 
-const { getCombinedRecoveryDataByBuildingId, buildingHasRecoveryReports, buildingRecoveryReportDataHasBeenRetrieved } = useRecoveryReportsStore()
-const { shownReportIndex, isSamplePanelOpen } = storeToRefs(useRecoveryReportsStore())
+const recoveryStore = useRecoveryReportsStore()
+const { shownReportIndex, isSamplePanelOpen } = storeToRefs(recoveryStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
 
@@ -40,7 +40,7 @@ const isClamped = ref(false)
  */
 const caseItems = computed(() => {
   if (! buildingId.value) return []
-  return getCombinedRecoveryDataByBuildingId(buildingId.value) || []
+  return recoveryStore.getCombined(buildingId.value) || []
 })
 
 /**
@@ -49,8 +49,8 @@ const caseItems = computed(() => {
 const noCaseItemAvailableForBuilding = computed(() => {
   if (! buildingId.value) return false
   return (
-    buildingRecoveryReportDataHasBeenRetrieved(buildingId.value) 
-    && ! buildingHasRecoveryReports(buildingId.value)
+    recoveryStore.hasBeenRetrieved(buildingId.value)
+    && !recoveryStore.hasReports(buildingId.value)
   )
 })
 

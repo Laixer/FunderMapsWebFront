@@ -16,8 +16,8 @@ export interface UserMe {
   organizations: IOrg[]
 }
 
-export const getMe = async (): Promise<UserMe> => {
-  const raw = await get({ endpoint: '/user/me' }) as ApiUserMe
+export const getMe = async (signal?: AbortSignal): Promise<UserMe> => {
+  const raw = await get({ endpoint: '/user/me', signal }) as ApiUserMe
   return {
     profile: {
       email: raw.email ?? '',
