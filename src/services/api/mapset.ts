@@ -43,10 +43,13 @@ export const getAvailableMapsets = async (): Promise<IMapsetFE[]> => {
   return response.map(mapMapset)
 }
 
-export const getPublicAndAvailableMapsetsById = async (id: string): Promise<IMapsetFE[]> => {
-  const response = await get({ endpoint: `/mapset/${id}`, requireAuth: false }) as RawMapset[] | null
-  if (!response) throw new Error(`Failed to retrieve mapset: ${id}`)
-  return response.map(mapMapset)
+// /api/mapset/:id returns a single object (the public mapset matching the
+// id or slug, or 404). Older C# contract returned an array — the TS API
+// returns one object directly, so don't .map() over it.
+export const getPublicAndAvailableMapsetsById = async (id: string): Promise<IMapsetFE | null> => {
+  const response = await get({ endpoint: `/mapset/${id}`, requireAuth: false }) as RawMapset | null
+  if (!response) return null
+  return mapMapset(response)
 }
 
 export default {

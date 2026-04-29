@@ -209,11 +209,11 @@ function useMapsets() {
     isLoadingMapsets.value = true
 
     try {
-      const response = await api.mapset.getPublicAndAvailableMapsetsById(mapsetId)
-      response.forEach((mapset: IMapsetFE) => {
+      const mapset = await api.mapset.getPublicAndAvailableMapsetsById(mapsetId)
+      if (mapset) {
         const enforced = enforceGeoFencingOnPublicMapsets(mapset)
         availableMapsetsById.value[enforced.id] = enforced
-      })
+      }
     } catch (e) {
       console.error('Failed to load mapset by id:', mapsetId, e)
     }
