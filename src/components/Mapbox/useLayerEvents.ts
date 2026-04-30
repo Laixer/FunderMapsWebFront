@@ -56,12 +56,15 @@ export const useLayerEvents = function useLayerEvents(
       return
     }
 
-    // Drop a marker and pan to the click position. The geocoder API doesn't
-    // return building coordinates, so the click is the only source of truth.
+    // Drop a marker at the click position. The geocoder API doesn't return
+    // building coordinates, so the click is the only source of truth.
     mapMarkerLatLon.value = e.lngLat
-    mapCenterLatLon.value = e.lngLat
 
-    buildingRouting.navigateToBuilding(building_id)
+    // Await navigation so the URL writeback in mapCenterRouting (triggered
+    // by mapCenterLatLon below) sees the new route — otherwise it pushes
+    // the old route and cancels this navigation.
+    await buildingRouting.navigateToBuilding(building_id)
+    mapCenterLatLon.value = e.lngLat
   }
 
   /****************************************************************************

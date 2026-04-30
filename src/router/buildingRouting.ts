@@ -17,7 +17,10 @@ export const useBuildingRouting = function useBuildingRouting() {
   const { buildingId } = storeToRefs(buildingStore)
 
   /**
-   * Navigate to a building, taking the current route context into account
+   * Navigate to a building, taking the current route context into account.
+   * Returns the router push promise so callers can await navigation completion
+   * (important when the caller also writes to refs that trigger competing
+   * router.push calls — without awaiting, those would cancel this navigation).
    */
   function navigateToBuilding(id: string|null) {
 
@@ -27,16 +30,17 @@ export const useBuildingRouting = function useBuildingRouting() {
 
       // If no mapset id is known, go home
       if (! route.params.mapsetId) {
-        router.push({ name: 'home' }) 
+        return router.push({ name: 'home' })
 
       // Otherwise load the mapset
       } else if (route.name !== 'mapset') {
-        router.push({ 
-          name: 'mapset', 
+        return router.push({
+          name: 'mapset',
           params: { mapsetId: route.params.mapsetId },
           query: route.query
         })
       }
+      return Promise.resolve()
 
     // We have a building id & a mapset id. We can open a building page or even a specific panel
     } else {
@@ -54,8 +58,8 @@ export const useBuildingRouting = function useBuildingRouting() {
       } else {
         name = 'building'
       }
-      
-      router.push({ name, params, query: route.query })
+
+      return router.push({ name, params, query: route.query })
     }
   }
 

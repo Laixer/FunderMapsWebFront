@@ -235,12 +235,15 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     // truth for the selection's location.
     const [ Lng, Lat ] = (centroide_ll ?? '').replace('POINT(', '').replace(')', '').split(' ')
     const lngLat = new mapboxgl.LngLat(parseFloat(Lng), parseFloat(Lat))
-    mapCenterLatLon.value = lngLat
     mapMarkerLatLon.value = lngLat
 
+    // Await navigation so the URL writeback in mapCenterRouting (triggered
+    // by mapCenterLatLon below) sees the new route — otherwise it pushes
+    // the old route and cancels this navigation.
     if (nummeraanduiding_id && isAuthenticated.value) {
-      buildingRouting.navigateToBuilding(nummeraanduiding_id)
+      await buildingRouting.navigateToBuilding(nummeraanduiding_id)
     }
+    mapCenterLatLon.value = lngLat
 
   } catch {
     error.value = true
