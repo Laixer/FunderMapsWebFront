@@ -230,17 +230,16 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     queryString.value = weergavenaam
     handleClose()
 
-    // Navigate to the building, which triggers loading the data, opening the sidebar and placing the marker
+    // Always pan + drop a marker at the PDOK coords — the geocoder API
+    // doesn't return building coordinates, so this is the only source of
+    // truth for the selection's location.
+    const [ Lng, Lat ] = (centroide_ll ?? '').replace('POINT(', '').replace(')', '').split(' ')
+    const lngLat = new mapboxgl.LngLat(parseFloat(Lng), parseFloat(Lat))
+    mapCenterLatLon.value = lngLat
+    mapMarkerLatLon.value = lngLat
+
     if (nummeraanduiding_id && isAuthenticated.value) {
       buildingRouting.navigateToBuilding(nummeraanduiding_id)
-    } else {
-      /**
-       * Navigating to the lat lng while the API calls are being made
-       *  The lat lng from the API may differ, but that should not be a big enough difference to matter here
-       */ 
-      const [ Lng, Lat ] = (centroide_ll ?? '').replace('POINT(', '').replace(')', '').split(' ')
-      mapCenterLatLon.value = new mapboxgl.LngLat(parseFloat(Lng), parseFloat(Lat))
-      mapMarkerLatLon.value = new mapboxgl.LngLat(parseFloat(Lng), parseFloat(Lat))
     }
 
   } catch {

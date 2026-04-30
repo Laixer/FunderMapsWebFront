@@ -19,7 +19,7 @@ export const useLayerEvents = function useLayerEvents(
 
   const sessionStore = useSessionStore()
   const { isAuthenticated } = storeToRefs(sessionStore)
-  const { mapMarkerLatLon } = storeToRefs(useMainStore())
+  const { mapMarkerLatLon, mapCenterLatLon } = storeToRefs(useMainStore())
 
   const mapInstance = shallowRef(Map)
 
@@ -56,9 +56,10 @@ export const useLayerEvents = function useLayerEvents(
       return
     }
 
-    // Drop a marker at the click position. The geocoder API doesn't return
-    // building coordinates, so the marker can only land where the click did.
+    // Drop a marker and pan to the click position. The geocoder API doesn't
+    // return building coordinates, so the click is the only source of truth.
     mapMarkerLatLon.value = e.lngLat
+    mapCenterLatLon.value = e.lngLat
 
     buildingRouting.navigateToBuilding(building_id)
   }
