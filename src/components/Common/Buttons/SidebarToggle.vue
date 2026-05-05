@@ -13,7 +13,7 @@ defineEmits<{ close: [] }>()
   <button
     type="button"
     class="sidebar-toggle | group inline-flex h-8 w-8 items-center justify-center rounded text-blue-900 transition-colors duration-150 hover:bg-grey-200 hover:text-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1 disabled:opacity-40"
-    :class="direction === 'left' ? 'mr-auto' : 'ml-auto'"
+    :class="direction === 'left' ? 'ml-auto' : 'mr-auto'"
     :disabled="disabled"
     :aria-label="direction === 'left' ? 'Verberg zijbalk' : 'Verberg zijbalk'"
     @click="() => disabled ? undefined : $emit('close')"
