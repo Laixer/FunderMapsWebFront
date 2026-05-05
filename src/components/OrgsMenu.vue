@@ -4,8 +4,8 @@ import { storeToRefs } from 'pinia';
 
 import { vOnClickOutside } from '@vueuse/components'
 
-import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue';
-import SwitchIcon from '@assets/svg/icons/switch.svg'
+import Avatar from '@/components/Common/Avatar.vue'
+import ChevronDownIcon from '@assets/svg/icons/chevron-down.svg'
 import CheckIcon from '@assets/svg/icons/check.svg'
 
 import { useSessionStore } from '@/store/session';
@@ -14,25 +14,15 @@ const sessionStore = useSessionStore()
 const { selectOrgById } = sessionStore
 const { organizations, selectedOrg, selectedOrgId } = storeToRefs(sessionStore)
 
-/**
- * Whether the menu is open
- */
 const isOpen = ref(false)
 
-/**
- * Toggle / close the menu open state
- */
 const handleToggle = function handleToggle() {
-  isOpen.value = ! isOpen.value
+  isOpen.value = !isOpen.value
 }
 const handleClose = function handleClose() {
   isOpen.value = false
 }
 
-/**
- * Activate an Org
- *  The Main component watches for changes and will navigate accordingly
- */
 const handleSelectOrg = function handleSelectOrg(id: string) {
   selectOrgById(id)
   handleClose()
@@ -47,77 +37,48 @@ const handleSelectOrg = function handleSelectOrg(id: string) {
       class="relative">
 
       <button
-        v-if="organizations.length !== 1"
+        v-if="organizations.length > 1"
+        type="button"
+        class="button group flex items-center gap-2 p-0"
+        :aria-label="`Wijzig organisatie, huidig: ${selectedOrg.name}`"
+        aria-haspopup="true"
+        :aria-expanded="isOpen"
         @click.prevent="handleToggle"
-        class="button group flex flex-col items-start p-0">
-        <h2 class="heading-5">{{ selectedOrg.name }}</h2>
-        <div
-          class="flex gap-2 text-sm font-bold text-green-500 transition-colors duration-150 group-hover:text-blue-500"
-        >
-          <SwitchIcon class="aspect-square w-4" aria-hidden="true" />
-          Wijzig organisatie
-        </div>
+      >
+        <h2 class="heading-5 transition-colors group-hover:text-green-500">{{ selectedOrg.name }}</h2>
+        <ChevronDownIcon
+          class="h-2.5 w-2.5 text-grey-500 transition-[transform,color] duration-200 group-hover:text-green-500"
+          :class="{ 'rotate-180': isOpen }"
+          aria-hidden="true"
+        />
       </button>
 
       <h2 v-else class="heading-5">{{ selectedOrg.name }}</h2>
 
       <Transition name="slide-down">
         <div
-          v-if="isOpen && organizations.length !== 1"
-          class="dropdown arrow arrow--top-left | absolute -left-7 top-full origin-top-left outline-none"
+          v-if="isOpen && organizations.length > 1"
+          class="dropdown arrow arrow--top-left | absolute -left-3 top-full z-20 min-w-56 origin-top-left outline-none"
         >
-          <div
-            class="dropdown__main | relative grid rounded-lg bg-white py-4 shadow-float"
-          >
-            <div
-              class="dropdown__header | flex items-baseline justify-between gap-6 px-8 pb-2 pt-3"
-            >
-              <h3 class="heading-5 whitespace-nowrap">Mijn organisaties</h3>
-              <CloseBtn 
-                class="-translate-y-3 translate-x-3 p-0"
-                @close="handleClose" />
-            </div>
-            <div class="dropdown__content">
-              <ol>
-                <li v-for="Mapset in organizations" :key="Mapset.id">
-                  <a
-                    href="#"
-                    class="flex cursor-pointer gap-3 px-8 py-2 transition-colors duration-100 hover:bg-grey-100"
-                    :class="{'bg-grey-100': Mapset.id === selectedOrgId}"
-                    @click.prevent="handleSelectOrg(Mapset.id)"
-                  >
-                    <figure class="relative">
-                      <Avatar class="aspect-square w-8 rounded-full" :name="Mapset.name" />
-
-                      <div
-                        v-if="Mapset.id === selectedOrgId"
-                        class="absolute bottom-0 right-0 translate-x-1 translate-y-1 rounded-full border border-white bg-blue-500 p-1 text-white"
-                      >
-                        <CheckIcon
-                          class="aspect-square w-2"
-                          aria-hidden="true" 
-                        />
-                      </div>
-                    </figure>
-                    <div>
-                      <h6 class="heading-6 leading-none">{{ Mapset.name }}</h6>
-                      <div 
-                        v-if="Mapset.id === selectedOrgId"
-                        class="flex gap-2 text-sm text-blue-500">Geselecteerd</div>
-                      <div 
-                        v-else
-                        class="flex gap-2 text-sm text-green-500">
-                        <SwitchIcon
-                          class="aspect-square w-4"
-                          aria-hidden="true" 
-                        />
-                        Naar deze organisatie
-                      </div>
-                    </div>
-                  </a>
-                </li>
-              </ol>
-            </div>
+          <div class="dropdown__main | rounded-lg bg-white py-2 shadow-float">
+            <ol>
+              <li v-for="org in organizations" :key="org.id">
+                <button
+                  type="button"
+                  class="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left transition-colors duration-100 hover:bg-grey-100"
+                  :class="{ 'bg-grey-100': org.id === selectedOrgId }"
+                  @click.prevent="handleSelectOrg(org.id)"
+                >
+                  <Avatar class="aspect-square w-7 rounded-full text-xs" :name="org.name" />
+                  <span class="heading-6 flex-1 leading-none">{{ org.name }}</span>
+                  <CheckIcon
+                    v-if="org.id === selectedOrgId"
+                    class="aspect-square w-3 flex-shrink-0 text-green-500"
+                    aria-hidden="true"
+                  />
+                </button>
+              </li>
+            </ol>
           </div>
         </div>
       </Transition>
