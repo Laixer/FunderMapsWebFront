@@ -17,9 +17,9 @@ export const useAdminstrativeBoundaries = function useAdminstrativeBoundaries(
     Map, 
     toggleValue, 
     [
-      'boundry-municipality',
-      'boundry-neighborhood',
-      'boundry-district'
+      'boundary-municipality',
+      'boundary-neighborhood',
+      'boundary-district'
     ]
   )
 }

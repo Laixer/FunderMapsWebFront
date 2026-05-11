@@ -1,8 +1,8 @@
 {
-  "id": "boundry-district",
+  "id": "boundary-district",
   "type": "line",
-  "source": "boundry_district",
-  "source-layer": "boundry_district",
+  "source": "boundary_district",
+  "source-layer": "boundary_district",
   "minzoom": 10,
   "layout": {"visibility": "none"},
   "paint": {

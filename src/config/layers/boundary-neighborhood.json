@@ -1,8 +1,8 @@
 {
-  "id": "boundry-neighborhood",
+  "id": "boundary-neighborhood",
   "type": "line",
-  "source": "boundry_neighborhood",
-  "source-layer": "boundry_neighborhood",
+  "source": "boundary_neighborhood",
+  "source-layer": "boundary_neighborhood",
   "minzoom": 10,
   "layout": {"visibility": "none"},
   "paint": {
