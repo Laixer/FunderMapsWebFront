@@ -1,8 +1,8 @@
 {
-  "id": "boundry-municipality",
+  "id": "boundary-municipality",
   "type": "line",
-  "source": "boundry_municipality",
-  "source-layer": "boundry_municipality",
+  "source": "boundary_municipality",
+  "source-layer": "boundary_municipality",
   "minzoom": 10,
   "layout": {"visibility": "none"},
   "paint": {
