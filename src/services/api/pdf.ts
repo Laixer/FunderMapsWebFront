@@ -1,28 +1,28 @@
-import { get, post } from "../apiClient"
+import { apiBasePath } from "@/config"
+import { getAuthHeader, hasToken } from "@/services/token"
+import { trimTrailingChar } from "@/utils/string"
 
-const POLL_INTERVAL_MS = 2000
-const POLL_TIMEOUT_MS = 5 * 60 * 1000
-
-const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
-
+// Sync render against the API's Gotenberg-backed /api/pdf/:id endpoint. The
+// API holds the request while Gotenberg renders the report front-end, then
+// streams `application/pdf` bytes back. We wrap them in an object URL so the
+// caller (anchor href / window.open) can treat it like a hosted link.
+//
+// Returned URL is owned by the caller — `URL.revokeObjectURL` it when the
+// view is torn down to avoid leaking blob memory.
 export const getPdf = async (buildingId: string): Promise<string> => {
-  const submission = await post({ endpoint: `/pdf/${buildingId}` }) as { jobId: string }
-  const { jobId } = submission
+  if (!hasToken()) throw new Error("Missing access token")
 
-  const deadline = Date.now() + POLL_TIMEOUT_MS
-  while (Date.now() < deadline) {
-    const status = await get({ endpoint: `/pdf/job/${jobId}` }) as {
-      status: 'working' | 'success' | 'failed'
-      accessLink?: string
-    }
-    if (status.status === 'success' && status.accessLink) return status.accessLink
-    if (status.status === 'failed') throw new Error('PDF generation failed')
-    await sleep(POLL_INTERVAL_MS)
-  }
+  const url = `${trimTrailingChar(apiBasePath, "/")}/api/pdf/${encodeURIComponent(buildingId)}`
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { ...getAuthHeader() },
+  })
+  if (!response.ok) throw new Error(`PDF generation failed (HTTP ${response.status})`)
 
-  throw new Error('PDF generation timed out')
+  const blob = await response.blob()
+  return URL.createObjectURL(blob)
 }
 
 export default {
-  getPdf
+  getPdf,
 }

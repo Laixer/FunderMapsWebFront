@@ -19,18 +19,16 @@ const handleDownload = async function handleDownload() {
     // Ensure the appropriate filename is used even if the user navigates away while the download is still being processed
     const filename = buildingId.value + ''
 
-    const response = await getPdf(filename)
-
-    const res = await fetch(response)
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${filename}.pdf`
-    a.click()
-    URL.revokeObjectURL(url)
-
-    isDownloading.value = false
+    try {
+      const url = await getPdf(filename)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${filename}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      isDownloading.value = false
+    }
   }
 }
 
