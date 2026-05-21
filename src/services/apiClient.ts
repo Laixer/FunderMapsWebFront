@@ -1,6 +1,7 @@
 import { apiBasePath } from "@/config"
 import { trimLeadingChar, trimTrailingChar } from "@/utils/string"
-import { getAuthHeader, hasToken, removeAccessToken } from '@/services/token'
+import { getAuthHeader, hasToken, removeTokens } from '@/services/token'
+import { refresh } from '@/services/oidc'
 import { emitAuthExpired } from '@/services/authEvents'
 
 type Method = 'GET' | 'POST' | 'PUT'
@@ -13,9 +14,8 @@ interface CallOptions {
   signal?: AbortSignal
 }
 
-const makeCall = async ({
-  endpoint, method = 'GET', body, requireAuth = true, signal,
-}: CallOptions): Promise<unknown> => {
+const makeCall = async (opts: CallOptions, _retried = false): Promise<unknown> => {
+  const { endpoint, method = 'GET', body, requireAuth = true, signal } = opts
   let fetchOptions: RequestInit = {}
   let responseBody: unknown = null
 
@@ -51,10 +51,14 @@ const makeCall = async ({
     }
 
     if (!response.ok) {
-      // Server says our token is no good. Drop it locally and signal the
-      // shell so it can clear session state and navigate to login.
+      // 401 — the access token likely expired. Try a single silent refresh and
+      // retry, so the user (and the map) isn't bounced to login. Only if the
+      // refresh fails do we drop the session and signal the shell.
       if (requireAuth && response.status === 401) {
-        removeAccessToken()
+        if (!_retried && (await refresh())) {
+          return makeCall(opts, true)
+        }
+        removeTokens()
         emitAuthExpired()
         throw new APITokenError('Server rejected token (401)')
       }
