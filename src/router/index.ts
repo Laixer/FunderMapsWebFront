@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/views/Main.vue'
+import { loginRedirect } from '@/services/oidc'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,7 +13,18 @@ const router = createRouter({
     {
       name: 'login',
       path: '/login',
-      component: () => import('@/views/auth/Login.vue')
+      component: () => import('@/views/auth/Login.vue'),
+      // Login lives in the auth app (auth.fundermaps.com). Redirect to the OIDC
+      // flow before the component renders, so no local login page flashes.
+      beforeEnter: async () => {
+        await loginRedirect()
+        return false
+      },
+    },
+    {
+      name: 'auth-callback',
+      path: '/auth/callback',
+      component: () => import('@/views/auth/Callback.vue'),
     },
     {
       name: 'forgotten',

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 
 import type { IUser } from '@/datastructures/interfaces';
 import api from '@/services/api';
-import { hasToken, removeAccessToken, storeAccessToken } from '@/services/token';
+import { hasToken, removeTokens, storeAccessToken } from '@/services/token';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { useMetadataStore } from './metadata';
@@ -120,7 +120,7 @@ export const useSessionStore = defineStore('session', () => {
     // expired session) we still want to log out client-side.
     try { await api.auth.signOut(); } catch { /* swallow */ }
 
-    removeAccessToken();
+    removeTokens();
     currentUser.value = null;
     selectedOrgId.value = null;
 

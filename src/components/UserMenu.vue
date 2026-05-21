@@ -15,6 +15,7 @@ import ChevronDownIcon from '@assets/svg/icons/chevron-down.svg'
 
 import { useSessionStore } from '@/store/session';
 import { useMainStore } from '@/store/main'
+import { logoutRedirect } from '@/services/oidc'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -60,10 +61,11 @@ const handleOpenPasswordModal = function() {
   isOpen.value = false
 }
 
-const handleLogout = async function() {
-  await sessionStore.logout()
+const handleLogout = function() {
   isOpen.value = false
-  router.push({ name: 'login' })
+  // RP-initiated logout: end the SSO session at the provider and return to the
+  // map as a guest (oidc.ts). A local-only logout would silently re-login.
+  logoutRedirect()
 }
 
 /**
