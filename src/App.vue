@@ -11,7 +11,13 @@ const sessionStore = useSessionStore()
 const metadataStore = useMetadataStore()
 const { isAuthenticated } = storeToRefs(sessionStore)
 
-sessionStore.authenticateFromAccessToken()
+// Skip session restore on the OIDC callback — Callback.vue owns auth there
+// (it exchanges the code). Restoring here would, with no token yet, run
+// logout() → sessionStorage.clear(), wiping the PKCE state before the exchange
+// ("Invalid OIDC state").
+if (window.location.pathname !== '/auth/callback') {
+  sessionStore.authenticateFromAccessToken()
+}
 
 // Refetch metadata whenever the user becomes authenticated. Covers three
 // cases: fresh login (false -> true), session restore on page load
