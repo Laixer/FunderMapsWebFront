@@ -15,13 +15,13 @@ No test framework is configured. Uses pnpm as package manager.
 
 ## Architecture
 
-FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/subsidence analysis with Mapbox map visualization. It uses `<script setup>` SFCs, Pinia for state management, and Tailwind CSS v4 for styling (via `@tailwindcss/vite` plugin, config in `src/style.css` `@theme` block). Custom CSS lives in `public/resources/styles/` using native CSS nesting.
+FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/subsidence analysis with Mapbox map visualization. It uses `<script setup>` SFCs, Pinia for state management, and Tailwind CSS v4 for styling (via `@tailwindcss/vite` plugin, config in `src/style.css` `@theme` block). Custom CSS lives in `src/styles/` (imported via `src/main.ts`) using native CSS nesting.
 
 ### Source Layout (`src/`)
 
 - **`router/`** - Vue Router config. Routes: `/login`, `/forgotten`, `/reset/:resetKey?`, `/` (home), `/map/:mapsetId`, `/map/:mapsetId/building/:buildingId(/:panel)`
 - **`store/`** - Pinia stores. Core: `session` (auth), `main` (UI state/modals), `buildings` (selected building), `mapsets` (available mapsets), `layers` (visibility, persisted to sessionStorage), `filters` (ownership), `metadata` (user prefs). Building-specific substores in `store/building/` (analysis, geolocations, incidents, inquiries, recovery, statistics, subsidence)
-- **`services/`** - API layer. `apiClient.ts` is the base HTTP client with JWT auth (Bearer token), auto-redirect on auth failure, and token refresh. Endpoint modules in `services/api/` (auth, building, mapset, metadata, org, pdf, userprofile)
+- **`services/`** - API layer. `apiClient.ts` is the base HTTP client; it attaches the opaque OIDC bearer, performs a single silent refresh on `401`, and redirects to login when that fails. OIDC PKCE flow in `oidc.ts`, token storage in `token.ts`. Endpoint modules in `services/api/` (auth, building, mapset, metadata, pdf, userprofile)
 - **`components/Mapbox/`** - Map integration. `Map.vue` is the main map component. Composables (`use*.ts`) handle layers, sources, events, markers, clustering, geo-fencing, ownership filters, position tracking, and administrative boundaries
 - **`config/layers/`** - JSON layer definitions for Mapbox styling (30+ files for foundation types, incidents, risk assessments, etc.)
 - **`datastructures/`** - TypeScript interfaces, enums, and data classes (Location, Controls, analysis/report types)
@@ -46,7 +46,7 @@ Required `VITE_` prefixed env vars (no `.env` file in repo):
 
 ### Authentication Flow
 
-JWT-based auth stored in localStorage as `access_token`. App.vue refreshes the token every 10 minutes. The `session` store handles login/logout and JWT claim extraction. `apiClient.ts` attaches the Bearer token to all requests. `VITE_AUTH_KEY` can override JWT with API key auth.
+**OIDC** authorization-code + PKCE (`client_id=webfront`), implemented in `services/oidc.ts`. The login form lives in the auth app (auth.fundermaps.com); `/login` redirects there and the callback exchanges the code for tokens. Tokens are **opaque** (not JWTs — see `services/token.ts`), stored in localStorage; there is no client-side decoding. A `refresh` token (via `offline_access`) drives a single silent refresh on `401` inside `apiClient.ts` — if that fails the session drops and the shell redirects to login. The `session` store handles `/me`, role flags, logout, and `logoutRedirect()` (RP-initiated end-session). The `/forgotten` and `/reset` routes still cover the local password-reset flow.
 
 ### Map Layer System
 
@@ -58,7 +58,6 @@ Mapsets define which layers are available. Layer configs in `config/layers/` def
 - **chart.js** + chartjs-plugin-trendline - Data visualization
 - **zod** - Schema validation
 - **vite-svg-loader** - Import SVGs as Vue components
-- **jwt-decode** - JWT token parsing
 
 ### Backend Context
 
