@@ -6,21 +6,21 @@ import OverlayModal from '@/components/Common/OverlayModal.vue';
 import ExitIcon from '@assets/svg/icons/exit.svg'
 
 import { useMapsetStore } from '@/store/mapsets'
-import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/store/session';
+import { logoutRedirect } from '@/services/oidc'
 
 
 const { noMapsetsFound } = storeToRefs( useMapsetStore() )
-const router = useRouter()
-const sessionStore = useSessionStore()
 const { isAuthenticated } = storeToRefs( useSessionStore() )
 
 /**
- * Log the user out, and redirect to the login page
+ * Log the user out. RP-initiated (ends the SSO session at the provider), not a
+ * local-only clear — otherwise the next /authorize silently re-signs-in the
+ * same no-mapsets user, defeating the point of this button (switch accounts).
+ * Matches UserMenu's logout.
  */
-const handleLogout = async function() {
-  await sessionStore.logout()
-  router.push({ name: 'login' })
+const handleLogout = function() {
+  logoutRedirect()
 }
 
 </script>
