@@ -21,8 +21,8 @@ interface ImportMetaEnv {
   // Fundermaps base mapbox style
   readonly VITE_FUNDERMAPS_BASE_STYLE: string
 
-  // Fundermaps API Key
-  readonly VITE_AUTH_KEY: string
+  // Layer the building-number labels are inserted before (optional)
+  readonly VITE_FUNDERMAPS_NUMBER_LAYER: string
 }
 
 interface ImportMeta {

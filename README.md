@@ -49,13 +49,13 @@ pnpm format
 
 ## Architecture
 
-The application uses `<script setup>` single-file components, Pinia for state management, and Tailwind CSS v4 for styling. Authentication is JWT-based. Map layers and data sources are configured per mapset with geographic fencing.
+The application uses `<script setup>` single-file components, Pinia for state management, and Tailwind CSS v4 for styling. Authentication is OIDC (authorization-code + PKCE). Map layers and data sources are configured per mapset with geographic fencing.
 
 ### Source Layout
 
 - `src/router/` - Vue Router configuration
 - `src/store/` - Pinia stores (session, mapsets, layers, buildings, filters, metadata)
-- `src/services/` - API client with JWT auth and endpoint modules
+- `src/services/` - API client (OIDC bearer) and endpoint modules
 - `src/components/Mapbox/` - Map component and composables for layers, sources, events, clustering
 - `src/config/layers/` - Mapbox GL layer style definitions
 - `src/datastructures/` - TypeScript interfaces, enums, and data classes
