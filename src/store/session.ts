@@ -34,12 +34,6 @@ export const useSessionStore = defineStore('session', () => {
     organizations.value.find(o => o.id === selectedOrgId.value) ?? null,
   );
 
-  const selectOrgById = (id: string): void => {
-    if (organizations.value.some(o => o.id === id)) {
-      selectedOrgId.value = id;
-    }
-  };
-
   const isOrgAvailable = (id: string | null | undefined): boolean =>
     !!id && organizations.value.some(o => o.id === id);
 
@@ -135,7 +129,6 @@ export const useSessionStore = defineStore('session', () => {
     organizations,
     selectedOrgId,
     selectedOrg,
-    selectOrgById,
     isOrgAvailable,
     authenticateFromAccessToken,
     login,
