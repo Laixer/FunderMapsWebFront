@@ -7,14 +7,14 @@
 }
 
 .link--outline {
-  @apply rounded border border-grey-200 px-4 py-3 transition-all duration-150 hover:border-transparent hover:bg-white hover:shadow-hover;
+  @apply rounded border border-grey-200 px-4 py-3 transition-colors duration-150 hover:border-grey-400 hover:bg-grey-100;
 
   &.active {
-    @apply border-green-500 bg-white shadow-hover;
+    @apply border-green-500 bg-white;
   }
 
   &.disabled {
-    @apply cursor-not-allowed bg-grey-200 opacity-60 hover:border-grey-200 hover:shadow-none;
+    @apply cursor-not-allowed bg-grey-200 opacity-60 hover:border-grey-200;
   }
 
   &.loading {
