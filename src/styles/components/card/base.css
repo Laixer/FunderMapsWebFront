@@ -5,5 +5,5 @@
 }
 
 .card {
-  @apply overflow-hidden rounded-lg bg-white shadow-card;
+  @apply overflow-hidden rounded-lg border border-grey-200 bg-white;
 }
