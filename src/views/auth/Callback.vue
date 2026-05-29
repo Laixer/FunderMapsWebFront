@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { exchangeCode } from '@/services/oidc'
+import { exchangeCode, logoutRedirect } from '@/services/oidc'
 import { useSessionStore } from '@/store/session'
 
 const route = useRoute()
@@ -27,14 +27,24 @@ onMounted(async () => {
     error.value = true
   }
 })
+
+// End the SSO session at the provider, then return to the map for a fresh
+// sign-in. A plain link back to /login would silently re-authenticate via the
+// still-alive SSO session — straight back into the same wrong account and the
+// same error. RP-initiated logout breaks that loop. (See oidc.ts.)
+function signOut() {
+  logoutRedirect()
+}
 </script>
 
 <template>
   <!-- Neutral loading during the code exchange — not the login chrome. -->
-  <div class="grid min-h-screen place-content-center text-grey-700">
+  <div class="grid min-h-screen place-content-center text-center text-grey-700">
     <p v-if="error" class="text-sm">
-      Inloggen mislukt.
-      <RouterLink :to="{ name: 'login' }" class="text-green-700 underline">Opnieuw proberen</RouterLink>
+      Inloggen mislukt. Mogelijk heeft het actieve account geen toegang.
+      <button type="button" class="text-green-700 underline" @click="signOut">
+        Inloggen met een ander account
+      </button>
     </p>
     <p v-else class="text-sm">Bezig met inloggen…</p>
   </div>
