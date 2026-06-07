@@ -14,7 +14,7 @@ import CloseIcon from '@assets/svg/icons/close.svg'
 import FundermapsIcon from './Common/Icons/FundermapsIcon.vue';
 
 import { getSuggestions, getLookup, getSuggestionsNearCoordinates } from '@/services/pdok'
-import { IPDOKSuggestion } from '@/datastructures/interfaces';
+import { IPDOKSuggestion, IGeoLocationData } from '@/datastructures/interfaces';
 
 import { useMainStore } from '@/store/main';
 import { useSessionStore } from '@/store/session';
@@ -53,26 +53,27 @@ watch(
     // No repeat please
     if (value === lastQuery.value) return
 
-    // TODO: We have more tests to do here
-    // Directly open a known buildingId
+    // Looks like a BAG identifier? Try to open the building directly.
+    // Covers a bare 16-digit BAG number (PAND or NUMMERAANDUIDING) and any
+    // NL.IMBAG.* form.
     if (
       (value.length === 16 && /^[0-9]+$/.test(value)) ||
-      (value.includes('BAG') || value.includes('bag'))
+      value.toUpperCase().includes('BAG')
     ) {
-      const buildingIdVerified = await verifyBuildingId(value)
-      if (buildingIdVerified) {
-        buildingRouting.navigateToBuilding(value)
+      const location = await lookupBuilding(value)
+      if (location) {
+        await openBuilding(location)
         return
       }
     }
-    
+
     await handleGetSuggestions(value)
 
     // no results and query string longer than 10 characters? Let's give the Fundermaps API a try
     if (suggestions.value.length === 0 && value.length > 10) {
-      const buildingIdVerified = await verifyBuildingId(value)
-      if (buildingIdVerified) {
-        buildingRouting.navigateToBuilding(value)
+      const location = await lookupBuilding(value)
+      if (location) {
+        await openBuilding(location)
         return
       }
     }
@@ -155,17 +156,51 @@ const onHover = function onHover(index: number) {
 }
 
 /**
- * Get the building Id from Fundermaps API
+ * Look up a building by any BAG identifier via the Fundermaps API.
+ * Returns the resolved location (canonical id, address, coordinates) or null
+ * when the identifier doesn't resolve to a known building.
  */
-const verifyBuildingId = async function verifyBuildingId(id: string) {
+const lookupBuilding = async function lookupBuilding(id: string): Promise<IGeoLocationData | null> {
   try {
-    if (! isAuthenticated.value) return false
+    if (! isAuthenticated.value) return null
 
-    await getLocationInformationByBuildingId(id)
-    return true
+    return await getLocationInformationByBuildingId(id)
   } catch {
-    return false
+    return null
   }
+}
+
+/**
+ * Open a building resolved from a BAG-number search: pan + drop a marker at
+ * its coordinates (the geocoder doesn't return coordinates on navigation, so
+ * we set them here at the source), reflect the resolved address in the search
+ * box, and navigate to the canonical building id.
+ */
+const openBuilding = async function openBuilding(location: IGeoLocationData) {
+  const { latitude, longitude } = location.building
+  const lngLat =
+    typeof latitude === 'number' && typeof longitude === 'number'
+      ? new mapboxgl.LngLat(longitude, latitude)
+      : null
+
+  // Drop the marker up front — it tracks mapMarkerLatLon independently of the
+  // route, so it's safe to set before navigating.
+  if (lngLat) mapMarkerLatLon.value = lngLat
+
+  // Show the resolved address in the box (when the building has one), and
+  // suppress a follow-up suggestion lookup for that value.
+  if (location.address.street) {
+    lastQuery.value = location.address.fullAddress
+    queryString.value = location.address.fullAddress
+  }
+
+  handleClose()
+
+  // Await navigation before setting mapCenterLatLon — the center change
+  // triggers a URL writeback in mapCenterRouting; doing it first would push
+  // the old route and cancel this navigation (mirrors handleSelectBuilding).
+  await buildingRouting.navigateToBuilding(location.building.externalId)
+  if (lngLat) mapCenterLatLon.value = lngLat
 }
 
 
