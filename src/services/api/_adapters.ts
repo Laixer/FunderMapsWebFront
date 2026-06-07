@@ -251,11 +251,21 @@ export const adaptGeoLocationData = (raw: unknown): IGeoLocationData => {
   const opt = <T>(idField: string, build: () => T): T | null =>
     r[idField] ? build() : null
 
+  // Prefer the residence point when present, else fall back to the building
+  // footprint centroid — the API returns both; residence is null for most
+  // buildings, the centroid is always present.
+  const num = (v: unknown): number | undefined =>
+    typeof v === 'number' ? v : undefined
+  const latitude = num(r.residence_lat) ?? num(r.building_lat)
+  const longitude = num(r.residence_lon) ?? num(r.building_lon)
+
   return {
     building: {
       id: (r.building_id as string) ?? '',
       externalId: (r.building_id as string) ?? '',
       neighborhoodId: (r.neighborhood_id as string) ?? null,
+      latitude,
+      longitude,
     },
     address: {
       id: (r.address_id as string) ?? '',
