@@ -312,6 +312,10 @@ interface RawAttributedRow extends Record<string, unknown> {
   attribution_creator_name?: string | null
   attribution_owner?: string | null
   attribution_owner_name?: string | null
+  // Data owner (issue #973). Not yet served by the API — falls back to the
+  // owning org below until report.inquiry.data_owner_organization_id ships.
+  attribution_data_owner?: string | null
+  attribution_data_owner_name?: string | null
   attribution_contractor?: number | null
   attribution_contractor_name?: string | null
   audit_status?: string
@@ -329,6 +333,10 @@ const envelopes = (r: RawAttributedRow) => ({
     creatorName: r.attribution_creator_name ?? null,
     owner: r.attribution_owner ?? null,
     ownerName: r.attribution_owner_name ?? null,
+    // Data owner mirrors the owning org until the API exposes the real
+    // data_owner_organization_id field; repoint here when it does (#973).
+    dataOwner: r.attribution_data_owner ?? r.attribution_owner ?? null,
+    dataOwnerName: r.attribution_data_owner_name ?? r.attribution_owner_name ?? null,
     contractor: r.attribution_contractor ?? null,
     contractorName: r.attribution_contractor_name ?? null,
   },

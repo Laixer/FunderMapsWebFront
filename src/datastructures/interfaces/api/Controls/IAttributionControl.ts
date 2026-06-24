@@ -8,6 +8,8 @@ export interface IAttributionControl extends IEnumMethods {
   creatorName: string
   owner: string, // uuid
   ownerName: string
+  dataOwner: string, // uuid — org that owns the data (#973)
+  dataOwnerName: string
   contractor: string // uuid
   contractorName: string
 }
