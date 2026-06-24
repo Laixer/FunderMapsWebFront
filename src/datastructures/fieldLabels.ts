@@ -68,6 +68,8 @@ export const AttributionControlFieldLabels = <Record<string, string>> {
   reviewer: "Gecontroleerd door",
   contractorName: "Uitvoerder",
   ownerName: "Opdrachtgever",
+  dataOwner: "Data-eigenaar",
+  dataOwnerName: "Data-eigenaar",
   creatorName: "Verwerkt door",
   reviewerName: "Gecontroleerd door"
 }

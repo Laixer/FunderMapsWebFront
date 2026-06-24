@@ -27,7 +27,7 @@ const inquiriesStore = useInquiriesStore()
 const { shownReportIndex, isSamplePanelOpen } = storeToRefs(inquiriesStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
-const { isOrgAvailable } = useSessionStore()
+const { isAuthenticated } = storeToRefs(useSessionStore())
 
 /**
  * Props & events
@@ -104,6 +104,7 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'documentDate' }),
       new FieldDataConfig({ name: 'contractorName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'ownerName', source: selectedCaseItem.value?.report.attribution }),
+      new FieldDataConfig({ name: 'dataOwnerName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'creatorName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'reviewerName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'auditStatus', source: selectedCaseItem.value?.report.state }),
@@ -142,8 +143,12 @@ const downloadDetails = computed(() => {
 
   let filename = selectedCaseItem.value?.report.documentName || 'Onderzoeksdocument'
 
-  // Only show the download button if the logged in user belongs to the org that owns the report
-  if (! isOrgAvailable(selectedCaseItem.value?.report?.attribution?.owner)) {
+  // Inquiry source files are downloadable by any logged-in user: the API
+  // serves them ownership-agnostically (#968), so hiding the button when the
+  // report's owning org differs from the user's only blocked access to data
+  // that was already reachable. Owner-org gating returns in the data-owner
+  // epic (#973) once attribution is corrected via data_owner_organization_id.
+  if (! isAuthenticated.value) {
     return null
   }
 
