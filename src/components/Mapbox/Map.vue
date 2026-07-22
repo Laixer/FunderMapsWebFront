@@ -11,7 +11,6 @@ import { useBuildingMarker } from './useBuildingMarker'
 import { useMapboxControlNudge } from './useMapboxControlNudge';
 import { useTrackPositioning } from './useTrackPositioning'
 import { useMapLayers } from './useMapLayers'
-import { useAdminstrativeBoundaries } from '@/components/Mapbox/useAdministrativeBoundries';
 import { useBuildingCluster } from '@/components/Mapbox/useBuildingCluster'
 
 import { useMapCenterRouting } from '@/router/mapCenterRouting';
@@ -34,7 +33,6 @@ const mapInstance = shallowRef<Map | null>(null)
 const MapCenterManagement = useMapCenterManagement()
 
 useBuildingMarker(mapInstance)
-useAdminstrativeBoundaries(mapInstance)
 useBuildingCluster(mapInstance)
 useMapLayers(mapInstance)
 const { getLastKnownPositioning } = useTrackPositioning(mapInstance)
