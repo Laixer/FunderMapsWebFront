@@ -19,10 +19,6 @@ export const useMapSources = function useMapSources(
   }
 
   const sourceZoomLevels: Record<string, { min?: number, max?: number }> = {
-    'boundary_municipality': {
-      min: 7,
-      max: 11
-    },
     'incident_neighboorhood': {
       min: 10
     },

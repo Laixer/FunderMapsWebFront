@@ -17,11 +17,6 @@ export const useLayersStore = defineStore('layers', () => {
   const visibleLayersByMapsetId = ref<Record<string, string[]>>({});
 
   /**
-   * Indicates whether administrative boundaries are shown.
-   */
-  const showAdministrativeBoundaries = ref(false);
-
-  /**
    * Indicates whether the building cluster (bouwkundige eenheid) layer is shown.
    */
   const showBuildingCluster = ref(false);
@@ -188,7 +183,6 @@ export const useLayersStore = defineStore('layers', () => {
 
   return {
     visibleLayersByMapsetId,
-    showAdministrativeBoundaries,
     showBuildingCluster,
     getVisibleLayersByMapsetId,
     getVisibleLayersOfActiveMapset,
