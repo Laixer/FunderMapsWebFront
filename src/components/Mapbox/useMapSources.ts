@@ -33,7 +33,20 @@ export const useMapSources = function useMapSources(
 
   // Sources served dynamically by the Martin tileserver
   // (VITE_FUNDERMAPS_TILESERVER_URL) instead of the static tileset bucket.
+  // These are added via their TileJSON endpoint, so tile URLs, zoom range
+  // and bounds come from the server instead of being duplicated here.
   const dynamicSources = ['buildings']
+
+  /**
+   * TileJSON endpoint for a dynamic source. Accepts both a bare base
+   * template ("https://tiles.example/{SOURCE}") and the tile-URL form
+   * ("https://tiles.example/{SOURCE}/{z}/{x}/{y}") in the env var.
+   */
+  const tileJsonPath = function tileJsonPath(sourceName: string): string {
+    return (import.meta.env.VITE_FUNDERMAPS_TILESERVER_URL + '' || '')
+      .replace('/{z}/{x}/{y}', '')
+      .replace('{SOURCE}', sourceName)
+  }
 
   /**
    * Add a map source
@@ -53,11 +66,21 @@ export const useMapSources = function useMapSources(
       return
     }
 
-    const urlTemplate = dynamicSources.includes(sourceName)
-      ? import.meta.env.VITE_FUNDERMAPS_TILESERVER_URL
-      : import.meta.env.VITE_FUNDERMAPS_TILES_URL
+    if (dynamicSources.includes(sourceName)) {
+      // Tile URLs, min/max zoom and bounds all come from the TileJSON.
+      mapInstance.value.addSource(
+        sourceName,
+        {
+          type: 'vector',
+          url: tileJsonPath(sourceName)
+        }
+      )
 
-    const sourcePath = (urlTemplate + '' || '')
+      currentSources.push(sourceName)
+      return
+    }
+
+    const sourcePath = (import.meta.env.VITE_FUNDERMAPS_TILES_URL + '' || '')
       .replace('{SOURCE}', sourceName || '')
 
     /**
