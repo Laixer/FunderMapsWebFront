@@ -1,0 +1,40 @@
+{
+  "id": "contractor",
+  "type": "fill-extrusion",
+  "source": "buildings",
+  "source-layer": "buildings",
+  "filter": ["has", "contractor"],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-color": [
+          "match",
+          ["get", "contractor"],
+          ["KCAF"],
+          "#85dbbe",
+          ["FunderMaps B.V."],
+          "#96ed51",
+          ["Gemeente Haarlem"],
+          "#b59e3c",
+          ["Gemeente Rotterdam"],
+          "#7edf9a",
+          ["Perfectkeur"],
+          "#bdf450",
+          ["Funderingsloket"],
+          "#9d592d",
+          ["Elkien"],
+          "#79e370",
+          ["Gemeente Dordrecht"],
+          "#d3e14d",
+          ["Wareco"],
+          "#8c3a28",
+          ["Gemeente Schiedam"],
+          "#7ee587",
+          ["VastgoedNED"],
+          "#c9b441",
+          ["Gemeente Zaanstad"],
+          "#7b2a2d",
+          "#6a6c70"
+      ]
+  }
+}
