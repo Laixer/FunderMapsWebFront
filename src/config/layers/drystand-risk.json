@@ -1,8 +1,8 @@
 {
   "id": "drystand-risk",
   "type": "fill-extrusion",
-  "source": "analysis_risk",
-  "source-layer": "analysis_risk",
+  "source": "buildings",
+  "source-layer": "buildings",
   "filter": [
       "all",
       [

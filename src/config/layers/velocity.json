@@ -1,8 +1,8 @@
 {
   "id": "velocity",
   "type": "fill-extrusion",
-  "source": "analysis_foundation",
-  "source-layer": "analysis_foundation",
+  "source": "buildings",
+  "source-layer": "buildings",
   "filter": ["has", "velocity"],
   "layout": {"visibility": "none"},
   "paint": {

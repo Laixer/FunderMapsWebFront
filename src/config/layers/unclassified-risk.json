@@ -1,8 +1,8 @@
 {
   "id": "unclassified-risk",
   "type": "fill-extrusion",
-  "source": "analysis_risk",
-  "source-layer": "analysis_risk",
+  "source": "buildings",
+  "source-layer": "buildings",
   "minzoom": 13,
   "filter": [
       "all",
