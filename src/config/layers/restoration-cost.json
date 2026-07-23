@@ -1,8 +1,8 @@
 {
   "id": "restoration-cost",
   "type": "fill-extrusion",
-  "source": "analysis_risk",
-  "source-layer": "analysis_risk",
+  "source": "buildings",
+  "source-layer": "buildings",
   "filter": ["has", "restoration_costs"],
   "layout": {"visibility": "none"},
   "paint": {

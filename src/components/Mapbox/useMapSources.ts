@@ -19,7 +19,7 @@ export const useMapSources = function useMapSources(
   }
 
   const sourceZoomLevels: Record<string, { min?: number, max?: number }> = {
-    'incident_neighboorhood': {
+    'incident_neighborhood': {
       min: 10
     },
     'incident_municipality': {
@@ -30,6 +30,10 @@ export const useMapSources = function useMapSources(
       min: 10
     }
   }
+
+  // Sources served dynamically by the Martin tileserver
+  // (VITE_FUNDERMAPS_TILESERVER_URL) instead of the static tileset bucket.
+  const dynamicSources = ['buildings']
 
   /**
    * Add a map source
@@ -49,7 +53,11 @@ export const useMapSources = function useMapSources(
       return
     }
 
-    const sourcePath = (import.meta.env.VITE_FUNDERMAPS_TILES_URL + '' || '')
+    const urlTemplate = dynamicSources.includes(sourceName)
+      ? import.meta.env.VITE_FUNDERMAPS_TILESERVER_URL
+      : import.meta.env.VITE_FUNDERMAPS_TILES_URL
+
+    const sourcePath = (urlTemplate + '' || '')
       .replace('{SOURCE}', sourceName || '')
 
     /**

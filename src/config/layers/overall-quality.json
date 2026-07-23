@@ -1,8 +1,8 @@
 {
   "id": "overall-quality",
   "type": "fill-extrusion",
-  "source": "analysis_report",
-  "source-layer": "analysis_report",
+  "source": "buildings",
+  "source-layer": "buildings",
   "filter": [
       "match",
       ["get", "overall_quality"],

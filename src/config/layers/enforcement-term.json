@@ -1,8 +1,8 @@
 {
   "id": "enforcement-term",
   "type": "fill-extrusion",
-  "source": "analysis_report",
-  "source-layer": "analysis_report",
+  "source": "buildings",
+  "source-layer": "buildings",
   "filter": ["has", "enforcement_term"],
   "layout": {"visibility": "none"},
   "paint": {
