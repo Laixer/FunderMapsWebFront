@@ -35,7 +35,7 @@ export const useMapSources = function useMapSources(
   // (VITE_FUNDERMAPS_TILESERVER_URL) instead of the static tileset bucket.
   // These are added via their TileJSON endpoint, so tile URLs, zoom range
   // and bounds come from the server instead of being duplicated here.
-  const dynamicSources = ['buildings']
+  const dynamicSources = ['buildings', 'building_cluster']
 
   /**
    * TileJSON endpoint for a dynamic source. Accepts both a bare base
