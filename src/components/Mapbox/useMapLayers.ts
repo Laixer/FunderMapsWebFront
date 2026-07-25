@@ -92,7 +92,20 @@ export const useMapLayers = function useMapLayers(
           // Add ownership fencing
           applyOwnershipFilterToLayerSpecification(layerSpecification)
 
-          mapInstance.value.addLayer(layerSpecification, import.meta.env.VITE_FUNDERMAPS_NUMBER_LAYER || 'building-number-label-hover')
+          // Insert data layers below the purple admin-boundary lines (and
+          // thus below all labels). The anchor is resolved against the
+          // running style: the env override first, then the boundary
+          // layer, then the first symbol layer, then simply on top -
+          // a missing anchor id must never take the whole mapset down
+          // (the legacy hardcoded 'building-number-label-hover' anchor
+          // did exactly that after the basemap swap).
+          const anchorCandidates = [
+            import.meta.env.VITE_FUNDERMAPS_NUMBER_LAYER,
+            'fundermaps-municipality',
+          ].filter(Boolean) as string[]
+          const anchor = anchorCandidates.find((id) => mapInstance.value?.getLayer(id))
+            || mapInstance.value.getStyle().layers.find((l) => l.type === 'symbol')?.id
+          mapInstance.value.addLayer(layerSpecification, anchor)
 
           attachEventHandlers(layerId)
 
