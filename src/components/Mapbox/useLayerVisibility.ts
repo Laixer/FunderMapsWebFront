@@ -1,4 +1,4 @@
-import { type Map } from "mapbox-gl";
+import { type Map } from "maplibre-gl";
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';

@@ -1,4 +1,9 @@
-import { type FilterSpecification, type LayerSpecification } from "mapbox-gl"
+import { type FilterSpecification, type LayerSpecification } from "maplibre-gl"
+
+// Our layer configs (config/layers/*.json) are always data layers, never
+// background — background layers lack filter/source, which the plain
+// LayerSpecification union would otherwise forbid accessing.
+type DataLayerSpecification = Exclude<LayerSpecification, { type: 'background' }>
 import { storeToRefs } from "pinia";
 
 import { useMapsetStore } from '@/store/mapsets';
@@ -62,15 +67,16 @@ export const useGeographyFilter = function useGeographyFilter() {
    * Apply the Geography Filter to the layer presentation
    */
   const applyGeographyFilterToLayerSpecification = function applyGeographyFilterToLayerSpecification(
-    specification: LayerSpecification,
+    specification: DataLayerSpecification,
     mapset?: IMapsetFE|undefined
   ) {
     if (enableMapFilter === 'false' && mapset?.public === false)  {
       return specification
     }
     
-    // construct the geo filter
-    const geoFilter: FilterSpecification = [].concat(
+    // construct the geo filter (legacy filter syntax, built as a plain
+    // array and only cast to FilterSpecification when attached)
+    const geoFilter: unknown[] = ([] as unknown[]).concat(
       generateFencing('municipality_id', 'fenceMunicipality', mapset) as [], // Make TS shut up
       generateFencing('district_id', 'fenceDistrict', mapset) as [], // Make TS shut up
       generateFencing('neighborhood_id', 'fenceNeighborhood', mapset) as [], // Make TS shut up
@@ -93,9 +99,9 @@ export const useGeographyFilter = function useGeographyFilter() {
         'all',
         specification.filter,
         geoFilter
-      ]
+      ] as unknown as FilterSpecification
     } else {
-      specification.filter = geoFilter
+      specification.filter = geoFilter as unknown as FilterSpecification
     }
     
     return specification

@@ -1,6 +1,11 @@
 
 import { type MaybeRef, type Ref, shallowRef, watch } from "vue";
-import { LayerSpecification, type Map } from "mapbox-gl";
+import { type LayerSpecification, type Map } from "maplibre-gl";
+
+// Our layer configs (config/layers/*.json) are always data layers, never
+// background — background layers lack filter/source, which the plain
+// LayerSpecification union would otherwise forbid accessing.
+type DataLayerSpecification = Exclude<LayerSpecification, { type: 'background' }>
 
 import { useMapSources } from "./useMapSources";
 
@@ -55,7 +60,7 @@ export const useToggleableLayers = function useToggleableLayers(
     for(const layerId of layers) {
       if (! mapInstance.value.getLayer(layerId)) {
         try {
-          const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
+          const layerSpecification: DataLayerSpecification = await getLayerSpecificationById(layerId)
 
           if (layerSpecification.source) {
             addSource(layerSpecification.source)

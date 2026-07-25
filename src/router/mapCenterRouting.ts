@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia"
 import { useMainStore } from "@/store/main"
 import { useSessionStore } from "@/store/session"
 import { useRoute, useRouter } from 'vue-router'
-import mapboxgl from "mapbox-gl"
+import { LngLat } from "maplibre-gl"
 
 
 export const useMapCenterRouting = function useMapCenterRouting() {
@@ -57,7 +57,7 @@ export const useMapCenterRouting = function useMapCenterRouting() {
   const getLatLngFromQueryString = function getLatLngFromQueryString() {
     try {
       if (hasLatLngInQueryString()) {
-        return new mapboxgl.LngLat(
+        return new LngLat(
           parseFloat(`${route.query.lng}`), 
           parseFloat(`${route.query.lat}`)
         )

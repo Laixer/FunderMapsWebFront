@@ -3,7 +3,7 @@
  * Map Event handling
  **********************************************************************************/
 
-import { type Map, type MapMouseEvent, type MapboxGeoJSONFeature } from "mapbox-gl";
+import { type Map, type MapMouseEvent, type MapGeoJSONFeature } from "maplibre-gl";
 import { type MaybeRef, shallowRef } from "vue";
 import { storeToRefs } from "pinia";
 
@@ -41,7 +41,7 @@ export const useLayerEvents = function useLayerEvents(
   /**
    * Navigate to building on click
    */
-  const handleBuildingClick = async function handleBuildingClick(e: MapMouseEvent & { features?: MapboxGeoJSONFeature[] }) {
+  const handleBuildingClick = async function handleBuildingClick(e: MapMouseEvent & { features?: MapGeoJSONFeature[] }) {
     if (!e.features || e.features.length === 0) return
 
     // Map interaction is only for authenticated users

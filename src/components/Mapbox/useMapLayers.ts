@@ -4,7 +4,12 @@
  *  - API returns boolean 'hasBuildingEvents' prop per layer
  */
 
-import { LayerSpecification, type Map } from "mapbox-gl";
+import { type LayerSpecification, type Map } from "maplibre-gl";
+
+// Our layer configs (config/layers/*.json) are always data layers, never
+// background — background layers lack filter/source, which the plain
+// LayerSpecification union would otherwise forbid accessing.
+type DataLayerSpecification = Exclude<LayerSpecification, { type: 'background' }>
 import { type MaybeRef, watch, shallowRef } from "vue";
 import { storeToRefs } from "pinia";
 
@@ -72,7 +77,7 @@ export const useMapLayers = function useMapLayers(
       if (!mapInstance.value.getLayer(layerId)) {
         try {
           // Get the base layer specification
-          const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
+          const layerSpecification: DataLayerSpecification = await getLayerSpecificationById(layerId)
 
           if (layerSpecification.source) {
             addSource(layerSpecification.source)
@@ -152,7 +157,7 @@ export const useMapLayers = function useMapLayers(
       if (!mapInstance.value.getLayer(layerId)) continue
 
       try {
-        const layerSpecification: LayerSpecification = await getLayerSpecificationById(layerId)
+        const layerSpecification: DataLayerSpecification = await getLayerSpecificationById(layerId)
 
         applyGeographyFilterToLayerSpecification(layerSpecification, currentMapset)
         applyOwnershipFilterToLayerSpecification(layerSpecification)

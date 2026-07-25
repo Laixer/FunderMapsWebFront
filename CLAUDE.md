@@ -15,7 +15,7 @@ No test framework is configured. Uses pnpm as package manager.
 
 ## Architecture
 
-FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/subsidence analysis with Mapbox map visualization. It uses `<script setup>` SFCs, Pinia for state management, and Tailwind CSS v4 for styling (via `@tailwindcss/vite` plugin, config in `src/style.css` `@theme` block). Custom CSS lives in `src/styles/` (imported via `src/main.ts`) using native CSS nesting.
+FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/subsidence analysis with MapLibre map visualization. It uses `<script setup>` SFCs, Pinia for state management, and Tailwind CSS v4 for styling (via `@tailwindcss/vite` plugin, config in `src/style.css` `@theme` block). Custom CSS lives in `src/styles/` (imported via `src/main.ts`) using native CSS nesting.
 
 ### Source Layout (`src/`)
 
@@ -23,7 +23,7 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 - **`store/`** - Pinia stores. Core: `session` (auth), `main` (UI state/modals), `buildings` (selected building), `mapsets` (available mapsets), `layers` (visibility, persisted to sessionStorage), `filters` (ownership), `metadata` (user prefs). Building-specific substores in `store/building/` (analysis, geolocations, incidents, inquiries, recovery, statistics, subsidence)
 - **`services/`** - API layer. `apiClient.ts` is the base HTTP client; it attaches the opaque OIDC bearer, performs a single silent refresh on `401`, and redirects to login when that fails. OIDC PKCE flow in `oidc.ts`, token storage in `token.ts`. Endpoint modules in `services/api/` (auth, building, mapset, metadata, pdf, userprofile)
 - **`components/Mapbox/`** - Map integration. `Map.vue` is the main map component. Composables (`use*.ts`) handle layers, sources, events, markers, clustering, geo-fencing, ownership filters, position tracking, and administrative boundaries
-- **`config/layers/`** - JSON layer definitions for Mapbox styling (30+ files for foundation types, incidents, risk assessments, etc.)
+- **`config/layers/`** - JSON layer definitions for map styling (MapLibre style spec) (30+ files for foundation types, incidents, risk assessments, etc.)
 - **`datastructures/`** - TypeScript interfaces, enums, and data classes (Location, Controls, analysis/report types)
 - **`directives/`** - Custom Vue directives (line clamping)
 - **`utils/`** - Helpers for validation, sessionStorage, string manipulation
@@ -36,8 +36,6 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 ### Environment Variables
 
 Required `VITE_` prefixed env vars (no `.env` file in repo):
-- `VITE_MAPBOX_TOKEN` - Mapbox API token
-- `VITE_MAPBOX_STYLE` - Mapbox style URL
 - `VITE_FUNDERMAPS_URL` - API base URL
 - `VITE_FUNDERMAPS_TILES_URL` - Tile server URL
 - `VITE_DEFAULT_MAPSET_ID` - Default mapset UUID
@@ -54,7 +52,7 @@ Mapsets define which layers are available. Layer configs in `config/layers/` def
 
 ### Key Libraries
 
-- **mapbox-gl** - Map rendering
+- **maplibre-gl** - Map rendering (FunderMaps basemap style; source of truth in FunderMapsWorker `tileserver/styles/`)
 - **chart.js** + chartjs-plugin-trendline - Data visualization
 - **zod** - Schema validation
 - **vite-svg-loader** - Import SVGs as Vue components

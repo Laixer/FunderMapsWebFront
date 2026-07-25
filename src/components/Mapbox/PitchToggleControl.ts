@@ -1,4 +1,4 @@
-import type { ExpressionSpecification, IControl, Map } from 'mapbox-gl'
+import type { ExpressionSpecification, IControl, Map } from 'maplibre-gl'
 
 /**
  * A custom Mapbox control that toggles between 2D (flat polygons) and 3D (extruded buildings).
@@ -20,7 +20,7 @@ export class PitchToggleControl implements IControl {
     this.map = map
 
     this.container = document.createElement('div')
-    this.container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group'
+    this.container.className = 'maplibregl-ctrl maplibregl-ctrl-group'
 
     this.button = document.createElement('button')
     this.button.type = 'button'
