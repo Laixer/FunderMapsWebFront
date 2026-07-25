@@ -52,7 +52,7 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
 const options = computed(() => {
   const lastKnownPositioning = getLastKnownPositioning()
   return {
-    style: (import.meta.env.VITE_FUNDERMAPS_BASE_STYLE || 'https://fundermaps-tileset.ams3.digitaloceanspaces.com/assets/styles/fundermaps-basemap.json'),
+    style: (import.meta.env.VITE_FUNDERMAPS_BASE_STYLE || 'https://tiles.fundermaps.com/style/fundermaps-basemap'),
     center: getLatLngFromQueryString() || lastKnownPositioning.center || [4.897070, 52.377956], // [5.2913, 52.1326],
     zoom: lastKnownPositioning.zoom || 15,
     pitch: lastKnownPositioning.pitch || 30,
