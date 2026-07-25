@@ -1,5 +1,5 @@
 
-import { type Map } from "mapbox-gl";
+import { type Map } from "maplibre-gl";
 import { type MaybeRef, shallowRef } from "vue";
 
 /**
@@ -95,8 +95,7 @@ export const useMapSources = function useMapSources(
         type: 'vector',
         tiles: [sourcePath],
         minzoom,
-        maxzoom,
-        buffer: 64
+        maxzoom
       }
     )
 

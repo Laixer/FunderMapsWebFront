@@ -1,5 +1,5 @@
 import { type MaybeRef, shallowRef, watch } from 'vue'
-import mapboxgl, { type LngLat, type Map } from 'mapbox-gl'
+import { Marker, type LngLat, type Map } from 'maplibre-gl'
 import { storeToRefs } from 'pinia'
 
 import { useBuildingStore } from '@/store/buildings'
@@ -12,7 +12,7 @@ import { useMainStore } from '@/store/main'
 export const useBuildingMarker = function useBuildingMarker(
   Map: MaybeRef<Map | null | undefined>,
 ) {
-  const marker = new mapboxgl.Marker()
+  const marker = new Marker()
   const mapInstance = shallowRef(Map)
 
   const { buildingId } = storeToRefs(useBuildingStore())
@@ -25,7 +25,7 @@ export const useBuildingMarker = function useBuildingMarker(
     const el = marker.getElement()
     el.style.display = 'none'
     marker.setLngLat(lngLat).addTo(mapInstance.value)
-    // Animate the drop-in once mapbox has projected the coordinates.
+    // Animate the drop-in once maplibre has projected the coordinates.
     requestAnimationFrame(() => {
       el.classList.remove('marker-drop')
       el.style.display = ''

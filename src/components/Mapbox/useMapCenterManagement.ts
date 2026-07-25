@@ -1,4 +1,4 @@
-import mapboxgl, { type Map } from "mapbox-gl"
+import { LngLat, type LngLatLike, type Map } from "maplibre-gl"
 import { storeToRefs } from "pinia"
 import { computed, nextTick, watch } from "vue"
 
@@ -31,7 +31,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     return locationStore.getData(buildingId.value)
   })
 
-  const flyToCenter = function flyToCenter(center: mapboxgl.LngLatLike) {
+  const flyToCenter = function flyToCenter(center: LngLatLike) {
     if (! mapInstance) return
 
     // Set some zoom limits that make sense when flying
@@ -49,7 +49,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
 
   const flyToBuildingLocation = function flyToBuildingLocation(location: IGeoLocationData) {
     if (location.residence && mapInstance) {
-      mapCenterLatLon.value = new mapboxgl.LngLat(
+      mapCenterLatLon.value = new LngLat(
         location.residence.longitude, 
         location.residence.latitude
       )
@@ -72,7 +72,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
    */
   watch(
     () => mapCenterLatLon.value,
-    (center: mapboxgl.LngLat|null) => {
+    (center: LngLat|null) => {
 
       // We use `ignoreCenterChange` to ignore changes caused by `handleMapMovement`
       if (! mapInstance || center === null || ignoreCenterChange === true) {
@@ -93,7 +93,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
       }
 
       if (mapset.metadata?.center) {
-        flyToCenter(mapset.metadata.center as mapboxgl.LngLatLike)
+        flyToCenter(mapset.metadata.center as LngLatLike)
       }
     },
     { immediate: true }
@@ -125,7 +125,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
       flyToBuildingLocation(locationData.value)
     } else if (activeMapset.value?.metadata?.center) {
       flyToCenter(
-        activeMapset.value.metadata.center as mapboxgl.LngLatLike
+        activeMapset.value.metadata.center as LngLatLike
       )
     } else {
       handleMapMovement()

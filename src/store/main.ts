@@ -1,6 +1,6 @@
 import { ref, shallowRef } from 'vue';
 import { defineStore } from 'pinia';
-import type { LngLat } from 'mapbox-gl';
+import type { LngLat } from 'maplibre-gl';
 
 export const useMainStore = defineStore('main', () => {
   const isProfileModalOpen = ref(false);

@@ -1,4 +1,4 @@
-import { type Map } from "mapbox-gl";
+import { type Map } from "maplibre-gl";
 import { type MaybeRef, watch, shallowRef } from "vue";
 
 import { useMetadataStore } from '@/store/metadata';

@@ -1,61 +1,50 @@
 <script setup lang="ts">
 /**
- * @copyright MIT 
+ * @copyright MIT
  * @author Wouter van Dam (wouter@journeyworks.nl)
- * 
- * This is a basic, generic Vue wrapper component for MapBox. 
+ *
+ * This is a basic, generic Vue wrapper component for MapLibre.
  * This module is included in the source code of the application itself for simplicity and reliability
  */
 
 import { onMounted, onUnmounted, provide, readonly, ref } from 'vue'
-import mapboxgl, { type Map } from 'mapbox-gl'
+import { Map as MaplibreMap } from 'maplibre-gl'
 
-import 'mapbox-gl/dist/mapbox-gl.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 /**
- * The Mapbox instance
+ * The MapLibre instance
  */
-let map: Map
+let map: MaplibreMap
 
 /**
  * Reference to the DOM container
- */ 
+ */
 const mapcontainer = ref()
 
 /**
- * Used to indicate to child components that the mapbox instance is loaded
+ * Used to indicate to child components that the map instance is loaded
  */
 const loaded = ref(false)
 provide('loaded', readonly(loaded))
 
 /**
  * Props
- */ 
-const { 
-  accessToken = import.meta.env.VITE_MAPBOX_TOKEN, 
-  mapStyle = import.meta.env.VITE_MAPBOX_STYLE, 
-  options = {} 
+ */
+const {
+  mapStyle = '',
+  options = {}
 } = defineProps<{
-  accessToken?: string,
   mapStyle?: string,
   options?: object
 }>()
 
 const emit = defineEmits<{
-  load: [{ map: Map, sdk?: object }]
+  load: [{ map: MaplibreMap }]
 }>()
 
-/**
- * 
- */
-const loadMapbox = function() {
-  const mapboxSDK = mapboxgl
-
-  if (accessToken) {
-    mapboxSDK.accessToken = accessToken  
-  }
-
-  map = new mapboxSDK.Map(
+const loadMap = function() {
+  map = new MaplibreMap(
     Object.assign({}, options, {
       container: mapcontainer.value,
     },
@@ -63,15 +52,13 @@ const loadMapbox = function() {
     mapStyle && mapStyle !== '' ? { style: mapStyle } : {})
   )
 
-  // provide('map', map)
-
   map.on('load', () => {
     loaded.value = true
-    emit('load', { map, sdk: mapboxSDK } )
+    emit('load', { map })
   })
 }
 
-onMounted(loadMapbox)
+onMounted(loadMap)
 
 onUnmounted(() => {
   map.remove()
@@ -86,9 +73,9 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* Unscoped: overrides mapbox-gl.css which sets inline dimensions */
+/* Unscoped: overrides maplibre-gl.css which sets inline dimensions */
 .MapBox,
-.mapboxgl-map {
+.maplibregl-map {
   width: 100% !important;
   height: 100% !important;
 }

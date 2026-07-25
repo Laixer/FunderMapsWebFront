@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, shallowRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MapBox from '@/components/Common/Mapbox/MapBox.vue';
-import { type Map } from 'mapbox-gl'
+import { type Map } from 'maplibre-gl'
 
 import { addControls } from './controls';
 import { useMapCenterManagement } from './useMapCenterManagement'
@@ -26,7 +26,7 @@ const { isAvailable: hasUserMetaData, metadata: userMetadata } = storeToRefs(met
 
 const emit = defineEmits<{ ready: [] }>()
 
-// The Mapbox Map instance
+// The MapLibre Map instance
 const mapInstance = shallowRef<Map | null>(null)
 
 // Composables to handle map related functionality
@@ -47,13 +47,12 @@ const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeft
 
 /**
  * The startup options
- *  Set as ref because options.style is updated once the mapset is available
  *  Reference the last known position from the last visit if available
  */
 const options = computed(() => {
   const lastKnownPositioning = getLastKnownPositioning()
   return {
-    style: (import.meta.env.VITE_FUNDERMAPS_BASE_STYLE || 'mapbox://styles/laixer/clcz2iorf003414p22imzzhnk'),
+    style: (import.meta.env.VITE_FUNDERMAPS_BASE_STYLE || 'https://fundermaps-tileset.ams3.digitaloceanspaces.com/assets/styles/fundermaps-basemap.json'),
     center: getLatLngFromQueryString() || lastKnownPositioning.center || [4.897070, 52.377956], // [5.2913, 52.1326],
     zoom: lastKnownPositioning.zoom || 15,
     pitch: lastKnownPositioning.pitch || 30,

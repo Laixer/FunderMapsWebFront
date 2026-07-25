@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import mapboxgl from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 
 import { debouncedRef } from '@vueuse/core';
 import { vOnClickOutside } from '@vueuse/components'
@@ -180,7 +180,7 @@ const openBuilding = async function openBuilding(location: IGeoLocationData) {
   const { latitude, longitude } = location.building
   const lngLat =
     typeof latitude === 'number' && typeof longitude === 'number'
-      ? new mapboxgl.LngLat(longitude, latitude)
+      ? new LngLat(longitude, latitude)
       : null
 
   // Drop the marker up front — it tracks mapMarkerLatLon independently of the
@@ -269,7 +269,7 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
     // doesn't return building coordinates, so this is the only source of
     // truth for the selection's location.
     const [ Lng, Lat ] = (centroide_ll ?? '').replace('POINT(', '').replace(')', '').split(' ')
-    const lngLat = new mapboxgl.LngLat(parseFloat(Lng), parseFloat(Lat))
+    const lngLat = new LngLat(parseFloat(Lng), parseFloat(Lat))
     mapMarkerLatLon.value = lngLat
 
     // Await navigation so the URL writeback in mapCenterRouting (triggered

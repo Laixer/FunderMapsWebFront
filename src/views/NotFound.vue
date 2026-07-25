@@ -9,7 +9,7 @@ const router = useRouter()
 import MapBox from '@/components/Common/Mapbox/MapBox.vue';
 
 const options = {
-  style: 'mapbox://styles/mapbox/standard',
+  style: 'https://fundermaps-tileset.ams3.digitaloceanspaces.com/assets/styles/fundermaps-basemap.json',
   center: [4.503663, 52.530826],
   zoom: 15,
   pitch: 45,

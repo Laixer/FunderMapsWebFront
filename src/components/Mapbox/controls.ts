@@ -1,11 +1,11 @@
 
 
-import mapboxgl, { type Map } from "mapbox-gl"
+import { GeolocateControl, NavigationControl, type Map } from "maplibre-gl"
 import { PitchToggleControl } from "./PitchToggleControl"
 
 export const addControls = function addControls(map: Map) {
   map.addControl(
-    new mapboxgl.NavigationControl(),
+    new NavigationControl(),
     "bottom-right"
   )
 
@@ -15,12 +15,11 @@ export const addControls = function addControls(map: Map) {
   )
 
   map.addControl(
-    new mapboxgl.GeolocateControl({
+    new GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true,
       },
       trackUserLocation: true,
-      showUserHeading: true,
     }), "bottom-right"
   )
 }

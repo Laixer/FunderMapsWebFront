@@ -13,17 +13,17 @@ export const useMapboxControlNudge = function useMapboxControlNudge(
   const maybeNudge = function nudge(){
     try {
       const newOffset = isOpen.value ? `${offset}px` : '0px'
-      const bottom = document.getElementsByClassName(`mapboxgl-ctrl-bottom-${side}`)[0] as HTMLElement | undefined
+      const bottom = document.getElementsByClassName(`maplibregl-ctrl-bottom-${side}`)[0] as HTMLElement | undefined
       if (bottom) {
         bottom.style.setProperty(side, newOffset)
       }
 
-      const top = document.getElementsByClassName(`mapboxgl-ctrl-top-${side}`)[0] as HTMLElement | undefined
+      const top = document.getElementsByClassName(`maplibregl-ctrl-top-${side}`)[0] as HTMLElement | undefined
       if (top) {
         top.style.setProperty(side, newOffset)
       }
     } catch {
-      console.warn("Failed to nudge mapbox controls position")
+      console.warn("Failed to nudge map controls position")
     }
   }
 
