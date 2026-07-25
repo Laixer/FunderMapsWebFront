@@ -8,9 +8,17 @@
  */
 
 import { onMounted, onUnmounted, provide, readonly, ref } from 'vue'
-import { Map as MaplibreMap } from 'maplibre-gl'
+import { Map as MaplibreMap, setWorkerUrl } from 'maplibre-gl'
+// maplibre v6 loads its worker as a sibling module via a runtime-computed
+// URL, which the bundler can't see - the file never gets emitted and the
+// request falls through to the SPA catch-all (text/html -> dead worker,
+// blank map). ?worker&url makes Vite bundle the worker with its imports
+// and hands us the hashed URL to register instead.
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+setWorkerUrl(maplibreWorkerUrl)
 
 /**
  * The MapLibre instance

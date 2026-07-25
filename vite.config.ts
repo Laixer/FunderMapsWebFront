@@ -23,6 +23,15 @@ export default defineConfig(() => {
 
   return {
     plugins: [tailwindcss(), vue(), svgLoader()],
+    worker: {
+      rollupOptions: {
+        output: {
+          entryFileNames: `assets/[name]-[hash]-${buildId}.js`,
+          chunkFileNames: `assets/[name]-[hash]-${buildId}.js`,
+          assetFileNames: `assets/[name]-[hash]-${buildId}[extname]`,
+        },
+      },
+    },
     resolve: {
       alias: [
         { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
