@@ -1,0 +1,55 @@
+{
+  "id": "hotspot",
+  "type": "fill-extrusion",
+  "source": "buildings",
+  "source-layer": "buildings",
+  "filter": [
+      "all",
+      [
+          "any",
+          [
+              "match",
+              ["get", "drystand_risk"],
+              ["d", "e"],
+              true,
+              false
+          ],
+          [
+              "match",
+              ["get", "dewatering_depth_risk"],
+              ["d", "e"],
+              true,
+              false
+          ]
+      ],
+      ["!=", ["get", "address_count"], 0]
+  ],
+  "layout": {"visibility": "none"},
+  "paint": {
+      "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          ["get", "height"],
+          22,
+          ["get", "height"]
+      ],
+      "fill-extrusion-color": [
+          "case",
+          [
+              "any",
+              ["==", ["get", "drystand_risk"], "e"],
+              ["==", ["get", "dewatering_depth_risk"], "e"]
+          ],
+          "#ff5533",
+          [
+              "any",
+              ["==", ["get", "drystand_risk"], "d"],
+              ["==", ["get", "dewatering_depth_risk"], "d"]
+          ],
+          "#ffac33",
+          "hsla(0, 0%, 0%, 0)"
+      ]
+  }
+}
