@@ -35,7 +35,21 @@ export const useMapSources = function useMapSources(
   // (VITE_FUNDERMAPS_TILESERVER_URL) instead of the static tileset bucket.
   // These are added via their TileJSON endpoint, so tile URLs, zoom range
   // and bounds come from the server instead of being duplicated here.
-  const dynamicSources = ['buildings', 'building_cluster']
+  //
+  // This is now every source the layer configs reference, so the static
+  // branch below is only reachable as a rollback (drop a name from this
+  // list and it goes back to Spaces). Once the cutover has held, the
+  // static path and VITE_FUNDERMAPS_TILES_URL can be removed outright —
+  // deliberately kept for now so a rollback needs no redeploy of logic.
+  const dynamicSources = [
+    'buildings',
+    'building_cluster',
+    'facade_scan',
+    'incident',
+    'incident_district',
+    'incident_municipality',
+    'incident_neighborhood',
+  ]
 
   /**
    * TileJSON endpoint for a dynamic source. Accepts both a bare base
