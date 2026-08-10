@@ -16,16 +16,16 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@vue/devtools-api": "^8.1.5",
-    "@vueuse/components": "^14.3.0",
-    "@vueuse/core": "^14.3.0",
+    "@vue/devtools-api": "^8.2.1",
+    "@vueuse/components": "^14.4.0",
+    "@vueuse/core": "^14.4.0",
     "chart.js": "^4.5.1",
-    "chartjs-plugin-trendline": "^3.2.4",
-    "maplibre-gl": "^6.0.0",
+    "chartjs-plugin-trendline": "^3.2.9",
+    "maplibre-gl": "^6.2.0",
     "pinia": "^4.0.2",
-    "vue": "^3.5.39",
+    "vue": "^3.5.41",
     "vue-markdown-render": "^2.3.1",
-    "vue-router": "^5.1.0",
+    "vue-router": "^5.2.0",
     "zod": "^4.4.3"
   },
   "pnpm": {
