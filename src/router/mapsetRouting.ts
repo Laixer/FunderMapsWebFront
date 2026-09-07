@@ -12,9 +12,8 @@ export const useMapsetRouting = function useMapsetRouting() {
   const route = useRoute()
 
   const mapsetStore = useMapsetStore()
-  const { isAuthenticated } = storeToRefs(
-    useSessionStore()
-  )
+  const sessionStore = useSessionStore()
+  const { isAuthenticated } = storeToRefs(sessionStore)
 
   const {
     loadAvailableMapsets,
@@ -34,75 +33,89 @@ export const useMapsetRouting = function useMapsetRouting() {
 
 
   /**
-   * Handle changes in the mapsetId in the path
-   *  Load the mapset(s) if necessary
+   * Resolve which mapset to show for the current route.
+   *  Load the mapset(s) if necessary. Waits for the session probe first:
+   *  the cookie session is only known after /me has answered, and deciding
+   *  on isAuthenticated before that treats every user as a guest (no private
+   *  mapsets, "Geen kaarten gevonden", or a bounce to login).
    */
-  watch(
-    () => route.params.mapsetId,
-    async () => {
-      const publicMapsetStorageKey = 'last-viewed-public-mapset'
-      const privateMapsetStorageKey = 'last-viewed-private-mapset'
+  async function resolveMapsetForRoute() {
+    await sessionStore.ready
 
-      const mapsetId = route.params?.mapsetId
-        || localStorage.getItem(publicMapsetStorageKey)
-        || localStorage.getItem(privateMapsetStorageKey)
+    const publicMapsetStorageKey = 'last-viewed-public-mapset'
+    const privateMapsetStorageKey = 'last-viewed-private-mapset'
 
-      // Logged in, but no private mapsets available yet? Load them first
-      if (isAuthenticated.value && ! hasAvailablePrivateMapsets.value) {
-        await loadAvailableMapsets()
+    const mapsetId = route.params?.mapsetId
+      || localStorage.getItem(publicMapsetStorageKey)
+      || localStorage.getItem(privateMapsetStorageKey)
+
+    // Logged in, but no private mapsets available yet? Load them first
+    if (isAuthenticated.value && ! hasAvailablePrivateMapsets.value) {
+      await loadAvailableMapsets()
+    }
+
+    // A mapset Id was set in the url
+    if (mapsetId) {
+
+      // If not available yet, try to specifically load this mapset
+      if (! isMapsetAvailable(mapsetId as string)) {
+        await loadAvailableMapsetsById(mapsetId as string)
       }
 
-      // A mapset Id was set in the url
-      if (mapsetId) {
-
-        // If not available yet, try to specifically load this mapset
-        if (! isMapsetAvailable(mapsetId as string)) {
-          await loadAvailableMapsetsById(mapsetId as string)
-        }
-
-        // If (now) available, mark it as the last visited mapset and select it
-        if (isMapsetAvailable(mapsetId as string)) {
-          if (isPublicMapset(mapsetId as string)) {
-            localStorage.setItem(publicMapsetStorageKey, mapsetId.toString())
-          } else {
-            localStorage.setItem(privateMapsetStorageKey, mapsetId.toString())
-          }
-
-          selectMapsetById(mapsetId as string)
-          return
-        }
-      }
-
-      // Unable to load the requested mapset and not logged in
-      if (! isAuthenticated.value) {
-        // Try to redirect to the last visited public mapset
-        const lastPublic = localStorage.getItem(publicMapsetStorageKey)
-        if (lastPublic && mapsetId !== lastPublic) {
-          navigateToMapset(lastPublic)
+      // If (now) available, mark it as the last visited mapset and select it
+      if (isMapsetAvailable(mapsetId as string)) {
+        if (isPublicMapset(mapsetId as string)) {
+          localStorage.setItem(publicMapsetStorageKey, mapsetId.toString())
         } else {
-          router.push({ name: 'login' })
+          localStorage.setItem(privateMapsetStorageKey, mapsetId.toString())
         }
+
+        selectMapsetById(mapsetId as string)
         return
       }
+    }
 
-      // Logged in and no mapsets available at all
-      if (! hasAvailableMapsets.value) {
-        const lastPublic = localStorage.getItem(publicMapsetStorageKey)
-        if (lastPublic && mapsetId !== lastPublic) {
-          navigateToMapset(lastPublic)
-        }
-        return
+    // Unable to load the requested mapset and not logged in
+    if (! isAuthenticated.value) {
+      // Try to redirect to the last visited public mapset
+      const lastPublic = localStorage.getItem(publicMapsetStorageKey)
+      if (lastPublic && mapsetId !== lastPublic) {
+        navigateToMapset(lastPublic)
+      } else {
+        router.push({ name: 'login' })
       }
+      return
+    }
 
-      // Redirect to default or first available mapset
-      if (mapsetId !== preferredMapsetId.value) {
-        navigateToMapset(preferredMapsetId.value)
-      } else if (mapsetId !== firstMapsetId.value) {
-        navigateToMapset(firstMapsetId.value)
+    // Logged in and no mapsets available at all
+    if (! hasAvailableMapsets.value) {
+      const lastPublic = localStorage.getItem(publicMapsetStorageKey)
+      if (lastPublic && mapsetId !== lastPublic) {
+        navigateToMapset(lastPublic)
       }
-    },
-    { immediate: true }
-  )
+      return
+    }
+
+    // Redirect to default or first available mapset
+    if (mapsetId !== preferredMapsetId.value) {
+      navigateToMapset(preferredMapsetId.value)
+    } else if (mapsetId !== firstMapsetId.value) {
+      navigateToMapset(firstMapsetId.value)
+    }
+  }
+
+  /**
+   * Handle changes in the mapsetId in the path
+   */
+  watch(() => route.params.mapsetId, resolveMapsetForRoute, { immediate: true })
+
+  /**
+   * A session that appears after the first resolve (login without a page
+   * load) brings private mapsets with it.
+   */
+  watch(isAuthenticated, (value) => {
+    if (value) resolveMapsetForRoute()
+  })
 
 
   /**

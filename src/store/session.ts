@@ -23,6 +23,15 @@ export const useSessionStore = defineStore('session', () => {
 
   const isAuthenticated = computed<boolean>(() => currentUser.value !== null);
 
+  // The session is a cookie, so "who is signed in" is only known once the
+  // first /me probe has answered. Anything that must decide between guest
+  // and user (mapset routing) awaits `ready` instead of reading
+  // isAuthenticated too early -- which would treat every user as a guest for
+  // the first few hundred milliseconds of a page load.
+  const sessionChecked = ref(false);
+  let markReady: () => void = () => {};
+  const ready = new Promise<void>((resolve) => { markReady = resolve; });
+
   const organizations = computed(() => currentUser.value?.organizations ?? []);
 
   // The org the user is currently acting as. Defaults to the first org on
@@ -77,7 +86,12 @@ export const useSessionStore = defineStore('session', () => {
    * Restore the session on page load: ask /me. Guests stay guests.
    */
   const authenticate = async (): Promise<void> => {
-    await loadUser();
+    try {
+      await loadUser();
+    } finally {
+      sessionChecked.value = true;
+      markReady();
+    }
   };
 
   /**
@@ -108,6 +122,8 @@ export const useSessionStore = defineStore('session', () => {
     selectedOrgId,
     selectedOrg,
     isOrgAvailable,
+    sessionChecked,
+    ready,
     authenticate,
     logout,
   };
