@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router';
 import { useSessionStore } from '@/store/session';
 import { useMetadataStore } from '@/store/metadata'
 import { onAuthExpired } from '@/services/authEvents'
+import { loginRedirect } from '@/services/auth'
 
-const router = useRouter()
 const sessionStore = useSessionStore()
 const metadataStore = useMetadataStore()
 const { isAuthenticated } = storeToRefs(sessionStore)
 
-// Skip session restore on the OIDC callback — Callback.vue owns auth there
-// (it exchanges the code). Restoring here would, with no token yet, run
-// logout() → sessionStorage.clear(), wiping the PKCE state before the exchange
-// ("Invalid OIDC state").
-if (window.location.pathname !== '/auth/callback') {
-  sessionStore.authenticateFromAccessToken()
-}
+// Restore the session from the cookie on load. Guests simply stay guests.
+sessionStore.authenticate()
 
 // Refetch metadata whenever the user becomes authenticated. Covers three
 // cases: fresh login (false -> true), session restore on page load
@@ -37,11 +31,10 @@ watch(
 // /login so they can sign back in. UserMenu's manual logout doesn't go
 // through this path — it intentionally keeps the user on the current page
 // (public mapsets remain accessible).
-onAuthExpired(async () => {
-  await sessionStore.logout()
-  if (router.currentRoute.value.name !== 'login') {
-    router.push({ name: 'login' })
-  }
+onAuthExpired(() => {
+  // The session lapsed mid-use: go and sign in again; the auth app brings
+  // the user back to this page.
+  loginRedirect()
 })
 </script>
 

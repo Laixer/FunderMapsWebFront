@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
-import { loginRedirect } from '@/services/oidc'
+import { loginRedirect } from '@/services/auth'
 
-// Login lives in the auth app (auth.fundermaps.com). The router redirects to the
-// OIDC flow before this renders (the login route's beforeEnter); this is a
-// no-render fallback so the old login form never flashes during the hand-off.
+// Login lives at the auth app (auth.fundermaps.com). The route's beforeEnter
+// already navigates there; this is a no-render fallback.
 onMounted(() => {
-  loginRedirect()
+  loginRedirect(window.location.origin + '/')
 })
 </script>
 

@@ -1,5 +1,4 @@
 import { apiBasePath } from "@/config"
-import { getAuthHeader, hasToken } from "@/services/token"
 import { trimTrailingChar } from "@/utils/string"
 
 // Sync render against the API's Gotenberg-backed /api/pdf/:id endpoint. The
@@ -10,12 +9,10 @@ import { trimTrailingChar } from "@/utils/string"
 // Returned URL is owned by the caller — `URL.revokeObjectURL` it when the
 // view is torn down to avoid leaking blob memory.
 export const getPdf = async (buildingId: string): Promise<string> => {
-  if (!hasToken()) throw new Error("Missing access token")
-
   const url = `${trimTrailingChar(apiBasePath, "/")}/api/pdf/${encodeURIComponent(buildingId)}`
   const response = await fetch(url, {
     method: "POST",
-    headers: { ...getAuthHeader() },
+    credentials: "include",
   })
   if (!response.ok) throw new Error(`PDF generation failed (HTTP ${response.status})`)
 

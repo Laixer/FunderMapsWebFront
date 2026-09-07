@@ -3,14 +3,14 @@ import { defineStore } from 'pinia';
 
 import type { IUser } from '@/datastructures/interfaces';
 import api from '@/services/api';
-import { hasToken, removeTokens, storeAccessToken } from '@/services/token';
+import { APITokenError } from '@/services/apiClient';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { useMetadataStore } from './metadata';
 
 // Build a display name from /me's given_name + family_name; fall back to
-// email, then "Anoniem". Better Auth tokens are opaque so the username
-// can't be decoded from the bearer — we always have to ask the server.
+// email, then "Anoniem". The session is a cookie, so who is signed in is
+// always a question for the server.
 function displayName(profile: { givenName?: string; lastName?: string; email?: string } | null): string {
   if (!profile) return 'Anoniem';
   const full = `${profile.givenName ?? ''} ${profile.lastName ?? ''}`.trim();
@@ -37,15 +37,15 @@ export const useSessionStore = defineStore('session', () => {
   const isOrgAvailable = (id: string | null | undefined): boolean =>
     !!id && organizations.value.some(o => o.id === id);
 
-  // Tracks the in-flight /me request so logout (or a fresh login as someone
-  // else) can cancel it. Without this, a late /me response could land its
-  // profile under whatever session is now active — the hasToken() guard
-  // catches the logout case but not user-A-then-user-B re-login.
+  // Tracks the in-flight /me request so logout can cancel it. Without this,
+  // a late /me response could land its profile under whatever session is
+  // now active.
   let inflightController: AbortController | null = null;
 
   /**
-   * Fetch the user profile + organizations from /api/user/me. The request
-   * is bound to a fresh AbortController so logout/re-login can cancel it.
+   * Fetch the user profile + organizations from /api/user/me, using the
+   * session cookie. A 401 means "guest" and leaves the store empty; that is
+   * the normal case for most visitors of the public map.
    */
   const loadUser = async (): Promise<void> => {
     inflightController?.abort();
@@ -53,8 +53,8 @@ export const useSessionStore = defineStore('session', () => {
     inflightController = controller;
 
     try {
-      const { profile, organizations: orgs } = await api.userprofile.getMe(controller.signal);
-      if (controller.signal.aborted || !hasToken()) return;
+      const { profile, organizations: orgs } = await api.userprofile.getMe(controller.signal, { quiet401: true });
+      if (controller.signal.aborted) return;
       currentUser.value = {
         name: displayName(profile),
         email: profile.email,
@@ -65,45 +65,24 @@ export const useSessionStore = defineStore('session', () => {
       }
     } catch (e) {
       if (e instanceof DOMException && e.name === 'AbortError') return;
+      if (e instanceof APITokenError) return; // guest
       console.error('Failed to load user profile:', e);
-      if (hasToken()) logout();
+      currentUser.value = null;
     } finally {
       if (inflightController === controller) inflightController = null;
     }
   };
 
   /**
-   * Try to restore the session from a stored access token. The token is
-   * opaque — we can't validate it client-side, so we ask /me. To avoid a
-   * race with route guards (which redirect to /login when isAuthenticated
-   * is false), set currentUser optimistically based on token presence and
-   * then refine when /me responds. If /me rejects, the token was bad and
-   * we log out.
+   * Restore the session on page load: ask /me. Guests stay guests.
    */
-  const authenticateFromAccessToken = async (): Promise<void> => {
-    if (!hasToken()) {
-      logout();
-      return;
-    }
-    currentUser.value = { name: 'Anoniem', email: '', organizations: [] };
+  const authenticate = async (): Promise<void> => {
     await loadUser();
   };
 
-  const login = async (email: string, password: string): Promise<void> => {
-    try {
-      const response = await api.auth.login(email, password);
-      storeAccessToken(response.token);
-      await loadUser();
-    } catch (e) {
-      console.error('Login failed:', e);
-      logout();
-      throw e;
-    }
-  };
-
   /**
-   * Log out: invalidate server session (best-effort), clear token + user
-   * state, and clear dependent stores.
+   * Log out: invalidate the server session (best-effort, clears the cookie),
+   * clear user state, and clear dependent stores.
    */
   const logout = async (): Promise<void> => {
     // Cancel any /me request still in flight before tearing down state.
@@ -114,7 +93,6 @@ export const useSessionStore = defineStore('session', () => {
     // expired session) we still want to log out client-side.
     try { await api.auth.signOut(); } catch { /* swallow */ }
 
-    removeTokens();
     currentUser.value = null;
     selectedOrgId.value = null;
 
@@ -130,8 +108,7 @@ export const useSessionStore = defineStore('session', () => {
     selectedOrgId,
     selectedOrg,
     isOrgAvailable,
-    authenticateFromAccessToken,
-    login,
+    authenticate,
     logout,
   };
 });
