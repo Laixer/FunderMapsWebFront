@@ -1,7 +1,5 @@
 import { apiBasePath } from "@/config"
 import { trimLeadingChar, trimTrailingChar } from "@/utils/string"
-import { getAuthHeader, hasToken, removeTokens } from '@/services/token'
-import { refresh } from '@/services/oidc'
 import { emitAuthExpired } from '@/services/authEvents'
 
 type Method = 'GET' | 'POST' | 'PUT'
@@ -11,30 +9,27 @@ interface CallOptions {
   method?: Method
   body?: unknown
   requireAuth?: boolean
+  /**
+   * A 401 is an answer, not a failure: used by the session probe on page
+   * load, where "no session" simply means the visitor is a guest.
+   */
+  quiet401?: boolean
   signal?: AbortSignal
 }
 
-const makeCall = async (opts: CallOptions, _retried = false): Promise<unknown> => {
-  const { endpoint, method = 'GET', body, requireAuth = true, signal } = opts
+const makeCall = async (opts: CallOptions): Promise<unknown> => {
+  const { endpoint, method = 'GET', body, requireAuth = true, quiet401 = false, signal } = opts
   let fetchOptions: RequestInit = {}
   let responseBody: unknown = null
 
   try {
-    // Pre-flight: throw without emitting auth-expired. Callers should
-    // guard on isAuthenticated before making authenticated calls; this
-    // is the safety net. Emitting here would cycle if a logout flow
-    // makes its own (now-tokenless) calls.
-    if (requireAuth && !hasToken()) {
-      throw new APITokenError('Missing access token')
-    }
-
+    // The Better Auth session cookie is the credential; the browser sends it
+    // with credentials: 'include'. The server decides (401 handled below).
     fetchOptions = {
       method,
       signal,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(requireAuth ? getAuthHeader() : {}),
-      },
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       ...(body !== undefined && { body: JSON.stringify(body) }),
     }
 
@@ -51,16 +46,11 @@ const makeCall = async (opts: CallOptions, _retried = false): Promise<unknown> =
     }
 
     if (!response.ok) {
-      // 401 — the access token likely expired. Try a single silent refresh and
-      // retry, so the user (and the map) isn't bounced to login. Only if the
-      // refresh fails do we drop the session and signal the shell.
+      // 401 — no live session. Signal the shell (which sends the user to log
+      // in again) unless the caller said a 401 is a normal answer.
       if (requireAuth && response.status === 401) {
-        if (!_retried && (await refresh())) {
-          return makeCall(opts, true)
-        }
-        removeTokens()
-        emitAuthExpired()
-        throw new APITokenError('Server rejected token (401)')
+        if (!quiet401) emitAuthExpired()
+        throw new APITokenError('Not signed in (401)')
       }
       throw new APIErrorResponse(response.status, responseBody)
     }
@@ -128,7 +118,7 @@ export class APICallError extends APIClientError {
 // and silently dropping a body is a footgun.
 // ----------------------------------------------------------------------------
 
-export const get = (opts: { endpoint: string; requireAuth?: boolean; signal?: AbortSignal }) =>
+export const get = (opts: { endpoint: string; requireAuth?: boolean; quiet401?: boolean; signal?: AbortSignal }) =>
   makeCall({ ...opts, method: 'GET' })
 
 export const post = (opts: { endpoint: string; body?: unknown; requireAuth?: boolean; signal?: AbortSignal }) =>

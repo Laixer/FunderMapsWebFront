@@ -7,7 +7,7 @@ import ExitIcon from '@assets/svg/icons/exit.svg'
 
 import { useMapsetStore } from '@/store/mapsets'
 import { useSessionStore } from '@/store/session';
-import { logoutRedirect } from '@/services/oidc'
+import { logoutRedirect } from '@/services/auth'
 
 
 const { noMapsetsFound } = storeToRefs( useMapsetStore() )
@@ -20,7 +20,7 @@ const { isAuthenticated } = storeToRefs( useSessionStore() )
  * Matches UserMenu's logout.
  */
 const handleLogout = function() {
-  logoutRedirect()
+  void logoutRedirect()
 }
 
 </script>
