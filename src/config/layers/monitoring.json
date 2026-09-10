@@ -3,6 +3,7 @@
   "type": "fill-extrusion",
   "source": "buildings",
   "source-layer": "buildings",
+  "filter": ["==", ["get", "monitoring"], true],
   "layout": {"visibility": "none"},
   "paint": {
       "fill-extrusion-color": "#ce007c",
