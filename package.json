@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@vue/devtools-api": "^8.2.1",
-    "@vueuse/components": "^14.4.0",
+    "@vueuse/components": "^15.0.0",
     "@vueuse/core": "^15.0.0",
     "chart.js": "^4.5.1",
     "chartjs-plugin-trendline": "^3.2.13",
