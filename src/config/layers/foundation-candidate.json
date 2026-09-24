@@ -1,0 +1,21 @@
+{
+  "id": "foundation-candidate",
+  "type": "fill-extrusion",
+  "source": "foundation_candidate",
+  "source-layer": "foundation_candidate",
+  "layout": {"visibility": "none"},
+  "paint": {
+    "fill-extrusion-height": ["get", "height"],
+    "fill-extrusion-color": [
+      "match",
+      ["get", "family"],
+      "wood",
+      ["match", ["get", "evidence"], "none", "#c9a79f", "#8c3a28"],
+      "concrete",
+      ["match", ["get", "evidence"], "none", "#b9babc", "#6a6c70"],
+      "no_pile",
+      ["match", ["get", "evidence"], "none", "#e89aa2", "#ce0015"],
+      "hsl(0, 0%, 100%)"
+    ]
+  }
+}
