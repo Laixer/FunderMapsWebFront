@@ -8,13 +8,15 @@
     "fill-extrusion-height": ["get", "height"],
     "fill-extrusion-color": [
       "match",
-      ["get", "family"],
+      ["get", "foundation_type"],
       "wood",
-      ["match", ["get", "evidence"], "none", "#c9a79f", "#8c3a28"],
+      ["match", ["get", "grade"], "zwak", "#c9a79f", "#8c3a28"],
+      "wood_charger",
+      ["match", ["get", "grade"], "zwak", "#cdc4a0", "#8f7a2e"],
       "concrete",
-      ["match", ["get", "evidence"], "none", "#b9babc", "#6a6c70"],
+      ["match", ["get", "grade"], "zwak", "#b9babc", "#6a6c70"],
       "no_pile",
-      ["match", ["get", "evidence"], "none", "#e89aa2", "#ce0015"],
+      ["match", ["get", "grade"], "zwak", "#e89aa2", "#ce0015"],
       "hsl(0, 0%, 100%)"
     ]
   }
