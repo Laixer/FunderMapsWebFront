@@ -1,0 +1,23 @@
+{
+  "id": "foundation-candidate",
+  "type": "fill-extrusion",
+  "source": "foundation_candidate",
+  "source-layer": "foundation_candidate",
+  "layout": {"visibility": "none"},
+  "paint": {
+    "fill-extrusion-height": ["get", "height"],
+    "fill-extrusion-color": [
+      "match",
+      ["get", "foundation_type"],
+      "wood",
+      ["match", ["get", "grade"], "zwak", "#c9a79f", "#8c3a28"],
+      "wood_charger",
+      ["match", ["get", "grade"], "zwak", "#cdc4a0", "#8f7a2e"],
+      "concrete",
+      ["match", ["get", "grade"], "zwak", "#b9babc", "#6a6c70"],
+      "no_pile",
+      ["match", ["get", "grade"], "zwak", "#e89aa2", "#ce0015"],
+      "hsl(0, 0%, 100%)"
+    ]
+  }
+}
