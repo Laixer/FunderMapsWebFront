@@ -204,7 +204,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
 
 <template>
   <Panel 
-    title="Herstel informatie" 
+    title="Herstelinformatie" 
     @close="emit('close')">
 
     <Transition>
@@ -213,7 +213,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
 
     <BackLink 
       @click.prevent="emit('back')"
-      label="Terug naar Pand informatie" />
+      label="Terug naar pandinformatie" />
     
     <section
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
@@ -249,7 +249,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
       </div>
 
       <div class="space-y-3">
-        <h6 class="font-bold leading-none">Rapportage informatie</h6>
+        <h6 class="font-bold leading-none">Rapportage-informatie</h6>
         <dl class="space-y-3">
           <div 
             v-for="field in reportFieldsWithData" 

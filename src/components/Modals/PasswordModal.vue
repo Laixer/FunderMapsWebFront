@@ -126,7 +126,7 @@ const handleClose = function handleClose() {
 
         <Input
           id="current-password"
-          label="Huidige wachtwoord"
+          label="Huidig wachtwoord"
           :type="showPassword ? 'text' : 'password'"
           v-model="formData.oldPassword"
           placeholder="Voer je huidige wachtwoord in"
@@ -137,7 +137,7 @@ const handleClose = function handleClose() {
           required>
 
           <template #before>
-            <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+            <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
@@ -165,7 +165,7 @@ const handleClose = function handleClose() {
           required>
 
           <template #before>
-            <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+            <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
@@ -192,7 +192,7 @@ const handleClose = function handleClose() {
           required>
 
           <template #before>
-            <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+            <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"

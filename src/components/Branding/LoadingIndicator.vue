@@ -5,7 +5,7 @@ withDefaults(defineProps<{
   hideLabel?: boolean
   small?: boolean
 }>(), {
-  label: 'Loading...',
+  label: 'Laden...',
 })
 
 </script>

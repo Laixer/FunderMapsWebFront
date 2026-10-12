@@ -39,8 +39,8 @@ export const analysisFieldLabels = <Record<string, string>> {
   soil: "Type ondergrond",
   foundationType: "Type fundering",
   foundationTypeReliability: "Betrouwbaarheid funderingstype",
-  restorationCosts: "Indicatieve funderingsherstel kosten",
-  velocity: "Pandzakkingsnelheid (InSAR)",
+  restorationCosts: "Indicatieve funderingsherstelkosten",
+  velocity: "Pandzakkingssnelheid (InSAR)",
   drystandRisk: "Droogstandrisico",
   drystand: "Droogstand",
   drystandReliability: "Betrouwbaarheid droogstandsrisico",
@@ -58,7 +58,7 @@ export const recoveryFieldLabels = <Record<string, string>> {
   id: "Onderzoeksnummer",
   type: "Type bewijslast",
   note: "Opmerking",
-  auditStatus: "Controle status",
+  auditStatus: "Controlestatus",
 }
 
 export const AttributionControlFieldLabels = <Record<string, string>> {
@@ -114,7 +114,7 @@ export const inquirySampleFieldLabels = <Record<string, string>> {
   building: 'Pand ID',
 
   foundationType: "Type fundering",
-  recoveryAdvised: "Funderingsherstel advies",
+  recoveryAdvised: "Funderingshersteladvies",
   
   note: "Opmerking",
   builtYear: "Bouwjaar volgens onderzoek",
@@ -128,12 +128,12 @@ export const inquirySampleFieldLabels = <Record<string, string>> {
   damageCause: "Oorzaak funderingsschade",
   overallQuality: "Totale funderingskwaliteit",
   damageCharacteristics: "Geconstateerde schade",
-  pileHeadLevel: "Paalkop niveau",
-  pileDiameterTop: "Paalkop diameter",
-  pileDistanceLength: "Hart-op-hart afstand",
-  pileTipLevel: "Paalpunt niveau",
-  pileDiameterBottom: "Paalpunt diameter",
-  concreteChargerLength: "Oplanger lengte",
+  pileHeadLevel: "Paalkopniveau",
+  pileDiameterTop: "Paalkopdiameter",
+  pileDistanceLength: "Hart-op-hartafstand",
+  pileTipLevel: "Paalpuntniveau",
+  pileDiameterBottom: "Paalpuntdiameter",
+  concreteChargerLength: "Oplangerlengte",
   woodType: "Houtsoort",
   woodPenetrationDepth: "Inslagdiepte",
   woodQuality: "Houtkwaliteit paal",
@@ -150,7 +150,7 @@ export const inquirySampleFieldLabels = <Record<string, string>> {
   masonLevel: "Niveau onderkant metselwerk",
   masonQuality: "Kwaliteit metselwerk",
   constructionPile: "Constructie paal",
-  settlementSpeed: "Pandzakkingsnelheid gemeten",
+  settlementSpeed: "Pandzakkingssnelheid gemeten",
   deformedFacade: "Gevel vervormd",
   skewedParallelFacade: "Lintvoegmeting beoordeling",
   skewedParallel: "Lintvoegmeting",
@@ -203,17 +203,17 @@ export const incidentFieldLabels = <Record<string, string>> {
   owner: "Eigenaar",
   foundationRecovery: "Herstel uitgevoerd?",
   neighborRecovery: "Herstel uitgevoerd bij buren?",
-  foundationDamageCause: "Vermoedelijke schade oorzaak",
+  foundationDamageCause: "Vermoedelijke schadeoorzaak",
   note: "Opmerking",
   name: "Naam melder",
   phoneNumber: "Telefoon melder",
   email: "Email melder",
-  foundationDamageCharacteristics: "Schade oorzaken",
+  foundationDamageCharacteristics: "Schadeoorzaken",
   environmentDamageCharacteristics: "Omgevingsaspecten",
-  auditStatus: "Controle status",
+  auditStatus: "Controlestatus",
   documentFile: "Link naar documenten",
   internalNote: "Interne opmerking",
-  questionType: "Vraag type"
+  questionType: "Vraagtype"
 }
 
 /**

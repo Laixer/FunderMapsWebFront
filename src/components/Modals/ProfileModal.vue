@@ -247,7 +247,7 @@ const handleClose = function handleClose() {
     v-show="isProfileModalOpen"
     :active="isProfileModalOpen"
     variant="narrow"
-    title="Profiel instellingen"
+    title="Profielinstellingen"
     class="ProfileModal"
     @close="handleClose">
 
@@ -290,7 +290,7 @@ const handleClose = function handleClose() {
           v-model="profileData.email"
           placeholder="Voer je e-mail in"
           autocomplete="email"
-          instruction="Dit e-mail adres kan niet gewijzigd worden"
+          instruction="Dit e-mailadres kan niet gewijzigd worden"
           :validationStatus="getStatus('email')"
           :validationMessage="getError('email')"
           :disabled="true" />

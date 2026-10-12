@@ -369,7 +369,7 @@ const handleClear = function handleClear() {
               @close="handleClose" />
           </div>
           <div class="dropdown__content">
-            <ol id="search-suggestions" role="listbox" aria-label="Adres suggesties">
+            <ol id="search-suggestions" role="listbox" aria-label="Adressuggesties">
               <li
                 v-for="(suggestion, index) in suggestions" :key="suggestion.id"
                 :id="`suggestion-${index}`"

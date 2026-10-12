@@ -59,9 +59,9 @@ const title = computed<string|null>(() => {
 
   switch(activeMapsetId.value) {
     case '0afd6eef-b056-4c33-bf61-883864fdfe98': // Rapportage
-      return 'Rapportage informatie'
+      return 'Rapportage-informatie'
     case '79686171-6564-463f-8046-41a9a9ead55f': // Risico
-      return 'Risico informatie' 
+      return 'Risico-informatie' 
     case 'c81d4c1b-cc11-4f80-b324-9ab7e6cefd99': // Fundering
       return 'Funderingsinformatie'
     case '8de9bc42-829c-4df2-b75f-c8c392e18e76': // pand
@@ -69,7 +69,7 @@ const title = computed<string|null>(() => {
     case '42ddf102-a8bd-4076-9336-27781eb069c8': // Gevelscan
       return null // no title
     case '0f3080d3-1ecc-4d05-a55a-62ef3c4c74b7': // Incidenten
-      return 'Incident informatie'
+      return 'Incidentinformatie'
   }
 
   return null

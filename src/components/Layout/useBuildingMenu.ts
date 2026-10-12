@@ -58,11 +58,11 @@ export function useBuildingMenu() {
 
   const reportMenu = computed<ReportMenuItem[]>(() => [
     { slug: 'inquiry', panel: 'InquiryPanel',
-      name: 'Bekijk onderzoeks informatie',
+      name: 'Bekijk onderzoeksinformatie',
       loading: !!(buildingId.value && !inquiriesStore.hasBeenRetrieved(buildingId.value)),
       disabled: !!(buildingId.value && !inquiriesStore.hasReports(buildingId.value)) },
     { slug: 'recovery', panel: 'RecoveryPanel',
-      name: 'Bekijk herstel informatie',
+      name: 'Bekijk herstelinformatie',
       loading: !!(buildingId.value && !recoveryStore.hasBeenRetrieved(buildingId.value)),
       disabled: !!(buildingId.value && !recoveryStore.hasReports(buildingId.value)) },
     { slug: 'incidents', panel: 'IncidentsPanel',

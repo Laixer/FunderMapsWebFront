@@ -154,7 +154,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
         </template>
 
         <BackLink 
-          label="Naar kaart selectie" 
+          label="Naar kaartselectie" 
           @click.prevent="handleCloseMapsetLegend" />
         
         <section class="space-y-2">

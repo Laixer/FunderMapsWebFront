@@ -192,7 +192,7 @@ watch(
 <template>
   <InformationModal 
     v-if="isSamplePanelOpen"
-    title="Onderzoeks informatie" 
+    title="Onderzoeksinformatie" 
     class="InquirySampleModal"
     @close="handleClose">
 

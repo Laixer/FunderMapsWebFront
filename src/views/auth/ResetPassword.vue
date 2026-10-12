@@ -95,7 +95,7 @@ const handleSubmit = async function handleSubmit() {
 
       <div v-if="resetFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
         Het wijzigen van het wachtwoord is niet gelukt.
-        Mogelijk is de eenmalige reset sleutel reeds verlopen.
+        Mogelijk is de eenmalige resetsleutel reeds verlopen.
         In dat geval moet je <router-link :to="{ name: 'forgotten' }">een nieuw verzoek indienen om het wachtwoord te
           wijzigen</router-link>.
       </div>
@@ -110,7 +110,7 @@ const handleSubmit = async function handleSubmit() {
           :validationStatus="getStatus('password')" :validationMessage="getError('password')" :tabindex="2" required>
 
         <template #before>
-          <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+          <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
             <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
             <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
           </button>
@@ -123,7 +123,7 @@ const handleSubmit = async function handleSubmit() {
           :validationStatus="getStatus('passwordConfirm')" :validationMessage="getError('passwordConfirm')" required>
 
         <template #before>
-          <button type="button" :aria-pressed="showPassword" aria-label="Toggle wachtwoord zichtbaarheid" @click="showPassword = !showPassword">
+          <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
             <LockedIcon v-show="!showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
             <UnlockedIcon v-show="showPassword" class="aspect-square w-4 text-grey-700" aria-hidden="true" />
           </button>
@@ -141,7 +141,7 @@ const handleSubmit = async function handleSubmit() {
       <template v-slot:footer>
         <router-link class="flex gap-3" :to="{ name: 'login' }">
           <BackArrowIcon />
-          <span>Terug naar de inlog pagina</span>
+          <span>Terug naar de inlogpagina</span>
         </router-link>
       </template>
     </Card>
