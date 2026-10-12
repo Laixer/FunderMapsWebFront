@@ -21,7 +21,7 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 
 - **`router/`** - Vue Router config. Routes: `/login`, `/forgotten`, `/reset/:resetKey?`, `/` (home), `/map/:mapsetId`, `/map/:mapsetId/building/:buildingId(/:panel)`
 - **`store/`** - Pinia stores. Core: `session` (auth), `main` (UI state/modals), `buildings` (selected building), `mapsets` (available mapsets), `layers` (visibility, persisted to sessionStorage), `filters` (ownership), `metadata` (user prefs). Building-specific substores in `store/building/` (analysis, geolocations, incidents, inquiries, recovery, statistics, subsidence)
-- **`services/`** - API layer. `apiClient.ts` is the base HTTP client; it attaches the opaque OIDC bearer, performs a single silent refresh on `401`, and redirects to login when that fails. OIDC PKCE flow in `oidc.ts`, token storage in `token.ts`. Endpoint modules in `services/api/` (auth, building, mapset, metadata, pdf, userprofile)
+- **`services/`** - API layer. `apiClient.ts` is the base HTTP client; it sends the session cookie (`credentials: 'include'`) and, on a `401`, signals the shell through `authEvents.ts`. `auth.ts` holds the redirects to the auth app. Nothing is stored in the browser. Endpoint modules in `services/api/` (auth, building, mapset, metadata, pdf, userprofile)
 - **`components/Mapbox/`** - Map integration. `Map.vue` is the main map component. Composables (`use*.ts`) handle layers, sources, events, markers, clustering, geo-fencing, ownership filters, position tracking, and administrative boundaries
 - **`config/layers/`** - JSON layer definitions for map styling (MapLibre style spec) (30+ files for foundation types, incidents, risk assessments, etc.)
 - **`datastructures/`** - TypeScript interfaces, enums, and data classes (Location, Controls, analysis/report types)
@@ -44,7 +44,7 @@ Required `VITE_` prefixed env vars (no `.env` file in repo):
 
 ### Authentication Flow
 
-**OIDC** authorization-code + PKCE (`client_id=webfront`), implemented in `services/oidc.ts`. The login form lives in the auth app (auth.fundermaps.com); `/login` redirects there and the callback exchanges the code for tokens. Tokens are **opaque** (not JWTs — see `services/token.ts`), stored in localStorage; there is no client-side decoding. A `refresh` token (via `offline_access`) drives a single silent refresh on `401` inside `apiClient.ts` — if that fails the session drops and the shell redirects to login. The `session` store handles `/me`, role flags, logout, and `logoutRedirect()` (RP-initiated end-session). The `/forgotten` and `/reset` routes still cover the local password-reset flow.
+The session is the **Better Auth cookie on the API origin**, shared by every `*.fundermaps.com` app; there is no token and nothing in localStorage. (Until October 2026 this was OIDC with a bearer token; `services/oidc.ts` and `services/token.ts` are gone.) The map is public: a visitor without a session is a guest, not an error. `services/auth.ts` has `loginRedirect()` (to `${VITE_AUTH_URL}/login?redirect=…`, default auth.fundermaps.com, which returns the user once the cookie is set) and `logoutRedirect()` (posts `/api/auth/sign-out`, then reloads the map as a guest). A `401` on a call that needs a session makes `apiClient.ts` emit `authExpired`, and the shell sends the user to log in again. The `session` store handles `/me` and the role flags. The `/forgotten` and `/reset` routes still cover the local password-reset flow.
 
 ### Map Layer System
 
