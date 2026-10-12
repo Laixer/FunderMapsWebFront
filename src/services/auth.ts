@@ -21,6 +21,14 @@ export function loginRedirect(returnTo: string = window.location.href): void {
   window.location.assign(`${AUTH}/login?redirect=${encodeURIComponent(returnTo)}`)
 }
 
+/**
+ * Full-page navigation to the auth app's "wachtwoord vergeten" page. The map
+ * had its own password pages once; old bookmarks and links to them end up here.
+ */
+export function forgotPasswordRedirect(): void {
+  window.location.replace(`${AUTH}/forgot-password`)
+}
+
 /** End the session server-side (clears the cookie) and reload the map as a guest. */
 export async function logoutRedirect(): Promise<void> {
   try {
