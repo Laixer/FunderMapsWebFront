@@ -119,7 +119,7 @@ const sections = computed<Section[]>(() => {
   if (decades.length > 0) {
     out.push({
       key: 'constructionYearDistribution',
-      title: 'Aantal bouwjaren per decennia in de buurt',
+      title: 'Aantal bouwjaren per decennium in de buurt',
       component: BarChart,
       labels: decades.map((d: IConstructionYearPair) =>
         `${d.decade.yearFrom.substring(0, 4)}-${d.decade.yearTo.substring(0, 4)}`),

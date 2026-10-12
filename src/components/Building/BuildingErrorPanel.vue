@@ -6,7 +6,7 @@ defineEmits<{ close: [] }>()
 </script>
 
 <template>
-  <Panel title="Pand Informatie" @close="$emit('close')">
+  <Panel title="Pandinformatie" @close="$emit('close')">
     <div class="flex flex-col items-center gap-4 py-8 text-center">
       <AlertIcon class="w-12 text-grey-400" aria-hidden="true" />
       <div class="space-y-1">

@@ -34,7 +34,7 @@ const handleLogout = function() {
     <p>
       Er zijn geen kaarten waar u toegang toe heeft.
       <br />
-      Neem contact op met de support afdeling voor meer informatie.
+      Neem contact op met de supportafdeling voor meer informatie.
     </p>
 
     <template v-slot:footer>

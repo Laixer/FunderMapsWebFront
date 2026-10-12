@@ -46,21 +46,21 @@ const handleSubmit = async function handleSubmit() {
       <template v-slot:footer>
         <router-link class="flex gap-3" :to="{ name: 'login' }">
           <BackArrowIcon />
-          <span>Terug naar de inlog pagina</span>
+          <span>Terug naar de inlogpagina</span>
         </router-link>
       </template>
     </Card>
     <Card v-else title="Wachtwoord vergeten" shadow rounded wide>
 
       <p>
-        Indien het e-mail adres "{{ email }}" bekend is, ontvang je binnen enkele minuten een e-mail.
+        Indien het e-mailadres "{{ email }}" bekend is, ontvang je binnen enkele minuten een e-mail.
         Daarin staat de link waarmee je een nieuw wachtwoord in kan stellen.
       </p>
 
       <template v-slot:footer>
         <router-link class="flex gap-3" :to="{ name: 'login' }">
           <BackArrowIcon />
-          <span>Terug naar de inlog pagina</span>
+          <span>Terug naar de inlogpagina</span>
         </router-link>
       </template>
     </Card>

@@ -76,7 +76,7 @@ const handleCloseSideBar = (): void => {
       <Panel
         v-else
         @close="handleCloseSideBar"
-        title="Pand Informatie">
+        title="Pandinformatie">
 
         <SkeletonLoader v-if="isLoadingCoreData" />
 

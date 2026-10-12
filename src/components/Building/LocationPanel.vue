@@ -92,14 +92,14 @@ const fieldsWithData = computed(() => {
 
     <BackLink 
       @click.prevent="emit('back')"
-      label="Terug naar Pand informatie" />
+      label="Terug naar pandinformatie" />
     
     <section
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
       :class="{ 'rounded-b-lg' : !! pdokLink }"
     >
       <div class="space-y-3">
-        <h6 class="font-bold leading-none">Locatie informatie</h6>
+        <h6 class="font-bold leading-none">Locatie-informatie</h6>
         <dl class="space-y-3">
           <div 
             v-for="field in fieldsWithData" 
