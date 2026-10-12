@@ -155,7 +155,7 @@ export const inquirySampleFieldLabels = <Record<string, string>> {
   skewedParallelFacade: "Lintvoegmeting beoordeling",
   skewedParallel: "Lintvoegmeting",
   thresholdFrontLevel: "Drempel voorgevel niveau",
-  skewedWindowFrame: "Scheve deur- en/of raamkozijn",
+  skewedWindowFrame: "Scheve deur- en/of raamkozijnen",
   thresholdUpdownSkewed: "Ongelijkmatige zakking?",
   skewedPerpendicularFacade: "Loodmeting beoordeling",
   skewedPerpendicular: "Loodmeting",
