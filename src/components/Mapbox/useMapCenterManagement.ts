@@ -1,6 +1,7 @@
 import { LngLat, type LngLatLike, type Map } from "maplibre-gl"
 import { storeToRefs } from "pinia"
 import { computed, nextTick, watch } from "vue"
+import { useRoute } from "vue-router"
 
 import { useMainStore } from '@/store/main';
 import { useBuildingStore } from '@/store/buildings';
@@ -14,7 +15,7 @@ import { IGeoLocationData } from "@/datastructures/interfaces";
  */
 export const useMapCenterManagement = function useMapCenterManagement() {
 
-  const { mapCenterLatLon } = storeToRefs( useMainStore() )
+  const { mapCenterLatLon, mapMarkerLatLon } = storeToRefs( useMainStore() )
   const { buildingId } = storeToRefs(useBuildingStore())
   const locationStore = useGeoLocationsStore()
   const { activeMapset } = storeToRefs( useMapsetStore() )
@@ -25,6 +26,17 @@ export const useMapCenterManagement = function useMapCenterManagement() {
 
   // A flag we use to track when the watcher should ignore center changes
   let ignoreCenterChange: boolean = false
+
+  // Whether the page was opened on a pand: a shared link, a bookmark, a link
+  // from the Studio. Read once, during setup.
+  const route = useRoute()
+  const openedOnBuilding = typeof route.params.buildingId === 'string' && route.params.buildingId !== ''
+
+  // That pand still has to be put on the map (see showLinkedBuilding)
+  let linkedBuildingPending = openedOnBuilding
+
+  // The first mapset to load must not pull the map away from that pand
+  let firstMapsetSeen = false
 
   const locationData = computed(() => {
     if (! buildingId.value) return null
@@ -47,22 +59,39 @@ export const useMapCenterManagement = function useMapCenterManagement() {
     })
   }
 
-  const flyToBuildingLocation = function flyToBuildingLocation(location: IGeoLocationData) {
-    if (location.residence && mapInstance) {
-      mapCenterLatLon.value = new LngLat(
-        location.residence.longitude, 
-        location.residence.latitude
-      )
+  /**
+   * Put the pand the page was opened on in view, with its marker.
+   *
+   * A click on the map and a search both say where the pand is themselves
+   * (useLayerEvents, SearchBar). A link says nothing, so the map stayed where
+   * it started (the saved position, or the default centre) with the pand's
+   * details beside it and no marker. Done once, for that first pand only: a
+   * pand picked by hand must not move the map under the cursor.
+   *
+   * Returns whether the map was sent there.
+   */
+  const showLinkedBuilding = function showLinkedBuilding(location: IGeoLocationData|null): boolean {
+    if (! linkedBuildingPending || ! location || ! mapInstance) return false
+
+    // A click or a search got there first and placed the marker itself
+    if (mapMarkerLatLon.value) {
+      linkedBuildingPending = false
+      return false
     }
+
+    const { latitude, longitude } = location.building
+    if (typeof latitude !== 'number' || typeof longitude !== 'number') return false
+
+    linkedBuildingPending = false
+    const lngLat = new LngLat(longitude, latitude)
+    mapMarkerLatLon.value = lngLat
+    mapCenterLatLon.value = lngLat
+    return true
   }
 
   watch(
     () => locationData.value,
-    (location: IGeoLocationData|null) => {
-      if (location) {
-        flyToBuildingLocation(location)
-      }
-    },
+    (location: IGeoLocationData|null) => { showLinkedBuilding(location) },
     { immediate: true }
   )
 
@@ -91,6 +120,12 @@ export const useMapCenterManagement = function useMapCenterManagement() {
       if (! mapInstance || ! mapset || ignoreCenterChange === true) {
         return
       }
+
+      // The page was opened on a pand: the mapset that comes with it is not a
+      // reason to go to the mapset's own centre instead.
+      const isFirstMapset = ! firstMapsetSeen
+      firstMapsetSeen = true
+      if (isFirstMapset && openedOnBuilding) return
 
       if (mapset.metadata?.center) {
         flyToCenter(mapset.metadata.center as LngLatLike)
@@ -121,9 +156,9 @@ export const useMapCenterManagement = function useMapCenterManagement() {
 
     mapInstance.on('moveend', handleMapMovement)
     
-    if (locationData.value && locationData.value.residence) {
-      flyToBuildingLocation(locationData.value)
-    } else if (activeMapset.value?.metadata?.center) {
+    if (showLinkedBuilding(locationData.value)) {
+      // on its way to the pand
+    } else if (activeMapset.value?.metadata?.center && ! openedOnBuilding) {
       flyToCenter(
         activeMapset.value.metadata.center as LngLatLike
       )

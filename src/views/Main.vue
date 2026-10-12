@@ -53,7 +53,7 @@ const {
   activeMapset,
 } = storeToRefs(useMapsetStore())
 const { isLeftSidebarOpen } = storeToRefs(useMainStore())
-const { hasSelectedBuilding } = storeToRefs(useBuildingStore())
+const { hasSelectedBuilding, buildingId } = storeToRefs(useBuildingStore())
 
 /**
  * Whether mapbox has initiated
@@ -81,13 +81,20 @@ useBuildingRouting().start()
 
 
 /**
- * Update page title when active mapset changes
+ * The tab title: the pand when one is open, otherwise the mapset.
+ *
+ * Owned here and not by the router: the router's afterEach also runs every
+ * time the map moves (the position is kept in the query string), and used to
+ * put the bare "FunderMaps" back over the mapset name, or the mapset name over
+ * the pand, depending on which finished last.
  */
-watch(() => activeMapset.value, (mapset) => {
-  if (mapset) {
+watch([() => activeMapset.value, () => buildingId.value], ([mapset, pand]) => {
+  if (pand) {
+    document.title = `Pand ${pand} — FunderMaps`
+  } else if (mapset) {
     document.title = `${mapset.name} — FunderMaps`
   }
-})
+}, { immediate: true })
 
 /**
  * If all the mapsets are unloaded, redirect to the login page

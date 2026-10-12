@@ -327,6 +327,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
                   class="aspect-square w-4"
                   aria-hidden="true"
                 />
+                <span class="sr-only">Volledige opmerking tonen</span>
               </button>
             </dt>
             <dd class="text-grey-700">
