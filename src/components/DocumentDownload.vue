@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import { IDownloadLink } from '@/datastructures/interfaces';
 import { getInquiryReportDownloadLink, getRecoveryReportDownloadLink } from '@/services/api/building';
@@ -14,8 +14,14 @@ const props = withDefaults(defineProps<{
   label?: string
 }>(), {
   title: 'Onderzoeksbestand',
-  label: 'Download .pdf',
+  label: 'Download document',
 })
+
+// The last attempt to get the document failed: said under the button
+const downloadFailed = ref(false)
+
+// The message belongs to the document it was about
+watch(() => props.id, () => { downloadFailed.value = false })
 
 /**
  * Get the callback associated with the source type
@@ -36,15 +42,22 @@ const callback = computed<(id: string) => Promise<IDownloadLink>>(() => {
 })
 
 const handleDownload = async function handleDownload() {
-  const link: IDownloadLink = await callback.value(String(props.id))
-  
-  if (link && link.accessLink) {
-    const a = document.createElement('a')
-    a.href = link.accessLink
-    a.download = props.filename
-    a.click()
-  } else {
-    console.error("Failed to retrieve download link")
+  downloadFailed.value = false
+
+  try {
+    const link: IDownloadLink = await callback.value(String(props.id))
+
+    if (link && link.accessLink) {
+      const a = document.createElement('a')
+      a.href = link.accessLink
+      a.download = props.filename
+      a.click()
+    } else {
+      throw new Error("No download link in the answer")
+    }
+  } catch (e) {
+    console.error("Failed to retrieve download link", e)
+    downloadFailed.value = true
   }
 }
 
@@ -53,15 +66,20 @@ const handleDownload = async function handleDownload() {
 <template>
   <h6 v-if="title">{{ title }}</h6>
   <p>
-    <a 
+    <!-- A button: an <a> without href cannot be reached with the keyboard -->
+    <button
+      type="button"
       class="link"
-      @click.prevent="handleDownload">
+      @click="handleDownload">
       <FundermapsIcon
         name="file-pdf"
         class="aspect-square h-5"
         aria-hidden="true"
       />
       <strong>{{ label }}</strong>
-    </a>
+    </button>
+  </p>
+  <p v-if="downloadFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
+    Het downloaden van het document is niet gelukt. Probeer het later opnieuw.
   </p>
 </template>

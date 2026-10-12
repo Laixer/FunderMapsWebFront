@@ -17,8 +17,11 @@
       @apply rounded-r;
     }
 
+    /* Not when the form itself reports an error: the browser calls a required
+       field "valid" as soon as it is filled in, and its green tick and border
+       outranked the error style below. */
     &[data-validation="success"],
-    &:has(:user-valid:not(:placeholder-shown):required) {
+    &:not([data-validation="error"]):has(:user-valid:not(:placeholder-shown):required) {
       @apply border-green-500;
 
       input:not([type="checkbox"]):not([type="radio"]) {
@@ -66,7 +69,7 @@
       background-position: center right 1rem;
     }
 
-    &:user-valid:required {
+    &:user-valid:required:not([data-validation="error"] *) {
       background: url("@assets/svg/icons/validation-success.svg") no-repeat;
       background-size: 0.75rem;
       background-position: center right 1rem;

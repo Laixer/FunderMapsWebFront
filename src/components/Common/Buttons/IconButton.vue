@@ -9,6 +9,9 @@ const { square, transparent } = defineProps<{
   disabled?: boolean
 }>()
 
+// The template gives the button type="button"; a caller can still pass another
+// type. Without one a button is the submit button of the form it sits in: the
+// search field's "Wissen" was, so Enter emptied the field.
 const btnClass = computed<string[]>(() => {
   if (transparent) {
     return []
@@ -26,7 +29,7 @@ const btnClass = computed<string[]>(() => {
 </script>
 
 <template>
-  <button :class="btnClass" :disabled="disabled">
+  <button type="button" :class="btnClass" :disabled="disabled">
     <!-- <svg class="w-4 aspect-square" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
     </svg> -->
     <slot />

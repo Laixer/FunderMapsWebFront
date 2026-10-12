@@ -41,13 +41,13 @@ export const analysisFieldLabels = <Record<string, string>> {
   foundationTypeReliability: "Betrouwbaarheid funderingstype",
   restorationCosts: "Indicatieve funderingsherstelkosten",
   velocity: "Pandzakkingssnelheid (InSAR)",
-  drystandRisk: "Droogstandrisico",
+  drystandRisk: "Droogstandsrisico",
   drystand: "Droogstand",
   drystandReliability: "Betrouwbaarheid droogstandsrisico",
-  dewateringDepthRisk: "Ontwateringsdiepte risico",
+  dewateringDepthRisk: "Risico ontwateringsdiepte",
   dewateringDepth: "Ontwateringsdiepte",
   dewateringDepthReliability: "Betrouwbaarheid ontwateringsdiepte",
-  bioInfectionRisk: "Bacteriële aantasting risico",
+  bioInfectionRisk: "Risico bacteriële aantasting",
   bioInfectionReliability: "Betrouwbaarheid bacteriële aantasting",
   unclassifiedRisk: "Vastgesteld",
   recoveryType: "Herstelmethode"
@@ -180,13 +180,13 @@ export const inquirySampleFieldLabels = <Record<string, string>> {
 export const statisticsFieldLabels = <Record<string, string>> {}
 
 export const riskFieldLabels = <Record<string, string>> {
-  drystandRisk: "Droogstandrisico",
+  drystandRisk: "Droogstandsrisico",
   drystand: "Droogstand",
   drystandReliability: "Betrouwbaarheid droogstandsrisico",
-  dewateringDepthRisk: "Ontwateringsdiepte risico",
+  dewateringDepthRisk: "Risico ontwateringsdiepte",
   dewateringDepth: "Ontwateringsdiepte",
   dewateringDepthReliability: "Betrouwbaarheid ontwateringsdiepte",
-  bioInfectionRisk: "Bacteriële aantasting risico",
+  bioInfectionRisk: "Risico bacteriële aantasting",
   bioInfectionReliability: "Betrouwbaarheid bacteriële aantasting",
   unclassifiedRisk: "Vastgesteld"
 }

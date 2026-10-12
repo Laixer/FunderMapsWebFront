@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, watch, computed, onBeforeUnmount } from 'vue';
+import { ref, watch, computed, nextTick, onBeforeUnmount } from 'vue';
 import { storeToRefs } from 'pinia';
 import { z } from 'zod'
 import { DutchMobilePhoneRegex } from '@/utils/validation'
@@ -38,6 +38,11 @@ const profileData = ref()
  */
 const recentSuccess = ref(false)
 let recentSuccessTimer: ReturnType<typeof setTimeout>|null = null
+
+/**
+ * Whether the last attempt to store the profile failed
+ */
+const saveFailed = ref(false)
 
 
 
@@ -78,11 +83,13 @@ const validationSchema = z.object({
   // Because required input & set to strict
   email: z.string(),
 
+  // The message is set on the union: when both options fail zod reports the
+  // union itself, with its English default ("Invalid input")
   phoneNumber: z
     .union([
       z.string().trim().length(0), 
       z.string().trim().regex(DutchMobilePhoneRegex, 'Voer een geldig mobiel telefoonnummer in')
-    ])
+    ], { error: 'Voer een geldig telefoonnummer in' })
     .optional()
     .transform(e => e === "" ? undefined : e),
 }).strict()
@@ -100,14 +107,20 @@ const {
 } = useValidation(validationSchema, profileData) 
 
 /**
- * Load the profile upon opening the profile modal for the first time after logging in
- *  The component is mounted in the main view, so the data remains available until logging out
+ * Load the profile every time the profile modal opens
+ *  The component stays mounted in the main view. Loading once kept whatever
+ *  was typed and not saved (or not accepted) in the fields: the next time the
+ *  dialog showed that as if it were the profile.
  */
 watch(
   () => isProfileModalOpen.value, 
   async (value) => {
     
-    if (value === true && isProfileDataAvailable.value === false) {
+    if (value === true) {
+      isProfileDataAvailable.value = false
+      saveFailed.value = false
+      recentSuccess.value = false
+
       const { profile } = await api.userprofile.getMe()
 
       profileData.value = {
@@ -119,6 +132,11 @@ watch(
       }
 
       isProfileDataAvailable.value = true
+
+      // The fields were disabled until now, so the dialog could not start in
+      // its first field by itself
+      await nextTick()
+      if (isProfileModalOpen.value) document.getElementById('givenName')?.focus()
     }
   }
 )
@@ -200,6 +218,7 @@ const handleSubmit = async function handleSubmit() {
 
   busySaving.value = true
   recentSuccess.value = false
+  saveFailed.value = false
 
   await validate()
 
@@ -220,9 +239,8 @@ const handleSubmit = async function handleSubmit() {
       recentSuccess.value = true
 
     } catch(e) {
-      // TODO: Error handling & all that fun stuff
-
       console.error("Failed to save profile", e)
+      saveFailed.value = true
     }
     
     busySaving.value = false
@@ -267,7 +285,6 @@ const handleClose = function handleClose() {
           :disabled="busySaving || !isProfileDataAvailable"
           :validationStatus="getStatus('givenName')"
           :validationMessage="getError('givenName')"
-          :tabindex="1"
           required />
 
         <Input
@@ -280,7 +297,6 @@ const handleClose = function handleClose() {
           :disabled="busySaving || !isProfileDataAvailable"
           :validationStatus="getStatus('lastName')"
           :validationMessage="getError('lastName')"
-          :tabindex="2"
           required />
 
         <Input
@@ -306,7 +322,6 @@ const handleClose = function handleClose() {
           :disabled="busySaving || !isProfileDataAvailable"
           :validationStatus="getStatus('jobTitle')"
           :validationMessage="getError('jobTitle')"
-          :tabindex="3"
         />
 
         <Input
@@ -319,7 +334,6 @@ const handleClose = function handleClose() {
           :disabled="busySaving || !isProfileDataAvailable"
           :validationStatus="getStatus('phoneNumber')"
           :validationMessage="getError('phoneNumber')"
-          :tabindex="4"
         />
 
         <Transition>
@@ -327,6 +341,10 @@ const handleClose = function handleClose() {
             Je instellingen zijn opgeslagen
           </p>
         </Transition>
+
+        <p v-if="saveFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
+          Je instellingen zijn niet opgeslagen. Probeer het opnieuw.
+        </p>
 
         <Button
           type="submit"

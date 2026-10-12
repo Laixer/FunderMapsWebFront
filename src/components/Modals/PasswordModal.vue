@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { z } from 'zod'
 
@@ -22,7 +22,7 @@ const { isPasswordModalOpen } = storeToRefs( useMainStore() )
  */
 const changeFailed = ref(false)
 const changeSucceeded = ref(false)
-const showPassword = ref(true)
+const showPassword = ref(false)
 const formData = ref({
   oldPassword: '',
   newPassword: '',
@@ -36,10 +36,12 @@ const busySaving = ref(false)
 
 /** 
  * Keeping it simple. Let the API decide what is valid
+ *  Except the length: the API takes 8 characters or more, and a shorter
+ *  password would only come back as "niet gelukt" without a reason.
  */
 const validationSchema = z.object({
-  oldPassword: z.string({ error: 'Dit veld is vereist' }).trim(),
-  newPassword: z.string({ error: 'Dit veld is vereist' }).trim().min(5, 'Het wachtwoord moet minimaal 5 karakters lang zijn.'),
+  oldPassword: z.string({ error: 'Dit veld is vereist' }).trim().min(1, 'Dit veld is vereist'),
+  newPassword: z.string({ error: 'Dit veld is vereist' }).trim().min(8, 'Het wachtwoord is te kort. Gebruik minimaal 8 tekens.'),
   passwordConfirm: z.string({ error: 'Dit veld is vereist' }).trim()
 })
 .strict()
@@ -100,6 +102,26 @@ const handleClose = function handleClose() {
   isPasswordModalOpen.value = false
 }
 
+/**
+ * A closed dialog keeps nothing: no typed passwords, no messages, and the
+ *  passwords are hidden again. However it was closed: the user menu can switch
+ *  to the profile dialog without going through handleClose.
+ */
+watch(
+  () => isPasswordModalOpen.value,
+  (value) => {
+    if (value === false) {
+      reset()
+      formData.value.oldPassword = ''
+      formData.value.newPassword = ''
+      formData.value.passwordConfirm = ''
+      changeFailed.value = false
+      changeSucceeded.value = false
+      showPassword.value = false
+    }
+  }
+)
+
 </script>
 <template>
 
@@ -133,7 +155,6 @@ const handleClose = function handleClose() {
           autocomplete="current-password"
           :validationStatus="getStatus('oldPassword')"
           :validationMessage="getError('oldPassword')"
-          :tabindex="1"
           required>
 
           <template #before>
@@ -161,7 +182,6 @@ const handleClose = function handleClose() {
           autocomplete="new-password"
           :validationStatus="getStatus('newPassword')"
           :validationMessage="getError('newPassword')" 
-          :tabindex="2"
           required>
 
           <template #before>

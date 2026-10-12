@@ -34,7 +34,10 @@ export const useMapCenterRouting = function useMapCenterRouting() {
         query.lat = `${LatLng.lat.toFixed(5)}`
         query.lng = `${LatLng.lng.toFixed(5)}` 
 
-        router.push({
+        // replace, not push: where the map is belongs to the page that is
+        // open, it is not a step to go Back to. With push every map move
+        // added a history entry and Back only changed these two numbers.
+        router.replace({
           name: route.name,
           params: route.params,
           query,

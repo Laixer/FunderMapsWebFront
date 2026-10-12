@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, toRef } from 'vue'
+import { onBeforeUnmount, onMounted, ref, toRef, useId } from 'vue'
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
 import { useFocusTrap } from '@/composables/useFocusTrap'
 
@@ -22,11 +22,27 @@ const emit = defineEmits<{ close: [] }>()
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef, props.active !== undefined ? toRef(props, 'active') : undefined)
 
+// The heading that names the dialog gets an id of its own: several dialogs
+// are in the page at once (three of them shared id="dialog-label").
+const labelId = useId()
+
 const handleClose = function handleClose() {
   if (props.closeable) {
     emit('close')
   }
 }
+
+// Escape closes the dialog, if it can be closed and is on screen (a dialog
+// that stays in the page is only hidden, and then has no boxes). Listened for
+// here and not in the focus trap: every dialog needs it, with or without a trap.
+const handleEscape = function handleEscape(e: KeyboardEvent) {
+  if (e.key === 'Escape' && dialogRef.value?.getClientRects().length) {
+    handleClose()
+  }
+}
+
+onMounted(() => document.addEventListener('keydown', handleEscape))
+onBeforeUnmount(() => document.removeEventListener('keydown', handleEscape))
 </script>
 
 <template>
@@ -39,13 +55,13 @@ const handleClose = function handleClose() {
       ref="dialogRef"
       class="panel pointer-events-auto"
       role="dialog"
-      aria-describedby="dialog-label"
+      :aria-labelledby="title || $slots.header ? labelId : undefined"
       aria-modal="true"
       :data-variant="variant"
     >
       <header class="panel__header">
-        <slot name="header">
-          <h4 v-if="title" id="dialog-label" class="heading-4">{{ title }}</h4>
+        <slot name="header" :label-id="labelId">
+          <h4 v-if="title" :id="labelId" class="heading-4">{{ title }}</h4>
         </slot>
 
         <CloseBtn

@@ -64,5 +64,6 @@ watch(() => props, () => {
 </script>
 
 <template>
-  <canvas ref="canvas" class="chart"></canvas>
+  <!-- A canvas has no name of its own; the title says what the chart shows -->
+  <canvas ref="canvas" class="chart" role="img" :aria-label="title"></canvas>
 </template>

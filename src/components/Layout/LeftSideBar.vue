@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { onKeyStroke } from '@vueuse/core';
+import { vOnClickOutside } from '@vueuse/components'
 import VueMarkdown from 'vue-markdown-render'
 
 import AccordionGroup from '@/components/Common/Accordion/AccordionGroup.vue';
@@ -25,7 +27,43 @@ const {
 } = mapsetStore
 
 const { isLeftSidebarOpen, isShowingMapsetSelection } = storeToRefs( useMainStore() )
-const showInfoTooltip = ref(false)
+
+/**
+ * The note beside the mapset name. Shown while the pointer is on the "i", and
+ *  kept open by a click (touch and keyboard have no hover) until a second
+ *  click, a click elsewhere or Escape. One flag for both made a click close
+ *  the note the pointer had just opened.
+ */
+const isNoteHovered = ref(false)
+const isNotePinned = ref(false)
+const showInfoTooltip = computed(() => isNoteHovered.value || isNotePinned.value)
+
+const noteElement = ref<HTMLElement | null>(null)
+
+const handleCloseNote = function handleCloseNote() {
+  isNotePinned.value = false
+  isNoteHovered.value = false
+}
+
+const handleClickOutsideNote = function handleClickOutsideNote(event: Event) {
+  // The note is teleported to <body>: a click in it (on a link, to select
+  // text) is not a click elsewhere
+  if (noteElement.value?.contains(event.target as Node)) return
+  handleCloseNote()
+}
+
+const handleToggleNote = function handleToggleNote() {
+  if (isNotePinned.value) {
+    // Also under the pointer: the second click is meant to close it
+    handleCloseNote()
+  } else {
+    isNotePinned.value = true
+  }
+}
+
+onKeyStroke('Escape', () => {
+  if (showInfoTooltip.value) handleCloseNote()
+})
 const { availableMapsetsByLoadingOrder, activeMapset, activeMapsetId } = storeToRefs( mapsetStore )
 const { changeLayerVisibility } = useLayersStore() 
 const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
@@ -119,14 +157,17 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
             {{ activeMapset?.name }}
             <span
               v-if="activeMapset?.note"
+              v-on-click-outside="handleClickOutsideNote"
               class="relative"
-              @mouseenter="showInfoTooltip = true"
-              @mouseleave="showInfoTooltip = false"
+              @mouseenter="isNoteHovered = true"
+              @mouseleave="isNoteHovered = false"
             >
               <button
                 class="p-1 text-green-500 hover:text-green-700"
                 type="button"
-                @click.prevent="showInfoTooltip = !showInfoTooltip"
+                aria-label="Toelichting bij deze kaart"
+                :aria-expanded="showInfoTooltip"
+                @click.prevent="handleToggleNote"
               >
                 <InfoIcon
                   class="aspect-square w-4"
@@ -137,6 +178,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                 <Transition name="short">
                   <div
                     v-if="showInfoTooltip"
+                    ref="noteElement"
                     class="fixed top-[5rem] z-50 ml-2 mt-2 w-72 rounded-lg bg-white p-5 shadow-float"
                     style="left: var(--sidebar-width)"
                   >

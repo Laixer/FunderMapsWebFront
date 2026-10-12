@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia';
 import MapBox from '@/components/Common/Mapbox/MapBox.vue';
 import { type Map } from 'maplibre-gl'
 
-import { addControls } from './controls';
+import { addControls, mapLocale } from './controls';
 import { useMapCenterManagement } from './useMapCenterManagement'
 import { useBuildingMarker } from './useBuildingMarker'
 import { useMapboxControlNudge } from './useMapboxControlNudge';
@@ -64,6 +64,7 @@ const options = computed(() => {
     antialias: true,
     fadeDuration: 0,
     attributionControl: false,
+    locale: mapLocale,
   }
 })
 

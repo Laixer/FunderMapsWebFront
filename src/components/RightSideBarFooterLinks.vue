@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import OutlineButton from '@/components/Common/Buttons/OutlineButton.vue';
@@ -12,9 +12,16 @@ const { buildingId } = storeToRefs(useBuildingStore())
 
 const isDownloading = ref(false)
 
+// The last attempt to make the PDF failed: said under the button
+const downloadFailed = ref(false)
+
+// The message belongs to the pand it was about
+watch(buildingId, () => { downloadFailed.value = false })
+
 const handleDownload = async function handleDownload() {
   if (buildingId.value && ! isDownloading.value) {
     isDownloading.value = true
+    downloadFailed.value = false
 
     // Ensure the appropriate filename is used even if the user navigates away while the download is still being processed
     const filename = buildingId.value + ''
@@ -26,6 +33,9 @@ const handleDownload = async function handleDownload() {
       a.download = `${filename}.pdf`
       a.click()
       URL.revokeObjectURL(url)
+    } catch (e) {
+      console.error('Failed to make the PDF', e)
+      downloadFailed.value = true
     } finally {
       isDownloading.value = false
     }
@@ -51,5 +61,8 @@ const handleDownload = async function handleDownload() {
         />
       </template>
     </OutlineButton>
+    <p v-if="downloadFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">
+      Het maken van de PDF is niet gelukt. Probeer het later opnieuw.
+    </p>
   </div>
 </template>

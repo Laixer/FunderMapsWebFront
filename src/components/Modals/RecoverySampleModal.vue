@@ -99,7 +99,7 @@ watch(
 
     <section 
       class="space-y-4">
-      <dl role="list" class="list--definition">
+      <dl class="list--definition">
         <div 
           v-for="field in sampleFieldsWithData" 
           :key="field.name"

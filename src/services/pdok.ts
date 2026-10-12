@@ -34,12 +34,14 @@ const callPDOK = async (endpoint: string): Promise<PDOKResponse | null> => {
   }
 }
 
+// What the user typed (and the id PDOK gave) goes through encodeURIComponent:
+// a bare `&`, `%` or `#` would end or break the parameter.
 export const getSuggestions = async (query: string, count: number | undefined | null): Promise<PDOKResponse | null> => {
-  return await callPDOK(`suggest?q=${query}&rows=${count || 5}&fq=type:(woonplaats OR postcode OR adres)`)
+  return await callPDOK(`suggest?q=${encodeURIComponent(query)}&rows=${count || 5}&fq=type:(woonplaats OR postcode OR adres)`)
 }
 
 export const getSuggestionsNearCoordinates = async (query: string, lat: string | number, lon: string | number, count: number | undefined | null): Promise<PDOKResponse | null> => {
-  return await callPDOK(`suggest?q=${query}&lat=${lat.toString()}&lon=${lon.toString()}&rows=${count || 5}&fq=type:(woonplaats OR postcode OR adres)`)
+  return await callPDOK(`suggest?q=${encodeURIComponent(query)}&lat=${lat.toString()}&lon=${lon.toString()}&rows=${count || 5}&fq=type:(woonplaats OR postcode OR adres)`)
 }
 
 export const getReverse = async (lat: string | number, lon: string | number, count: number | undefined | null): Promise<PDOKResponse | null> => {
@@ -47,5 +49,5 @@ export const getReverse = async (lat: string | number, lon: string | number, cou
 }
 
 export const getLookup = async (id: string): Promise<PDOKResponse | null> => {
-  return await callPDOK(`lookup?id=${id}`)
+  return await callPDOK(`lookup?id=${encodeURIComponent(id)}`)
 }

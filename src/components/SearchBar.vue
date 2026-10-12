@@ -36,7 +36,10 @@ const lastQuery = ref('')
 const suggestions = ref<IPDOKSuggestion[]>([])
 const focusedSuggestion = ref<number | null>(null)
 
-// TODO: Show a no results / error message ?
+// The text the list of suggestions (or the "nothing found" message) belongs to
+const suggestionsQuery = ref('')
+
+// The lookup found no address: said under the field
 const noResults = ref(false)
 const error = ref(false)
 
@@ -70,7 +73,9 @@ watch(
     await handleGetSuggestions(value)
 
     // no results and query string longer than 10 characters? Let's give the Fundermaps API a try
-    if (suggestions.value.length === 0 && value.length > 10) {
+    // (not when a newer lookup has started meanwhile: the answer to this one was dropped then,
+    // and the empty list says nothing about what was typed)
+    if (suggestions.value.length === 0 && lastQuery.value === value && value.length > 10) {
       const location = await lookupBuilding(value)
       if (location) {
         await openBuilding(location)
@@ -212,8 +217,12 @@ const handleGetSuggestions = async function handleGetSuggestions(query: string){
     // Remove the emptiness
     query = query.trim()
 
-    // Nothing to search for
-    if (query === '') return 
+    // Nothing to search for. An emptied field has nothing "not found" either.
+    if (query === '') {
+      noResults.value = false
+      lastQuery.value = ''
+      return
+    }
 
     // Do not repeat the same query
     if (query === lastQuery.value) return 
@@ -231,14 +240,20 @@ const handleGetSuggestions = async function handleGetSuggestions(query: string){
       results = await getSuggestions(query, 10)
     }
     
+    // An answer that comes in after a newer lookup started (or after the
+    // field was cleared or an address was picked) is not what is in the field
+    if (query !== lastQuery.value) return
+
+    suggestionsQuery.value = query
+
     if (! results) {
       noResults.value = true
       suggestions.value = []
       return
     }
 
-    noResults.value = false
     suggestions.value = results.response.docs as IPDOKSuggestion[]
+    noResults.value = suggestions.value.length === 0
 
   } catch {
     error.value = true
@@ -285,15 +300,29 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
   }
 }
 
-// What more can we do? 
-const handleSubmit = function handleSubmit() {
-  handleClose()
+/**
+ * Enter in the field, without a suggestion picked with the arrow keys:
+ *  take the first suggestion.
+ */
+const handleSubmit = async function handleSubmit() {
+  const query = queryString.value.trim()
+  if (query === '') return
 
-  // TODO: Search with API first, then PDOK.
+  // Enter can be quicker than the lookup, and the list may have been closed:
+  // make sure the suggestions belong to what is in the field now.
+  if (query !== suggestionsQuery.value) {
+    lastQuery.value = ''
+    await handleGetSuggestions(query)
+  }
+
+  if (query === suggestionsQuery.value && suggestions.value.length > 0) {
+    await handleSelectBuilding(suggestions.value[0].id, suggestions.value[0].weergavenaam)
+  }
 }
 
 const handleClose = function handleClose() {
   suggestions.value = []
+  suggestionsQuery.value = ''
   noResults.value = false
   error.value = false
 }
@@ -302,6 +331,13 @@ const handleClear = function handleClear() {
   queryString.value = ''
   lastQuery.value = ''
   handleClose()
+}
+
+/**
+ * The magnifier: put the cursor in the search field
+ */
+const handleFocusField = function handleFocusField() {
+  document.getElementById('search')?.focus()
 }
 </script>
 
@@ -343,7 +379,8 @@ const handleClear = function handleClear() {
             v-else
             class="text-blue-900 hover:text-green-700"
             transparent
-            label="Zoeken">
+            label="Zoeken"
+            @click.prevent="handleFocusField">
             <SearchIcon
               class="aspect-square w-4"
               aria-hidden="true" />
@@ -401,5 +438,17 @@ const handleClear = function handleClear() {
         </div>
       </div>
     </Transition>
+
+    <!-- Always in the page, so that a screen reader says the message when it appears -->
+    <div role="status">
+      <Transition name="slide-down">
+        <div
+          v-if="noResults && ! suggestions.length"
+          class="dropdown arrow arrow--top-left | absolute -left-7 top-full w-[28rem] origin-top-left"
+        >
+          <p class="dropdown__main | relative rounded-lg bg-white px-8 py-6 shadow-float">Geen adres gevonden</p>
+        </div>
+      </Transition>
+    </div>
   </div>
 </template>
