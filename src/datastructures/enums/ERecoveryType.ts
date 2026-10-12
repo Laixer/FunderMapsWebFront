@@ -37,7 +37,7 @@ export const ERecoveryTypeLabels: Map<ERecoveryType, string> = new Map([
   [ERecoveryType.Table, "Tafelfundering"],
   [ERecoveryType.BeamOnPile, "Opzetters"],
   [ERecoveryType.PileLowering, "Paalkopverlaging"],
-  [ERecoveryType.PileInWall, "Paalinkassing in (muur)"],
+  [ERecoveryType.PileInWall, "Paalinkassing (in muur)"],
   [ERecoveryType.Injection, "Grondinjectie/verbetering"],
   [ERecoveryType.Unknown, "Onbekend"]
 ]);

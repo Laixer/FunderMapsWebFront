@@ -32,7 +32,7 @@ const handleLogout = function() {
     :closeable="false">
 
     <p>
-      Er zijn geen kaarten waar u toegang toe heeft.
+      Er zijn geen kaarten waar je toegang toe hebt.
       <br />
       Neem contact op met de supportafdeling voor meer informatie.
     </p>

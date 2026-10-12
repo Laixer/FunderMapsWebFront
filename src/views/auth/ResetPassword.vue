@@ -90,7 +90,7 @@ const handleSubmit = async function handleSubmit() {
 </script>
 
 <template>
-  <AuthWrapper title="Wachtwoord wijzigen pagina voor de Fundermaps Applicatie">
+  <AuthWrapper title="Wachtwoord wijzigen, pagina van de FunderMaps-applicatie">
     <Card v-if="!resetSucceeded" title="Voer nieuw wachtwoord in" shadow rounded wide>
 
       <div v-if="resetFailed" class="rounded-lg border-l-4 border-red-500 bg-yellow-100 px-4 py-3 text-sm text-red-500" role="alert">

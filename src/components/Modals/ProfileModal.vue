@@ -81,7 +81,7 @@ const validationSchema = z.object({
   phoneNumber: z
     .union([
       z.string().trim().length(0), 
-      z.string().trim().regex(DutchMobilePhoneRegex, 'Voer alstublieft een geldig mobiel telefoonnummer in')
+      z.string().trim().regex(DutchMobilePhoneRegex, 'Voer een geldig mobiel telefoonnummer in')
     ])
     .optional()
     .transform(e => e === "" ? undefined : e),
@@ -324,7 +324,7 @@ const handleClose = function handleClose() {
 
         <Transition>
           <p v-if="recentSuccess" class="rounded-lg border-l-4 border-green-500 bg-green-100 px-4 py-3 text-sm text-green-700" role="status">
-            Uw instellingen zijn opgeslagen
+            Je instellingen zijn opgeslagen
           </p>
         </Transition>
 
