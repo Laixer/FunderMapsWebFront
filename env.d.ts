@@ -1,7 +1,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  // Mapbox
+  // Login app (optional; defaults to https://auth.fundermaps.com)
+  readonly VITE_AUTH_URL: string
 
   // PDOK
   readonly VITE_PDOK_LOCATIONSERVICE: string
@@ -13,13 +14,10 @@ interface ImportMetaEnv {
   readonly VITE_DEFAULT_MAPSET_ID: string
   readonly VITE_DEFAULT_LAYERS: string
 
-  // Fundermaps static tileset bucket (tippecanoe builds on Spaces)
-  readonly VITE_FUNDERMAPS_TILES_URL: string
-
   // Fundermaps dynamic tileserver (Martin) — serves the 'buildings' source
   readonly VITE_FUNDERMAPS_TILESERVER_URL: string
 
-  // Fundermaps base mapbox style
+  // Fundermaps base map style
   readonly VITE_FUNDERMAPS_BASE_STYLE: string
 
   // Layer the building-number labels are inserted before (optional)

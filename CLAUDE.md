@@ -35,12 +35,18 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 
 ### Environment Variables
 
-Required `VITE_` prefixed env vars (no `.env` file in repo):
+`VITE_` prefixed env vars the code reads (no `.env` file in repo):
 - `VITE_FUNDERMAPS_URL` - API base URL
-- `VITE_FUNDERMAPS_TILES_URL` - Tile server URL
-- `VITE_DEFAULT_MAPSET_ID` - Default mapset UUID
-- `VITE_DEFAULT_LAYERS` - Comma-separated default visible layer names
+- `VITE_FUNDERMAPS_TILESERVER_URL` - Martin tileserver base URL (the vector sources' TileJSON)
+- `VITE_PDOK_LOCATIONSERVICE` - PDOK Locatieserver base URL (address search)
+- `VITE_AUTH_URL` - login app, default `https://auth.fundermaps.com`
+- `VITE_FUNDERMAPS_BASE_STYLE` - base map style, default `https://tiles.fundermaps.com/style/fundermaps-basemap`
+- `VITE_DEFAULT_MAPSET_ID` - Default mapset UUID (has a default)
+- `VITE_DEFAULT_LAYERS` - Comma-separated default visible layer names (has a default)
+- `VITE_FUNDERMAPS_NUMBER_LAYER` - layer the building-number labels are inserted before (optional)
 - `VITE_GIT_COMMIT_HASH` - Auto-injected at build time from git
+
+Not read any more: `VITE_MAPBOX_TOKEN`, `VITE_MAPBOX_STYLE` (the map is MapLibre) and `VITE_FUNDERMAPS_TILES_URL` (the static tileset bucket; tiles come from the tileserver).
 
 ### Authentication Flow
 

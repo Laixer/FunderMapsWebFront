@@ -18,13 +18,20 @@ pnpm install
 Create a `.env` file with the following variables:
 
 ```
-VITE_MAPBOX_TOKEN=<Mapbox API token>
-VITE_MAPBOX_STYLE=<Mapbox style URL>
 VITE_FUNDERMAPS_URL=<API base URL>
-VITE_FUNDERMAPS_TILES_URL=<Tile server URL>
-VITE_DEFAULT_MAPSET_ID=<Default mapset UUID>
-VITE_DEFAULT_LAYERS=<Comma-separated default visible layer names>
+VITE_FUNDERMAPS_TILESERVER_URL=<tileserver base URL, e.g. https://tiles.fundermaps.com>
+VITE_PDOK_LOCATIONSERVICE=<PDOK Locatieserver base URL, for the address search>
+
+# Optional, each has a default in the code
+VITE_AUTH_URL=<login app; default https://auth.fundermaps.com>
+VITE_FUNDERMAPS_BASE_STYLE=<base map style; default https://tiles.fundermaps.com/style/fundermaps-basemap>
+VITE_DEFAULT_MAPSET_ID=<default mapset UUID>
+VITE_DEFAULT_LAYERS=<comma-separated default visible layer names>
+VITE_FUNDERMAPS_NUMBER_LAYER=<layer the building-number labels are inserted before>
 ```
+
+The map is drawn with MapLibre from our own tileserver; there is no Mapbox
+token any more (`VITE_MAPBOX_*` and `VITE_FUNDERMAPS_TILES_URL` are not read).
 
 ## Development
 
