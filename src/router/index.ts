@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/views/Main.vue'
-import { loginRedirect } from '@/services/auth'
+import { forgotPasswordRedirect, loginRedirect } from '@/services/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,15 +21,26 @@ const router = createRouter({
         return false
       },
     },
+    // The map's own password pages are gone: resetting a password happens in
+    // the auth app. Old bookmarks and old reset links are sent there; an old
+    // reset key cannot be used any more, so that visitor asks for a new link.
     {
       name: 'forgotten',
       path: '/forgotten',
-      component: () => import('@/views/auth/PasswordForgotten.vue')
+      component: () => import('@/views/auth/Login.vue'),
+      beforeEnter: () => {
+        forgotPasswordRedirect()
+        return false
+      },
     },
     {
       name: 'reset',
       path: '/reset/:resetKey?',
-      component: () => import('@/views/auth/ResetPassword.vue')
+      component: () => import('@/views/auth/Login.vue'),
+      beforeEnter: () => {
+        forgotPasswordRedirect()
+        return false
+      },
     },
 
     /**************************************************************************
@@ -99,12 +110,6 @@ router.afterEach((to) => {
   switch (to.name) {
     case 'login':
       document.title = `Inloggen — ${BASE_TITLE}`
-      break
-    case 'forgotten':
-      document.title = `Wachtwoord vergeten — ${BASE_TITLE}`
-      break
-    case 'reset':
-      document.title = `Wachtwoord herstellen — ${BASE_TITLE}`
       break
     case 'building':
     case 'building-panel':

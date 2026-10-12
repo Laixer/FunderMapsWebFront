@@ -24,22 +24,6 @@ export const signOut = async (): Promise<void> => {
   })
 }
 
-export const requestPasswordReset = async (email: string): Promise<void> => {
-  await post({
-    endpoint: '/auth/forget-password',
-    body: { email },
-    requireAuth: false
-  })
-}
-
-export const resetPassword = async (token: string, newPassword: string): Promise<void> => {
-  await post({
-    endpoint: '/auth/reset-password',
-    body: { token, newPassword },
-    requireAuth: false
-  })
-}
-
 export const changePassword = async (currentPassword: string, newPassword: string): Promise<void> => {
   await post({
     endpoint: '/auth/change-password',
@@ -51,7 +35,5 @@ export const changePassword = async (currentPassword: string, newPassword: strin
 export default {
   login,
   signOut,
-  requestPasswordReset,
-  resetPassword,
   changePassword
 }
