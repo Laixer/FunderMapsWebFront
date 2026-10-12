@@ -258,7 +258,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
                 />
               </button>
             </dt>
-            <dd class="text-grey-700">
+            <dd class="break-words text-grey-700">
               <p 
                 v-if="field.name === 'note'" 
                 v-line-clamp="3"

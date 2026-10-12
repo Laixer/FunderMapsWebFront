@@ -7,9 +7,9 @@ export enum EPileType {
   Press = 0,
 
   /// <summary>
-  ///     Intgernally driven.
+  ///     Internally driven.
   /// </summary>
-  IntgernallyDriven = 1,
+  InternallyDriven = 1,
 
   /// <summary>
   ///     Segment.
@@ -20,6 +20,6 @@ export enum EPileType {
 
 export const EPileTypeLabels: Map<EPileType, string> = new Map([
   [EPileType.Press, "Drukpaal"],
-  [EPileType.IntgernallyDriven, "Inwendig geheide buispaal"],
+  [EPileType.InternallyDriven, "Inwendig geheide buispaal"],
   [EPileType.Segment, "Segmentpaal"]
 ]);

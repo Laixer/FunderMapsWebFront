@@ -15,6 +15,7 @@ declare module 'chart.js' {
       colorMax?: string
       lineStyle?: string
       width?: number
+      accessibility?: { description?: string }
     }
   }
 }
@@ -58,6 +59,9 @@ const createChart = (): void => {
           colorMax: CHART_PALETTE.blue,
           lineStyle: 'solid',
           width: 2,
+          // The plugin adds a sentence about the trendline to the name of the
+          // canvas; without this one it is English ("Linear trendline for Dataset.")
+          accessibility: { description: 'Met trendlijn.' },
         },
       }],
     },
@@ -105,5 +109,6 @@ watch(() => props, () => {
 </script>
 
 <template>
-  <canvas ref="canvas" class="chart"></canvas>
+  <!-- A canvas has no name of its own; the title says what the chart shows -->
+  <canvas ref="canvas" class="chart" role="img" :aria-label="title"></canvas>
 </template>

@@ -91,7 +91,7 @@ const sections = computed<Section[]>(() => {
   if (subsidenceData.value && subsidenceData.value.length > 0) {
     out.push({
       key: 'displacement',
-      title: 'Pandzakkingssnelheid (mm)',
+      title: 'Pandzakking (mm)',
       component: ScatterChart,
       labels: [],
       data: subsidenceData.value.map(item => ({
@@ -119,7 +119,7 @@ const sections = computed<Section[]>(() => {
   if (decades.length > 0) {
     out.push({
       key: 'constructionYearDistribution',
-      title: 'Aantal bouwjaren per decennium in de buurt',
+      title: 'Aantal panden per bouwdecennium in de buurt',
       component: BarChart,
       labels: decades.map((d: IConstructionYearPair) =>
         `${d.decade.yearFrom.substring(0, 4)}-${d.decade.yearTo.substring(0, 4)}`),

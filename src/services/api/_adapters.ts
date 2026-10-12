@@ -25,8 +25,10 @@ import type {
 import {
   EAccessPolicy,
   EAuditStatus,
+  ECrackType,
   EEnforcementTerm,
   EEnvironmentDamageCharacteristics,
+  EFacade,
   EFoundationDamageCause,
   EFoundationDamageCharacteristics,
   EFoundationQuality,
@@ -34,9 +36,16 @@ import {
   EFoundationType,
   EIncidentQuestionType,
   EInquiryType,
+  EPileType,
+  EQuality,
   ERecoveryDocumentType,
+  ERecoveryStatus,
   ERecoveryType,
   EReliability,
+  ERotationType,
+  ESubstructure,
+  EWoodEncroachement,
+  EWoodType,
 } from "@/datastructures/enums"
 
 // ---------------------------------------------------------------------------
@@ -111,6 +120,15 @@ const ENUM = {
   recoveryDocumentType: enumToWireKeys(ERecoveryDocumentType),
   foundationRisk: enumToWireKeys(EFoundationRisk),
   incidentQuestionType: enumToWireKeys(EIncidentQuestionType),
+  substructure: enumToWireKeys(ESubstructure),
+  woodType: enumToWireKeys(EWoodType),
+  woodEncroachement: enumToWireKeys(EWoodEncroachement),
+  quality: enumToWireKeys(EQuality),
+  crackType: enumToWireKeys(ECrackType),
+  rotationType: enumToWireKeys(ERotationType),
+  recoveryStatus: enumToWireKeys(ERecoveryStatus),
+  pileType: enumToWireKeys(EPileType),
+  facade: enumToWireKeys(EFacade),
 } as const
 
 type EnumName = keyof typeof ENUM
@@ -382,14 +400,71 @@ export const adaptRecovery = (raw: unknown): IRecoveryReport => {
 }
 
 // ---------------------------------------------------------------------------
-// Inquiry / Recovery samples — snake→camel + parent FK rename
+// Inquiry / Recovery samples — snake→camel, key renames, enum coercion
 // ---------------------------------------------------------------------------
+
+// Every choice-list field the sample dialogs show, with the enum it holds.
+// The API sends the database's label ("wood_rotterdam"); the dialogs look a
+// label up by the enum's number, so without this every such field stayed
+// empty on screen.
+//
+// constructionPile and woodQuality are left out on purpose and stay as the
+// API sends them (the dialog shows no value for them, as before): their
+// option lists are not settled yet, so a label here could say something
+// nobody entered.
+const INQUIRY_SAMPLE_ENUMS: readonly [string, EnumName][] = [
+  ['substructure', 'substructure'],
+  ['foundationType', 'foundationType'],
+  ['enforcementTerm', 'enforcementTerm'],
+  ['damageCause', 'foundationDamageCause'],
+  ['damageCharacteristics', 'foundationDamageCharacteristics'],
+  ['woodType', 'woodType'],
+  ['woodEncroachement', 'woodEncroachement'],
+  ['overallQuality', 'foundationQuality'],
+  ['constructionQuality', 'quality'],
+  ['woodCapacityHorizontalQuality', 'quality'],
+  ['pileWoodCapacityVerticalQuality', 'quality'],
+  ['carryingCapacityQuality', 'quality'],
+  ['masonQuality', 'quality'],
+  ['crackIndoorType', 'crackType'],
+  ['crackFacadeFrontType', 'crackType'],
+  ['crackFacadeBackType', 'crackType'],
+  ['crackFacadeLeftType', 'crackType'],
+  ['crackFacadeRightType', 'crackType'],
+  ['skewedParallelFacade', 'rotationType'],
+  ['skewedPerpendicularFacade', 'rotationType'],
+]
+
+const RECOVERY_SAMPLE_ENUMS: readonly [string, EnumName][] = [
+  ['status', 'recoveryStatus'],
+  ['type', 'recoveryType'],
+  ['pileType', 'pileType'],
+  ['facade', 'facade'],
+]
+
+// Like coerceEnums, but a label this app does not know is kept as it came:
+// the dialog then shows an empty value for it, where undefined would make it
+// say "Geen data" about a field that does have data. Handles the one list
+// field too (facade). Mutates in place.
+const coerceSampleEnums = (obj: Record<string, unknown>, fields: readonly [string, EnumName][]): void => {
+  const coerce = (name: EnumName, value: unknown): unknown => toEnumInt(name, value) ?? value
+  for (const [field, name] of fields) {
+    const value = obj[field]
+    if (Array.isArray(value)) obj[field] = value.map(v => coerce(name, v))
+    else if (typeof value === 'string') obj[field] = coerce(name, value)
+  }
+}
 
 export const adaptInquirySample = (raw: unknown): IInquirySample => {
   const o = snakeToCamel(raw) as Record<string, unknown>
   // Frontend type names the parent FK `inquiry`, not `inquiryId`.
   if ('inquiryId' in o) { o.inquiry = o.inquiryId; delete o.inquiryId }
   if ('buildingId' in o) { o.building = o.buildingId; delete o.buildingId }
+  // Two columns are spelled differently from the frontend type, so the dialog
+  // never found them: `groundlevel` and `wood_encroachment`.
+  if ('groundlevel' in o) { o.groundLevel = o.groundlevel; delete o.groundlevel }
+  if ('woodEncroachment' in o) { o.woodEncroachement = o.woodEncroachment; delete o.woodEncroachment }
+  coerceSampleEnums(o, INQUIRY_SAMPLE_ENUMS)
   return o as unknown as IInquirySample
 }
 
@@ -398,6 +473,7 @@ export const adaptRecoverySample = (raw: unknown): IRecoverySample => {
   if ('recoveryId' in o) { o.recovery = o.recoveryId; delete o.recoveryId }
   if ('buildingId' in o) { o.building = o.buildingId; delete o.buildingId }
   if ('contractorId' in o) { o.contractor = o.contractorId; delete o.contractorId }
+  coerceSampleEnums(o, RECOVERY_SAMPLE_ENUMS)
   return o as unknown as IRecoverySample
 }
 

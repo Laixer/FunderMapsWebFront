@@ -23,8 +23,8 @@ const emit = defineEmits<{ close: [] }>()
 
     <VueMarkdown :source="text" :options="{ breaks: true, linkify: true, html: false }" class="markdown text-grey-700" />
 
-    <template v-slot:header>
-      <h5 id="dialog-label" class="heading-5">{{ title }}</h5>
+    <template v-slot:header="{ labelId }">
+      <h5 :id="labelId" class="heading-5">{{ title }}</h5>
     </template>
     
     <template 

@@ -201,7 +201,7 @@ watch(
         v-if="sampleFieldsWithData[group]"
         class="space-y-4">
         <h6>{{ fieldGroupHeaders[group] }}</h6>
-        <dl role="list" class="list--definition">
+        <dl class="list--definition">
           <div 
             v-for="field in sampleFieldsWithData[group]" 
             :key="field.name"

@@ -110,7 +110,6 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'auditStatus', source: selectedCaseItem.value?.report.state }),
       new FieldDataConfig({ name: 'standardF3o' }),
       new FieldDataConfig({ name: 'inspection' }),
-      new FieldDataConfig({ name: 'documentName' }),
       new FieldDataConfig({ name: 'jointMeasurement' }),
       new FieldDataConfig({ name: 'floorMeasurement' }),
       new FieldDataConfig({ name: 'note' })
@@ -330,7 +329,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
                 <span class="sr-only">Volledige opmerking tonen</span>
               </button>
             </dt>
-            <dd class="text-grey-700">
+            <dd class="break-words text-grey-700">
               <p 
                 v-if="field.name === 'note'" 
                 v-line-clamp="3"

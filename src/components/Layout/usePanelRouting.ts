@@ -54,6 +54,8 @@ export function usePanelRouting(menus: ComputedRef<MenuEntry[]>[]) {
 
   watch(() => route.params.panel, slug => {
     if (slug) openPanelBySlug(slug as string)
+    // The panel is gone from the address (browser Back): show the main menu again
+    else rightPanelSlide.value = false
   })
 
   onMounted(() => {

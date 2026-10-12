@@ -53,9 +53,10 @@ export function useFocusTrap(
 
     nextTick(() => {
       const focusable = getFocusableElements()
-      if (focusable.length > 0) {
-        focusable[0].focus()
-      }
+      // A dialog with a form starts in its first field; the first focusable
+      // element as such is the close button in the header.
+      const first = focusable.find(el => el.matches('input, select, textarea')) ?? focusable[0]
+      first?.focus()
     })
   }
 

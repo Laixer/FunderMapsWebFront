@@ -27,6 +27,7 @@ const { isAuthenticated, currentUser } = storeToRefs( sessionStore )
  * Component related data
  */
 const isOpen = ref(false)
+const menuButton = ref<HTMLButtonElement | null>(null)
 // Reactive: currentUser is null at component mount (set after /me resolves
 // or after a re-login), so capturing once would freeze the avatar label.
 const userName = computed(() => currentUser.value?.name || 'Onbekend')
@@ -39,6 +40,16 @@ const handleToggleMenu = function handleToggleMenu() {
 }
 const handleClose = function handleClose() {
   isOpen.value = false
+}
+
+/**
+ * Escape closes the menu. The focus goes back to the button that opened it:
+ *  the menu item that had it is gone.
+ */
+const handleEscape = function handleEscape() {
+  if (! isOpen.value) return
+  isOpen.value = false
+  menuButton.value?.focus()
 }
 
 /**
@@ -78,7 +89,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
 </script>
 
 <template>
-  <div class="relative" v-on-click-outside="handleClose">
+  <div class="relative" v-on-click-outside="handleClose" @keydown.esc="handleEscape">
 
     <LinkButton 
       v-if="! isAuthenticated"
@@ -94,6 +105,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
     <button
       v-else
+      ref="menuButton"
       class="button group p-0 pr-2.5"
       :aria-label="`Menu voor ${userName}`"
       aria-haspopup="true"
