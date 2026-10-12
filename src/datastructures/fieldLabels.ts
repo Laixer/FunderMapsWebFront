@@ -207,7 +207,7 @@ export const incidentFieldLabels = <Record<string, string>> {
   note: "Opmerking",
   name: "Naam melder",
   phoneNumber: "Telefoon melder",
-  email: "Email melder",
+  email: "E-mail melder",
   foundationDamageCharacteristics: "Schadeoorzaken",
   environmentDamageCharacteristics: "Omgevingsaspecten",
   auditStatus: "Controlestatus",

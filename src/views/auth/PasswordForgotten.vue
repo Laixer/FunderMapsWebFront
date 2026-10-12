@@ -24,7 +24,7 @@ const handleSubmit = async function handleSubmit() {
 </script>
 
 <template>
-  <AuthWrapper title="Wachtwoord vergeten pagina voor de Fundermaps Applicatie">
+  <AuthWrapper title="Wachtwoord vergeten, pagina van de FunderMaps-applicatie">
     <Card v-if="!requestSubmitted" title="Wachtwoord vergeten" shadow rounded wide>
       <p>
         Om een nieuw wachtwoord aan te maken dien je eerst je e-mail

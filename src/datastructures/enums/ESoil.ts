@@ -18,7 +18,7 @@ export enum ESoil {
 }
 
 export const ESoilLabels: Map<ESoil, string> = new Map([
-  [ESoil.az, "Afgesloten Zeearmen"],
+  [ESoil.az, "Afgesloten zeearmen"],
   [ESoil.du, "Duinen"],
   [ESoil.hl, "Heuvelland"],
   [ESoil.hz, "Zandgronden"],
