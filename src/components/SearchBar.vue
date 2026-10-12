@@ -319,6 +319,7 @@ const handleClear = function handleClear() {
         id="search"
         class="grow [&_.input-field]:w-auto"
         placeholder="Zoek hier op adres of postcode"
+        aria-label="Zoek op adres of postcode"
         autocomplete="off"
         role="combobox"
         :aria-expanded="suggestions.length > 0"

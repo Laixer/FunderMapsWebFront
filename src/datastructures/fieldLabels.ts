@@ -55,7 +55,7 @@ export const analysisFieldLabels = <Record<string, string>> {
 
 export const recoveryFieldLabels = <Record<string, string>> {
   documentName: "Documentnaam",
-  id: "Onderzoeksnummer",
+  id: "Herstelnummer",
   type: "Type bewijslast",
   note: "Opmerking",
   auditStatus: "Controlestatus",

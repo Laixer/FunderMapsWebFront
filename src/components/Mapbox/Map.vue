@@ -41,6 +41,10 @@ const { getLastKnownPositioning } = useTrackPositioning(mapInstance)
 // Update the query string in the route when the map center changes. Navigate to the LngLat from the query string when opening a mapset page
 const { getLatLngFromQueryString } = useMapCenterRouting()
 
+// Read once, as the page was opened: the app itself writes ?lat=&lng= into the
+// address on every map move, so later this says nothing about the link.
+const openedAtPosition = !! getLatLngFromQueryString()
+
 // Map Control nudging
 const { maybeNudge: maybeNudgeRight } = useMapboxControlNudge('right', 336, hasSelectedBuilding)
 const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeftSidebarOpen)
@@ -75,6 +79,14 @@ const options = computed(() => {
 // would also trigger our own moveend listener and cause a redundant PUT).
 let lastAppliedCenterKey: string | null = null
 const applySavedPosition = (map: Map): void => {
+  // A link that names its own destination wins over "where I left off": a
+  // pand in the address, or an explicit ?lat=&lng=. The saved position arrives
+  // with the user's metadata, usually after the map has started flying to the
+  // pand, and the jump below would end that flight: a logged-in user who
+  // opened a link to a pand in Amsterdam was left looking at wherever they
+  // last had the map, with the Amsterdam pand's details beside it.
+  if (hasSelectedBuilding.value || openedAtPosition) return
+
   const center = userMetadata.value?.lastCenterPosition as { lng: number; lat: number } | undefined
   if (!center) return
   const key = `${center.lng},${center.lat}`

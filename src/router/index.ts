@@ -113,10 +113,9 @@ router.afterEach((to) => {
       break
     case 'building':
     case 'building-panel':
-      document.title = `Pand ${to.params.buildingId} — ${BASE_TITLE}`
-      break
     case 'mapset':
-      document.title = BASE_TITLE
+      // The map names itself (views/Main.vue): this hook also runs on every
+      // map move, which keeps the position in the query string.
       break
     default:
       document.title = BASE_TITLE
