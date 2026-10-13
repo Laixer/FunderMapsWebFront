@@ -8,7 +8,7 @@
       [
           "match",
           ["get", "recovery_type"],
-          ["pile_in_wall", "table", "pile_lowering", "unknown"],
+          ["pile_in_wall", "table", "pile_lowering", "injection", "unknown"],
           true,
           false
       ],
@@ -26,9 +26,9 @@
           "#47baa5",
           ["unknown"],
           "#5949b6",
-          ["pilelowering"],
+          ["pile_lowering"],
           "#8a4ab5",
-          ["groundreinforcement"],
+          ["injection"],
           "#c67f71",
           "hsl(0, 94%, 55%)"
       ]
