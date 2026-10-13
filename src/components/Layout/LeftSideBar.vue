@@ -12,6 +12,7 @@ import BackLink from '@/components/Common/Links/BackLink.vue';
 import Panel from '@/components/Common/Panel.vue';
 
 import LeftSideBarFooterToggles from '@/components/LeftSideBarFooterToggles.vue'
+import SideBarToMap from './SideBarToMap.vue'
 
 import FundermapsIcon from '@/components/Common/Icons/FundermapsIcon.vue';
 import InfoIcon from '@assets/svg/icons/info.svg'
@@ -116,6 +117,8 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
     role="dialog"
     aria-modal="true"
   >
+    <SideBarToMap @close="isLeftSidebarOpen = false" />
+
     <div
       class="panels transition-transform duration-300"
       :class="{'-translate-x-full': isShowingMapsetSelection === false}"
@@ -163,7 +166,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
               @mouseleave="isNoteHovered = false"
             >
               <button
-                class="p-1 text-green-500 hover:text-green-700"
+                class="p-1 text-green-500 hover:text-green-700 max-md:p-3"
                 type="button"
                 aria-label="Toelichting bij deze kaart"
                 :aria-expanded="showInfoTooltip"
@@ -179,8 +182,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                   <div
                     v-if="showInfoTooltip"
                     ref="noteElement"
-                    class="fixed top-[5rem] z-50 ml-2 mt-2 w-72 rounded-lg bg-white p-5 shadow-float"
-                    style="left: var(--sidebar-width)"
+                    class="fixed left-(--sidebar-width) top-[5rem] z-50 ml-2 mt-2 w-72 rounded-lg bg-white p-5 shadow-float max-md:inset-x-4 max-md:top-44 max-md:m-0 max-md:max-h-[calc(100%-12rem)] max-md:w-auto max-md:overflow-y-auto"
                   >
                     <h6 class="heading-6 mb-2">{{ activeMapset?.name }}</h6>
                     <VueMarkdown

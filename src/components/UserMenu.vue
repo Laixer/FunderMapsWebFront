@@ -114,7 +114,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
       <Avatar :name="userName" />
 
       <ChevronDownIcon
-        class="h-2.5 w-2.5 transition-transform duration-200"
+        class="h-2.5 w-2.5 transition-transform duration-200 max-md:hidden"
         :class="{'rotate-180': isOpen}"
         aria-hidden="true" />
     </button>

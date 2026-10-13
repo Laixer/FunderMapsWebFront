@@ -44,3 +44,111 @@
     grid-column: panel-right;
   }
 }
+
+/**
+ * The phone layout: everything narrower than Tailwind's `md` (48rem, 768px).
+ *  From 48rem up nothing in this block applies.
+ *
+ *  The two side bar columns above are 21rem each whatever the window: on a
+ *  390px phone the page was 672px wide, with the user menu, the map buttons
+ *  and the pand panel off screen. Here there is one column, as wide as the
+ *  window. The map and both side bars share its one cell, so a side bar
+ *  that opens (same switches, same transitions as on a wide screen) lies
+ *  over the map at full width.
+ */
+@media (width < 48rem) {
+  .page-dashboard {
+    grid-template-columns: [full-start panel-left main panel-right] minmax(0, 1fr) [full-end];
+    grid-template-rows: [header] 4rem [main] auto;
+
+    /* The user menu: the avatar alone is the button, so the search field
+       gets the width (the padding of .button made it 106px wide) */
+    .app-header .button[aria-haspopup] {
+      @apply p-0;
+    }
+
+    /* Above the map's own buttons (z-index 2), which would show through a
+       panel that has slid sideways; below the dialogs (20) and the header */
+    .sidebar {
+      @apply z-10 border-x-0;
+
+      /* Room for the bar that leads back to the map (.sidebar__to-map) */
+      .panels {
+        @apply top-12;
+      }
+
+      /* The chevron that closes a panel is not shown here (the bar does
+         that). It was the last of the header's three parts; without it the
+         title must not be spread to the far side. */
+      .panel__header {
+        @apply justify-start;
+      }
+
+      /* The pager of a panel and other bare icon buttons: a finger's width */
+      .button--link {
+        @apply min-h-10 min-w-10 justify-center;
+      }
+    }
+
+    /* The two switches under the mapset list */
+    .app-sidebar--left .input--toggle label {
+      @apply min-h-10;
+    }
+
+    /* MapLibre draws its buttons 29px square */
+    .maplibregl-ctrl-group button {
+      @apply h-10 w-10;
+    }
+
+    /* A dialog keeps a small margin and less padding, so its content gets
+       the width; it is as high as the space under the header at most and
+       scrolls inside (.panel__content) */
+    .app-modal {
+      @apply p-2;
+
+      .panel {
+        @apply space-y-4 p-5;
+      }
+
+      /* The cross that closes it: 44px, still in the corner */
+      .panel__header .button--link {
+        @apply right-1 top-1 min-h-11 min-w-11 justify-center;
+      }
+
+      /* Next to the cross, not under it */
+      .panel__header > :first-child:not(.button--link) {
+        @apply pr-8;
+      }
+
+      /* The fields of the profile and password forms (a placeholder that
+         does not fit ends in an ellipsis), and the lock in them */
+      .input-field {
+        @apply min-h-11;
+
+        input {
+          @apply text-ellipsis;
+        }
+      }
+
+      .input-field__before {
+        @apply px-0.5;
+
+        button {
+          @apply flex h-10 w-10 items-center justify-center;
+        }
+      }
+    }
+
+    /* The remark of an onderzoek, a herstel or an incident opens beside the
+       right side bar on a wide screen. Here that side bar is the whole
+       screen: the remark comes up from the bottom, over it, at most 70% of
+       the screen high (a longer one scrolls inside). */
+    .app-modal[data-variant="main"] {
+      @apply inset-x-0 bottom-0 top-[30%] mt-0 items-end p-0;
+
+      .panel {
+        @apply max-w-none rounded-b-none rounded-t-lg shadow-float;
+      }
+    }
+  }
+}
