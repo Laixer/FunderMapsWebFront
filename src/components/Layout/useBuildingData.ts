@@ -57,7 +57,13 @@ export function useBuildingData() {
       ! incidentsStore.buildingIncidentReportDataHasBeenRetrieved(buildingId) ||
       ! inquiriesStore.hasBeenRetrieved(buildingId)
     ) {
-      const response = await api.building.getAllReportDataByBuildingId(buildingId)
+      // The meldingen (what the incident map layer marks a pand for) come
+      // from their own call. Without them the pand still has its reports: a
+      // failure there is an empty list, never a reason to show nothing.
+      const [response, meldingen] = await Promise.all([
+        api.building.getAllReportDataByBuildingId(buildingId),
+        api.building.getMeldingenByBuildingId(buildingId).catch(() => []),
+      ])
 
       if (! recoveryStore.hasBeenRetrieved(buildingId)) {
         recoveryStore.setData(buildingId, response.recoveries, response.recoverySamples)
@@ -66,7 +72,7 @@ export function useBuildingData() {
         inquiriesStore.setData(buildingId, response.inquiries, response.inquirySamples)
       }
       if (! incidentsStore.buildingIncidentReportDataHasBeenRetrieved(buildingId)) {
-        incidentsStore.setIncidentDataByBuildingId(buildingId, response.incidents)
+        incidentsStore.setIncidentDataByBuildingId(buildingId, [...response.incidents, ...meldingen])
       }
     }
   }

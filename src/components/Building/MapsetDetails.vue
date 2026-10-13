@@ -150,10 +150,13 @@ const allFields = computed(() => {
 
       return applyContextToFieldDataConfigs({
         source: incidentData.value[0],
-        configs: [
-          new FieldDataConfig({ name: 'id' }),
-          new FieldDataConfig({ name: 'createDate' }),
-        ]
+        // A melding has a topic, an incident report a number and a date
+        configs: incidentData.value[0]?.kind === 'melding'
+          ? [ new FieldDataConfig({ name: 'topic' }) ]
+          : [
+              new FieldDataConfig({ name: 'id' }),
+              new FieldDataConfig({ name: 'createDate' }),
+            ]
       })
       .map(retrieveAndFormatFieldData)
   }

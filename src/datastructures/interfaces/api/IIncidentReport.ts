@@ -30,5 +30,12 @@ export interface IIncidentReport extends IEnumMethods {
   building: string,
   auditStatus: EAuditStatus,
   incidentQuestionType: EIncidentQuestionType,
-  meta: object
+  meta: object,
+  /**
+   * 'melding': one of the meldingen the incident map layer draws. It has a
+   * topic and nothing else to show (no melder, no date, no number); every
+   * other field above is empty on it.
+   */
+  kind?: 'incident' | 'melding',
+  topic?: string
 }

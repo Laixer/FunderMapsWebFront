@@ -100,9 +100,8 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'type' }),
       new FieldDataConfig({ name: 'contractorName', source: selectedCaseItem.value?.report.attribution }), 
       new FieldDataConfig({ name: 'ownerName', source: selectedCaseItem.value?.report.attribution }),
-      // "Verwerkt door" is the organisation. Who entered and who checked the
-      // report are people (their e-mail addresses): not shown.
-      new FieldDataConfig({ name: 'processedByName', source: selectedCaseItem.value?.report.attribution }),
+      // No "Verwerkt door" / "Gecontroleerd door": those are people (their e-mail
+      // addresses). The organisation is the row "Opdrachtgever" above.
       new FieldDataConfig({ name: 'note' }),
       new FieldDataConfig({ name: 'auditStatus', source: selectedCaseItem.value?.report.state }),
     ]
@@ -110,8 +109,6 @@ const reportFieldsWithData = computed(() => {
 
   return reportFieldsConfig
     .map(retrieveAndFormatFieldData)
-    // Without an organisation to name there is no "Verwerkt door" row
-    .filter(field => field.name !== 'processedByName' || !! field.getValue('raw'))
 })
 
 /**
