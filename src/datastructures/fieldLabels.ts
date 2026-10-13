@@ -70,9 +70,8 @@ export const AttributionControlFieldLabels = <Record<string, string>> {
   ownerName: "Opdrachtgever",
   dataOwner: "Data-eigenaar",
   dataOwnerName: "Data-eigenaar",
-  // The organisation. creatorName and reviewerName (e-mail addresses of
-  // people) have no label any more: they are not shown.
-  processedByName: "Verwerkt door"
+  // creatorName and reviewerName (e-mail addresses of people) have no label
+  // any more: they are not shown.
 }
 
 export const StateControlFieldLabels = <Record<string, string>> {
@@ -214,7 +213,8 @@ export const incidentFieldLabels = <Record<string, string>> {
   auditStatus: "Controlestatus",
   documentFile: "Link naar documenten",
   internalNote: "Interne opmerking",
-  questionType: "Vraagtype"
+  questionType: "Vraagtype",
+  topic: "Onderwerp"
 }
 
 /**

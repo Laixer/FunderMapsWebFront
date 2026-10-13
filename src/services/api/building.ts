@@ -4,6 +4,7 @@ import type {
   IStatistics,
   IDownloadLink,
   ICombinedReportData,
+  IIncidentReport,
   ISubsidence,
 } from "@/datastructures/interfaces"
 import { get } from "../apiClient"
@@ -13,6 +14,7 @@ import {
   adaptStatistics,
   adaptGeoLocationData,
   adaptCombinedReport,
+  adaptMeldingen,
   adaptSubsidence,
 } from "./_adapters"
 
@@ -49,6 +51,15 @@ export const getAllReportDataByBuildingId = async (buildingId: string): Promise<
   return adaptCombinedReport(raw)
 }
 
+/**
+ * The meldingen of a pand: what the incident map layer marks it for. Only
+ * their topics come back.
+ */
+export const getMeldingenByBuildingId = async (buildingId: string): Promise<IIncidentReport[]> => {
+  const raw = await get({ endpoint: `/incident/building/${buildingId}?include=meldingen` })
+  return adaptMeldingen(raw)
+}
+
 export const getSubsidenceByBuildingId = async (buildingId: string): Promise<ISubsidence[]> => {
   const rows = await get({ endpoint: `/product/${buildingId}/subsidence/historic` })
   return adaptSubsidence(rows)
@@ -66,6 +77,7 @@ export default {
   getAnalysisByBuildingId,
   getStatisticsByBuildingId,
   getAllReportDataByBuildingId,
+  getMeldingenByBuildingId,
   getSubsidenceByBuildingId,
   getRecoveryReportDownloadLink,
   getInquiryReportDownloadLink,

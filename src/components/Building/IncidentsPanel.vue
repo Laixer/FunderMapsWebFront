@@ -78,7 +78,14 @@ const selectedCaseItem = computed(() => {
   return null
 })
 
+/**
+ * A melding (what the incident map layer marks this pand for) has a topic and
+ *  nothing else to show: no number, no date, no melder.
+ */
+const isMelding = computed(() => selectedCaseItem.value?.kind === 'melding')
+
 const selectedCaseItemTitle = computed(() => {
+  if (isMelding.value) return 'Melding'
   return selectedCaseItem.value?.id || ''
 })
 
@@ -90,6 +97,13 @@ const selectedCaseItemTitle = computed(() => {
 
 const fieldsWithData = computed(() => {
   if (selectedCaseItem.value === null) return []
+
+  if (isMelding.value) {
+    return applyContextToFieldDataConfigs({
+      source: selectedCaseItem,
+      configs: [ new FieldDataConfig({ name: 'topic' }) ]
+    }).map(retrieveAndFormatFieldData)
+  }
 
   const fieldsConfig = applyContextToFieldDataConfigs({
     source: selectedCaseItem,
@@ -205,7 +219,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
       <div>
         <!-- Paginator -->
         <nav
-          v-if="maxListIndex > 1"
+          v-if="maxListIndex > 0"
           class="mb-2 flex items-center justify-between text-sm text-(--color-text-muted)">
           <button
             class="button button--link p-1"
@@ -233,7 +247,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
       </div>
 
       <div class="space-y-3">
-        <h6 class="font-bold leading-none">Incidentinformatie</h6>
+        <h6 class="font-bold leading-none">{{ isMelding ? 'Meldinginformatie' : 'Incidentinformatie' }}</h6>
         <dl class="space-y-3">
           <div 
             v-for="field in fieldsWithData" 

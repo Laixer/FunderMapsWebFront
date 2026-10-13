@@ -519,6 +519,31 @@ export const adaptIncident = (raw: unknown): IIncidentReport => {
   return o as unknown as IIncidentReport
 }
 
+/**
+ * The meldingen in the answer of /incident/building/:id?include=meldingen, as
+ * items for the incidents list. The API sends the pand and the topic and
+ * nothing else; the rest of an incident stays empty here and is not shown.
+ */
+export const adaptMeldingen = (raw: unknown): IIncidentReport[] =>
+  (Array.isArray(raw) ? raw : [])
+    .filter((row): row is { kind: string, id: string, building_id: string, topic: string } =>
+      row?.kind === 'melding' && typeof row.id === 'string' && typeof row.topic === 'string' && row.topic !== '')
+    .map(row => ({
+      kind: 'melding',
+      id: row.id,
+      topic: row.topic,
+      building: row.building_id ?? '',
+      clientName: '',
+      email: '',
+      chainedBuilding: false,
+      owner: false,
+      foundationRecovery: false,
+      neighborRecovery: false,
+      foundationDamageCharacteristics: [],
+      environmentDamageCharacteristics: [],
+      meta: {},
+    }) as unknown as IIncidentReport)
+
 // ---------------------------------------------------------------------------
 // ICombinedReportData — the /report/:id 5-array endpoint
 // ---------------------------------------------------------------------------
