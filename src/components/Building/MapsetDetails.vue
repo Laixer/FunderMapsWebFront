@@ -9,20 +9,16 @@ import { storeToRefs } from 'pinia';
 import { useMapsetStore } from '@/store/mapsets'
 import { useBuildingStore } from '@/store/buildings';
 import { useAnalysisStore } from '@/store/building/analysis';
-import { useGeoLocationsStore } from '@/store/building/geolocations'
 import { useInquiriesStore } from '@/store/building/inquiries';
-import { useRecoveryReportsStore } from '@/store/building/recovery';
 import { useIncidentReportsStore } from '@/store/building/incidents';
 
 import { FieldDataConfig, applyContextToFieldDataConfigs, retrieveAndFormatFieldData } from '@/utils/fieldData';
 
 
-const { activeMapsetId } = storeToRefs(useMapsetStore())
+const { activeMapset } = storeToRefs(useMapsetStore())
 const { buildingId } = storeToRefs(useBuildingStore())
 const analysisStore = useAnalysisStore()
-const locationStore = useGeoLocationsStore()
 const inquiriesStore = useInquiriesStore()
-const recoveryStore = useRecoveryReportsStore()
 const { getIncidentReportsByBuildingId } = useIncidentReportsStore()
 
 
@@ -31,19 +27,9 @@ const analysisData = computed(() => {
   return analysisStore.getData(buildingId.value)
 })
 
-const locationData = computed(() => {
-  if (! buildingId.value) return null
-  return locationStore.getData(buildingId.value)
-})
-
 const inquiryData = computed(() => {
   if (! buildingId.value) return []
-  return inquiriesStore.getCombined(buildingId.value) || []
-})
-
-const recoveryData = computed(() => {
-  if (! buildingId.value) return []
-  return recoveryStore.getCombined(buildingId.value) || []
+  return inquiriesStore.getReportsWithSamples(buildingId.value) || []
 })
 
 
@@ -52,36 +38,51 @@ const incidentData = computed(() => {
   return getIncidentReportsByBuildingId(buildingId.value) || []
 })
 
+// The mapsets that have a summary. By id: their names and slugs can be edited.
+const MAPSET = {
+  rapportage: 'clcqk9m5n000a14qel71c83m2',
+  risico: 'clcqkaaea000714o1v1jmdqwf',
+  fundering: 'clcqkb4vp006w14qhzv7rfznm',
+  pand: 'clcqk8r6a005h14t9wt3u61bv',
+  quickscan: 'cliynyd6g01b801pges0bb7wh',
+  incidenten: 'cl2nh0ez3000y14o1nduwbsv5',
+}
+
 const title = computed<string|null>(() => {
 
   // No building = no need for details
   if (! buildingId.value) return null
 
-  switch(activeMapsetId.value) {
-    case '0afd6eef-b056-4c33-bf61-883864fdfe98': // Rapportage
+  switch(activeMapset.value?.id) {
+    case MAPSET.rapportage:
       return 'Rapportage-informatie'
-    case '79686171-6564-463f-8046-41a9a9ead55f': // Risico
+    case MAPSET.risico:
       return 'Risico-informatie' 
-    case 'c81d4c1b-cc11-4f80-b324-9ab7e6cefd99': // Fundering
+    case MAPSET.fundering:
       return 'Funderingsinformatie'
-    case '8de9bc42-829c-4df2-b75f-c8c392e18e76': // pand
+    case MAPSET.pand:
       return 'Pandinformatie'
-    case '42ddf102-a8bd-4076-9336-27781eb069c8': // Gevelscan
+    case MAPSET.quickscan:
       return null // no title
-    case '0f3080d3-1ecc-4d05-a55a-62ef3c4c74b7': // Incidenten
+    case MAPSET.incidenten:
       return 'Incidentinformatie'
   }
 
   return null
 })
 
-const fields = computed(() => {
+/**
+ * The rows per mapset. Every row reads the same as in the panel it comes
+ *  from (label, value, formatting): the summary repeats, it does not rephrase.
+ */
+const allFields = computed(() => {
 
   // No building = no need for details
   if (! buildingId.value) return []
 
-  switch(activeMapsetId.value) {
-    case '0afd6eef-b056-4c33-bf61-883864fdfe98': // Rapportage
+  switch(activeMapset.value?.id) {
+    // The onderzoek the onderzoek panel opens on: the last one that was added or changed
+    case MAPSET.rapportage:
       if (! Array.isArray(inquiryData.value) || inquiryData.value.length === 0) return []
 
       return applyContextToFieldDataConfigs({
@@ -96,7 +97,10 @@ const fields = computed(() => {
       })
       .map(retrieveAndFormatFieldData)
 
-    case '79686171-6564-463f-8046-41a9a9ead55f': // Risico
+    // The three risks of the model. Not the risk "op basis van onderzoek"
+    // (unclassifiedRisk): its row is called "Vastgesteld", which says too
+    // little without the heading it has in the risk panel.
+    case MAPSET.risico:
       if (analysisData.value === null) return []
 
       return applyContextToFieldDataConfigs({
@@ -105,60 +109,49 @@ const fields = computed(() => {
           new FieldDataConfig({ name: 'drystandRisk' }),
           new FieldDataConfig({ name: 'dewateringDepthRisk' }),
           new FieldDataConfig({ name: 'bioInfectionRisk' }),
-          new FieldDataConfig({ name: 'unclassifiedRisk' }),
-          new FieldDataConfig({ name: 'facadescanRisk' }),
         ]
       })
       .map(retrieveAndFormatFieldData)
 
-    case 'c81d4c1b-cc11-4f80-b324-9ab7e6cefd99': { // Fundering
+    // As the fundering panel has them, the herstelmethode included
+    case MAPSET.fundering:
       if (analysisData.value === null) return []
-
-      const configs = [
-        new FieldDataConfig({ name: 'foundationType' }),
-        new FieldDataConfig({ name: 'foundationTypeReliability' }),
-        new FieldDataConfig({ name: 'velocity' })
-      ]
-
-      if (Array.isArray(recoveryData.value) && recoveryData.value.length !== 0) {
-        configs.push(new FieldDataConfig({ name: 'recovery', source: recoveryData.value[0].sample }))
-        configs.push(new FieldDataConfig({ name: 'type', source: recoveryData.value[0].sample }))
-      }
 
       return applyContextToFieldDataConfigs({
         source: analysisData.value,
-        configs
-      })
-      .map(retrieveAndFormatFieldData)
-    }
-    case '8de9bc42-829c-4df2-b75f-c8c392e18e76':  // pand / gebouw
-      if (analysisData.value === null || locationData.value === null) return []
-
-      return applyContextToFieldDataConfigs({
-        source: analysisData,
         configs: [
-          new FieldDataConfig({ name: 'externalId', source: locationData.value?.building }),
-          new FieldDataConfig({ name: 'constructionYear' }),
-          new FieldDataConfig({ name: 'surfaceArea' }),
-          // TODO: owner field - not yet available
-          // TODO: # address count - not yet available
+          new FieldDataConfig({ name: 'foundationType' }),
+          new FieldDataConfig({ name: 'foundationTypeReliability' }),
+          new FieldDataConfig({ name: 'velocity' }),
+          new FieldDataConfig({ name: 'recoveryType' }),
         ]
       })
       .map(retrieveAndFormatFieldData)
 
-    case '42ddf102-a8bd-4076-9336-27781eb069c8': // Gevelscan
+    // The id of the pand is in the heading above
+    case MAPSET.pand:
+      if (analysisData.value === null) return []
+
+      return applyContextToFieldDataConfigs({
+        source: analysisData.value,
+        configs: [
+          new FieldDataConfig({ name: 'constructionYear' }),
+          new FieldDataConfig({ name: 'surfaceArea' }),
+        ]
+      })
+      .map(retrieveAndFormatFieldData)
+
+    case MAPSET.quickscan:
       return []
 
-    case '0f3080d3-1ecc-4d05-a55a-62ef3c4c74b7': // Incidenten
+    // The last melding. Its address and meldingsloket are not in the data.
+    case MAPSET.incidenten:
       if (! Array.isArray(incidentData.value) || incidentData.value.length === 0) return []
 
       return applyContextToFieldDataConfigs({
         source: incidentData.value[0],
         configs: [
           new FieldDataConfig({ name: 'id' }),
-          new FieldDataConfig({ name: 'address' }),
-          new FieldDataConfig({ name: 'building' }),
-          new FieldDataConfig({ name: 'clientId' }),
           new FieldDataConfig({ name: 'createDate' }),
         ]
       })
@@ -166,6 +159,20 @@ const fields = computed(() => {
   }
 
   return []
+})
+
+/**
+ * Only rows that say something: a field without data is left out, where the
+ *  panels show "Geen data" for it.
+ */
+const fields = computed(() => {
+  return allFields.value.filter(field => {
+    const raw = field.getValue('raw')
+    const value = field.value
+
+    return raw !== undefined && raw !== null && raw !== ''
+      && value !== undefined && value !== null && value !== ''
+  })
 })
 
 
@@ -176,10 +183,10 @@ const fields = computed(() => {
     v-if="fields.length !== 0"
     class="space-y-2 rounded-lg border border-grey-400 p-4">
     <h6 v-if="title" class="heading-6">{{ title }}</h6>
-    <ul class="space-y-1 text-grey-700">
+    <ul class="space-y-1 text-(--color-text-muted)">
       <li 
         v-for="item in fields"
-        :key="item.label">{{ item.label }}: {{ item.value || 'Onbekend' }}</li>
+        :key="item.name">{{ item.label }}: {{ item.value }}</li>
     </ul>
   </section>
 </template>

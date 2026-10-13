@@ -2,7 +2,9 @@
 
 import Modal from '@/components/Common/Modal.vue'
 
-const { closeable = true, variant = 'full', placing = 'center', wrapper = 'full' } = defineProps<{
+// `active` is passed on as it came: left out stays left out (undefined, not
+// false), so that Modal can tell "not open" from "did not say".
+const { closeable = true, variant = 'full', placing = 'center', wrapper = 'full', active = undefined } = defineProps<{
   title?: string
   variant?: string
   closeable?: boolean

@@ -105,7 +105,7 @@ const fieldsWithData = computed(() => {
             v-for="field in fieldsWithData" 
             :key="field.name">
             <dt>{{ field.label }}</dt>
-            <dd class="text-grey-700">{{ field.value }}</dd>
+            <dd>{{ field.value }}</dd>
           </div>
         </dl>
       </div>      

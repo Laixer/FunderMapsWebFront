@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { useMapsetStore } from '@/store/mapsets';
 import { getItemsStartingWith } from '@/utils/localStorage';
@@ -20,6 +20,17 @@ export const useLayersStore = defineStore('layers', () => {
    * Indicates whether the building cluster (bouwkundige eenheid) layer is shown.
    */
   const showBuildingCluster = ref(false);
+
+  /**
+   * Whether the active mapset has the building cluster layer in its own legend
+   * (the mapset "Pand"). There the checkbox in the legend is the one control:
+   * the switch above is not offered and does not touch the layer, or the two
+   * could say different things about the same lines on the map.
+   */
+  const isBuildingClusterInLegend = computed<boolean>(() => {
+    const { activeMapset } = storeToRefs(useMapsetStore());
+    return !! activeMapset.value?.layerSet?.some(layer => layer.id === 'building-cluster');
+  });
 
   /**
    * Resolves the mapset ID from various possible inputs.
@@ -184,6 +195,7 @@ export const useLayersStore = defineStore('layers', () => {
   return {
     visibleLayersByMapsetId,
     showBuildingCluster,
+    isBuildingClusterInLegend,
     getVisibleLayersByMapsetId,
     getVisibleLayersOfActiveMapset,
     isLayerVisible,

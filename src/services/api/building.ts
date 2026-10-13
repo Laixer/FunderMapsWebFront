@@ -21,6 +21,19 @@ export const getLocationInformationByBuildingId = async (buildingId: string): Pr
   return adaptGeoLocationData(raw)
 }
 
+/**
+ * Street and number of one address (a BAG nummeraanduiding id), or null when
+ * the answer has no street. The geocoder is public: no session is needed, and
+ * a 401 here must never send the user to the login.
+ */
+export const getAddressLabelById = async (addressId: string): Promise<string | null> => {
+  const raw = await get({ endpoint: `/geocoder/address/${addressId}`, requireAuth: false }) as
+    { street?: string | null, building_number?: string | null } | null
+
+  if (! raw?.street) return null
+  return `${raw.street} ${raw.building_number ?? ''}`.trim()
+}
+
 export const getAnalysisByBuildingId = async (buildingId: string): Promise<IAnalysis> => {
   const raw = await get({ endpoint: `/product/${buildingId}/analysis` })
   return new Analysis(adaptAnalysis(raw))
@@ -49,6 +62,7 @@ export const getInquiryReportDownloadLink = async (inquiryId: string): Promise<I
 
 export default {
   getLocationInformationByBuildingId,
+  getAddressLabelById,
   getAnalysisByBuildingId,
   getStatisticsByBuildingId,
   getAllReportDataByBuildingId,

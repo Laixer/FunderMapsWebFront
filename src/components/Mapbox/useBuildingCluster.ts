@@ -10,13 +10,18 @@ import { useToggleableLayers } from "./useToggleableLayers";
 export const useBuildingCluster = function useBuildingCluster(
   Map: MaybeRef<Map | null | undefined>
 ) {
-  const { showBuildingCluster: toggleValue } = storeToRefs(useLayersStore())
+  const {
+    showBuildingCluster: toggleValue,
+    isBuildingClusterInLegend
+  } = storeToRefs(useLayersStore())
   
   useToggleableLayers(
     Map, 
     toggleValue, 
     [
       'building-cluster'
-    ]
+    ],
+    // On a mapset with this layer in its legend, the legend decides
+    isBuildingClusterInLegend
   )
 }

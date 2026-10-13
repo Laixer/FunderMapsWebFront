@@ -1,3 +1,13 @@
+/* Text colours of the panels and dialogs.
+   The palette's grey-700 (the values in the lists) and green-500 (outline
+   buttons, links) are too light for text: 3.3:1 and 2.1:1 on white, where
+   WCAG AA asks for 4.5:1. These are the same hues one step darker, just
+   enough for 4.5:1 on white and on the grey of the side panels (grey-100). */
+:root {
+  --color-text-muted: #607188; /* 5.0:1 on white, 4.6:1 on grey-100 */
+  --color-text-green: #108054; /* 5.0:1 on white, 4.6:1 on grey-100 */
+}
+
 .panel {
   @apply grid overflow-hidden;
 
@@ -20,5 +30,10 @@
 
   .panel__footer {
     grid-row: panel-footer;
+  }
+
+  /* The value under or beside its label */
+  dd {
+    color: var(--color-text-muted);
   }
 }

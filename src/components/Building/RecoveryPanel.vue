@@ -14,6 +14,7 @@ import RightArrowIcon from '@assets/svg/icons/arrow-right.svg'
 import InfoIcon from '@assets/svg/icons/info.svg'
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs } from '@/utils/fieldData'
+import { useLeaveEmptyPanel } from '@/composables/useLeaveEmptyPanel'
 
 import { useRecoveryReportsStore } from '@/store/building/recovery';
 import { useBuildingStore } from '@/store/buildings';
@@ -21,7 +22,7 @@ import { useMainStore } from '@/store/main';
 
 
 const recoveryStore = useRecoveryReportsStore()
-const { shownReportIndex, isSamplePanelOpen } = storeToRefs(recoveryStore)
+const { shownReportIndex, shownSampleIndex, shownSampleLabel, isSamplePanelOpen } = storeToRefs(recoveryStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
 
@@ -36,11 +37,11 @@ const emit = defineEmits<{ close: []; back: [] }>()
 const isClamped = ref(false)
 
 /******************************************************************************
- * Main Recovery report
+ * Main Recovery report: one item per report, with its samples on this pand
  */
 const caseItems = computed(() => {
   if (! buildingId.value) return []
-  return recoveryStore.getCombined(buildingId.value) || []
+  return recoveryStore.getReportsWithSamples(buildingId.value) || []
 })
 
 /**
@@ -99,21 +100,44 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'type' }),
       new FieldDataConfig({ name: 'contractorName', source: selectedCaseItem.value?.report.attribution }), 
       new FieldDataConfig({ name: 'ownerName', source: selectedCaseItem.value?.report.attribution }),
-      new FieldDataConfig({ name: 'creatorName', source: selectedCaseItem.value?.report.attribution }),
-      new FieldDataConfig({ name: 'reviewerName', source: selectedCaseItem.value?.report.attribution }),
+      // "Verwerkt door" is the organisation. Who entered and who checked the
+      // report are people (their e-mail addresses): not shown.
+      new FieldDataConfig({ name: 'processedByName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'note' }),
       new FieldDataConfig({ name: 'auditStatus', source: selectedCaseItem.value?.report.state }),
     ]
   })
 
-  return reportFieldsConfig.map(retrieveAndFormatFieldData)
+  return reportFieldsConfig
+    .map(retrieveAndFormatFieldData)
+    // Without an organisation to name there is no "Verwerkt door" row
+    .filter(field => field.name !== 'processedByName' || !! field.getValue('raw'))
 })
+
+/**
+ * The samples of this report on this pand. Mostly one.
+ */
+const samples = computed(() => selectedCaseItem.value?.samples ?? [])
 
 /**
  * Whether sample information is available for this report
  */
-const hasSampleData = computed(() => {
-  return !! (selectedCaseItem.value?.sample)
+const hasSampleData = computed(() => samples.value.length !== 0)
+
+/**
+ * With several samples there is a button per sample. A herstel sample has no
+ *  address of its own: it is named by its number, and its method when known.
+ */
+const sampleButtons = computed(() => {
+  if (samples.value.length < 2) return []
+
+  return samples.value.map((sample, index) => {
+    const method = sample.getEnumLabel('type')
+    return {
+      index,
+      label: method ? `Herstel ${index + 1}: ${method}` : `Herstel ${index + 1}`
+    }
+  })
 })
 
 
@@ -126,16 +150,9 @@ watch(
 )
 
 /**
- * Close the panel if there is no data for this building
+ * Leave the panel if there is no data for this building
  */
-watch(
-  () => noCaseItemAvailableForBuilding.value, 
-  (value) => {
-    if (value === true) {
-      emit('back')
-    }
-  }
-)
+useLeaveEmptyPanel(noCaseItemAvailableForBuilding, 'recovery')
 
 watch(
   () => selectedCaseItem.value,
@@ -178,8 +195,10 @@ const resetListValue = function resetListValue() {
 /**
  * Handle opening the sample modal
  */
-const handleOpenModal = function handleOpenModal() {
-  if (hasSampleData.value) {
+const handleOpenModal = function handleOpenModal(sampleIndex = 0, label = '') {
+  if (samples.value[sampleIndex]) {
+    shownSampleIndex.value = sampleIndex
+    shownSampleLabel.value = label
     isSamplePanelOpen.value = true
   }
 }
@@ -221,7 +240,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
         <!-- Paginator -->
         <nav
           v-if="maxListIndex > 0"
-          class="mb-2 flex items-center justify-between text-sm text-grey-700">
+          class="mb-2 flex items-center justify-between text-sm text-(--color-text-muted)">
           <button
             class="button button--link p-1"
             :disabled="shownReportIndex === 0"
@@ -268,7 +287,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
                 <span class="sr-only">Volledige opmerking tonen</span>
               </button>
             </dt>
-            <dd class="break-words text-grey-700">
+            <dd class="break-words">
               <p 
                 v-if="field.name === 'note'" 
                 v-line-clamp="3"
@@ -279,11 +298,29 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
         </dl>
       </div>
 
+      <div
+        v-if="sampleButtons.length"
+        class="space-y-3">
+        <h6 class="font-bold leading-none">Herstelinformatie</h6>
+        <OutlineButton
+          v-for="button in sampleButtons"
+          :key="button.index"
+          :label="button.label"
+          class="w-full"
+          @click.prevent="handleOpenModal(button.index, button.label)"
+        >
+          <template v-slot:after>
+            <AnimatedArrowIcon />
+          </template>
+        </OutlineButton>
+      </div>
+
       <OutlineButton
+        v-else
         label="Bekijk de herstelinformatie"
         :disabled="! hasSampleData"
         class="w-full"
-        @click.prevent="handleOpenModal"
+        @click.prevent="handleOpenModal()"
       >
         <template v-slot:after>
           <AnimatedArrowIcon />

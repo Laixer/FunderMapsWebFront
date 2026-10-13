@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { onBeforeUnmount, onMounted, ref, toRef, useId } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useId } from 'vue'
 import CloseBtn from '@/components/Common/Buttons/CloseBtn.vue'
 import { useFocusTrap } from '@/composables/useFocusTrap'
 
@@ -15,12 +15,20 @@ const props = withDefaults(defineProps<{
   closeable: true,
   placing: 'center',
   wrapper: 'full',
+  // Not false: a boolean prop that is left out would otherwise read as
+  // "not active", and a dialog that is created when it opens (v-if) says
+  // nothing about `active`. Its focus trap never switched on.
+  active: undefined,
 })
 
 const emit = defineEmits<{ close: [] }>()
 
 const dialogRef = ref<HTMLElement | null>(null)
-useFocusTrap(dialogRef, props.active !== undefined ? toRef(props, 'active') : undefined)
+
+// A dialog that stays in the page (v-show) says when it is open; one that is
+// created when it opens is open for as long as it exists.
+const isActive = computed(() => props.active !== false)
+useFocusTrap(dialogRef, isActive)
 
 // The heading that names the dialog gets an id of its own: several dialogs
 // are in the page at once (three of them shared id="dialog-label").
@@ -53,8 +61,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', handleEscape))
   >
     <div
       ref="dialogRef"
-      class="panel pointer-events-auto"
+      class="panel pointer-events-auto focus:outline-none"
       role="dialog"
+      tabindex="-1"
       :aria-labelledby="title || $slots.header ? labelId : undefined"
       aria-modal="true"
       :data-variant="variant"

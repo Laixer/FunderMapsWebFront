@@ -151,7 +151,20 @@ export const useMapsetRouting = function useMapsetRouting() {
       name = 'mapset'
     }
 
-    router.push({ name, params, query: route.query })
+    // An address without a mapset the user can see (the start page "/", or a
+    // mapset that does not exist) is not a page to go Back to: the map that
+    // is shown instead takes its place in the history. With push, Back from
+    // the first page showed "/" with the map still up, and Back from an
+    // unknown mapset was sent forward again. Choosing another mapset stays a
+    // step of its own.
+    const currentMapsetId = route.params?.mapsetId
+    const isCorrection = ! currentMapsetId || ! isMapsetAvailable(currentMapsetId as string)
+
+    if (isCorrection) {
+      router.replace({ name, params, query: route.query })
+    } else {
+      router.push({ name, params, query: route.query })
+    }
   }
 
 

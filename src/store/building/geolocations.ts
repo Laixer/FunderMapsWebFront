@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { type IGeoLocationData } from "@/datastructures/interfaces"
@@ -27,6 +28,31 @@ export const useGeoLocationsStore = defineStore('geolocations', () => {
     return null
   }
 
+  /**
+   * Street and number per address id (BAG nummeraanduiding). The location
+   * data above holds one address per pand; a report can have samples on
+   * several addresses of a pand, and names them by this.
+   *  null = asked, no address found
+   */
+  const addressLabelById = ref<Record<string, string | null>>({})
+  const addressLabelRequested = new Set<string>()
+
+  function getAddressLabel(addressId: string): string | null {
+    return addressLabelById.value[addressId] ?? null
+  }
+
+  async function loadAddressLabel(addressId: string): Promise<void> {
+    if (! addressId || addressLabelRequested.has(addressId)) return
+    addressLabelRequested.add(addressId)
+
+    try {
+      addressLabelById.value[addressId] = await api.building.getAddressLabelById(addressId)
+    } catch {
+      // Not found, or the lookup failed: the sample keeps its number as name
+      addressLabelById.value[addressId] = null
+    }
+  }
+
   return {
     hasBeenRetrieved,
     failedToLoad,
@@ -35,5 +61,7 @@ export const useGeoLocationsStore = defineStore('geolocations', () => {
     loadData,
     getFullAddress,
     getAddress,
+    getAddressLabel,
+    loadAddressLabel,
   }
 })

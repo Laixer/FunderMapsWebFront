@@ -56,14 +56,13 @@ watch(
     // No repeat please
     if (value === lastQuery.value) return
 
-    // Looks like a BAG identifier? Try to open the building directly.
-    // Covers a bare 16-digit BAG number (PAND or NUMMERAANDUIDING) and any
-    // NL.IMBAG.* form.
-    if (
-      (value.length === 16 && /^[0-9]+$/.test(value)) ||
-      value.toUpperCase().includes('BAG')
-    ) {
-      const location = await lookupBuilding(value)
+    // Looks like an identifier of a pand or an address? Try to open the
+    // building directly. Only then: any other text is an address to look up,
+    // and the building lookup answers it with an error (it used to get every
+    // text of more than ten characters that matched no address).
+    const buildingId = toBuildingId(value)
+    if (buildingId) {
+      const location = await lookupBuilding(buildingId)
       if (location) {
         await openBuilding(location)
         return
@@ -71,19 +70,23 @@ watch(
     }
 
     await handleGetSuggestions(value)
-
-    // no results and query string longer than 10 characters? Let's give the Fundermaps API a try
-    // (not when a newer lookup has started meanwhile: the answer to this one was dropped then,
-    // and the empty list says nothing about what was typed)
-    if (suggestions.value.length === 0 && lastQuery.value === value && value.length > 10) {
-      const location = await lookupBuilding(value)
-      if (location) {
-        await openBuilding(location)
-        return
-      }
-    }
   }
 )
+
+/**
+ * The id in a text that has the shape of one the building lookup knows, or
+ *  null: a BAG pand or nummeraanduiding id, with the NL.IMBAG. prefix or as
+ *  the bare 16 digits, or a FunderMaps id (gfm-...). Returned as the lookup
+ *  wants it: without the spaces a pasted id can have, the prefix in capitals.
+ */
+const toBuildingId = function toBuildingId(value: string): string | null {
+  const id = value.replace(/\s+/g, '')
+
+  if (/^(NL\.IMBAG\.(PAND|NUMMERAANDUIDING)\.)?[0-9]{16}$/i.test(id)) return id.toUpperCase()
+  if (/^gfm-[0-9a-f]{32}$/i.test(id)) return id.toLowerCase()
+
+  return null
+}
 
 /**
  * Any change in the typed value directly resets the selection, without delay

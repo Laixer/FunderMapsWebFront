@@ -14,9 +14,11 @@ import RightArrowIcon from '@assets/svg/icons/arrow-right.svg'
 import InfoIcon from '@assets/svg/icons/info.svg'
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs } from '@/utils/fieldData'
+import { useLeaveEmptyPanel } from '@/composables/useLeaveEmptyPanel'
 
 import { useBuildingStore } from '@/store/buildings';
 import { useInquiriesStore } from '@/store/building/inquiries';
+import { useGeoLocationsStore } from '@/store/building/geolocations';
 import { useMainStore } from '@/store/main';
 import { useSessionStore } from '@/store/session';
 
@@ -24,7 +26,8 @@ import DocumentDownload from '@/components/DocumentDownload.vue';
 
 
 const inquiriesStore = useInquiriesStore()
-const { shownReportIndex, isSamplePanelOpen } = storeToRefs(inquiriesStore)
+const locationStore = useGeoLocationsStore()
+const { shownReportIndex, shownSampleIndex, shownSampleLabel, isSamplePanelOpen } = storeToRefs(inquiriesStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 const { remarkPopoverTitle, remarkPopoverText, isRemarkPopoverOpen } = storeToRefs(useMainStore())
 const { isAuthenticated } = storeToRefs(useSessionStore())
@@ -44,11 +47,11 @@ const emit = defineEmits<{ close: []; back: [] }>()
 const isClamped = ref(false)
 
 /**
- * Data source for panel
+ * Data source for panel: one item per onderzoek, with its samples on this pand
  */
 const caseItems = computed(() => {
   if (! buildingId.value) return []
-  return inquiriesStore.getCombined(buildingId.value) || []
+  return inquiriesStore.getReportsWithSamples(buildingId.value) || []
 })
 
 /**
@@ -105,8 +108,9 @@ const reportFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'contractorName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'ownerName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'dataOwnerName', source: selectedCaseItem.value?.report.attribution }),
-      new FieldDataConfig({ name: 'creatorName', source: selectedCaseItem.value?.report.attribution }),
-      new FieldDataConfig({ name: 'reviewerName', source: selectedCaseItem.value?.report.attribution }),
+      // "Verwerkt door" is the organisation. Who entered and who checked the
+      // onderzoek are people (their e-mail addresses): not shown.
+      new FieldDataConfig({ name: 'processedByName', source: selectedCaseItem.value?.report.attribution }),
       new FieldDataConfig({ name: 'auditStatus', source: selectedCaseItem.value?.report.state }),
       new FieldDataConfig({ name: 'standardF3o' }),
       new FieldDataConfig({ name: 'inspection' }),
@@ -116,14 +120,45 @@ const reportFieldsWithData = computed(() => {
     ]
   })
 
-  return reportFieldsConfig.map(retrieveAndFormatFieldData)
+  return reportFieldsConfig
+    .map(retrieveAndFormatFieldData)
+    // Without an organisation to name there is no "Verwerkt door" row
+    .filter(field => field.name !== 'processedByName' || !! field.getValue('raw'))
 })
+
+/**
+ * The samples of this report on this pand. Mostly one; an onderzoek that
+ *  covers several addresses of the pand has one per address.
+ */
+const samples = computed(() => selectedCaseItem.value?.samples ?? [])
 
 /**
  * Whether sample information is available for this report
  */
-const hasSampleData = computed(() => {
-  return !! (selectedCaseItem.value?.sample)
+const hasSampleData = computed(() => samples.value.length !== 0)
+
+/**
+ * With several samples there is a button per sample, named by its address
+ *  (street and number). Until the address is known, or when it cannot be
+ *  found: a number. The same address twice gets a number behind it.
+ */
+const sampleButtons = computed(() => {
+  if (samples.value.length < 2) return []
+
+  const names = samples.value.map(
+    (sample, index) => locationStore.getAddressLabel(sample.address) || `Meting ${index + 1}`
+  )
+
+  return names
+    .map((name, index) => {
+      const isRepeated = names.indexOf(name) !== names.lastIndexOf(name)
+      return {
+        index,
+        label: isRepeated ? `${name} (${names.slice(0, index + 1).filter(n => n === name).length})` : name
+      }
+    })
+    // In the order of the street: 166 before 168 before 170
+    .sort((a, b) => a.label.localeCompare(b.label, 'nl', { numeric: true }))
 })
 
 /**
@@ -187,16 +222,22 @@ watch(
 )
 
 /**
- * Close the panel if there is no data for this building
+ * Look up the addresses the buttons are named by. Only for a report with
+ *  several samples on this pand: one sample needs no name.
  */
 watch(
-  () => noCaseItemAvailableForBuilding.value, 
-  (value) => {
-    if (value === true) {
-      emit('back')
-    }
-  }
+  () => samples.value,
+  (list) => {
+    if (list.length < 2) return
+    list.forEach(sample => locationStore.loadAddressLabel(sample.address))
+  },
+  { immediate: true }
 )
+
+/**
+ * Leave the panel if there is no data for this building
+ */
+useLeaveEmptyPanel(noCaseItemAvailableForBuilding, 'inquiry')
 
 /**
  * Remarks popover
@@ -243,8 +284,14 @@ const resetListValue = function resetListValue() {
   shownReportIndex.value = 0
 }
 
-const handleOpenModal = function handleOpenModal() {
-  if (hasSampleData.value) {
+/**
+ * Open the dialog with a sample of this report: the only one, or the one of
+ *  the button that was pressed
+ */
+const handleOpenModal = function handleOpenModal(sampleIndex = 0, label = '') {
+  if (samples.value[sampleIndex]) {
+    shownSampleIndex.value = sampleIndex
+    shownSampleLabel.value = label
     isSamplePanelOpen.value = true
   }
 }
@@ -282,7 +329,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
         <!-- Paginator -->
         <nav
           v-if="maxListIndex > 0"
-          class="mb-2 flex items-center justify-between text-sm text-grey-700">
+          class="mb-2 flex items-center justify-between text-sm text-(--color-text-muted)">
           <button
             class="button button--link p-1"
             :disabled="shownReportIndex === 0"
@@ -329,7 +376,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
                 <span class="sr-only">Volledige opmerking tonen</span>
               </button>
             </dt>
-            <dd class="break-words text-grey-700">
+            <dd class="break-words">
               <p 
                 v-if="field.name === 'note'" 
                 v-line-clamp="3"
@@ -346,11 +393,29 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
         </template>
       </div>
 
+      <div
+        v-if="sampleButtons.length"
+        class="space-y-3">
+        <h6 class="font-bold leading-none">Onderzoeksinformatie per adres</h6>
+        <OutlineButton
+          v-for="button in sampleButtons"
+          :key="button.index"
+          :label="button.label"
+          class="w-full"
+          @click.prevent="handleOpenModal(button.index, button.label)"
+        >
+          <template v-slot:after>
+            <AnimatedArrowIcon />
+          </template>
+        </OutlineButton>
+      </div>
+
       <OutlineButton
+        v-else
         label="Bekijk onderzoeksinformatie"
         :disabled="! hasSampleData"
         class="w-full"
-        @click.prevent="handleOpenModal"
+        @click.prevent="handleOpenModal()"
       >
         <template v-slot:after>
           <AnimatedArrowIcon />

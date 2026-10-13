@@ -131,10 +131,18 @@ const fieldsWithData = computed(() => {
             v-for="field in fieldsWithData" 
             :key="field.name">
             <dt>{{ field.label }}</dt>
-            <dd class="text-grey-700">{{ field.value }}</dd>
+            <dd>{{ field.value }}</dd>
           </div>
         </dl>
       </div>
     </section>
   </Panel>
 </template>
+
+<style scoped>
+/* The name of the foundation is text. The accent green it shares with the
+   icon above it is too light to read (see panel/base.css). */
+.foundation__label {
+  color: var(--color-text-green);
+}
+</style>

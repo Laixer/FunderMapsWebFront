@@ -5,9 +5,10 @@ import { useSessionStore } from '../session'
 interface ReportLike { id: number }
 interface SampleLike { id: number }
 
-export interface CombinedReportSample<R, S> {
+export interface ReportWithSamples<R, S> {
   report: R
-  sample: S | undefined
+  // The samples this report has on the building it was asked for
+  samples: S[]
 }
 
 // Shared scaffolding for inquiry and recovery stores: report-with-samples
@@ -28,9 +29,14 @@ export function createReportStore<R extends ReportLike, S extends SampleLike>(op
   const reportIdsByBuildingId = ref<Record<string, number[]>>({})
   const sampleIdsByBuildingId = ref<Record<string, number[]>>({})
 
-  // Sample-panel UI state, used by the sidebar/modal pair.
+  // Sample-panel UI state, used by the sidebar/modal pair: which report the
+  // panel shows, and which of its samples the dialog shows.
   const isSamplePanelOpen = ref(false)
   const shownReportIndex = ref(0)
+  const shownSampleIndex = ref(0)
+  // How the panel named that sample on its button, when the report has more
+  // than one; the dialog repeats it.
+  const shownSampleLabel = ref('')
 
   function hasBeenRetrieved(buildingId: string): boolean {
     return Array.isArray(reportIdsByBuildingId.value[buildingId])
@@ -51,23 +57,17 @@ export function createReportStore<R extends ReportLike, S extends SampleLike>(op
     return samplesByReportId.value[reportId] ?? []
   }
 
-  // Cross-product of reports × samples scoped to this building. A report
-  // with no samples still appears once with sample=undefined.
-  function getCombined(buildingId: string): CombinedReportSample<R, S>[] {
+  // The reports of this building, each once, with the samples it has on this
+  // building (none, one or several). Not one entry per sample: a report with
+  // three samples then showed up as three reports.
+  function getReportsWithSamples(buildingId: string): ReportWithSamples<R, S>[] {
     const sampleIdsForBuilding = sampleIdsByBuildingId.value[buildingId] ?? []
-    const out: CombinedReportSample<R, S>[] = []
 
-    for (const report of getReports(buildingId)) {
-      const samples = getSamplesByReportId(report.id)
-        .filter(s => sampleIdsForBuilding.includes(s.id))
-
-      if (samples.length === 0) {
-        out.push({ report, sample: undefined })
-      } else {
-        for (const sample of samples) out.push({ report, sample })
-      }
-    }
-    return out
+    return getReports(buildingId).map(report => ({
+      report,
+      samples: getSamplesByReportId(report.id)
+        .filter(s => sampleIdsForBuilding.includes(s.id)),
+    }))
   }
 
   function setData(buildingId: string, reports: R[], samples: S[]): void {
@@ -100,10 +100,12 @@ export function createReportStore<R extends ReportLike, S extends SampleLike>(op
     hasReports,
     getReports,
     getSamplesByReportId,
-    getCombined,
+    getReportsWithSamples,
     setData,
     clear,
     isSamplePanelOpen,
     shownReportIndex,
+    shownSampleIndex,
+    shownSampleLabel,
   }
 }
