@@ -4,6 +4,8 @@
   }
 
   dd {
-    @apply text-end leading-loose text-grey-700;
+    @apply text-end leading-loose;
+
+    color: var(--color-text-muted);
   }
 }

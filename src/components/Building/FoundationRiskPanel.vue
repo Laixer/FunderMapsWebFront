@@ -128,7 +128,7 @@ const fieldsWithDataAndIcons = computed(() => {
               <dt>
                 {{ field.label }}
               </dt>
-              <dd class="text-grey-700 flex gap-2">
+              <dd class="flex gap-2">
                 <template v-if="field.icon">
                   <ClassificationIcon 
                     class="aspect-square w-4"

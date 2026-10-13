@@ -12,6 +12,7 @@ import { useMapboxControlNudge } from './useMapboxControlNudge';
 import { useTrackPositioning } from './useTrackPositioning'
 import { useMapLayers } from './useMapLayers'
 import { useBuildingCluster } from '@/components/Mapbox/useBuildingCluster'
+import { useOwnershipFilterNotice } from './useOwnershipFilter'
 
 import { useMapCenterRouting } from '@/router/mapCenterRouting';
 
@@ -35,6 +36,7 @@ const MapCenterManagement = useMapCenterManagement()
 useBuildingMarker(mapInstance)
 useBuildingCluster(mapInstance)
 useMapLayers(mapInstance)
+useOwnershipFilterNotice(mapInstance)
 const { getLastKnownPositioning } = useTrackPositioning(mapInstance)
 
 
@@ -63,7 +65,11 @@ const options = computed(() => {
     bearing: lastKnownPositioning.bearing || 0,
     antialias: true,
     fadeDuration: 0,
-    attributionControl: false,
+    // The base map is OpenFreeMap / OpenStreetMap, which ask to be named.
+    // MapLibre's own control, bottom right under the zoom buttons, with the
+    // texts the sources of the style provide. Compact: open when the map
+    // appears, folded to the "i" once the map is dragged.
+    attributionControl: { compact: true },
     locale: mapLocale,
   }
 })

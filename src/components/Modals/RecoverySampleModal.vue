@@ -11,7 +11,7 @@ import { useBuildingStore } from '@/store/buildings';
 
 
 const recoveryStore = useRecoveryReportsStore()
-const { shownReportIndex, isSamplePanelOpen } = storeToRefs(recoveryStore)
+const { shownReportIndex, shownSampleIndex, shownSampleLabel, isSamplePanelOpen } = storeToRefs(recoveryStore)
 const { buildingId } = storeToRefs(useBuildingStore())
 
 
@@ -20,25 +20,30 @@ const { buildingId } = storeToRefs(useBuildingStore())
  */
 const caseItems = computed(() => {
   if (! buildingId.value) return []
-  return recoveryStore.getCombined(buildingId.value) || []
+  return recoveryStore.getReportsWithSamples(buildingId.value) || []
 })
 
 
 /**
- * The selected report item, or null
+ * The sample the panel asked for: of the report it shows, the one of the
+ *  button that was pressed. Or null
  */
-const selectedCaseItem = computed(() => {
-  if (caseItems.value[shownReportIndex.value]) {
-    return caseItems.value[shownReportIndex.value]
-  }
-  return null
+const selectedSample = computed(() => {
+  return caseItems.value[shownReportIndex.value]?.samples[shownSampleIndex.value] ?? null
 })
 
 /**
  * Whether there is sample data to be shown
  */
 const hasSampleData = computed(() => {
-  return !! (selectedCaseItem.value?.sample)
+  return !! selectedSample.value
+})
+
+/**
+ * Of a report with several samples the dialog says which one it shows
+ */
+const title = computed(() => {
+  return shownSampleLabel.value ? `Herstelinformatie: ${shownSampleLabel.value}` : 'Herstelinformatie'
 })
 
 /**
@@ -48,7 +53,7 @@ const sampleFieldsWithData = computed(() => {
   if (! hasSampleData.value) return []
 
   const sampleFieldsConfig = applyContextToFieldDataConfigs({
-    source: selectedCaseItem.value?.sample,
+    source: selectedSample.value,
     configs: [
       // Pand 
       new FieldDataConfig({ name: 'recovery' }),
@@ -78,11 +83,13 @@ const handleClose = function handleClose() {
 
 /**
  * Auto close the modal if there is no sample data to be shown
+ *  Only then: the sample can also appear at the moment the dialog opens (the
+ *  panel names the sample as it opens the dialog), and that closed it again.
  */
 watch(
   () => hasSampleData.value,
-  () => {
-    if (isSamplePanelOpen.value) {
+  (hasData) => {
+    if (! hasData && isSamplePanelOpen.value) {
       handleClose()
     }
   }
@@ -93,7 +100,7 @@ watch(
 <template>
   <InformationModal 
     v-if="isSamplePanelOpen"
-    title="Herstelinformatie" 
+    :title="title"
     class="RecoverySampleModal"
     @close="handleClose">
 
@@ -105,7 +112,7 @@ watch(
           :key="field.name"
           class="item">
           <dt>{{ field.label }}</dt>
-          <dd class="text-grey-700">{{ field.value }}</dd>
+          <dd>{{ field.value }}</dd>
         </div>
       </dl>
     </section>

@@ -14,6 +14,7 @@ import RightArrowIcon from '@assets/svg/icons/arrow-right.svg'
 import InfoIcon from '@assets/svg/icons/info.svg'
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs } from '@/utils/fieldData'
+import { useLeaveEmptyPanel } from '@/composables/useLeaveEmptyPanel'
 
 import { useIncidentReportsStore } from '@/store/building/incidents';
 import { useBuildingStore } from '@/store/buildings';
@@ -126,16 +127,9 @@ watch(
 )
 
 /**
- * Close the panel if there is no data for this building
+ * Leave the panel if there is no data for this building
  */
-watch(
-  () => noCaseItemAvailableForBuilding.value, 
-  (value) => {
-    if (value === true) {
-      emit('back')
-    }
-  }
-)
+useLeaveEmptyPanel(noCaseItemAvailableForBuilding, 'incidents')
 
 watch(
   () => selectedCaseItem.value,
@@ -212,7 +206,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
         <!-- Paginator -->
         <nav
           v-if="maxListIndex > 1"
-          class="mb-2 flex items-center justify-between text-sm text-grey-700">
+          class="mb-2 flex items-center justify-between text-sm text-(--color-text-muted)">
           <button
             class="button button--link p-1"
             :disabled="selectedListIndex === 0"
@@ -258,7 +252,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
                 />
               </button>
             </dt>
-            <dd class="break-words text-grey-700">
+            <dd class="break-words">
               <p 
                 v-if="field.name === 'note'" 
                 v-line-clamp="3"

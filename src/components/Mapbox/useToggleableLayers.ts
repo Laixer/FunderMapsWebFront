@@ -13,7 +13,10 @@ import { useMapSources } from "./useMapSources";
 export const useToggleableLayers = function useToggleableLayers(
   Map: MaybeRef<Map | null | undefined>,
   toggleValue: Ref,
-  layers: string[]
+  layers: string[],
+  // True while something else decides about these layers (a mapset that has
+  // them in its own legend). The toggle then leaves them alone.
+  isManagedElsewhere?: Ref<boolean>
 ) {
 
   const mapInstance = shallowRef(Map)
@@ -38,6 +41,11 @@ export const useToggleableLayers = function useToggleableLayers(
       return
     }
 
+    // Not ours to show or hide right now
+    if (isManagedElsewhere?.value) {
+      return
+    }
+
     const visible = !! toggleValue.value
 
     for(const layerId of layers) {
@@ -54,6 +62,11 @@ export const useToggleableLayers = function useToggleableLayers(
 
     // Too eager
     if (! mapInstance.value) {
+      return
+    }
+
+    // Not ours to add right now
+    if (isManagedElsewhere?.value) {
       return
     }
     
@@ -96,5 +109,19 @@ export const useToggleableLayers = function useToggleableLayers(
     () => toggleValue.value, 
     applyVisibility
   )
+
+  /**
+   * When the layers are ours again (the mapset that had them in its legend
+   *  was left), put them back as the toggle says. That mapset removes its
+   *  layers from the map when it goes, these included: hence add, and hence
+   *  after the other watchers have run (flush: post).
+   */
+  if (isManagedElsewhere) {
+    watch(
+      () => isManagedElsewhere.value,
+      (isManaged) => { if (! isManaged) addLayers() },
+      { flush: 'post' }
+    )
+  }
 }
 

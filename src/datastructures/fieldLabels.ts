@@ -70,8 +70,9 @@ export const AttributionControlFieldLabels = <Record<string, string>> {
   ownerName: "Opdrachtgever",
   dataOwner: "Data-eigenaar",
   dataOwnerName: "Data-eigenaar",
-  creatorName: "Verwerkt door",
-  reviewerName: "Gecontroleerd door"
+  // The organisation. creatorName and reviewerName (e-mail addresses of
+  // people) have no label any more: they are not shown.
+  processedByName: "Verwerkt door"
 }
 
 export const StateControlFieldLabels = <Record<string, string>> {

@@ -7,7 +7,10 @@
 }
 
 .button--outline {
-  @apply border-current text-green-500 hover:-translate-y-0.5 hover:border-transparent hover:bg-green-700 hover:text-white disabled:text-grey-400 disabled:hover:translate-y-0;
+  @apply border-current hover:-translate-y-0.5 hover:border-transparent hover:bg-green-700 hover:text-white disabled:text-grey-400 disabled:hover:translate-y-0;
+
+  /* Label and border: green-500 is too light to read as text (panel/base.css) */
+  color: var(--color-text-green);
 }
 
 .button--link {

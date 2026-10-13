@@ -7,6 +7,7 @@ import { PitchToggleControl } from "./PitchToggleControl"
 // name of the map and of the marker. Given to the map as its `locale`
 // (Map.vue); only the texts this app can show are listed.
 export const mapLocale: Record<string, string> = {
+  'AttributionControl.ToggleAttribution': 'Bronvermelding van de kaart tonen of verbergen',
   'GeolocateControl.FindMyLocation': 'Mijn locatie zoeken',
   'GeolocateControl.LocationNotAvailable': 'Locatie niet beschikbaar',
   'Map.Title': 'Kaart',
