@@ -20,6 +20,7 @@ import BuildingErrorPanel from '@/components/Building/BuildingErrorPanel.vue';
 import MapsetDetails from '@/components/Building/MapsetDetails.vue';
 
 import RightSideBarFooterLinks from '@/components/RightSideBarFooterLinks.vue';
+import SideBarToMap from './SideBarToMap.vue';
 
 import { useSessionStore } from '@/store/session';
 import { useBuildingStore } from '@/store/buildings';
@@ -65,6 +66,8 @@ const handleCloseSideBar = (): void => {
     role="dialog"
     aria-modal="true"
   >
+    <SideBarToMap @close="handleCloseSideBar" />
+
     <div
       class="panels transition-transform duration-300"
       :class="{'-translate-x-full': rightPanelSlide}"

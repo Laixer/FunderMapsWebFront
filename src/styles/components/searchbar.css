@@ -3,3 +3,46 @@
     width: clamp(10rem, 2.6471rem + 31.3725vw, 25rem);
   }
 }
+
+/* The phone layout (the breakpoint: see pages/dashboard.css) */
+@media (width < 48rem) {
+  .app-header {
+    /* A finger's height */
+    .input-field {
+      @apply min-h-11;
+    }
+
+    /* The field is narrow: no empty strip beside the button in it, and a
+       placeholder that does not fit ends in an ellipsis */
+    #search {
+      @apply pr-2 text-ellipsis;
+    }
+
+    /* The cross that empties the field (12px on its own) */
+    .input-field__after {
+      @apply ml-0 px-0.5;
+
+      button {
+        @apply flex h-10 w-10 items-center justify-center;
+      }
+    }
+
+    /* The suggestions and "Geen adres gevonden" hang 28rem wide under the
+       field, from left of it: here from edge to edge of the window */
+    .dropdown.arrow--top-left {
+      @apply fixed inset-x-2 top-14 w-auto;
+
+      .dropdown__main {
+        @apply max-h-[calc(100dvh-5rem)] overflow-y-auto;
+      }
+
+      .dropdown__header .button--link {
+        @apply min-h-11 min-w-11 justify-center;
+      }
+    }
+
+    #search-suggestions a {
+      @apply py-3.5;
+    }
+  }
+}

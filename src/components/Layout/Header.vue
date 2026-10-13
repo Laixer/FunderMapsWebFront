@@ -15,14 +15,14 @@ const { hasAvailableMapsets } = storeToRefs(
 </script>
 
 <template>
-  <header class="app-header isolate z-50 flex items-center gap-6 border-b border-grey-200 border-t-2 border-t-green-500 px-6 py-5">
+  <header class="app-header isolate z-50 flex items-center gap-6 border-b border-grey-200 border-t-2 border-t-green-500 px-6 py-5 max-md:gap-3 max-md:px-4 max-md:py-1.5">
     <GrayLogo />
 
     <Transition>
-      <div v-if="hasAvailableMapsets" class="divider | w-[1px] flex-shrink-0 flex-grow-0 self-stretch bg-grey-400"></div>
+      <div v-if="hasAvailableMapsets" class="divider | w-[1px] flex-shrink-0 flex-grow-0 self-stretch bg-grey-400 max-md:hidden"></div>
     </Transition>
 
-    <div class="flex w-full items-center gap-8">
+    <div class="flex w-full items-center gap-8 max-md:min-w-0 max-md:gap-3">
       <Transition>
         <SearchBar v-if="hasAvailableMapsets" class="flex-1" />
       </Transition>

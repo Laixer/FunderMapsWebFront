@@ -32,6 +32,7 @@ import { useBuildingStore } from "@/store/buildings";
 
 import { useMapsetRouting } from '@/router/mapsetRouting'
 import { useBuildingRouting } from '@/router/buildingRouting'
+import { usePhoneLayout } from '@/components/Layout/usePhoneLayout'
 import StatisticsModal from '@/components/Modals/StatisticsModal.vue';
 import DisclaimerModal from '@/components/Modals/DisclaimerModal.vue';
 
@@ -125,6 +126,19 @@ const handleOpenLeftSidebar = function handleOpenLeftSidebar() {
   isLeftSidebarOpen.value = true
 }
 
+/**
+ * On a phone an open side bar covers the map, and two would cover each other.
+ *  A pand that opens (from the search field, which stays in reach) takes the
+ *  place of the mapset side bar, so that closing the pand leads to the map.
+ */
+const isPhone = usePhoneLayout()
+
+watch([() => hasSelectedBuilding.value, isPhone], ([hasPand, phone]) => {
+  if (hasPand && phone) {
+    isLeftSidebarOpen.value = false
+  }
+})
+
 const handleMapboxIsReady = function handleMapboxIsReady() {
   mapboxIsReady.value = true
 }
@@ -140,7 +154,7 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
       <Map @ready="handleMapboxIsReady" />
 
       <Transition name="short">
-        <div v-show="hasAvailableMapsets && !isLeftSidebarOpen" class="map__actions | absolute left-8 top-12">
+        <div v-show="hasAvailableMapsets && !isLeftSidebarOpen" class="map__actions | absolute left-8 top-12 max-md:left-4 max-md:top-4">
           <Button @click.prevent="handleOpenLeftSidebar" label="Open filter">
             <template v-slot:before>
               <FilterIcon class="w-3" aria-hidden="true" />
