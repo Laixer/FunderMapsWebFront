@@ -15,7 +15,7 @@
       [
           "match",
           ["get", "recovery_type"],
-          ["pile_in_wall", "pile_lowering", "table", "unknown"],
+          ["pile_in_wall", "pile_lowering", "table", "injection", "unknown"],
           false,
           true
       ]

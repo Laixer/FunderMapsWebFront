@@ -53,15 +53,19 @@
           [
               "match",
               ["get", "inquiry_type"],
-              [
-                  "demolition_research",
-                  "additional_research",
-                  "architectural_research"
-              ],
+              ["demolition_research"],
               true,
               false
           ],
           "#4767b8",
+          [
+              "match",
+              ["get", "inquiry_type"],
+              ["additional_research"],
+              true,
+              false
+          ],
+          "#c4a169",
           [
               "match",
               ["get", "inquiry_type"],
