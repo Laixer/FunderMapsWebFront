@@ -256,7 +256,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
               <span>{{ field.label }}</span>
               <button
                 v-if="field.name === 'note' && isClamped === true"
-                class="-ml-1 p-2 text-green-500 hover:text-green-700"
+                class="-ml-1 rounded p-2 text-green-500 hover:text-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1"
                 type="button"
                 @click.prevent="handleOpenRemarkPopover"
               >

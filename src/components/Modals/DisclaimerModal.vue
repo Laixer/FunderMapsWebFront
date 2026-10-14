@@ -82,9 +82,14 @@ const handleAccept = function handleAccept() {
 
     <VueMarkdown :source="disclaimerText" :options="{ breaks: true, html: false }" class="markdown" />
 
-    <Button 
-      @click.prevent="handleAccept" 
-      label="Akkoord" />
+    <!-- When the text is too long for the dialog (a small phone) it scrolls
+         under the button, which stays whole at the bottom; the white band
+         covers the text beneath it. -mt-4 pt-4: where it fits, nothing moves. -->
+    <div class="sticky bottom-0 -mt-4 bg-white pt-4">
+      <Button
+        @click.prevent="handleAccept"
+        label="Akkoord" />
+    </div>
 
   </OverlayModal>
 </template>

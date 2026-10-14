@@ -183,7 +183,7 @@ const legendFieldLabel = function legendFieldLabel(name: string): string {
           <FundermapsIcon
             :key="activeMapset?.id"
             :name="activeMapset?.icon || 'home-info'"
-            class="accent-color-blue aspect-square w-6"
+            class="accent-color-blue aspect-square w-6 shrink-0"
             aria-hidden="true" 
           />
           <h4 class="heading-4">
@@ -195,7 +195,7 @@ const legendFieldLabel = function legendFieldLabel(name: string): string {
               @mouseleave="isNoteHovered = false"
             >
               <button
-                class="p-1 text-green-500 hover:text-green-700 max-md:p-3"
+                class="rounded p-1 text-green-500 hover:text-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1 max-md:p-3"
                 type="button"
                 aria-label="Toelichting bij deze kaart"
                 :aria-expanded="showInfoTooltip"

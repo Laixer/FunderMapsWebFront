@@ -24,9 +24,10 @@
       @apply rounded-none rounded-l-lg shadow-none;
 
       /* 65ch (max-w-prose) where there is room. With both side bars open the
-         map is narrower than that from 1320px down: then the width of the map,
-         so that the popover does not lie over the left side bar. */
-      max-width: min(65ch, max(20rem, calc(100vw - 2 * var(--sidebar-width))));
+         map is narrower than that from 1336px down: then the width of the map
+         less 1rem, so that the popover does not lie over the left side bar
+         and its rounded side stays clear of it, over the map. */
+      max-width: min(65ch, max(20rem, calc(100vw - 2 * var(--sidebar-width) - 1rem)));
     }
   }
 }

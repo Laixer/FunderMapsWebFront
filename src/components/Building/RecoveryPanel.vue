@@ -269,7 +269,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
       </div>
 
       <div class="space-y-3">
-        <h6 class="font-bold leading-none">Rapportage-informatie</h6>
+        <h6 class="font-bold leading-none">Herstelinformatie</h6>
         <dl class="space-y-3">
           <div 
             v-for="field in reportFieldsWithData" 
@@ -278,7 +278,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
               <span>{{ field.label }}</span>
               <button
                 v-if="field.name === 'note' && isClamped === true"
-                class="-ml-1 p-2 text-green-500 hover:text-green-700"
+                class="-ml-1 rounded p-2 text-green-500 hover:text-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1"
                 type="button"
                 @click.prevent="handleOpenRemarkPopover"
               >
@@ -303,7 +303,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
       <div
         v-if="sampleButtons.length"
         class="space-y-3">
-        <h6 class="font-bold leading-none">Herstelinformatie</h6>
+        <h6 class="font-bold leading-none">Herstelinformatie per onderdeel</h6>
         <OutlineButton
           v-for="button in sampleButtons"
           :key="button.index"

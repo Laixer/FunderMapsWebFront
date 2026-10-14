@@ -282,9 +282,11 @@ const handleSelectBuilding = async function handleSelectBuilding(id: string, wee
 
     const { centroide_ll, nummeraanduiding_id } = results.response.docs[0]
 
-    // Insert the selected address in the search box, and close the suggestion list
-    lastQuery.value = weergavenaam // this prevents a Lookup API call to PDOK
-    queryString.value = weergavenaam
+    // Insert the selected address in the search box, written as the list
+    // showed it, and close the suggestion list
+    const shown = toDisplayName(weergavenaam)
+    lastQuery.value = shown // this prevents a Lookup API call to PDOK
+    queryString.value = shown
     handleClose()
 
     // Always pan + drop a marker at the PDOK coords — the geocoder API
@@ -341,8 +343,9 @@ const handleClear = function handleClear() {
 }
 
 /**
- * A suggestion as it is shown: the postcode written "1017 RM", where PDOK
- *  gives "1017RM". Only shown so; what is picked stays PDOK's own text.
+ * A suggestion as it is shown, in the list and in the field once picked: the
+ *  postcode written "1017 RM", where PDOK gives "1017RM". The pick is looked
+ *  up by its id, and PDOK finds "1017 RM" as it finds "1017RM".
  */
 const toDisplayName = function toDisplayName(weergavenaam: string): string {
   return weergavenaam.replace(/(^|, )(\d{4})([A-Z]{2})(?= )/, '$1$2 $3')
@@ -382,7 +385,7 @@ const handleFocusField = function handleFocusField() {
         <template v-slot:after>
           <IconButton
             v-if="queryString"
-            class="text-grey-700 hover:text-red-500"
+            class="rounded text-grey-700 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1"
             transparent
             label="Wissen"
             @click.prevent="handleClear">
@@ -392,7 +395,7 @@ const handleFocusField = function handleFocusField() {
           </IconButton>
           <IconButton
             v-else
-            class="text-blue-900 hover:text-green-700"
+            class="rounded text-blue-900 hover:text-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1"
             transparent
             label="Zoeken"
             @click.prevent="handleFocusField">

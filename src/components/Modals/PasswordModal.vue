@@ -158,7 +158,7 @@ watch(
           required>
 
           <template #before>
-            <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
+            <button type="button" class="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
@@ -185,7 +185,7 @@ watch(
           required>
 
           <template #before>
-            <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
+            <button type="button" class="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
@@ -212,7 +212,7 @@ watch(
           required>
 
           <template #before>
-            <button type="button" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
+            <button type="button" class="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1" :aria-pressed="showPassword" aria-label="Wachtwoord tonen of verbergen" @click="showPassword = !showPassword">
               <LockedIcon
                 v-show="! showPassword"
                 class="aspect-square w-4 text-grey-700"
