@@ -369,7 +369,7 @@ const handleFocusField = function handleFocusField() {
         v-model="queryString"
         id="search"
         class="grow [&_.input-field]:w-auto"
-        :placeholder="isPhone ? 'Adres of postcode' : 'Zoek hier op adres of postcode'"
+        :placeholder="isPhone ? 'Zoek adres' : 'Zoek hier op adres of postcode'"
         aria-label="Zoek op adres of postcode"
         autocomplete="off"
         role="combobox"
@@ -418,7 +418,7 @@ const handleFocusField = function handleFocusField() {
           >
             <h3 class="heading-5 whitespace-nowrap">Suggesties</h3>
             <CloseBtn 
-              class="-translate-y-3 translate-x-3 p-0"
+              class="-translate-y-3 translate-x-3"
               @close="handleClose" />
           </div>
           <div class="dropdown__content">
