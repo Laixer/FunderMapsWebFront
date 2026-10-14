@@ -91,13 +91,12 @@ const handleLoginRedirect = function handleLoginRedirect() {
 <template>
   <div class="relative" v-on-click-outside="handleClose" @keydown.esc="handleEscape">
 
-    <!-- Room around the text for the focus ring, the text where it was (the
-         "!": .button--link sets its padding outside Tailwind's layers). On a
+    <!-- Room around the text for the focus ring, the text where it was. On a
          phone no arrow: the search field needs the width. -->
     <LinkButton 
       v-if="! isAuthenticated"
       label="Inloggen"
-      class="transition-colors hover:text-(--color-text-green) md:-mr-2 md:px-2!"
+      class="underline-offset-2 transition-colors hover:text-(--color-text-green) hover:underline md:-mr-2 md:px-2"
       @click.prevent="handleLoginRedirect">
       <template v-slot:after>
         <ArrowRightIcon 
@@ -109,7 +108,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
     <button
       v-else
       ref="menuButton"
-      class="button group p-0 pr-2.5"
+      class="button group"
       :aria-label="`Menu voor ${userName}`"
       aria-haspopup="true"
       :aria-expanded="isOpen"

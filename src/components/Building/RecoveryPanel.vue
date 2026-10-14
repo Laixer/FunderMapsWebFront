@@ -244,7 +244,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
           v-if="maxListIndex > 0"
           class="mb-2 flex items-center justify-between text-sm text-(--color-text-muted)">
           <button
-            class="button button--link p-1"
+            class="button button--link px-1 py-2.5"
             :disabled="shownIndex === 0"
             @click.prevent="handlePrevMain">
             <LeftArrowIcon
@@ -255,7 +255,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
           </button>
           <span>{{ shownIndex + 1 }} van {{ maxListIndex + 1 }}</span>
           <button
-            class="button button--link p-1"
+            class="button button--link px-1 py-2.5"
             :disabled="shownIndex === maxListIndex"
             @click.prevent="handleNextMain">
             <RightArrowIcon

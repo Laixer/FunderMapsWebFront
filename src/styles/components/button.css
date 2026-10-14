@@ -1,30 +1,36 @@
-.button {
-  @apply inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-solid border-transparent px-5 py-2.5 font-extrabold leading-none transition-transform duration-150 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1 focus-visible:outline-none disabled:pointer-events-none disabled:cursor-default;
-}
+/* In Tailwind's components layer, so a utility on a button wins (the pager's
+   p-1, the hover colour of "Inloggen"). Unlayered, these rules beat every
+   utility. All of them move together: .button--link's px-0 has to keep
+   overriding .button's px-5. */
+@layer components {
+  .button {
+    @apply inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-solid border-transparent px-5 py-2.5 font-extrabold leading-none transition-transform duration-150 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1 focus-visible:outline-none disabled:pointer-events-none disabled:cursor-default;
+  }
 
-.button--solid {
-  @apply bg-green-500 text-white hover:-translate-y-0.5 hover:bg-green-700 disabled:bg-grey-400 disabled:hover:translate-y-0;
-}
+  .button--solid {
+    @apply bg-green-500 text-white hover:-translate-y-0.5 hover:bg-green-700 disabled:bg-grey-400 disabled:hover:translate-y-0;
+  }
 
-.button--outline {
-  @apply border-current hover:-translate-y-0.5 hover:border-transparent hover:bg-green-700 hover:text-white disabled:text-grey-400 disabled:hover:translate-y-0;
+  .button--outline {
+    @apply border-current hover:-translate-y-0.5 hover:border-transparent hover:bg-green-700 hover:text-white disabled:text-grey-400 disabled:hover:translate-y-0;
 
-  /* Label and border: green-500 is too light to read as text (panel/base.css) */
-  color: var(--color-text-green);
-}
+    /* Label and border: green-500 is too light to read as text (panel/base.css) */
+    color: var(--color-text-green);
+  }
 
-.button--link {
-  @apply rounded-md px-0 outline-offset-2 hover:text-blue-900 disabled:text-grey-400;
+  .button--link {
+    @apply rounded-md px-0 outline-offset-2 hover:text-blue-900 disabled:text-grey-400;
 
-  /* green-500 is too light to read as text (panel/base.css). Hover goes one
-     step darker, as the links do (link.css). */
-  color: var(--color-text-green);
-}
+    /* green-500 is too light to read as text (panel/base.css). Hover goes one
+       step darker, as the links do (link.css). */
+    color: var(--color-text-green);
+  }
 
-.button--icon {
-  @apply rounded-full p-2;
-}
+  .button--icon {
+    @apply rounded-full p-2;
+  }
 
-.button--square {
-  @apply relative rounded border bg-grey-200 p-2.5 text-grey-800 transition-all duration-150 hover:border-green-500 hover:bg-white hover:text-green-500;
+  .button--square {
+    @apply relative rounded border bg-grey-200 p-2.5 text-grey-800 transition-all duration-150 hover:border-green-500 hover:bg-white hover:text-green-500;
+  }
 }
