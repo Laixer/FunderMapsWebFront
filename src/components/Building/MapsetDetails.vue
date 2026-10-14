@@ -55,17 +55,18 @@ const title = computed<string|null>(() => {
 
   switch(activeMapset.value?.id) {
     case MAPSET.rapportage:
-      return 'Rapportage-informatie'
+      return 'Onderzoeksinformatie'
     case MAPSET.risico:
       return 'Risico-informatie' 
     case MAPSET.fundering:
       return 'Funderingsinformatie'
     case MAPSET.pand:
-      return 'Pandinformatie'
+      return null // the panel itself is titled "Pandinformatie", right above
     case MAPSET.quickscan:
       return null // no title
     case MAPSET.incidenten:
-      return 'Incidentinformatie'
+      // The row below is of a melding or of an incident report
+      return incidentData.value[0]?.kind === 'melding' ? 'Meldingsinformatie' : 'Incidentinformatie'
   }
 
   return null
@@ -186,7 +187,7 @@ const fields = computed(() => {
     v-if="fields.length !== 0"
     class="space-y-2 rounded-lg border border-grey-400 p-4">
     <h6 v-if="title" class="heading-6">{{ title }}</h6>
-    <ul class="space-y-1 text-(--color-text-muted)">
+    <ul class="space-y-1 break-words text-(--color-text-muted)">
       <li 
         v-for="item in fields"
         :key="item.name">{{ item.label }}: {{ item.value }}</li>

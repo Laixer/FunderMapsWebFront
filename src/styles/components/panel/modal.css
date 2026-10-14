@@ -8,8 +8,24 @@
       @apply max-w-xl;
     }
 
+    /* Room for the focus ring of a field or button at the edge (2px ring, 1px
+       offset): the content box scrolls, so it cuts off what sticks out. The
+       negative margin gives the room back; nothing moves. */
+    .panel__content {
+      @apply -mx-1 -mt-1 px-1 pt-1;
+
+      &:last-child {
+        @apply -mb-1 pb-1;
+      }
+    }
+
     &[data-variant="popover"] {
-      @apply max-w-prose rounded-none rounded-r-lg shadow-none;
+      @apply rounded-none rounded-r-lg shadow-none;
+
+      /* 65ch (max-w-prose) where there is room. With both side bars open the
+         map is narrower than that from 1320px down: then the width of the map,
+         so that the popover does not lie over the left side bar. */
+      max-width: min(65ch, max(20rem, calc(100vw - 2 * var(--sidebar-width))));
     }
   }
 }

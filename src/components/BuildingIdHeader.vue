@@ -25,7 +25,8 @@ const address = computed(() => {
 
   const { buildingNumber, postalCode, city } = location.value.address
   return {
-    street: `${street} ${buildingNumber ?? ''}`.trim(),
+    // A no-break space: the house number never ends up alone on a second line
+    street: `${street}\u00a0${buildingNumber ?? ''}`.trim(),
     place: `${postalCode ?? ''} ${city ?? ''}`.trim()
   }
 })

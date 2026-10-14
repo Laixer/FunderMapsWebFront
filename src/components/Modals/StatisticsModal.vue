@@ -108,7 +108,7 @@ const sections = computed<Section[]>(() => {
     key: 'foundationTypeDistribution',
     title: 'Verhouding funderingstype in de buurt',
     component: PieChart,
-    labels: ['Betonnen', 'Houten paal met betonoplanger', 'Houten palen', 'Niet onderheid', 'Overige'],
+    labels: ['Betonnen palen', 'Houten paal met betonoplanger', 'Houten palen', 'Niet onderheid', 'Overige'],
     data: foundationTypeBuckets.value,
     backgroundColors: [CHART_PALETTE.grey, CHART_PALETTE.yellow, CHART_PALETTE.orange,
       CHART_PALETTE.red, CHART_PALETTE.blue],
@@ -200,6 +200,14 @@ watch(showStatisticsModal, async open => {
   scrollToSection.value = null
 })
 
+// A chart with a bar per year (the horizontal ones) gets room for every
+// year: forty years in the 320px of the other charts were 3px bars, with two
+// of three years unnamed.
+const chartHeight = (section: Section): string | undefined =>
+  section.component === HorizontalBarChart
+    ? `${Math.max(320, section.labels.length * 22)}px`
+    : undefined
+
 const handleClose = (): void => {
   showStatisticsModal.value = false
 }
@@ -218,7 +226,7 @@ const handleClose = (): void => {
         class="space-y-4 scroll-mt-4"
       >
         <h5 class="heading-5">{{ section.title }}</h5>
-        <div class="h-80">
+        <div class="h-80" :style="{ height: chartHeight(section) }">
           <component
             :is="section.component"
             :title="section.title"

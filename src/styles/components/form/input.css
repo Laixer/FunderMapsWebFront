@@ -9,6 +9,11 @@
       outline: none;
     }
 
+    /* A field that cannot be typed in looks it (the e-mail address of the profile) */
+    &:has(input:disabled) {
+      @apply bg-grey-100;
+    }
+
     > :first-child {
       @apply rounded-l;
     }
@@ -60,6 +65,12 @@
   input:not([type="checkbox"]):not([type="radio"]),
   textarea {
     @apply w-full py-2.5 pl-4 pr-10 text-base leading-none text-blue-900 placeholder:text-grey-400 focus:outline-none;
+
+    &:disabled {
+      @apply cursor-not-allowed;
+
+      color: var(--color-text-muted);
+    }
 
     &:user-invalid {
       @apply text-red-500;

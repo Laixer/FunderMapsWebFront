@@ -29,7 +29,9 @@ const caseItems = computed(() => {
  *  button that was pressed. Or null
  */
 const selectedSample = computed(() => {
-  return caseItems.value[shownReportIndex.value]?.samples[shownSampleIndex.value] ?? null
+  // The same report as the panel shows: its page, held within the reports of this pand
+  const shownIndex = Math.min(shownReportIndex.value, caseItems.value.length - 1)
+  return caseItems.value[shownIndex]?.samples[shownSampleIndex.value] ?? null
 })
 
 /**
@@ -66,7 +68,8 @@ const sampleFieldsWithData = computed(() => {
       new FieldDataConfig({ name: 'permit' }),
       new FieldDataConfig({ name: 'permitDate' }),
       new FieldDataConfig({ name: 'recoveryDate' }),
-      new FieldDataConfig({ name: 'id' }),
+      // Not the id of the sample: an internal number, and it was shown under
+      // the name of the herstel's own number (the first row)
     ]
   })
 

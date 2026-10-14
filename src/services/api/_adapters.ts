@@ -263,7 +263,8 @@ export const adaptGeoLocationData = (raw: unknown): IGeoLocationData => {
   const r = (raw ?? {}) as Record<string, unknown>
   const street = (r.street as string) ?? ''
   const number = (r.building_number as string) ?? ''
-  const postal = (r.postal_code as string) ?? ''
+  // The postcode as it is written: "1234 AB". The API sends "1234AB".
+  const postal = ((r.postal_code as string) ?? '').replace(/^(\d{4})\s?([A-Za-z]{2})$/, '$1 $2')
   const city = (r.city as string) ?? ''
 
   const opt = <T>(idField: string, build: () => T): T | null =>
@@ -293,7 +294,8 @@ export const adaptGeoLocationData = (raw: unknown): IGeoLocationData => {
       postalCode: postal,
       street,
       city,
-      fullAddress: `${street} ${number}, ${postal} ${city}`.trim(),
+      // A pand without an address has none: not the bare comma of the template
+      fullAddress: street ? `${street} ${number}, ${postal} ${city}`.trim() : '',
     },
     residence: null,
     neighborhood: opt('neighborhood_id', () => ({

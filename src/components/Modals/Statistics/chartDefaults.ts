@@ -8,7 +8,7 @@ import Chart from 'chart.js/auto'
 
 const FONT_FAMILY = "'Greycliff CF', Arial, sans-serif"
 const COLOR_TEXT = '#3d5372'      // grey-800 — primary axis/legend text
-const COLOR_TEXT_MUTED = '#7f8fa4' // grey-700 — secondary
+const COLOR_TEXT_MUTED = '#607188' // --color-text-muted (panel/base.css) — secondary
 const COLOR_GRID = '#e8eaf1'      // grey-200 — subtle separators
 const COLOR_BG = '#ffffff'
 

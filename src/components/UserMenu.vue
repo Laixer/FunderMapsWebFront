@@ -94,7 +94,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
     <LinkButton 
       v-if="! isAuthenticated"
       label="Inloggen"
-      class="transition-colors hover:text-green-500"
+      class="transition-colors hover:text-(--color-text-green)"
       @click.prevent="handleLoginRedirect">
       <template v-slot:after>
         <ArrowRightIcon 
@@ -127,8 +127,8 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
         <button
           @click="handleOpenProfileModal"
-          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-green-500"
-          :class="{'text-green-500': isProfileModalOpen}"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-(--color-text-green)"
+          :class="{'text-(--color-text-green)': isProfileModalOpen}"
         >
           <UserIcon
             class="aspect-square h-3.5"
@@ -138,8 +138,8 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
         <button
           @click="handleOpenPasswordModal"
-          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-green-500"
-          :class="{'text-green-500': isPasswordModalOpen}"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-(--color-text-green)"
+          :class="{'text-(--color-text-green)': isPasswordModalOpen}"
         >
           <LockedIcon
             class="aspect-square h-3.5"

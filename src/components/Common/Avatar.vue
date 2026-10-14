@@ -8,7 +8,7 @@ const { name = 'A. Noniempje', color = 'blue' } = defineProps<{
 }>()
 
 const firstLetter = computed<string>(() => {
-  return name.charAt(0)
+  return name.charAt(0).toUpperCase()
 })
 
 const colorClasses = computed<string[]>(() => {

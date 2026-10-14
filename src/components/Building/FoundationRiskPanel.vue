@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 import Panel from '@/components/Common/Panel.vue';
 import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
+import SkeletonLoader from '@/components/Common/SkeletonLoader.vue';
 import ClassificationIcon from '@/components/Common/Icons/ClassificationIcon.vue';
 
 import { retrieveAndFormatFieldData, FieldDataConfig, applyContextToFieldDataConfigs, CompletedFieldData } from '@/utils/fieldData'
@@ -30,6 +31,16 @@ const emit = defineEmits<{ close: []; back: [] }>()
 const analysisData = computed(() => {
   if (! buildingId.value) return null
   return analysisStore.getData(buildingId.value)
+})
+
+/**
+ * The analysis is still on its way: on a direct link to this panel, the panel
+ *  is on screen before its data. Not when the request has failed.
+ */
+const isLoading = computed(() => {
+  if (! buildingId.value) return false
+  return ! analysisStore.hasBeenRetrieved(buildingId.value)
+    && ! analysisStore.failedToLoad(buildingId.value)
 })
 
 const fieldGroupHeaders: Record<string, string> = {
@@ -116,6 +127,8 @@ const fieldsWithDataAndIcons = computed(() => {
     <section
       class="content -mx-4 flex-auto space-y-10 rounded-t-lg bg-white px-4 py-6"
     >
+      <SkeletonLoader v-if="isLoading" />
+
       <template v-for="group in Object.keys(fieldGroupHeaders)" :key="group">
         <div
           v-if="fieldsWithDataAndIcons[group]"

@@ -2,8 +2,13 @@
   summary {
     @apply cursor-pointer transition-colors duration-150;
 
-    &:hover {
-      @apply text-green-500;
+    /* Only where a pointer hovers: on a touch screen the hover colour stuck
+       to the heading that was tapped last. The darker green: green-500 is too
+       light to read as text (panel/base.css). */
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-text-green);
+      }
     }
 
     &:focus-visible {

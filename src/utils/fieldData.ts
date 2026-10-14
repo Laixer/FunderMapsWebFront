@@ -242,7 +242,7 @@ export const retrieveAndFormatFieldData = function retrieveAndFormatFieldData(co
     } else {
 
       if (dataObj.fieldValueLabel === true || dataObj.fieldValueLabel === false) {
-        dataObj.formattedFieldValueLabel = dataObj.fieldValueLabel === true ? 'ja' : 'nee'
+        dataObj.formattedFieldValueLabel = dataObj.fieldValueLabel === true ? 'Ja' : 'Nee'
       } else {
         dataObj.formattedFieldValueLabel = dataObj.fieldValueLabel
       }
