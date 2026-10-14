@@ -111,8 +111,8 @@ const sections = computed<Section[]>(() => {
     component: PieChart,
     labels: ['Betonnen of stalen palen', 'Houten paal met betonoplanger', 'Houten palen', 'Ondiepe fundering', 'Overig'],
     data: foundationTypeBuckets.value,
-    backgroundColors: [CHART_PALETTE.grey, CHART_PALETTE.yellow, CHART_PALETTE.orange,
-      CHART_PALETTE.red, CHART_PALETTE.blue],
+    // The colours of these classes in the map's funderingstype legend
+    backgroundColors: ['#7f8fa4', '#b59e3c', '#8c3a28', '#ce0015', '#ffec33'],
     borderColors: [],
   })
 

@@ -129,7 +129,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
         <button
           @click="handleOpenProfileModal"
-          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-(--color-text-green)"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-(--color-text-green) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-500"
           :class="{'text-(--color-text-green)': isProfileModalOpen}"
         >
           <UserIcon
@@ -140,7 +140,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
         <button
           @click="handleOpenPasswordModal"
-          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-(--color-text-green)"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-(--color-text-green) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-500"
           :class="{'text-(--color-text-green)': isPasswordModalOpen}"
         >
           <LockedIcon
@@ -151,7 +151,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
 
         <button
           @click="handleLogout"
-          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-red-500"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-500"
         >
           <ExitIcon
             class="aspect-square h-3.5"

@@ -121,7 +121,7 @@ const fieldsWithData = computed(() => {
           class="aspect-square w-3 group-hover:text-green-500"
           aria-hidden="true"
         />
-        <strong>PDOK Viewer</strong>
+        <strong>BAG Viewer</strong>
       </a>
     </template>
   </Panel>

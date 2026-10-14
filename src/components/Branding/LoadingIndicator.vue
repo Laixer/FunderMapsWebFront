@@ -45,6 +45,6 @@ withDefaults(defineProps<{
     </svg>
     <div 
       v-if="! hideLabel" 
-      class="text-grey-700">{{ label }}</div>
+      class="text-(--color-text-muted)">{{ label }}</div>
   </div>
 </template>

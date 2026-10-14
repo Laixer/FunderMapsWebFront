@@ -64,7 +64,7 @@
 
   input:not([type="checkbox"]):not([type="radio"]),
   textarea {
-    @apply w-full py-2.5 pl-4 pr-10 text-base leading-none text-blue-900 placeholder:text-grey-400 focus:outline-none;
+    @apply w-full py-2.5 pl-4 pr-10 text-base leading-none text-blue-900 placeholder:text-grey-700 focus:outline-none;
 
     &:disabled {
       @apply cursor-not-allowed;
