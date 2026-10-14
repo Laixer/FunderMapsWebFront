@@ -96,7 +96,7 @@ const handleLoginRedirect = function handleLoginRedirect() {
     <LinkButton 
       v-if="! isAuthenticated"
       label="Inloggen"
-      class="transition-colors hover:text-(--color-text-green) md:-mr-2 md:px-2"
+      class="underline-offset-2 transition-colors hover:text-(--color-text-green) hover:underline md:-mr-2 md:px-2"
       @click.prevent="handleLoginRedirect">
       <template v-slot:after>
         <ArrowRightIcon 
