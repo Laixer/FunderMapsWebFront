@@ -20,7 +20,8 @@
     }
 
     &[data-variant="popover"] {
-      @apply rounded-none rounded-r-lg shadow-none;
+      /* Square where it lies against the right side bar, rounded over the map */
+      @apply rounded-none rounded-l-lg shadow-none;
 
       /* 65ch (max-w-prose) where there is room. With both side bars open the
          map is narrower than that from 1320px down: then the width of the map,

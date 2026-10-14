@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Component } from 'vue';
+import { computed, ref, type Component } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import Panel from '@/components/Common/Panel.vue';
@@ -38,6 +38,10 @@ const { buildingMenu, actionMenu, reportMenu } = useBuildingMenu()
 const { selectedPanel, rightPanelSlide, openPanel, backToMainMenu } =
   usePanelRouting([buildingMenu, reportMenu])
 
+// A pand that could not be loaded has nothing to show in a sub-panel: a link
+// to one (…/foundation) shows the "Geen data beschikbaar" panel all the same
+const isSubPanelShown = computed(() => rightPanelSlide.value && ! failedToLoad.value)
+
 const availablePanels: Record<string, Component> = {
   BuildingPanel,
   FoundationPanel,
@@ -70,18 +74,18 @@ const handleCloseSideBar = (): void => {
 
     <div
       class="panels transition-transform duration-300"
-      :class="{'-translate-x-full': rightPanelSlide}"
+      :class="{'-translate-x-full': isSubPanelShown}"
     >
       <!-- The panel that is slid out of view is inert: Tab otherwise walks
            through links nobody sees, and Enter on one of them works -->
       <BuildingErrorPanel
         v-if="failedToLoad"
-        :inert="rightPanelSlide"
+        :inert="isSubPanelShown"
         @close="handleCloseSideBar"
       />
       <Panel
         v-else
-        :inert="rightPanelSlide"
+        :inert="isSubPanelShown"
         @close="handleCloseSideBar"
         title="Pandinformatie">
 
@@ -143,7 +147,7 @@ const handleCloseSideBar = (): void => {
 
       <component
         :is="availablePanels[selectedPanel]"
-        :inert="! rightPanelSlide"
+        :inert="! isSubPanelShown"
         @close="handleCloseSideBar"
         @back="backToMainMenu" />
     </div>

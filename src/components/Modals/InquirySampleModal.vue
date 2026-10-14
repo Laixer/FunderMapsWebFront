@@ -56,10 +56,10 @@ const fieldGroupHeaders: Record<string, string> = {
   constructionQuality: 'Kwaliteit metselwerk',
   skewed: 'Vervorming',
   crack: 'Scheuren',
-  front: 'Voorgevel scheur',
-  back: 'Achtergevel scheur',
-  right: 'Rechtergevel scheur',
-  left: 'Linkergevel scheur',
+  front: 'Scheur voorgevel',
+  back: 'Scheur achtergevel',
+  right: 'Scheur rechtergevel',
+  left: 'Scheur linkergevel',
   report: 'Opmerking uit rapportage'
 }
 
@@ -221,7 +221,9 @@ watch(
         </dl>
       </section>
       
-      <hr class="border-grey-200" />
+      <!-- A rule between groups only: not under a group that is not shown,
+           and not after the last one -->
+      <hr v-if="sampleFieldsWithData[group]" class="border-grey-200 last:hidden" />
     </template>
 
   </InformationModal>

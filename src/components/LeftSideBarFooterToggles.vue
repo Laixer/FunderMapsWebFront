@@ -14,7 +14,9 @@ const { selectedOrg } = storeToRefs(useSessionStore())
 
 <template>
   <div class="flex flex-col gap-1 px-5">
-    <div>
+    <!-- The filter matches on the name of the user's organisation: without
+         one (a guest) the switch would turn on and do nothing -->
+    <div v-if="selectedOrg">
       <Toggle v-model="applyOwnershipFilter" label="Filter op eigendom" />
 
       <!-- Always in the page, so that a screen reader says the message when it appears -->

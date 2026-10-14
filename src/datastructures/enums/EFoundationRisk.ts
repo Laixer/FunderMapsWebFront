@@ -36,6 +36,14 @@ export const EFoundationRiskLabels: Map<EFoundationRisk, string> = new Map([
   [EFoundationRisk.E, "E (Aanzienlijk hoog risico)"]
 ]);
 
+/**
+ * The label of a risk class named by its letter, as the legends and the
+ *  statistics get it ("A"), or undefined for anything else
+ */
+export const foundationRiskLabelByLetter = function foundationRiskLabelByLetter(letter: string): string | undefined {
+  return EFoundationRiskLabels.get(EFoundationRisk[letter as keyof typeof EFoundationRisk])
+}
+
 
 export const EFoundationRiskIconNames: Map<EFoundationRisk, string> = new Map([
   [EFoundationRisk.A, "a"],

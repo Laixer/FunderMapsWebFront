@@ -18,6 +18,7 @@ import type {
   IIncidentYearPair,
   IInquiryYearPair,
 } from '@/datastructures/interfaces/api/IStatistics'
+import { foundationRiskLabelByLetter } from '@/datastructures/enums'
 import { CHART_PALETTE, CHART_PALETTE_SOFT } from './Statistics/chartDefaults'
 
 const { buildingId } = storeToRefs(useBuildingStore())
@@ -54,15 +55,15 @@ const foundationTypeBuckets = computed<number[]>(() => {
   return out
 })
 
-const riskColors = (labels: string[]): string[] => {
+const riskColors = (letters: string[]): string[] => {
   const map: Record<string, string> = {
-    'Label A': CHART_PALETTE.green,
-    'Label B': CHART_PALETTE_SOFT.green,
-    'Label C': CHART_PALETTE.yellow,
-    'Label D': CHART_PALETTE.orange,
-    'Label E': CHART_PALETTE.red,
+    A: CHART_PALETTE.green,
+    B: CHART_PALETTE_SOFT.green,
+    C: CHART_PALETTE.yellow,
+    D: CHART_PALETTE.orange,
+    E: CHART_PALETTE.red,
   }
-  return labels.map(l => map[l] ?? CHART_PALETTE.grey)
+  return letters.map(l => map[l] ?? CHART_PALETTE.grey)
 }
 
 interface Section {
@@ -108,7 +109,7 @@ const sections = computed<Section[]>(() => {
     key: 'foundationTypeDistribution',
     title: 'Verhouding funderingstype in de buurt',
     component: PieChart,
-    labels: ['Betonnen palen', 'Houten paal met betonoplanger', 'Houten palen', 'Niet onderheid', 'Overige'],
+    labels: ['Betonnen of stalen palen', 'Houten paal met betonoplanger', 'Houten palen', 'Ondiepe fundering', 'Overig'],
     data: foundationTypeBuckets.value,
     backgroundColors: [CHART_PALETTE.grey, CHART_PALETTE.yellow, CHART_PALETTE.orange,
       CHART_PALETTE.red, CHART_PALETTE.blue],
@@ -130,15 +131,16 @@ const sections = computed<Section[]>(() => {
   }
 
   if (stats.foundationRiskDistribution) {
-    const riskLabels = Object.keys(stats.foundationRiskDistribution)
-      .map(k => `Label ${k.replace('percentage', '')}`)
+    const riskLetters = Object.keys(stats.foundationRiskDistribution)
+      .map(k => k.replace('percentage', ''))
     out.push({
       key: 'foundationRiskDistribution',
       title: 'Verhouding funderingsrisico in de buurt',
       component: PieChart,
-      labels: riskLabels,
+      // The class as the pand panel writes it: "A (Geen risico)"
+      labels: riskLetters.map(l => foundationRiskLabelByLetter(l) ?? `Label ${l}`),
       data: Object.values(stats.foundationRiskDistribution),
-      backgroundColors: riskColors(riskLabels),
+      backgroundColors: riskColors(riskLetters),
       borderColors: [],
     })
   }

@@ -20,11 +20,15 @@ import { useMainStore } from '@/store/main';
 import { useSessionStore } from '@/store/session';
 import { useBuildingRouting } from '@/router/buildingRouting'
 import { getLocationInformationByBuildingId } from '@/services/api/building';
+import { usePhoneLayout } from '@/components/Layout/usePhoneLayout'
 
 const { mapCenterLatLon, mapMarkerLatLon } = storeToRefs(useMainStore())
 const { isAuthenticated } = storeToRefs(useSessionStore())
 
 const buildingRouting = useBuildingRouting()
+
+// On a phone the field shows a dozen letters: the short text still says what to type
+const isPhone = usePhoneLayout()
 
 const queryString = ref('')
 
@@ -337,6 +341,14 @@ const handleClear = function handleClear() {
 }
 
 /**
+ * A suggestion as it is shown: the postcode written "1017 RM", where PDOK
+ *  gives "1017RM". Only shown so; what is picked stays PDOK's own text.
+ */
+const toDisplayName = function toDisplayName(weergavenaam: string): string {
+  return weergavenaam.replace(/(^|, )(\d{4})([A-Z]{2})(?= )/, '$1$2 $3')
+}
+
+/**
  * The magnifier: put the cursor in the search field
  */
 const handleFocusField = function handleFocusField() {
@@ -357,7 +369,7 @@ const handleFocusField = function handleFocusField() {
         v-model="queryString"
         id="search"
         class="grow [&_.input-field]:w-auto"
-        placeholder="Zoek hier op adres of postcode"
+        :placeholder="isPhone ? 'Adres of postcode' : 'Zoek hier op adres of postcode'"
         aria-label="Zoek op adres of postcode"
         autocomplete="off"
         role="combobox"
@@ -432,7 +444,7 @@ const handleFocusField = function handleFocusField() {
                         aria-hidden="true" 
                       />
                     </span>
-                    <h6 class="heading-6 leading-none">{{ suggestion.weergavenaam }}</h6>
+                    <h6 class="heading-6 leading-none">{{ toDisplayName(suggestion.weergavenaam) }}</h6>
                   </div>
                 </a>
               </li>

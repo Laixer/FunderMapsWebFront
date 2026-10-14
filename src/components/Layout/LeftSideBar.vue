@@ -20,6 +20,7 @@ import InfoIcon from '@assets/svg/icons/info.svg'
 import { useMainStore } from '@/store/main'
 import { useMapsetStore } from '@/store/mapsets'
 import { useLayersStore } from '@/store/layers';
+import { foundationRiskLabelByLetter } from '@/datastructures/enums'
 
 
 const mapsetStore = useMapsetStore()
@@ -66,6 +67,18 @@ onKeyStroke('Escape', () => {
   if (showInfoTooltip.value) handleCloseNote()
 })
 const { availableMapsetsByLoadingOrder, activeMapset, activeMapsetId } = storeToRefs( mapsetStore )
+
+/**
+ * The name of the mapset with its last word apart: that word and the "i" of
+ *  the note stay on one line, so the "i" follows a name that wraps (in a flex
+ *  box it sat at the edge of the panel)
+ */
+const mapsetNameParts = computed(() => {
+  const name = activeMapset.value?.name ?? ''
+  const at = name.lastIndexOf(' ')
+  return { head: name.slice(0, at + 1), last: name.slice(at + 1) }
+})
+
 const { changeLayerVisibility } = useLayersStore() 
 const { visibleLayersByMapsetId } = storeToRefs(useLayersStore())
 
@@ -107,6 +120,16 @@ const handleCloseMapsetLegend = function handleCloseMapsetLegend() {
  */
 const handleToggleLayerById = function handleOpenLayerById(layerId: string, visibility: boolean) {
   changeLayerVisibility(layerId, visibility, activeMapsetId.value)
+}
+
+/**
+ * A legend row of a risk layer is named by its class letter: it reads as the
+ *  pand panel writes the class, "A (Geen risico)"
+ */
+const legendFieldLabel = function legendFieldLabel(name: string): string {
+  if (name.length !== 1) return name
+
+  return foundationRiskLabelByLetter(name) ?? `Label ${name}`
 }
 
 </script>
@@ -163,12 +186,11 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
             class="accent-color-blue aspect-square w-6"
             aria-hidden="true" 
           />
-          <h4 class="heading-4 flex items-center gap-1">
-            {{ activeMapset?.name }}
-            <span
+          <h4 class="heading-4">
+            {{ mapsetNameParts.head }}<span class="whitespace-nowrap">{{ mapsetNameParts.last }}<span
               v-if="activeMapset?.note"
               v-on-click-outside="handleClickOutsideNote"
-              class="relative"
+              class="relative ml-1 inline-flex align-middle"
               @mouseenter="isNoteHovered = true"
               @mouseleave="isNoteHovered = false"
             >
@@ -195,12 +217,12 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                     <VueMarkdown
                       :source="activeMapset?.note ?? ''"
                       :options="{ breaks: true, linkify: true, html: false }"
-                      class="text-sm leading-relaxed text-(--color-text-muted)"
+                      class="space-y-2 text-sm leading-relaxed text-(--color-text-muted) [&_a]:text-(--color-text-green) [&_a]:underline"
                     />
                   </div>
                 </Transition>
               </Teleport>
-            </span>
+            </span></span>
           </h4>
         </template>
 
@@ -221,7 +243,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                 <li
                   v-for="field in layer.fields"
                   :key="`field_${field.name}`"
-                  :style="`--marker-color: #${field.color}`">{{ field.name.length === 1 ? `Label ${field.name}` : field.name }}</li>
+                  :style="`--marker-color: #${field.color}`">{{ legendFieldLabel(field.name) }}</li>
               </ol>
             </AccordionItem>
           </AccordionGroup>

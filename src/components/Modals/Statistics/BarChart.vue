@@ -38,6 +38,7 @@ const createChart = (): void => {
         borderColor: props.borderColors,
         borderWidth: 1,
         borderRadius: 4,
+        maxBarThickness: 24,
       }],
     },
     options: {

@@ -66,7 +66,8 @@ export {
 
 export {
   EFoundationRisk,
-  EFoundationRiskLabels
+  EFoundationRiskLabels,
+  foundationRiskLabelByLetter
 } from './EFoundationRisk'
 
 export {
