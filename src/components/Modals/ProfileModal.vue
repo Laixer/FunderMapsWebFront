@@ -75,7 +75,7 @@ const validationSchema = z.object({
   jobTitle: z
     .union([
       z.string().trim().length(0), 
-      z.string().trim().min(1, "Een functienaam moet minimaal 2 karakters bevatten")
+      z.string().trim().min(1, "Een functienaam moet minimaal 1 teken bevatten.")
     ])
     .optional()
     .transform(e => e === "" ? "" : e),

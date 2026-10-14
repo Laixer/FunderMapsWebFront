@@ -94,7 +94,9 @@ export function useFocusTrap(
       // element as such is the close button in the header. A dialog with
       // nothing to focus takes the focus itself (it needs tabindex="-1").
       const first = focusable.find(el => el.matches('input, select, textarea')) ?? focusable[0] ?? containerRef.value
-      first?.focus()
+      // Not scrolled to: a dialog whose only button is under its text (the
+      // disclaimer on a small phone) opened with its first lines scrolled away
+      first?.focus({ preventScroll: true })
     })
   }
 
