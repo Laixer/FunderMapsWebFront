@@ -9,5 +9,15 @@
 </script>
 
 <template>
-  <Button v-bind="props" :outline="true"></Button>
+  <!-- The icon slots are passed on (as LinkButton does): without this the
+       icons a caller gives never showed -->
+  <Button v-bind="props" :outline="true">
+    <template v-slot:before>
+      <slot name="before" />
+    </template>
+
+    <template v-slot:after>
+      <slot name="after" />
+    </template>
+  </Button>
 </template>

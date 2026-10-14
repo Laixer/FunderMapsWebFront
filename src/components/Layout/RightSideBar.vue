@@ -72,12 +72,16 @@ const handleCloseSideBar = (): void => {
       class="panels transition-transform duration-300"
       :class="{'-translate-x-full': rightPanelSlide}"
     >
+      <!-- The panel that is slid out of view is inert: Tab otherwise walks
+           through links nobody sees, and Enter on one of them works -->
       <BuildingErrorPanel
         v-if="failedToLoad"
+        :inert="rightPanelSlide"
         @close="handleCloseSideBar"
       />
       <Panel
         v-else
+        :inert="rightPanelSlide"
         @close="handleCloseSideBar"
         title="Pandinformatie">
 
@@ -139,6 +143,7 @@ const handleCloseSideBar = (): void => {
 
       <component
         :is="availablePanels[selectedPanel]"
+        :inert="! rightPanelSlide"
         @close="handleCloseSideBar"
         @back="backToMainMenu" />
     </div>

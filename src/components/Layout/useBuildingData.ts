@@ -86,6 +86,13 @@ export function useBuildingData() {
     watch(
       () => buildingId.value,
       async (id) => {
+        // The page a report panel is on belongs to the pand it was turned
+        // for. The panels reset it too, but only while they are in the page:
+        // one that had been closed opened on page 3 of the next pand, which
+        // is an empty panel when that pand has one report.
+        inquiriesStore.shownReportIndex = 0
+        recoveryStore.shownReportIndex = 0
+
         if (id === null) return
 
         onBuildingSelected()

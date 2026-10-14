@@ -1,7 +1,10 @@
 .input--toggle {
   [type="checkbox"] {
     + label {
-      @apply relative inline-flex cursor-pointer items-center gap-3 text-sm leading-tight text-grey-700 select-none;
+      @apply relative inline-flex cursor-pointer items-center gap-3 text-sm leading-tight select-none;
+
+      /* grey-700 is too light to read as text (panel/base.css) */
+      color: var(--color-text-muted);
 
       &::before {
         content: "";
@@ -11,6 +14,13 @@
       &::after {
         content: "";
         @apply absolute left-0.5 top-1/2 block h-4 w-4 -translate-y-1/2 rounded-full bg-white shadow-sm transition-transform duration-200;
+      }
+    }
+
+    /* The checkbox itself is hidden (sr-only): the switch shows its focus */
+    &:focus-visible {
+      + label::before {
+        @apply ring-2 ring-green-500 ring-offset-1;
       }
     }
 

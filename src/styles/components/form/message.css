@@ -1,5 +1,8 @@
 .input__message {
-  @apply text-sm leading-normal text-grey-700;
+  @apply text-sm leading-normal;
+
+  /* grey-700 is too light to read as text (panel/base.css) */
+  color: var(--color-text-muted);
 
   &[data-variant="success"] {
     @apply text-green-700;

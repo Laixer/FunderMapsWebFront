@@ -22,7 +22,7 @@ const { hasAvailableMapsets } = storeToRefs(
       <div v-if="hasAvailableMapsets" class="divider | w-[1px] flex-shrink-0 flex-grow-0 self-stretch bg-grey-400 max-md:hidden"></div>
     </Transition>
 
-    <div class="flex w-full items-center gap-8 max-md:min-w-0 max-md:gap-3">
+    <div class="flex w-full items-center justify-end gap-8 max-md:min-w-0 max-md:gap-3">
       <Transition>
         <SearchBar v-if="hasAvailableMapsets" class="flex-1" />
       </Transition>

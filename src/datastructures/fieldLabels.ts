@@ -79,7 +79,7 @@ export const StateControlFieldLabels = <Record<string, string>> {
 }
 
 export const recoverySampleFieldLabels = <Record<string, string>> {
-  recovery: 'Onderzoeksnummer',
+  recovery: 'Herstelnummer',
   type: "Methode herstel",
   pileType: "Paaltype",
   status: "Status herstel",
@@ -88,8 +88,7 @@ export const recoverySampleFieldLabels = <Record<string, string>> {
   facade: "Herstelde gevel",
   permit: "Vergunningsnummer",
   permitDate: "Vergunningsdatum",
-  recoveryDate: "Datum herstel",
-  id: 'Herstelnummer'
+  recoveryDate: "Datum herstel"
 }
 
 export const inquiryFieldLabels = <Record<string, string>> {

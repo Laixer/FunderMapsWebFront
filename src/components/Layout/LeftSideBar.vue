@@ -123,9 +123,12 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
       class="panels transition-transform duration-300"
       :class="{'-translate-x-full': isShowingMapsetSelection === false}"
     >
+      <!-- The panel that is slid out of view is inert: Tab otherwise walks
+           through links nobody sees, and Enter on one of them works -->
       <Panel
         subtitle="Selecteer een kaart"
         close-direction="left"
+        :inert="! isShowingMapsetSelection"
         @close="isLeftSidebarOpen = false">
         <section class="grid space-y-2">
           <MenuLink
@@ -149,9 +152,13 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
 
       <Panel
         close-direction="left"
+        :inert="isShowingMapsetSelection"
         @close="isLeftSidebarOpen = false">
         <template v-slot:subtitle>
+          <!-- Keyed: the icon component reads its name once, so without a key
+               the heading kept the icon of the mapset that was shown first -->
           <FundermapsIcon
+            :key="activeMapset?.id"
             :name="activeMapset?.icon || 'home-info'"
             class="accent-color-blue aspect-square w-6"
             aria-hidden="true" 
@@ -188,7 +195,7 @@ const handleToggleLayerById = function handleOpenLayerById(layerId: string, visi
                     <VueMarkdown
                       :source="activeMapset?.note ?? ''"
                       :options="{ breaks: true, linkify: true, html: false }"
-                      class="text-sm leading-relaxed text-grey-700"
+                      class="text-sm leading-relaxed text-(--color-text-muted)"
                     />
                   </div>
                 </Transition>

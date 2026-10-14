@@ -7,7 +7,6 @@ import Panel from '@/components/Common/Panel.vue';
 import BuildingIdHeader from '@/components/BuildingIdHeader.vue';
 import BackLink from '@/components/Common/Links/BackLink.vue';
 import OutlineButton from '@/components/Common/Buttons/OutlineButton.vue';
-import AnimatedArrowIcon from '@/components/Common/Icons/AnimatedArrowIcon.vue';
 
 import LeftArrowIcon from '@assets/svg/icons/arrow-left.svg'
 import RightArrowIcon from '@assets/svg/icons/arrow-right.svg'
@@ -76,11 +75,17 @@ const maxListIndex = computed(() => {
 })
 
 /**
+ * The page the panel is on: the stored one, held within the reports of this
+ *  pand. A page this pand does not have would show as an empty panel.
+ */
+const shownIndex = computed(() => Math.min(shownReportIndex.value, maxListIndex.value))
+
+/**
  * The selected case item, or null
  */
 const selectedCaseItem = computed(() => {
-  if (caseItems.value[shownReportIndex.value]) {
-    return caseItems.value[shownReportIndex.value]
+  if (caseItems.value[shownIndex.value]) {
+    return caseItems.value[shownIndex.value]
   }
   return null
 })
@@ -268,13 +273,13 @@ onBeforeUnmount(() => isRemarkPopoverOpen.value = false)
  * Navigation between cases
  */
 const handleNext = function handleNext() {
-  if (shownReportIndex.value === maxListIndex.value) return
-  shownReportIndex.value = shownReportIndex.value + 1
+  if (shownIndex.value === maxListIndex.value) return
+  shownReportIndex.value = shownIndex.value + 1
 }
 
 const handlePrev = function handlePrev() {
-  if (shownReportIndex.value < 1) return
-  shownReportIndex.value = shownReportIndex.value - 1
+  if (shownIndex.value < 1) return
+  shownReportIndex.value = shownIndex.value - 1
 }
 
 const resetListValue = function resetListValue() {
@@ -329,7 +334,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
           class="mb-2 flex items-center justify-between text-sm text-(--color-text-muted)">
           <button
             class="button button--link p-1"
-            :disabled="shownReportIndex === 0"
+            :disabled="shownIndex === 0"
             @click.prevent="handlePrev">
             <LeftArrowIcon
               class="aspect-square h-2.5"
@@ -337,10 +342,10 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
             />
             <span class="sr-only">Vorige</span>
           </button>
-          <span>{{ shownReportIndex + 1 }} van {{ maxListIndex + 1 }}</span>
+          <span>{{ shownIndex + 1 }} van {{ maxListIndex + 1 }}</span>
           <button
             class="button button--link p-1"
-            :disabled="shownReportIndex === maxListIndex"
+            :disabled="shownIndex === maxListIndex"
             @click.prevent="handleNext">
             <RightArrowIcon
               class="aspect-square h-2.5"
@@ -400,11 +405,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
           :label="button.label"
           class="w-full"
           @click.prevent="handleOpenModal(button.index, button.label)"
-        >
-          <template v-slot:after>
-            <AnimatedArrowIcon />
-          </template>
-        </OutlineButton>
+        />
       </div>
 
       <OutlineButton
@@ -413,11 +414,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
         :disabled="! hasSampleData"
         class="w-full"
         @click.prevent="handleOpenModal()"
-      >
-        <template v-slot:after>
-          <AnimatedArrowIcon />
-        </template>
-      </OutlineButton>
+      />
       
     </section>
   </Panel>

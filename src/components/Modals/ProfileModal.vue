@@ -65,12 +65,12 @@ const validationSchema = z.object({
   givenName: z.string({
     error: 'Een voornaam is vereist'
   })
-    .trim().min(2, 'Een voornaam moet minimaal 2 karakters bevatten'),
+    .trim().min(2, 'Een voornaam moet minimaal 2 tekens bevatten.'),
 
   lastName: z.string({
     error: 'Een achternaam is vereist'
   })
-    .trim().min(2, 'Een achternaam moet minimaal 2 karakters bevatten'),
+    .trim().min(2, 'Een achternaam moet minimaal 2 tekens bevatten.'),
   
   jobTitle: z
     .union([
@@ -274,7 +274,7 @@ const handleClose = function handleClose() {
         @submit.prevent="handleSubmit"
         class="space-y-6">
 
-        <h6>Algemeen</h6>
+        <h6 class="heading-6">Algemeen</h6>
         <Input
           id="givenName"
           label="Voornaam"
@@ -311,7 +311,7 @@ const handleClose = function handleClose() {
           :validationMessage="getError('email')"
           :disabled="true" />
 
-        <h6>Aanvullend</h6>
+        <h6 class="heading-6">Aanvullend</h6>
         <Input
           id="jobTitle"
           label="Functie"

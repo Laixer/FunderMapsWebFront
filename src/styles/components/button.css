@@ -14,7 +14,11 @@
 }
 
 .button--link {
-  @apply rounded-md px-0 text-green-500 outline-offset-2 hover:text-green-700 disabled:text-grey-400;
+  @apply rounded-md px-0 outline-offset-2 hover:text-blue-900 disabled:text-grey-400;
+
+  /* green-500 is too light to read as text (panel/base.css). Hover goes one
+     step darker, as the links do (link.css). */
+  color: var(--color-text-green);
 }
 
 .button--icon {

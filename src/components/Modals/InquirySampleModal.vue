@@ -29,7 +29,9 @@ const caseItems = computed(() => {
  *  button that was pressed. Or null
  */
 const selectedSample = computed(() => {
-  return caseItems.value[shownReportIndex.value]?.samples[shownSampleIndex.value] ?? null
+  // The same report as the panel shows: its page, held within the reports of this pand
+  const shownIndex = Math.min(shownReportIndex.value, caseItems.value.length - 1)
+  return caseItems.value[shownIndex]?.samples[shownSampleIndex.value] ?? null
 })
 
 /**
@@ -207,7 +209,7 @@ watch(
       <section
         v-if="sampleFieldsWithData[group]"
         class="space-y-4">
-        <h6>{{ fieldGroupHeaders[group] }}</h6>
+        <h6 class="heading-6">{{ fieldGroupHeaders[group] }}</h6>
         <dl class="list--definition">
           <div 
             v-for="field in sampleFieldsWithData[group]" 

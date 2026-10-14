@@ -247,7 +247,7 @@ const handleClamped = function handleClamped(clamped: CustomEvent) {
       </div>
 
       <div class="space-y-3">
-        <h6 class="font-bold leading-none">{{ isMelding ? 'Meldinginformatie' : 'Incidentinformatie' }}</h6>
+        <h6 class="font-bold leading-none">{{ isMelding ? 'Meldingsinformatie' : 'Incidentinformatie' }}</h6>
         <dl class="space-y-3">
           <div 
             v-for="field in fieldsWithData" 

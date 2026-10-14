@@ -4,8 +4,30 @@
   }
 
   dd {
-    @apply text-end leading-loose;
+    /* A row is as high as it was (2rem), but a value of several lines keeps
+       a normal line height: at the row's it was a ragged, double-spaced block */
+    @apply py-1 text-end leading-normal;
 
     color: var(--color-text-muted);
+
+    /* A value that is left blank still has a line: without one its row was
+       lower than the others and the label sat off their baseline */
+    &:empty::before {
+      content: "\200b";
+    }
+  }
+
+  /* The phone layout (the breakpoint: see pages/dashboard.css): the value
+     under its label, both from the left. Beside a long label there was room
+     for half a value: "Geen data" broke in two. */
+  @media (width < 48rem) {
+    .item {
+      @apply flex-col gap-0;
+    }
+
+    /* Close under its label, the room after it: a pair reads as a pair */
+    dd {
+      @apply pb-2 pt-0 text-start;
+    }
   }
 }

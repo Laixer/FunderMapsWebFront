@@ -31,14 +31,23 @@ const handleClose = function handleClose() {
     v-if="isRemarkPopoverOpen && remarkPopoverTitle && remarkPopoverText"
     :title="remarkPopoverTitle" 
     :text="remarkPopoverText"
-    placing="end"
+    placing="start"
     @close="handleClose" />
 </template>
 
 <style scoped>
+/* Beside the right side bar, from the top of the map (under the 5rem header).
+   It ends above the map's buttons, which are in the bottom right corner and
+   were under the popover; a remark that needs more height scrolls inside.
+   On a phone the popover is a sheet from the bottom (pages/dashboard.css). */
 .RemarkPopover {
   position: absolute;
   right: var(--sidebar-width);
-  bottom: 0;
+  top: 5rem;
+  bottom: 14rem;
+
+  /* As high as the remark, from the top. Said here: the class Modal makes of
+     `placing` exists in the stylesheet for "center" only. */
+  align-items: start;
 }
 </style>

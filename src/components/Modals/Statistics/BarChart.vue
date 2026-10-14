@@ -47,8 +47,9 @@ const createChart = (): void => {
         legend: { display: false },
       },
       scales: {
-        x: { beginAtZero: true, grid: { display: !props.horizontal } },
-        y: { beginAtZero: true, grid: { display: props.horizontal } },
+        // Counts: no ticks between the whole numbers (one incident gave 0,1 … 0,9)
+        x: { beginAtZero: true, grid: { display: !props.horizontal }, ticks: { precision: 0 } },
+        y: { beginAtZero: true, grid: { display: props.horizontal }, ticks: { precision: 0 } },
       },
     },
   })

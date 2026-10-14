@@ -10,6 +10,10 @@
       @apply h-2.5 w-2.5 rounded-full;
 
       background-color: var(--marker-color, var(--color-grey-700));
+
+      /* A hairline around the dot: a white or near-white one (the lowest
+         class of a scale) is invisible on the panel's grey without it */
+      box-shadow: 0 0 0 1px rgb(0 0 0 / 0.18);
     }
   }
 }

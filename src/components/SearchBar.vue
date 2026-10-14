@@ -370,7 +370,7 @@ const handleFocusField = function handleFocusField() {
         <template v-slot:after>
           <IconButton
             v-if="queryString"
-            class="text-grey-400 hover:text-red-500"
+            class="text-grey-700 hover:text-red-500"
             transparent
             label="Wissen"
             @click.prevent="handleClear">
@@ -421,7 +421,7 @@ const handleFocusField = function handleFocusField() {
                   href="#"
                   tabindex="-1"
                   class="flex cursor-pointer gap-3 px-8 py-2 transition-colors duration-100"
-                  :class="index === focusedSuggestion ? 'bg-grey-100 text-green-500' : ''"
+                  :class="index === focusedSuggestion ? 'bg-grey-100 text-(--color-text-green)' : ''"
                   @click.prevent="handleSelectBuilding(suggestion.id, suggestion.weergavenaam)"
                 >
                   <div class="flex gap-2">

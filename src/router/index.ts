@@ -117,6 +117,9 @@ router.afterEach((to) => {
       // The map names itself (views/Main.vue): this hook also runs on every
       // map move, which keeps the position in the query string.
       break
+    case 'NotFound':
+      document.title = `Pagina niet gevonden — ${BASE_TITLE}`
+      break
     default:
       document.title = BASE_TITLE
   }
