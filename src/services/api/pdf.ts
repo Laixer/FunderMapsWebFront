@@ -1,9 +1,9 @@
 import { apiBasePath } from "@/config"
 import { trimTrailingChar } from "@/utils/string"
 
-// Sync render against the API's Gotenberg-backed /api/pdf/:id endpoint. The
-// API holds the request while Gotenberg renders the report front-end, then
-// streams `application/pdf` bytes back. We wrap them in an object URL so the
+// Sync render against the API's /api/pdf/:id endpoint. The API holds the
+// request while it makes the report with Typst (about 10 s), then streams
+// `application/pdf` bytes back. We wrap them in an object URL so the
 // caller (anchor href / window.open) can treat it like a hosted link.
 //
 // Returned URL is owned by the caller — `URL.revokeObjectURL` it when the
