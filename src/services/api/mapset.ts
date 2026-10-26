@@ -8,7 +8,6 @@ interface RawMapset {
   id: string
   slug: string
   name: string
-  style: string
   metadata: object | null
   public: boolean | null
   consent: string | null
@@ -24,7 +23,6 @@ const mapMapset = (raw: RawMapset): IMapsetFE => ({
   id: raw.id,
   slug: raw.slug,
   name: raw.name || 'Onbekende laag',
-  style: raw.style,
   metadata: (raw.metadata as { center?: number[] }) ?? {},
   public: !!raw.public,
   consent: raw.consent ?? null,

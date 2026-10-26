@@ -22,7 +22,7 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 - **`router/`** - Vue Router config. Routes: `/login`, `/forgotten`, `/reset/:resetKey?`, `/` (home), `/map/:mapsetId`, `/map/:mapsetId/building/:buildingId(/:panel)`
 - **`store/`** - Pinia stores. Core: `session` (auth), `main` (UI state/modals), `buildings` (selected building), `mapsets` (available mapsets), `layers` (visibility, persisted to sessionStorage), `filters` (ownership), `metadata` (user prefs). Building-specific substores in `store/building/` (analysis, geolocations, incidents, inquiries, recovery, statistics, subsidence)
 - **`services/`** - API layer. `apiClient.ts` is the base HTTP client; it sends the session cookie (`credentials: 'include'`) and, on a `401`, signals the shell through `authEvents.ts`. `auth.ts` holds the redirects to the auth app. Nothing is stored in the browser. Endpoint modules in `services/api/` (auth, building, mapset, metadata, pdf, userprofile)
-- **`components/Mapbox/`** - Map integration. `Map.vue` is the main map component. Composables (`use*.ts`) handle layers, sources, events, markers, clustering, geo-fencing, ownership filters, position tracking, and administrative boundaries
+- **`components/Map/`** - Map integration. `Map.vue` is the main map component. Composables (`use*.ts`) handle layers, sources, events, markers, clustering, geo-fencing, ownership filters, position tracking, and administrative boundaries
 - **`config/layers/`** - JSON layer definitions for map styling (MapLibre style spec) (30+ files for foundation types, incidents, risk assessments, etc.)
 - **`datastructures/`** - TypeScript interfaces, enums, and data classes (Location, Controls, analysis/report types)
 - **`directives/`** - Custom Vue directives (line clamping)
@@ -46,7 +46,7 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 - `VITE_FUNDERMAPS_NUMBER_LAYER` - layer the building-number labels are inserted before (optional)
 - `VITE_GIT_COMMIT_HASH` - Auto-injected at build time from git
 
-Not read any more: `VITE_MAPBOX_TOKEN`, `VITE_MAPBOX_STYLE` (the map is MapLibre) and `VITE_FUNDERMAPS_TILES_URL` (the static tileset bucket; tiles come from the tileserver).
+Not read any more: `VITE_FUNDERMAPS_TILES_URL` (the static tileset bucket; tiles come from the tileserver).
 
 ### Authentication Flow
 
@@ -54,7 +54,7 @@ The session is the **Better Auth cookie on the API origin**, shared by every `*.
 
 ### Map Layer System
 
-Mapsets define which layers are available. Layer configs in `config/layers/` define Mapbox GL styling. The `layers` store tracks visibility per mapset. Composables in `components/Mapbox/` dynamically add/remove layers and sources based on the active mapset. Geographic fencing filters data by municipality/district/neighborhood.
+Mapsets define which layers are available. Layer configs in `config/layers/` define MapLibre styling. The `layers` store tracks visibility per mapset. Composables in `components/Map/` dynamically add/remove layers and sources based on the active mapset. Geographic fencing filters data by municipality/district/neighborhood.
 
 ### Key Libraries
 

@@ -2,16 +2,16 @@
 import { computed, onBeforeUnmount, shallowRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import MapBox from '@/components/Common/Mapbox/MapBox.vue';
+import BaseMap from '@/components/Common/Map/BaseMap.vue';
 import { type Map } from 'maplibre-gl'
 
 import { addControls, mapLocale } from './controls';
 import { useMapCenterManagement } from './useMapCenterManagement'
 import { useBuildingMarker } from './useBuildingMarker'
-import { useMapboxControlNudge } from './useMapboxControlNudge';
+import { useMapControlNudge } from './useMapControlNudge';
 import { useTrackPositioning } from './useTrackPositioning'
 import { useMapLayers } from './useMapLayers'
-import { useBuildingCluster } from '@/components/Mapbox/useBuildingCluster'
+import { useBuildingCluster } from '@/components/Map/useBuildingCluster'
 import { useOwnershipFilterNotice } from './useOwnershipFilter'
 
 import { useMapCenterRouting } from '@/router/mapCenterRouting';
@@ -48,8 +48,8 @@ const { getLatLngFromQueryString } = useMapCenterRouting()
 const openedAtPosition = !! getLatLngFromQueryString()
 
 // Map Control nudging
-const { maybeNudge: maybeNudgeRight } = useMapboxControlNudge('right', 336, hasSelectedBuilding)
-const { maybeNudge: maybeNudgeLeft } = useMapboxControlNudge('left', 336, isLeftSidebarOpen)
+const { maybeNudge: maybeNudgeRight } = useMapControlNudge('right', 336, hasSelectedBuilding)
+const { maybeNudge: maybeNudgeLeft } = useMapControlNudge('left', 336, isLeftSidebarOpen)
 
 /**
  * The startup options
@@ -137,7 +137,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <MapBox 
+  <BaseMap 
     v-if="hasUserMetaData"
     :options="options" 
     @load="onLoad" />

@@ -74,7 +74,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="MapBox">
+  <div class="BaseMap">
     <div ref="mapcontainer"></div>
     <slot v-if="loaded" />
   </div>
@@ -82,7 +82,7 @@ onUnmounted(() => {
 
 <style>
 /* Unscoped: overrides maplibre-gl.css which sets inline dimensions */
-.MapBox,
+.BaseMap,
 .maplibregl-map {
   width: 100% !important;
   height: 100% !important;

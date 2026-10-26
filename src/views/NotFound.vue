@@ -6,7 +6,7 @@ import Button from '@/components/Common/Buttons/Button.vue';
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-import MapBox from '@/components/Common/Mapbox/MapBox.vue';
+import BaseMap from '@/components/Common/Map/BaseMap.vue';
 
 const options = {
   style: 'https://tiles.fundermaps.com/style/fundermaps-basemap',
@@ -26,7 +26,7 @@ const options = {
     <Header />
 
     <div class="app-view | map-placeholder-bg relative bg-grey-200">
-      <MapBox :options="options" />
+      <BaseMap :options="options" />
     </div>
 
     <OverlayModal title="Oh nee! Deze pagina is verzakt (404)" :closeable="false">

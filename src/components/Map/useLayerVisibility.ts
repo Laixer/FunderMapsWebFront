@@ -21,7 +21,7 @@ export const useLayerVisibility = function useLayerVisibility(
 
   /**
    * Layer id of currently shown layers
-   *  We keep track of this locally to reduce the number of visibility changes applied to Mapbox
+   *  We keep track of this locally to reduce the number of visibility changes applied to the map
    */
   let currentlyVisibleLayers: string[] = []
   let currentlyHiddenLayers: string[] = []

@@ -21,7 +21,7 @@ export const useMapCenterManagement = function useMapCenterManagement() {
   const { activeMapset } = storeToRefs( useMapsetStore() )
 
 
-  // Reference to the mapbox instance
+  // Reference to the map instance
   let mapInstance: Map|null = null
 
   // A flag we use to track when the watcher should ignore center changes
