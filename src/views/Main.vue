@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 
 // Layout
 import Header from '@/components/Layout/Header.vue'
-import Map from '@/components/Mapbox/Map.vue'
+import Map from '@/components/Map/Map.vue'
 import LeftSidebar from '@/components/Layout/LeftSideBar.vue'
 import RightSidebar from '@/components/Layout/RightSideBar.vue'
 
@@ -57,9 +57,9 @@ const { isLeftSidebarOpen } = storeToRefs(useMainStore())
 const { hasSelectedBuilding, buildingId } = storeToRefs(useBuildingStore())
 
 /**
- * Whether mapbox has initiated
+ * Whether the map has initiated
  */
-const mapboxIsReady = ref(false)
+const mapIsReady = ref(false)
 
 /**
  * Loaded when not currently loading and mapsets are available or no mapsets were found
@@ -67,7 +67,7 @@ const mapboxIsReady = ref(false)
 const loaded = computed(() => {
   return isLoadingMapsetsDebounced.value === false
     && (hasAvailableMapsets.value === true || noMapsetsFound.value === true)
-    && mapboxIsReady.value
+    && mapIsReady.value
 })
 
 /**
@@ -139,8 +139,8 @@ watch([() => hasSelectedBuilding.value, isPhone], ([hasPand, phone]) => {
   }
 })
 
-const handleMapboxIsReady = function handleMapboxIsReady() {
-  mapboxIsReady.value = true
+const handleMapIsReady = function handleMapIsReady() {
+  mapIsReady.value = true
 }
 
 </script>
@@ -151,7 +151,7 @@ const handleMapboxIsReady = function handleMapboxIsReady() {
 
     <!-- Map view -->
     <div class="app-view | map-placeholder-bg relative bg-grey-200">
-      <Map @ready="handleMapboxIsReady" />
+      <Map @ready="handleMapIsReady" />
 
       <Transition name="short">
         <div v-show="hasAvailableMapsets && !isLeftSidebarOpen" class="map__actions | absolute left-8 top-12 max-md:left-4 max-md:top-4">

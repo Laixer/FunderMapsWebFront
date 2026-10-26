@@ -22,7 +22,7 @@ export const useGeographyFilter = function useGeographyFilter() {
   const geoFilterByMapsetId: Record<string,FilterSpecification> = {}
 
   /**
-   * Generate a Mapbox Style segment to filter features based on fencing properties
+   * Generate a map style filter segment to filter features based on fencing properties
    */
   const generateFencing = function(
     property: string, 

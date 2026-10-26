@@ -3,7 +3,7 @@ import { type Ref, watch } from 'vue';
 
 import { usePhoneLayout } from '@/components/Layout/usePhoneLayout';
 
-export const useMapboxControlNudge = function useMapboxControlNudge(
+export const useMapControlNudge = function useMapControlNudge(
   side: 'left'|'right' = 'right',
   offset = 336,
   isOpen: Ref<boolean>

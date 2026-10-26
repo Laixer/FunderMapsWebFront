@@ -47,7 +47,7 @@
 
 /**
  * The map's buttons and source line stay clear of the pand panel from the
- *  start. The map moves them aside itself (Mapbox/useMapboxControlNudge, which
+ *  start. The map moves them aside itself (Map/useMapControlNudge, which
  *  sets the same offset inline), but only once it has loaded: on a link to a
  *  pand the source line lay over the panel until then.
  */

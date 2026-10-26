@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, IControl, Map } from 'maplibre-gl'
 
 /**
- * A custom Mapbox control that toggles between 2D (flat polygons) and 3D (extruded buildings).
+ * A custom map control that toggles between 2D (flat polygons) and 3D (extruded buildings).
  * In 2D mode: pitch is set to 0 and fill-extrusion heights are flattened.
  * In 3D mode: pitch is restored and extrusion heights use the feature's height property.
  */

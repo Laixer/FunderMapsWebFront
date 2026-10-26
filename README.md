@@ -2,7 +2,7 @@
 
 Web frontend for the FunderMaps platform — a building foundation and subsidence analysis tool with interactive map visualization.
 
-Built with Vue 3, TypeScript, Vite, and Mapbox GL.
+Built with Vue 3, TypeScript, Vite, and MapLibre.
 
 ## Prerequisites
 
@@ -30,8 +30,8 @@ VITE_DEFAULT_LAYERS=<comma-separated default visible layer names>
 VITE_FUNDERMAPS_NUMBER_LAYER=<layer the building-number labels are inserted before>
 ```
 
-The map is drawn with MapLibre from our own tileserver; there is no Mapbox
-token any more (`VITE_MAPBOX_*` and `VITE_FUNDERMAPS_TILES_URL` are not read).
+The map is drawn with MapLibre from our own tileserver (`VITE_FUNDERMAPS_TILES_URL`
+is not read any more).
 
 ## Development
 
@@ -63,8 +63,8 @@ The application uses `<script setup>` single-file components, Pinia for state ma
 - `src/router/` - Vue Router configuration
 - `src/store/` - Pinia stores (session, mapsets, layers, buildings, filters, metadata)
 - `src/services/` - API client (session cookie) and endpoint modules
-- `src/components/Mapbox/` - Map component and composables for layers, sources, events, clustering
-- `src/config/layers/` - Mapbox GL layer style definitions
+- `src/components/Map/` - Map component and composables for layers, sources, events, clustering
+- `src/config/layers/` - MapLibre layer style definitions
 - `src/datastructures/` - TypeScript interfaces, enums, and data classes
 - `src/views/` - Page components (auth, map, home)
 - `src/styles/` - Custom CSS using native nesting

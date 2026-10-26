@@ -23,12 +23,7 @@ export interface IMapsetFE {
   icon: string,
 
   /**
-   * A mapbox style url
-   */
-  style: string,
-
-  /**
-   * Mapset metadata (Mapbox center, etc.) — parsed from the API JSON string.
+   * Mapset metadata (map center, etc.) — parsed from the API JSON string.
    */
   metadata: { center?: number[] },
 
