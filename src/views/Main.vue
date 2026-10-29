@@ -103,7 +103,7 @@ watch([() => activeMapset.value, () => buildingId.value], ([mapset, pand]) => {
 watch(() => hasAvailableMapsets.value, (value, oldValue) => {
 
   if (value === false && oldValue === true) {
-    router.push({ name: 'login' })
+    router.push({ name: 'login', query: { redirect: window.location.pathname + window.location.search } })
   }
 })
 

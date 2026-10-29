@@ -12,7 +12,7 @@ FunderMaps is een webapplicatie voor het analyseren van gebouwfunderingen, bodem
 - Zoeken op adres of postcode via PDOK
 - Geografische afbakening (geo-fencing) per gemeente, wijk of buurt
 - PDF-rapportgeneratie
-- Inloggen met een FunderMaps-account via auth.fundermaps.com
+- Inloggen met een FunderMaps-account op maps.fundermaps.com/login
 
 ## Technologie
 

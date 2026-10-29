@@ -32,7 +32,7 @@ watch(
 // through this path — it intentionally keeps the user on the current page
 // (public mapsets remain accessible).
 onAuthExpired(() => {
-  // The session lapsed mid-use: go and sign in again; the auth app brings
+  // The session lapsed mid-use: go and sign in again; the login page brings
   // the user back to this page.
   loginRedirect()
 })

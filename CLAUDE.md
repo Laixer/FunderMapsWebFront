@@ -19,9 +19,9 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 
 ### Source Layout (`src/`)
 
-- **`router/`** - Vue Router config. Routes: `/login`, `/forgotten`, `/reset/:resetKey?`, `/` (home), `/map/:mapsetId`, `/map/:mapsetId/building/:buildingId(/:panel)`
+- **`router/`** - Vue Router config. Routes: `/login`, `/forgot-password`, `/reset-password`, `/account` (the login pages; `/forgotten` and `/reset/:resetKey?` redirect), `/` (home), `/map/:mapsetId`, `/map/:mapsetId/building/:buildingId(/:panel)`
 - **`store/`** - Pinia stores. Core: `session` (auth), `main` (UI state/modals), `buildings` (selected building), `mapsets` (available mapsets), `layers` (visibility, persisted to sessionStorage), `filters` (ownership), `metadata` (user prefs). Building-specific substores in `store/building/` (analysis, geolocations, incidents, inquiries, recovery, statistics, subsidence)
-- **`services/`** - API layer. `apiClient.ts` is the base HTTP client; it sends the session cookie (`credentials: 'include'`) and, on a `401`, signals the shell through `authEvents.ts`. `auth.ts` holds the redirects to the auth app. Nothing is stored in the browser. Endpoint modules in `services/api/` (auth, building, mapset, metadata, pdf, userprofile)
+- **`services/`** - API layer. `apiClient.ts` is the base HTTP client; it sends the session cookie (`credentials: 'include'`) and, on a `401`, signals the shell through `authEvents.ts`. `auth.ts` holds login, passkeys, password reset and sign-out (`authApi.ts` = the fetch wrapper for `/api/auth/*`, `authClient.ts` = the Better Auth client for passkeys). Nothing is stored in the browser. Endpoint modules in `services/api/` (auth, building, mapset, metadata, pdf, userprofile)
 - **`components/Map/`** - Map integration. `Map.vue` is the main map component. Composables (`use*.ts`) handle layers, sources, events, markers, clustering, geo-fencing, ownership filters, position tracking, and administrative boundaries
 - **`config/layers/`** - JSON layer definitions for map styling (MapLibre style spec) (30+ files for foundation types, incidents, risk assessments, etc.)
 - **`datastructures/`** - TypeScript interfaces, enums, and data classes (Location, Controls, analysis/report types)
@@ -39,7 +39,6 @@ FunderMaps is a Vue 3 + TypeScript + Vite application for building foundation/su
 - `VITE_FUNDERMAPS_URL` - API base URL
 - `VITE_FUNDERMAPS_TILESERVER_URL` - Martin tileserver base URL (the vector sources' TileJSON)
 - `VITE_PDOK_LOCATIONSERVICE` - PDOK Locatieserver base URL (address search)
-- `VITE_AUTH_URL` - login app, default `https://auth.fundermaps.com`
 - `VITE_FUNDERMAPS_BASE_STYLE` - base map style, default `https://tiles.fundermaps.com/style/fundermaps-basemap`
 - `VITE_DEFAULT_MAPSET_ID` - Default mapset UUID (has a default)
 - `VITE_DEFAULT_LAYERS` - Comma-separated default visible layer names (has a default)
@@ -50,7 +49,9 @@ Not read any more: `VITE_FUNDERMAPS_TILES_URL` (the static tileset bucket; tiles
 
 ### Authentication Flow
 
-The session is the **Better Auth cookie on the API origin**, shared by every `*.fundermaps.com` app; there is no token and nothing in localStorage. (Until October 2026 this was OIDC with a bearer token; `services/oidc.ts` and `services/token.ts` are gone.) The map is public: a visitor without a session is a guest, not an error. `services/auth.ts` has `loginRedirect()` (to `${VITE_AUTH_URL}/login?redirect=…`, default auth.fundermaps.com, which returns the user once the cookie is set) and `logoutRedirect()` (posts `/api/auth/sign-out`, then reloads the map as a guest). A `401` on a call that needs a session makes `apiClient.ts` emit `authExpired`, and the shell sends the user to log in again. The `session` store handles `/me` and the role flags. The map has no password pages of its own any more: `/forgotten` and `/reset` only send old bookmarks and links to the auth app's forgot-password page (`forgotPasswordRedirect()`); the local flow called `/auth/forget-password`, which the API no longer has. Changing a password while logged in still happens here (`PasswordModal`, `/auth/change-password`).
+The session is the **Better Auth cookie on the API origin**, shared by every `*.fundermaps.com` app; there is no token and nothing in localStorage. (Until October 2026 this was OIDC with a bearer token; `services/oidc.ts` and `services/token.ts` are gone.) The map is public: a visitor without a session is a guest, not an error.
+
+**The map has its own login pages since 2026-10-29** (moved from FunderMapsAuth, auth.fundermaps.com, which goes): `/login` (password, or a passkey — also offered in the e-mail field's autocomplete), `/forgot-password`, `/reset-password` (the API's reset mail links back here with `?token=`), and `/account` (passkeys, sign-out; needs a session), all inside `components/AuthShell.vue`. The paths are the old login app's, so auth.fundermaps.com can forward here path for path. `loginRedirect()` goes to `/login?redirect=<this page>`; the login page sends the user back there (`safeRedirect`: this map or another `*.fundermaps.com` app), else to the map, and forwards someone who is logged in already once a minute at most (no bounce loop). Passkeys belong to `fundermaps.com` (the API's `PASSKEY_RP_ID`), so the ones made on the old login app work here; the API must list this origin in `PASSKEY_ORIGIN`. `logoutRedirect()` posts `/api/auth/sign-out`, then reloads the map as a guest. A `401` on a call that needs a session makes `apiClient.ts` emit `authExpired`, and the shell sends the user to log in again. The `session` store handles `/me` and the role flags. Changing a password while logged in happens in `PasswordModal` (`/auth/change-password`).
 
 ### Map Layer System
 
