@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/views/Main.vue'
-import { getSession, safeRedirect } from '@/services/auth'
+import { getSession, LOGIN_HOST, onLoginHost, safeRedirect } from '@/services/auth'
 
 /**
  * The login page forwards someone who is logged in already, but a tab only once a minute: when the map then finds
@@ -143,6 +143,14 @@ router.afterEach((to) => {
     default:
       document.title = BASE_TITLE
   }
+})
+
+/** The login pages work on a fundermaps.com host only (the cookie's); elsewhere, the same page there. */
+const LOGIN_PAGES = new Set(['login', 'forgot-password', 'reset-password', 'account'])
+router.beforeEach((to) => {
+  if (!LOGIN_PAGES.has(String(to.name)) || onLoginHost()) return true
+  window.location.replace(`${LOGIN_HOST}${to.fullPath}`)
+  return false
 })
 
 export default router

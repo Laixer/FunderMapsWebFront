@@ -18,8 +18,24 @@ import { authClient } from './authClient'
 
 const API = trimTrailingChar(apiBasePath, '/')
 
-/** To the map's login page; it brings the user back to `returnTo` once the cookie is set. */
-export function loginRedirect(returnTo: string = window.location.href): void {
+/** The map's address on fundermaps.com, where logging in works. */
+export const LOGIN_HOST = 'https://maps.fundermaps.com'
+
+/**
+ * Whether this host can hold a login. The cookie belongs to fundermaps.com, so on the map's other names
+ * (funderingskaart.nl, funderingsrisicokaart.nl) the browser would refuse it: the login pages forward to the same
+ * page on LOGIN_HOST there (router). Local builds count as yes.
+ */
+export function onLoginHost(): boolean {
+  const host = window.location.hostname
+  return /(^|\.)fundermaps\.com$/.test(host) || host === 'localhost' || host === '127.0.0.1'
+}
+
+/**
+ * To the map's login page; it brings the user back to `returnTo` once the cookie is set. A path by default, so it
+ * also works after the forward from another host name to LOGIN_HOST.
+ */
+export function loginRedirect(returnTo: string = window.location.pathname + window.location.search): void {
   window.location.assign(`/login?redirect=${encodeURIComponent(returnTo)}`)
 }
 
