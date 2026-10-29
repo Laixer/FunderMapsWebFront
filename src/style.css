@@ -64,3 +64,10 @@
 :root {
   --sidebar-width: 21rem;
 }
+
+/* Full-bleed brand background of the login pages (components/AuthShell.vue; moved from FunderMapsAuth, 2026-10-29). */
+.page-no-session {
+  background-image: url('@assets/images/background.jpg');
+  background-size: cover;
+  background-position: center;
+}

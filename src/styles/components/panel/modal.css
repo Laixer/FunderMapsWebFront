@@ -1,6 +1,6 @@
 .modal {
   .panel {
-    /* Padding/shadow match the login card of the auth app, so modals and
+    /* Padding/shadow match the login card of the login pages, so modals and
        the login card share the same visual language. */
     @apply relative max-h-full w-full max-w-3xl space-y-6 rounded-lg border border-grey-200 bg-white p-8 shadow-float;
 

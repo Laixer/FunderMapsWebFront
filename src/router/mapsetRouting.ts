@@ -82,7 +82,8 @@ export const useMapsetRouting = function useMapsetRouting() {
       if (lastPublic && mapsetId !== lastPublic) {
         navigateToMapset(lastPublic)
       } else {
-        router.push({ name: 'login' })
+        // To the login page, which brings the user back to this mapset afterwards.
+        router.push({ name: 'login', query: { redirect: window.location.pathname + window.location.search } })
       }
       return
     }

@@ -23,7 +23,6 @@ VITE_FUNDERMAPS_TILESERVER_URL=<tileserver base URL, e.g. https://tiles.funderma
 VITE_PDOK_LOCATIONSERVICE=<PDOK Locatieserver base URL, for the address search>
 
 # Optional, each has a default in the code
-VITE_AUTH_URL=<login app; default https://auth.fundermaps.com>
 VITE_FUNDERMAPS_BASE_STYLE=<base map style; default https://tiles.fundermaps.com/style/fundermaps-basemap>
 VITE_DEFAULT_MAPSET_ID=<default mapset UUID>
 VITE_DEFAULT_LAYERS=<comma-separated default visible layer names>

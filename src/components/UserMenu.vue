@@ -9,13 +9,14 @@ import LinkButton from '@/components/Common/Buttons/LinkButton.vue';
 
 import UserIcon from '@assets/svg/icons/user.svg'
 import LockedIcon from '@assets/svg/icons/locked.svg'
+import PasskeyIcon from '@assets/svg/icons/passkey.svg'
 import ExitIcon from '@assets/svg/icons/exit.svg'
 import ArrowRightIcon from '@assets/svg/icons/arrow-right.svg'
 import ChevronDownIcon from '@assets/svg/icons/chevron-down.svg'
 
 import { useSessionStore } from '@/store/session';
 import { useMainStore } from '@/store/main'
-import { logoutRedirect } from '@/services/auth'
+import { loginRedirect, logoutRedirect } from '@/services/auth'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -72,18 +73,26 @@ const handleOpenPasswordModal = function() {
   isOpen.value = false
 }
 
+/**
+ * The account page: passkeys (add, remove) and sign-out. Was the login app's
+ * home page until 2026-10-29.
+ */
+const handleOpenAccount = function() {
+  isOpen.value = false
+  router.push({ name: 'account' })
+}
+
 const handleLogout = function() {
   isOpen.value = false
-  // RP-initiated logout: end the SSO session at the provider and return to the
-  // map as a guest (oidc.ts). A local-only logout would silently re-login.
+  // Ends the session at the API (clears the cookie) and reloads the map as a guest.
   void logoutRedirect()
 }
 
 /**
- * Redirect to the login page
+ * To the login page, which brings the user back to this page afterwards.
  */
 const handleLoginRedirect = function handleLoginRedirect() {
-  router.push({ name: 'login' })
+  loginRedirect()
 }
 
 </script>
@@ -147,6 +156,16 @@ const handleLoginRedirect = function handleLoginRedirect() {
             class="aspect-square h-3.5"
             aria-hidden="true" />
           <span class="whitespace-nowrap">Wijzig wachtwoord</span>
+        </button>
+
+        <button
+          @click="handleOpenAccount"
+          class="flex w-full cursor-pointer items-center gap-2 px-8 py-4 transition-colors hover:text-(--color-text-green) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-500"
+        >
+          <PasskeyIcon
+            class="aspect-square h-3.5"
+            aria-hidden="true" />
+          <span class="whitespace-nowrap">Passkeys</span>
         </button>
 
         <button

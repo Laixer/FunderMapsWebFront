@@ -1,8 +1,6 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  // Login app (optional; defaults to https://auth.fundermaps.com)
-  readonly VITE_AUTH_URL: string
 
   // PDOK
   readonly VITE_PDOK_LOCATIONSERVICE: string
