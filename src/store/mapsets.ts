@@ -13,13 +13,21 @@ import { useSessionStore } from '@/store/session'
  * Client-side geo-fencing override for public mapsets whose API response
  * does not include fenceMunicipality. Remove these overrides once the API
  * returns the correct fencing values for these mapsets.
+ *
+ * Every public mapset needs a line here, with the CBS code of its municipality
+ * (Studio #80).
  */
+const publicMapsetFences: Record<string, string[]> = {
+  'dordrecht-publiek': ['GM0505'],
+  'oudewater-publiek': ['GM0589'],
+  'schiedam-publiek': ['GM0606'],
+  'woerden-publiek': ['GM0632'],
+}
+
 const enforceGeoFencingOnPublicMapsets = function enforceGeoFencingOnPublicMapsets(mapset: IMapsetFE) {
-  if (mapset.slug === 'schiedam-publiek') {
-    mapset.fenceMunicipality = ['GM0606']
-  }
-  if (mapset.slug === 'woerden-publiek') {
-    mapset.fenceMunicipality = ['GM0632']
+  const fence = publicMapsetFences[mapset.slug]
+  if (fence) {
+    mapset.fenceMunicipality = [...fence]
   }
 
   return mapset
